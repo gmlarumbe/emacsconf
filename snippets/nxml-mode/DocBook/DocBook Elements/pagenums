@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <pagenums>
+# key: pagenums
+# --
+<pagenums>$1</pagenums>$0

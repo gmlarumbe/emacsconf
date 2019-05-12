@@ -1,0 +1,3 @@
+typedef enum
+{$0
+} ${1:name_e};

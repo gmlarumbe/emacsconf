@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <systemitem>
+# key: systemitem
+# --
+<systemitem>$1</systemitem>$0

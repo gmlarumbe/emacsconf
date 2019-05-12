@@ -1,0 +1,7 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <example id="...">
+# key: example
+# --
+<example id="$1">
+	$0
+</example>

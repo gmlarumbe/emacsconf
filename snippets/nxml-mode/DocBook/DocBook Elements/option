@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <option>
+# key: option
+# --
+<option>$1</option>$0

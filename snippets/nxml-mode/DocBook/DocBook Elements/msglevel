@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <msglevel>
+# key: msglevel
+# --
+<msglevel>$1</msglevel>$0

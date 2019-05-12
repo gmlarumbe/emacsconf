@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <wordasword>
+# key: wordasword
+# --
+<wordasword>$1</wordasword>$0

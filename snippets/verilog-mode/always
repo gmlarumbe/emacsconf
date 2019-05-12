@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# key: a
+# --
+
+always @(${1:posedge Clk}) begin
+   $0
+end

@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <methodsynopsis language="...">
+# key: methodsynopsis
+# --
+<methodsynopsis language="$1">
+	$0
+</methodsynopsis>

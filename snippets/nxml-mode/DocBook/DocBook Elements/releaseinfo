@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <releaseinfo>
+# key: releaseinfo
+# --
+<releaseinfo>$1</releaseinfo>$0

@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <callout arearefs="...">
+# key: callout
+# --
+<callout arearefs="$1">
+	$0
+</callout>

@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <medialabel class="cdrom">
+# key: cdrom
+# --
+<medialabel class="cdrom">$1</medialabel>$0

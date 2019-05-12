@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <beginpage pagenum="..." />
+# key: beginpage
+# --
+<beginpage pagenum="$1" />$0

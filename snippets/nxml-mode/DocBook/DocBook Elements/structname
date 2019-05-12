@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <structname>
+# key: structname
+# --
+<structname>$1</structname>$0

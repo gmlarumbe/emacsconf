@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <productname class="...">
+# key: productname
+# --
+<productname class="${1:trade}">$2</productname>$0

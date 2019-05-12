@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <bibliomset relation="...">
+# key: bibliomset
+# --
+<bibliomset relation="$1">
+	$0
+</bibliomset>

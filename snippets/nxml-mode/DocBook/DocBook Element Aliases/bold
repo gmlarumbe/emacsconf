@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <emphasis role='bold'>
+# key: bold
+# --
+<emphasis role="bold">$1</emphasis>$0

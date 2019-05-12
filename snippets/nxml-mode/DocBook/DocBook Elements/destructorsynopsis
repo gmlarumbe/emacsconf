@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <destructorsynopsis language="...">
+# key: destructorsynopsis
+# --
+<destructorsynopsis language="$1">
+	$0
+</destructorsynopsis>

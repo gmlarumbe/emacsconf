@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <link linkend="...">
+# key: link
+# --
+<link linkend="$1">$2</link>$0

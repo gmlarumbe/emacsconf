@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <constructorsynopsis language="...">
+# key: constructorsynopsis
+# --
+<constructorsynopsis language="$1">
+	$0
+</constructorsynopsis>

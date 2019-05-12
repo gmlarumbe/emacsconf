@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <area id="..." coords="..." />
+# key: area
+# --
+<area id="$1" coords="$2" />$0

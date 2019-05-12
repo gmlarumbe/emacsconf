@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <refpurpose>
+# key: refpurpose
+# --
+<refpurpose>$1</refpurpose>$0

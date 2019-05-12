@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <glossseealso otherterm="...">
+# key: glossseealso
+# --
+<glossseealso otherterm="$1">$2</glossseealso>$0

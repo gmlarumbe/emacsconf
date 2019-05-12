@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <medialabel>
+# key: medialabel
+# --
+<medialabel>$1</medialabel>$0

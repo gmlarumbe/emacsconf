@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <bibliosource class="...">
+# key: bibliosource
+# --
+<bibliosource class="${1:isbn}">$2</bibliosource>$0

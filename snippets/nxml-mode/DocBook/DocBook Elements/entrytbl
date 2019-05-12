@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <entrytbl cols="...">
+# key: entrytbl
+# --
+<entrytbl cols="$1">
+	$0
+</entrytbl>

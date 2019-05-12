@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <prompt>
+# key: prompt
+# --
+<prompt>$1</prompt>$0

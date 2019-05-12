@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <ulink url="...">
+# key: ulink
+# --
+<ulink url="$1">$2</ulink>$0

@@ -1,0 +1,7 @@
+snippet rand
+rand ${1:type} ${2:name};
+
+constraint $2_cst {
+   // define constraint here using dist, inside, = etc
+   $0
+};

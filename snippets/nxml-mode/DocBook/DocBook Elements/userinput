@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <userinput>
+# key: userinput
+# --
+<userinput>$1</userinput>$0

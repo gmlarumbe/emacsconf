@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <collabname>
+# key: collabname
+# --
+<collabname>$1</collabname>$0

@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <keycombo>
+# key: keycombo
+# --
+<keycombo>$1</keycombo>$0

@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <medialabel class="tape">
+# key: tape
+# --
+<medialabel class="tape">$1</medialabel>$0

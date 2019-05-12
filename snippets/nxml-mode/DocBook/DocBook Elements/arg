@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <arg>
+# key: arg
+# --
+<arg>$1</arg>$0

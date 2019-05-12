@@ -1,0 +1,49 @@
+class ${1:ovc_name}_driver extends ovm_driver #(${2:ovc_item});
+
+   string tID;
+   virtual interface ${3:ovc_if} vif;
+   $2 item;
+
+   function new(string name, ovm_component parent);
+      super.new(name, parent);
+      tID = get_type_name();
+      tID = tID.toupper();
+   endfunction: new
+
+   \`ovm_component_utils_begin($1_driver)
+      \`ovm_field_object(item, OVM_ALL_ON)
+   \`ovm_component_utils_end
+
+   task get_and_drive();
+      forever
+ begin
+    // wait(vif.reset==0);  // block until reset released
+     seq_item_port.get_next_item(item);
+    send_to_dut(item);
+    seq_item_port.item_done();
+ end
+   endtask: get_and_drive
+
+   task send_to_dut(input $2 item);
+      ovm_report_info(tID, $psprintf("%s : item sent is %0s",
+                     tID, item.sprint()), OVM_FULL);
+      // Send data to DUT (BFM - fill in your BFM code here)
+      #10 ;
+      #10 ;
+   endtask: send_to_dut
+
+   task reset_dut();
+      // fill in any reset code here
+   endtask: reset_dut
+
+   task run();
+      ovm_report_info(tID, $psprintf(" %s : running", tID), OVM_MEDIUM);
+      // reset_dut(); // fill in 'reset_dut()' if needed
+      get_and_drive();
+   endtask: run
+
+   virtual function void report();
+      // fill in any reporting code if needed
+      logic dummy;
+   endfunction: report
+endclass: $1_driver

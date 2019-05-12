@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <xi:include href="..." xmlns:xi="..." />
+# key: xi:include
+# --
+<xi:include href="$1.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />$0

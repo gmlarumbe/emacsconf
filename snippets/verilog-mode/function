@@ -1,0 +1,3 @@
+function ${1:void} ${2:function_name} ($3);
+  $0
+endfunction: $2

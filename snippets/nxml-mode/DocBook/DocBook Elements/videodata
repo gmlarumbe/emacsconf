@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <videodata fileref="..." scalefit="..." />
+# key: videodata
+# --
+<videodata fileref="$1" scalefit="${2:0}" />$0

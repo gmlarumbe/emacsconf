@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <secondary>
+# key: secondary
+# --
+<secondary>$1</secondary>$0

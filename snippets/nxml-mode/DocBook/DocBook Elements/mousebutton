@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <mousebutton>
+# key: mousebutton
+# --
+<mousebutton>$1</mousebutton>$0

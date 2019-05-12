@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <synopfragment id="...">
+# key: synopfragment
+# --
+<synopfragment id="$1">
+	$0
+</synopfragment>

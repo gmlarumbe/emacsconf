@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <street>
+# key: street
+# --
+<street>$1</street>$0

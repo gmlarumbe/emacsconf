@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <tocback linkend="...">
+# key: tocback
+# --
+<tocback linkend="$1">$2</tocback>$0

@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <confnum>
+# key: confnum
+# --
+<confnum>$1</confnum>$0

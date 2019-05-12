@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <guisubmenu>
+# key: guisubmenu
+# --
+<guisubmenu>$1</guisubmenu>$0

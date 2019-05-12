@@ -1,0 +1,8 @@
+class ${1:class_name} extends ${2:base_class};
+   $0
+   function new(${3:args});
+      super.new($3);
+
+   endfunction: new
+
+endclass: $1

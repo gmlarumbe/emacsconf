@@ -1,0 +1,7 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <formalpara>
+# key: formalpara
+# --
+<formalpara>
+	$0
+</formalpara>

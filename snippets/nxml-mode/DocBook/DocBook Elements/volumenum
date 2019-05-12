@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <volumenum>
+# key: volumenum
+# --
+<volumenum>$1</volumenum>$0

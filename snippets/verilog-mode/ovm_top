@@ -1,0 +1,28 @@
+\`include "ovm.svh"
+\`include "${1:ovc_name}_inc.svh"
+\`include "sve.sv"
+\`include "test1.sv"
+module top();
+
+   logic clock;
+   logic reset;
+
+   ${2:ovc_if} if0(clock, reset); // instantiate ovc interface
+
+   initial
+     begin
+    run_test();
+     end
+
+   always #10 clock = ~clock;
+
+   initial
+     begin
+  clock = 0;
+    reset = 1; // active high reset for this example
+  #75 reset = 0;
+     end
+
+   // instantiate and connect dut to interface(s) here
+
+endmodule: top

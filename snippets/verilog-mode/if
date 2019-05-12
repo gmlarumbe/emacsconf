@@ -1,0 +1,4 @@
+if (${1:condition}) begin
+   $0
+end // if($1)
+

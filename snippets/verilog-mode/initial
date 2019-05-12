@@ -1,0 +1,3 @@
+initial begin
+   $0
+end

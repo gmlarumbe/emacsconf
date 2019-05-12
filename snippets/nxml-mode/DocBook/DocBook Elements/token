@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <token>
+# key: token
+# --
+<token>$1</token>$0

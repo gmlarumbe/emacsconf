@@ -1,0 +1,7 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <chapter id="...">
+# key: chapter
+# --
+<chapter id="$1">
+	$0
+</chapter>

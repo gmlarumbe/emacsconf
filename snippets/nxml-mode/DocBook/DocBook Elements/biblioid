@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <biblioid class="...">
+# key: biblioid
+# --
+<biblioid class="${1:isbn}">$2</biblioid>$0

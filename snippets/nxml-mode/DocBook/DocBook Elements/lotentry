@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <lotentry linkend="...">
+# key: lotentry
+# --
+<lotentry linkend="$1">
+	$0
+</lotentry>

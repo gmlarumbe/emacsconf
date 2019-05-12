@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <medialabel class="disk">
+# key: disk
+# --
+<medialabel class="disk">$1</medialabel>$0

@@ -1,0 +1,8 @@
+fork
+   begin
+      $0
+   end
+   begin
+
+   end
+join

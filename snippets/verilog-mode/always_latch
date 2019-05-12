@@ -1,0 +1,3 @@
+always_latch begin
+   $0
+end

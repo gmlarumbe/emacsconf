@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <fieldsynopsis language="...">
+# key: fieldsynopsis
+# --
+<fieldsynopsis language="$1">
+	$0
+</fieldsynopsis>

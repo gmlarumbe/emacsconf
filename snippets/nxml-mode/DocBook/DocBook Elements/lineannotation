@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <lineannotation>
+# key: lineannotation
+# --
+<lineannotation>$1</lineannotation>$0

@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <textdata fileref="..." />
+# key: textdata
+# --
+<textdata fileref="$1" />$0

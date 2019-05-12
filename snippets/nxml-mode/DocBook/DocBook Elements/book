@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <book id="...">
+# key: book
+# --
+<book id="$1">
+	$0
+</book>

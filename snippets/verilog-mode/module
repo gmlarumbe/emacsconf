@@ -1,0 +1,3 @@
+module ${1:module_name} (/*port details*/);
+  $0
+endmodule: $1

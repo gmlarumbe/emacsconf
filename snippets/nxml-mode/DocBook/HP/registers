@@ -1,0 +1,10 @@
+# contributor: Gonzalo Larumbe <gonzalomlarumbe@gmail.com>
+# name: registers
+# key: registers
+# --
+<xi:include href="$1.docbook.xml" xpointer="$2_regs_rdl_regtbls">
+    <xi:fallback>
+        <para>There is no register information available.</para>
+    </xi:fallback>
+</xi:include>
+$0

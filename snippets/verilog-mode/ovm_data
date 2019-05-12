@@ -1,0 +1,18 @@
+class ${1:ovc_item} extends ovm_sequence_item;
+   $0
+   /* AUTO_OVM_VARS */
+   rand bit [3:0] addr;
+   rand bit [5:0] length;
+   rand bit [7:0] payload [];
+   
+   \`ovm_object_utils_begin(yapp_pkt)
+      \`ovm_field_int(addr, OVM_ALL_ON)
+      \`ovm_field_int(length, OVM_ALL_ON)
+      \`ovm_field_array_int(payload, OVM_ALL_ON)
+   \`ovm_object_utils_end
+
+   function new(string name="$1");
+      super.new(name);
+   endfunction: new
+
+endclass: $1

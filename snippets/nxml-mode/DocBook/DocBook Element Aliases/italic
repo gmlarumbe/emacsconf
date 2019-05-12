@@ -1,0 +1,5 @@
+# contributor: Gonzalo Larumbe <gonzalomlarumbe@gmail.com>
+# name: <emphasis role='italic'>
+# key: italic
+# --
+<emphasis role="italic">$1</emphasis>$0

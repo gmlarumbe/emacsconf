@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <ooclass>
+# key: ooclass
+# --
+<ooclass>$1</ooclass>$0

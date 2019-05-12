@@ -1,0 +1,42 @@
+class ${1:ovc_name}_seq1 extends ovm_sequence #(${2:ovc_item});
+
+   string tID;
+   \`ovm_sequence_utils($1_seq1, $1_sequencer)
+   // $2 trans;
+   // "req" built-in ovm_sequence class member for sequence_item
+   rand int delay1;
+   rand int delay2;
+   constraint d1 {delay1 > 55; delay1 < 125;}
+   constraint d2 {delay2 > 25; delay2 < 45;}
+
+   function new(string name = "$1_seq1");
+      super.new(name);
+      tID = get_type_name();
+      tID = tID.toupper();
+   endfunction: new
+
+   task body();
+      \`message(OVM_LOW, ("RUNNING sequence: %s", get_name()))
+      ovm_report_info(tID, $psprintf("%s: sequence Running", tID), OVM_LOW);
+      // not the best way to print, just to confirm randomization
+      \`message(OVM_LOW, ("delay1=%0d, delay2=%0d", delay1, delay2))
+      ovm_report_info(tID, $psprintf("%s: delay1=%0d, delay2=%0d",
+                     tID, delay1, delay2), OVM_MEDIUM);
+      #delay1
+    // dummy delay to illustrate a sequence rand variable
+      \`ovm_do(req) // this line sends the transaction
+      #delay1
+ // get_response(rsp); // get response if implemented
+      \`ovm_do(req) // this line sends the transaction
+      #delay1
+  // get_response(rsp); // get response if implemented
+      \`ovm_do(req) // this line sends the transaction
+      #delay2
+  // get_response(rsp); // get response if implemented
+      \`message(OVM_LOW, ("sequence: %s complete", get_name()))
+      ovm_report_info(tID, $psprintf("sequence: %s complete", tID), OVM_LOW);
+   endtask: body
+
+endclass: $1_seq1
+
+//additional sequences can be included in this file

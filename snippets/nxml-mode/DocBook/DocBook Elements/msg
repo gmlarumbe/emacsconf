@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <msg>
+# key: msg
+# --
+<msg>
+	$0
+</msg>

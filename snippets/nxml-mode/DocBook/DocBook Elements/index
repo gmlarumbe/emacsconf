@@ -1,0 +1,7 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <index id="...">
+# key: index
+# --
+<index id="$1">
+	$0
+</index>

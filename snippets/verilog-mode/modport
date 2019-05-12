@@ -1,0 +1,7 @@
+modport ${1:name_mp}
+  ($0
+   // clocking clocking_cb,
+   // input input_name,
+   // output output_port,
+   // ....
+   );

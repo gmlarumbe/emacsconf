@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <action>
+# key: action
+# --
+<action>$1</action>$0

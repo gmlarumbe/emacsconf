@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <biblioset relation="...">
+# key: biblioset
+# --
+<biblioset relation="$1">
+	$0
+</biblioset>

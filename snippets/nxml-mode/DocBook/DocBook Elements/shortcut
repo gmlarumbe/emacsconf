@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <shortcut>
+# key: shortcut
+# --
+<shortcut>$1</shortcut>$0

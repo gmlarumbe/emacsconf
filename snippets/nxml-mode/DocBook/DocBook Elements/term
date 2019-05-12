@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <term>
+# key: term
+# --
+<term>$1</term>$0

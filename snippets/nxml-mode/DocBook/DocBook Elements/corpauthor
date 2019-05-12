@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <corpauthor>
+# key: corpauthor
+# --
+<corpauthor>$1</corpauthor>$0

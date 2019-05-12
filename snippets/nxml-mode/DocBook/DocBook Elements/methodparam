@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <methodparam>
+# key: methodparam
+# --
+<methodparam>$1</methodparam>$0

@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <sect1 id="...">
+# key: sect1
+# --
+<sect1 id="$1">
+	$0
+</sect1>

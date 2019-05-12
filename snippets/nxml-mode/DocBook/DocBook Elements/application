@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <application>
+# key: application
+# --
+<application>$1</application>$0

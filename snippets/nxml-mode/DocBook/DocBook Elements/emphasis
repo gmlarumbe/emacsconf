@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <emphasis>
+# key: emphasis
+# --
+<emphasis>$1</emphasis>$0

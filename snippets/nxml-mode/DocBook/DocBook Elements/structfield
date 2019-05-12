@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <structfield>
+# key: structfield
+# --
+<structfield>$1</structfield>$0

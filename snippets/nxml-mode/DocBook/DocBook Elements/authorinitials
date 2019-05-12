@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <authorinitials>
+# key: authorinitials
+# --
+<authorinitials>$1</authorinitials>$0

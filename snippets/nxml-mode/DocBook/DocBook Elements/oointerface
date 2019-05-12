@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <oointerface>
+# key: oointerface
+# --
+<oointerface>$1</oointerface>$0

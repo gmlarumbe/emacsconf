@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <guiicon>
+# key: guiicon
+# --
+<guiicon>$1</guiicon>$0

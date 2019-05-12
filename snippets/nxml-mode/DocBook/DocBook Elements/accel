@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <accel>
+# key: accel
+# --
+<accel>$1</accel>$0

@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <medialabel class="cartridge">
+# key: cartridge
+# --
+<medialabel class="cartridge">$1</medialabel>$0

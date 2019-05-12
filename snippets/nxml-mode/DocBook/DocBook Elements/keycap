@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <keycap>
+# key: keycap
+# --
+<keycap>$1</keycap>$0

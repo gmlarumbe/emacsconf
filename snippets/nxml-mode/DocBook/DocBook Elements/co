@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <co label="..." linkends="..." />
+# key: co
+# --
+<co label="$1" linkends="$2" />$0

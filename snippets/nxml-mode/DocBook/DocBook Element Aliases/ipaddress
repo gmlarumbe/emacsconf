@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <systemitem class="ipaddress">
+# key: ipaddress
+# --
+<systemitem class="ipaddress">$1</systemitem>$0

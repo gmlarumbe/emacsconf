@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <systemitem class="etheraddress">
+# key: etheraddress
+# --
+<systemitem class="etheraddress">$1</systemitem>$0

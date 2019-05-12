@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <funcdef>
+# key: funcdef
+# --
+<funcdef>$1</funcdef>$0

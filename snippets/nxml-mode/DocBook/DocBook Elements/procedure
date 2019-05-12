@@ -1,0 +1,8 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <procedure id="...">
+# key: procedure
+# --
+<procedure id="$1">
+	<title>$2</title>
+	$0
+</procedure>

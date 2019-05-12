@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <sgmltag>
+# key: sgmltag
+# --
+<sgmltag>$1</sgmltag>$0

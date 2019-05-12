@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <tasksummary>
+# key: tasksummary
+# --
+<tasksummary>
+	$0
+</tasksummary>

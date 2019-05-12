@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <graphic fileref="..." />
+# key: graphic
+# --
+<graphic fileref="$1" />$0

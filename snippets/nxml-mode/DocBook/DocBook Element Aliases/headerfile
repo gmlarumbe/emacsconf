@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <filename class="headerfile">
+# key: headerfile
+# --
+<filename class="headerfile">$1</filename>$0

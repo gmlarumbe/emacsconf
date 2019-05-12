@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <function>
+# key: function
+# --
+<function>$1</function>$0

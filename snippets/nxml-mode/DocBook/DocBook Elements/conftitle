@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <conftitle>
+# key: conftitle
+# --
+<conftitle>$1</conftitle>$0

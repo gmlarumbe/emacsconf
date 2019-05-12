@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <coref label="..." linkend="..." />
+# key: coref
+# --
+<coref label="$1" linkend="$1" />$0

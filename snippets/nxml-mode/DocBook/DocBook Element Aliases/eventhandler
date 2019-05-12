@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <systemitem class="eventhandler">
+# key: eventhandler
+# --
+<systemitem class="eventhandler">$1</systemitem>$0

@@ -1,0 +1,5 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <systemitem class="groupname">
+# key: groupname
+# --
+<systemitem class="groupname">$1</systemitem>$0

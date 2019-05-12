@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <surname>
+# key: surname
+# --
+<surname>$1</surname>$0

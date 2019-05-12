@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# key: f
+# --
+
+for (${1:int i=0}; ${2:i!=n}; ++i) begin
+   $0
+end

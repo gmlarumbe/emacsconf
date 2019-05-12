@@ -1,0 +1,12 @@
+casez (${1:expression})
+  ${2:value1}: begin
+     $0
+  end // casez: $2
+
+  // other case branches
+
+  default: begin
+
+  end
+endcase // case($1)  
+

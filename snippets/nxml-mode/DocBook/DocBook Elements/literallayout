@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <literallayout>
+# key: literallayout
+# --
+<literallayout>$1</literallayout>$0

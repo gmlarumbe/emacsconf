@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <artpagenums>
+# key: artpagenums
+# --
+<artpagenums>$1</artpagenums>$0

@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <database class="...">
+# key: database
+# --
+<database class="$1">$2</database>$0

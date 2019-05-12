@@ -1,0 +1,7 @@
+# contributor: Jaromir Hradilek <jhradilek@gmail.com>
+# name: <figure id="...">
+# key: figure
+# --
+<figure id="$1">
+	$0
+</figure>

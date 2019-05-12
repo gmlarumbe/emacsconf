@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <imagedata fileref="..." format="..." scalefit="..." />
+# key: imagedata
+# --
+<imagedata fileref="$1" format="${2:PNG}" scalefit="${3:0}" />$0

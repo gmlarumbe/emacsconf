@@ -1,0 +1,5 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <shortaffil>
+# key: shortaffil
+# --
+<shortaffil>$1</shortaffil>$0

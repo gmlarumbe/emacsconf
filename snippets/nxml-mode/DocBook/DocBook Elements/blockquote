@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <blockquote>
+# key: blockquote
+# --
+<blockquote>
+	$0
+</blockquote>

@@ -1,0 +1,7 @@
+# contributor: Martin Prpic <martin.prpic@gmail.com>
+# name: <appendix id="...">
+# key: appendix
+# --
+<appendix id="$1">
+	$0
+</appendix>
