@@ -376,6 +376,7 @@
               ("C-c p g" . helm-projectile-grep)
               )
   :config
+  (add-to-list 'projectile-project-root-files-bottom-up ".repo") ; Detect `repo' Git sandboxes (Sandbox preference over IP)
   (setq projectile-completion-system 'helm)
   (setq projectile-mode-line-prefix " P") ; Modeline
   (defun larumbe/projectile-custom-mode-line ()
@@ -506,7 +507,7 @@ function to return a regular expression, or
   :load-path "~/.elisp/larumbe/own-modes/minors/")
 
 ;;;;; vhier-outline
-(use-package unison-sync-minor-mode
+(use-package vhier-outline-mode
   :load-path "~/.elisp/larumbe/own-modes/minors/")
 
 

@@ -64,16 +64,15 @@
 (setq org-agenda-files (list "~/TODO.org"))
 ;;  Org Keywords
 (setq org-todo-keywords
-      '((sequence "TODO" "|" "DONE")
-        (sequence "IN PROGRESS" "NEEDS TEST" "|" "COMPLETED" "CANCELED" "POSTPONED")
+      '((sequence "TODO" "IN PROGRESS" "|" "DONE" "CANCELED" "POSTPONED")
         (sequence "|" "INFO")))
 ;;  Org Faces for Keywords
 (setq org-todo-keyword-faces
       '(("TODO"        . org-warning)
         ("IN PROGRESS" . "yellow")
         ("CANCELED"    . (:foreground "blue" :weight bold))
-        ("INFO"        . "light blue")
         ("POSTPONED"   . "cyan")
+        ("INFO"        . "light blue")
         ))
 
 ;;;;; Keymap

@@ -110,7 +110,7 @@
 ;;;;; Text Editing
 (global-set-key (kbd "C-M-<up>") 'move-lines-up)
 (global-set-key (kbd "C-M-<down>") 'move-lines-down)
-(global-set-key (kbd "C-c d") 'duplicate-line)
+(global-set-key (kbd "C-x d") 'duplicate-line) ; Replaces Dired (C-x C-j works better)
 (global-set-key (kbd "C-w") 'whole-line-or-region-kill-region)
 (global-set-key [remap dabbrev-expand] 'hippie-expand)
 ;;;;; Helm/IDO
@@ -193,6 +193,8 @@
 (push '?\C-. exwm-input-prefix-keys)
 ;; Screenshot
 (push '\print exwm-input-prefix-keys)
+;; Various functions (copy sim from cee)
+(push 'f9 exwm-input-prefix-keys)
 
 
 ;;; Common Simulation Key-Bindings
@@ -378,6 +380,53 @@
                  ([?\C-\/] . ?\C-z)
                  )))))
 
+
+
+;;; Gtkwave Local Key-Bindings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; GTKWAVE LOCAL KEY-BINDINGS ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; Local Key-bindings
+;; (add-hook 'exwm-manage-finish-hook
+;;           (lambda ()
+;;             (when (and exwm-class-name
+;;                        (string= exwm-class-name "Gtkwave"))
+;;               ;; (setq-local exwm-input-prefix-keys '(?\C-c))
+;;                  )))
+;; Simulation keys
+(add-hook 'exwm-manage-finish-hook
+          (lambda ()
+            (when (and exwm-class-name
+                       (string= exwm-class-name "Gtkwave"))
+              (exwm-input-set-local-simulation-keys
+               '(
+                 ;; Own keys
+                 ([?\C-g] . escape)
+                 ;; movement
+                 ([?\C-b] . left)
+                 ([?\M-b] . C-left)
+                 ([?\C-f] . right)
+                 ([?\M-f] . C-right)
+                 ([?\C-p] . up)
+                 ([?\C-n] . down)
+                 ([?\M-<] . home)
+                 ([?\M->] . end)
+                 ([?\C-a] . home)
+                 ([?\C-e] . end)
+                 ([?\M-v] . prior)
+                 ([?\C-v] . next)
+                 ([?\C-d] . delete)
+                 ;; ([?\C-k] . (S-end ?\C-x)) ; It kills, not simply deletes
+                 ;; cut/paste.
+                 ;; ([?\C-w] . ?\C-x)
+                 ([?\M-w] . ?\C-c)
+                 ([?\C-y] . ?\C-v)
+                 ;; search
+                 ;; ([?\C-\M-s] . ?\C-F)      ; Find
+                 ;; ([?\C-\M-r] . ?\C-F)      ; Find
+                 ;; ([?\C-s]    . ?\C-G)      ; Find Next (forward search)
+                 ;; ([?\C-r]    . (S-f3))     ; Find Previous (backwards search)
+                 )))))
 
 
 

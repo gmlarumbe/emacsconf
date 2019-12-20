@@ -32,7 +32,7 @@
 
 
 (fset 'copy-firefox-link
-   [?\C-l ?\C-w])
+   [?\C-l ?\M-w])
 
 
 (defun larumbe/exwm-firefox-youtube-dl ()
@@ -40,7 +40,7 @@
   (interactive)
   (let (link dir)
     (save-window-excursion
-      (switch-to-buffer "Firefox-esr")
+      (switch-to-buffer "Firefox")
       ;; https://stackoverflow.com/questions/28039958/emacs-call-a-kbd-macro-in-defun-function
       (execute-kbd-macro 'copy-firefox-link)
       (setq link (current-kill 0))
@@ -104,6 +104,67 @@
   (other-window 1))
 
 
+(defun larumbe/show-repo-sync-buffers ()
+  (interactive)
+  (setq last-command-event 49)
+  (delete-other-windows)
+  (switch-to-buffer "*<git_metaljf>*" nil 'force-same-window)
+  (split-window-right nil)
+  (split-window-below nil)
+  (handle-focus-out
+   `(focus-out ,(elmacro-get-frame "0x6cabe70")))
+  (other-window 1)
+  (handle-focus-in
+   `(focus-in ,(elmacro-get-frame "0x6cabe70")))
+  (switch-to-buffer "*<git_smc_metaljf>*" nil 'force-same-window)
+  (insert "g")
+  (delete-backward-char 1 nil)
+  (handle-focus-out
+   `(focus-out ,(elmacro-get-frame "0x6cabe70")))
+  (other-window 1)
+  (handle-focus-in
+   `(focus-in ,(elmacro-get-frame "0x6cabe70")))
+  (split-window-below nil)
+  (switch-to-buffer "*<git_metaljf_integration>*" nil 'force-same-window)
+  (handle-focus-out
+   `(focus-out ,(elmacro-get-frame "0x6cabe70")))
+  (other-window 1)
+  (handle-focus-in
+   `(focus-in ,(elmacro-get-frame "0x6cabe70")))
+  (switch-to-buffer "*<git_lamarr>*" nil 'force-same-window))
+
+
+(defun larumbe/kill-repo-sync-buffers ()
+  (interactive)
+  (handle-focus-out
+   `(focus-out ,(elmacro-get-frame "0x6cabe70")))
+  (larumbe/kill-current-buffer)
+  (handle-focus-in
+   `(focus-in ,(elmacro-get-frame "0x6cabe70")))
+  (delete-window)
+  (handle-focus-out
+   `(focus-out ,(elmacro-get-frame "0x6cabe70")))
+  (larumbe/kill-current-buffer)
+  (handle-focus-in
+   `(focus-in ,(elmacro-get-frame "0x6cabe70")))
+  (delete-window)
+  (handle-focus-out
+   `(focus-out ,(elmacro-get-frame "0x6cabe70")))
+  (setq last-command-event 134217767)
+  (larumbe/kill-current-buffer)
+  (setq last-command-event 134217767)
+  (handle-focus-in
+   `(focus-in ,(elmacro-get-frame "0x6cabe70")))
+  (delete-window)
+  (handle-focus-out
+   `(focus-out ,(elmacro-get-frame "0x6cabe70")))
+  (setq last-command-event 134217767)
+  (larumbe/kill-current-buffer)
+  (setq last-command-event 134217767)
+  (handle-focus-in
+   `(focus-in ,(elmacro-get-frame "0x6cabe70")))
+  (setq last-command-event 'f4))
+
 
 (defun larumbe/verilog-clean-parenthesis-blanks ()
   "Cleans blanks inside parenthesis blocks (Verilog port connections).
@@ -122,4 +183,7 @@ If region is not used, then a query replacement is performed instead"
         (message "Removing blanks at the end...")
         (query-replace-regexp old-start new-start nil (point-min) (point-max))
         (query-replace-regexp old-end   new-end   nil (point-min) (point-max))))))
+
+
+
 

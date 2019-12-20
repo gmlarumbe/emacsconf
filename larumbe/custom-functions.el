@@ -158,6 +158,43 @@
       (forward-line 1))))
 
 
+(defun read-lines (filePath)
+  "Return a list of lines of a file at filePath."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (split-string (buffer-string) "\n" t)))
+
+
+(defun larumbe/buffer-expand-filenames ()
+  "Expands filenames path present in `current-buffer' line by line"
+  (interactive)
+  (let (cur-line)
+    (save-excursion
+      (beginning-of-buffer)
+      (while (< (point) (point-max))
+        (delete-horizontal-space)
+        (setq cur-line (expand-file-name (thing-at-point 'line) default-directory))
+        (kill-line 1)
+        (insert cur-line)))))
+
+
+(defun larumbe/sort-regexp-at-the-beginning-of-file (regexp)
+  "Move lines containing REGEXP recursively at the beginning of the file, line by line
+This might be useful when managing a list of files, one file at a line, and there is some need of sorting by regexp
+For example, in SystemVerilog packages might need to be included before reading other files."
+  (interactive)
+  (beginning-of-buffer)
+  (while (not sorted-files-p)
+    (save-excursion
+      (if (not (search-forward-regexp regexp nil 1))
+          (setq sorted-files-p t))
+      (beginning-of-line)
+      (kill-line 1)) ; 1 kills trailing newline as well
+    (yank)))
+
+
+
+
 ;;; Specific Mode oriented functions
 ;;;; Dired
 (defun larumbe/toggle-dired-deletion-confirmer ()
@@ -590,10 +627,16 @@ This is because there is no include option for `diff' utils.
 `https://stackoverflow.com/questions/3775377/how-do-you-diff-a-directory-for-only-files-of-a-specific-type'"
   (interactive "DSelect first directory: \nDSelect second directory: \nFSelect output file:")
   (let ((exclude-file)
-        (exclude-patterns '("*.wdf" "*.xml" "*.bxml" "*.wpc" "*.target" "*.rdl.ast"
-                            "file_list.py" "source_list.tcl" "run_vivado.tcl")))
+        (exclude-patterns '("*.wdf"
+                            "*.xml"
+                            "*.bxml"
+                            "*.wpc"
+                            "*.target"
+                            "*.rdl.ast"
+                            "file_list.py"
+                            "source_list.tcl"
+                            "run_vivado.tcl")))
     (setq exclude-file (concat (file-name-directory out-file) "exclude.pats"))
-    (setq exclude-patterns larumbe/diff-recursive-exclude-patterns)
     (f-write-text (larumbe/print-elements-of-list-of-strings exclude-patterns) 'utf-8 exclude-file)
     ;; If return value is `1' is because differences were found
     (start-process-shell-command
@@ -681,6 +724,16 @@ Load TODO.org and see agenda for today..."
 
 
 ;;;; Git customizations
+;;;;; Repo sync
+(defun larumbe/repo-sync-sandboxes (repo-paths)
+  "Update all .repo sandboxes passed as parameter (to be used in local and cee)"
+  (while repo-paths
+    (async-shell-command
+     (concat "cd " (nth 0 (car repo-paths)) " && repo sync")
+     (concat "*<" (nth 1 (car repo-paths)) ">*"))
+    (setq repo-paths (cdr repo-paths))))
+
+
 ;;;;; Manual/Ediff Merging
 ;;;;;; Aux functions
 (defun larumbe/git-find-changed-files-between-branches ()

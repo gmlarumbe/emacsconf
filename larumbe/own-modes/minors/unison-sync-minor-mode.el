@@ -167,7 +167,7 @@ User will have to choose which of the repos has priority on the synchronization"
       (progn
         (remove-hook 'after-save-hook 'unison-sync-save-hook)
         ;; (remove-hook 'write-file-functions 'unison-sync-save-hook)
-p        (remove-hook 'unison-sync-minor-mode-hook
+        (remove-hook 'unison-sync-minor-mode-hook
                      (lambda ()
                        (add-hook 'after-save-hook 'unison-sync-save-hook nil 'make-it-local)))
         ;; (remove-hook 'unison-sync-minor-mode-hook

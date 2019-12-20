@@ -12,7 +12,7 @@
 (add-hook 'prog-mode-hook 'yas-minor-mode)
 (add-hook 'prog-mode-hook 'fic-mode)
 (add-hook 'prog-mode-hook 'ggtags-mode)
-(unless (string-equal (system-name) "vl159.austin.hpicorp.net")
+(unless (string-equal (system-name) "vl159.plano.hpicorp.net")
   (add-hook 'prog-mode-hook 'auto-complete-mode)
   (add-hook 'prog-mode-hook 'projectile-mode))
 
@@ -104,10 +104,10 @@
   :mode (("\\SConstruct\\'" . python-mode))
   :config
   (setq py-number-face           font-lock-doc-face)
-  (setq py-object-reference-face font-lock-doc-face)
+  (setq py-object-reference-face verilog-font-lock-grouping-keywords-face)
   (setq py-pseudo-keyword-face   font-lock-constant-face) ; True/False/None
   (setq py-try-if-face           font-lock-doc-face)
-  (setq py-variable-name-face    font-lock-reference-face)
+  (setq py-variable-name-face    font-lock-variable-name-face)
   (setq py-use-font-lock-doc-face-p t)
   )
 
@@ -132,7 +132,7 @@
   )
 
 (add-hook 'python-mode-hook 'my-python-hook)
-(unless (string-equal (system-name) "vl159.austin.hpicorp.net")
+(unless (string-equal (system-name) "vl159.plano.hpicorp.net")
   (use-package jedi-core)
   (add-hook 'python-mode-hook 'jedi:setup))
 
@@ -143,6 +143,7 @@
   (local-set-key (kbd "C-c C-j") 'sh-switch-to-process-buffer)
   (local-set-key (kbd "C-c C-k") 'sh-send-line-or-region-and-step)
   (local-set-key (kbd "C-c C-p") 'larumbe/sh-send-line-or-region-and-step-ansi)
+  (local-set-key (kbd "C-c C-t") 'hydra-sh-template/body)
   (set 'ac-sources
              '(
                ac-source-gtags
@@ -152,6 +153,39 @@
   )
 (add-hook 'sh-mode-hook 'my-sh-mode-hook)
 
+
+(defhydra hydra-sh-template (:color blue
+                                    :hint nil)
+  "
+for s_e_quence           _i_f            _p_rintf            _a_rgs
+for a_r_ithmetic         _c_ase          ec_h_o              _b_ang
+for si_m_ple             _f_unction      printf _d_ebug      safe ba_n_g
+_u_ntil                  _+_ add
+_w_hile                  _s_elect
+while inde_x_ed          _p_rint
+^^
+^^
+"
+
+  ("e"   (larumbe/hydra-yasnippet "for-seq"))
+  ("r"   (larumbe/hydra-yasnippet "for-ar"))
+  ("m"   (larumbe/hydra-yasnippet "for-simple"))
+  ("u"   (larumbe/hydra-yasnippet "until"))
+  ("w"   (larumbe/hydra-yasnippet "while"))
+  ("f"   (larumbe/hydra-yasnippet "f"))
+  ("p"   (larumbe/hydra-yasnippet "pr"))
+  ("h"   (larumbe/hydra-yasnippet "e"))
+  ("d"   (larumbe/hydra-yasnippet "pd"))
+  ("a"   (larumbe/hydra-yasnippet "args"))
+  ("b"   (larumbe/hydra-yasnippet "!"))
+  ("n"   (larumbe/hydra-yasnippet "s!"))
+  ("x"   (sh-indexed-loop))
+  ("i"   (sh-if))
+  ("c"   (sh-case))
+  ("+"   (call-interactively 'sh-add))
+  ("s"   (sh-select))
+  ("q"   nil nil :color blue)
+  ("C-g" nil nil :color blue))
 
 
 ;;;; C/C++
@@ -220,7 +254,7 @@
 ;; Prog-mode hook keybindings
 (add-hook 'nxml-mode-hook 'my-prog-mode-hook)
 
-(unless (string-equal (system-name) "vl159.austin.hpicorp.net")
+(unless (string-equal (system-name) "vl159.plano.hpicorp.net")
   (add-hook 'nxml-mode-hook 'auto-complete-mode)
   (add-hook 'nxml-mode-hook 'projectile-mode))
 
@@ -267,7 +301,9 @@
 ;;;; CONF
 (use-package conf-mode
   :mode (("\\.service\\'" . conf-mode)
-         ("\\rc\\'"       . conf-mode))
+         ("\\rc\\'"       . conf-mode)
+         ("\\.sby\\'"     . conf-mode)
+         )
   :config
   ;; INFO: Since it is not a childe of prog-mode, requires common configuration settings
   (add-hook 'conf-mode-hook 'show-paren-mode)
