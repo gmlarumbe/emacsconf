@@ -2,6 +2,11 @@
 # key: af
 # --
 
-always_ff @(${1:posedge Clk}) begin
-   $0
-end
+always_ff @(posedge ${1:Clk}) begin : ${3:label}
+    if (!${2:Rst_n}) begin
+        /*AUTORESET*/
+    end
+    else begin
+        $0
+    end
+end : $3

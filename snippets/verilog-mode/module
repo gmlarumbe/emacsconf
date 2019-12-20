@@ -1,3 +1,11 @@
-module ${1:module_name} (/*port details*/);
-  $0
+# -*- mode: snippet -*-
+# key: ms
+# --
+
+module ${1:module_name} (${2:
+    // ...
+    });
+
+    $0
+
 endmodule: $1

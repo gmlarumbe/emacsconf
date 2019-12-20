@@ -1,4 +1,7 @@
-snippet rand
+# -*- mode: snippet -*-
+# key: rn
+# --
+
 rand ${1:type} ${2:name};
 
 constraint $2_cst {

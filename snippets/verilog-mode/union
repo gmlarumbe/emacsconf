@@ -1,3 +1,0 @@
-typedef union {
-   $0
-} ${1:name_u};

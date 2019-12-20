@@ -1,3 +1,7 @@
+# -*- mode: snippet -*-
+# key: rp
+# --
+
 repeat (${1:N}) begin
    $0
 end

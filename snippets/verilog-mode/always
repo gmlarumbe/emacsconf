@@ -1,7 +1,7 @@
 # -*- mode: snippet -*-
-# key: a
+# key: aa
 # --
 
-always @(${1:posedge Clk}) begin
+always begin
    $0
 end

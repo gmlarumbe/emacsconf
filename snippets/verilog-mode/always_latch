@@ -1,3 +1,7 @@
-always_latch begin
+# -*- mode: snippet -*-
+# key: al
+# --
+
+always_latch begin : ${1:label}
    $0
-end
+end : $1
