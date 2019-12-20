@@ -21,6 +21,13 @@
               ("C-M-d"   . larumbe/find-verilog-module-instance-fwd)
               ("C-M-h"   . xah-select-current-block)
               ("C-c C-t" . hydra-verilog-template/body)
+              ("C-c l"   . larumbe/verilog-insert-instance-from-file)
+              ("C-c i"   . larumbe/verilog-indent-current-module)
+              ("C-c a"   . larumbe/verilog-align-ports-current-module)
+              ("C-c C-l" . larumbe/verilog-align-parameters-current-module)
+              ("C-c b"   . larumbe/verilog-beautify-current-module)
+              ("C-c c"   . larumbe/verilog-toggle-connect-port)
+              ("C-c C-c" . larumbe/verilog-connect-ports-recursively)
               ("C-^"     . modi/verilog-jump-to-header-dwim)
               ("C-&"     . modi/verilog-jump-to-header-dwim-fwd))
   :demand ; INFO: Avoid deferring to properly load modi settings
@@ -42,6 +49,7 @@
   (setq verilog-indent-begin-after-if           t)
   (setq verilog-auto-endcomments                t)
   (setq verilog-date-scientific-format          t)
+  (setq verilog-case-fold                       nil) ; Regexps should NOT ignore case
 
   (setq verilog-indent-lists      nil) ; How to treat indenting items in a list. TODO: Change this to resemble old-style?
   (setq verilog-auto-lineup       nil) ; other options are 'declarations or 'all
@@ -77,13 +85,7 @@
           ))
   (setq verilog-library-files
         '(
-          ;; SLLC Project (local path)
-          "/home/martigon/Repos/svn/asterix/trunk/projects/metaljf/ip/sllc/rtl/sllc.sv"
-          "/home/martigon/Repos/svn/smc/trunk/projects/dogmatix/x02_tsabar/top/tb/asterix_heartbeat/asxmodel/asterix_tsaabar_wrapper.sv"
-          "/home/martigon/Repos/svn/metaljf/trunk/ip/btd/rtl/btd.sv"
-          ;; IPI-less and bd_block stub
-          "/home/martigon/Repos/svn/metaljf/trunk/syn_targets/projects/metaljf/heartbeat/top/engine_top_bd/engine_top_bd.srcs/sources_1/bd/bd_block/hdl/bd_block_wrapper.v"
-          "/home/martigon/Repos/svn/metaljf/trunk/syn_targets/projects/metaljf/heartbeat/top/engine_top_bd/engine_top_bd.srcs/sources_1/bd/bd_block/hdl/bd_block_wrapper_stub.v"
+          ;; "/home/martigon/Repos/lfp_GitHub/git_metaljf/metaljf/top/rtl/metaljf_debug.sv"
           ))
 
   (modify-syntax-entry ?` ".")     ; TODO: Breaks syntax table anyhow?
@@ -141,13 +143,13 @@
    NOTE2: Assumes this command is called at sim directory, with souces at ../src/<module>.v
    NOTE3: Temp and sim files for iverilog are created at sim/iver/ directory"
   (interactive)
-  (if (string-equal (file-name-extension (buffer-file-name)) "v") ; File must be .v
-      (if (string-match-p (regexp-quote "_tb") (file-title))
+  (if (string-match "[s]?v[h]?$" (file-name-extension (buffer-file-name))) ; File must be Verilog/SystemVerilog
+      (if (string-match-p (regexp-quote "tb") (file-title))
           (progn
             (shell-command "mkdir -p iver")
             (compile (iverilog-compile-command)))
-        (message "File must be a TestBench! <file>_tb.v"))
-    (message "File isn't .v!")))
+        (message "File must be a TestBench! <file>_tb.v / tb_<file>.sv"))
+    (message "File isn't .v/.sv!")))
 
 (defun iverilog-run-vvp()
   "Run Icarus Verilog simulator engine. Generate dumpfile <top_tb_module>.lxt2 from .compiled extension iverilog previous step file."
@@ -205,35 +207,19 @@
 ;; Should be deprecated by Hydra+YASnippet
 ;; Customized functions extracted from verilog-mode.el at .elisp/ dir
 ;;;; Common
-(defun verilog-prompt-reset-custom ()
+(defvar verilog-reset-custom "Rst_n")
+(defun larumbe/verilog-prompt-reset-custom ()
   "Prompt for the name of a state machine reset."
   (setq verilog-reset-custom (read-string "Active Low Reset Name: " "Rst_n")))
 
-(defun verilog-prompt-clock-custom ()
+(defun larumbe/verilog-prompt-clock-custom ()
   "Prompt for the name of a clock."
   (setq verilog-clock-custom (read-string "Posedge clock name: " "Clk")))
 
-;;;; Always
-(define-skeleton verilog-sk-always-async-custom
-  "Insert always async reset block.
-Rise Edge active clk and Low Active reset.
-Default clk name = clk, Default reset name = reset_n"
-  ()
-  > "always @ (posedge " '(verilog-prompt-clock-custom) | verilog-clock-custom
-  " or negedge " '(verilog-prompt-reset-custom) | verilog-reset-custom ") begin"  (progn (electric-verilog-tab) nil) \n
-  > "if (!" verilog-reset-custom ") begin"                                           (progn (electric-verilog-tab) nil) \n
-  > _ "// Insert reset statements here"                                                 (progn (electric-verilog-tab) nil) \n
-  > "/*AUTORESET*/"                                                                     (progn (electric-verilog-tab) nil) \n
-  > "end"                                                                               (progn (electric-verilog-tab) nil) \n
-  > "else begin"                                                                        (progn (electric-verilog-tab) nil) \n
-  > "// Insert block statements here"                                                   (progn (electric-verilog-tab) nil) \n
-  > "end"                                                                               (progn (electric-verilog-tab) nil) \n
-  > "end"                                                                               (progn (electric-verilog-tab) nil) \n
-  )
 
 ;;;; Begin/end block
 ;; Replace old begin-end from verilog-mode skeleton
-(defun verilog-begin-custom ()
+(defun larumbe/verilog-begin-custom ()
   "Insert begin end block.  Uses the minibuffer to prompt for name.
 Written as verilog-mode original defun had issues with indentation."
   (interactive)
@@ -249,49 +235,9 @@ Written as verilog-mode original defun had issues with indentation."
   )
 
 
-;;;; Tasks
-(defun verilog-task-add-in (in-read)
-  "Add inputs to task template"
-  (let (msb lsb)
-    (setq msb (read-string "msb: " "31"))
-    (setq lsb (read-string "lsb: " "0"))
-    (insert (concat "input [" msb ":" lsb "] " in-read ";"))
-    (electric-verilog-terminate-line)))
-
-(defun verilog-task-add-out (out-read)
-  "Add Outputs to task template"
-  (let (msb lsb)
-    (setq msb (read-string "msb: " "31"))
-    (setq lsb (read-string "lsb: " "0"))
-    (insert (concat "output [" msb ":" lsb "] " out-read ";"))
-    (electric-verilog-terminate-line)))
-
-
-;; Custom Task template
-(defun verilog-task-custom ()
-  "Insert a task definition."
-  (interactive)
-  (let (in-read out-read)
-    (insert (concat "task " (read-string "Task name: ") ";"))   (progn (electric-verilog-terminate-line) nil)
-    (while (not(string-equal (setq in-read (read-string "Input: ")) ""))
-      (verilog-task-add-in in-read)
-      )
-    (while (not(string-equal (setq out-read (read-string "Output: ")) ""))
-      (verilog-task-add-out out-read)
-      )
-    (insert (concat "begin"))
-    (electric-verilog-terminate-line)
-    (save-excursion
-      (electric-verilog-terminate-line)
-      (insert (concat "end"))                                   (progn (electric-verilog-terminate-line) nil)
-      (insert (concat "endtask"))                               (progn (electric-verilog-terminate-line) nil))
-    (electric-verilog-tab)))
-
-
-
 ;;;; Comments
 ;; Had some issues trying to implement it with skeletons. Finally decided on interactive defun
-(defun verilog-add-block-comment ()
+(defun larumbe/verilog-add-block-comment ()
   "Custom function. Creates a Verilog comment block. Useful to separate sections within code.
 Char code 47 corresponds to '/' character in Verilog"
   (interactive)
@@ -318,20 +264,20 @@ Char code 47 corresponds to '/' character in Verilog"
 
 ;;;; State Machines
 ;; Variables used to add parameters on-the-fly
-(defvar verilog-fsm-parameter-position nil)
+(defvar larumbe/verilog-fsm-parameter-position nil)
 
 ;; 1 parameter keyword per parameter declaration
-(defun verilog-state-machine-add-case (param-read)
+(defun larumbe/verilog-state-machine-add-case (param-read)
   "Fills cases within the Next state and output logic and declares them as parameters at the beginning of the FSM "
   (save-excursion
-    (goto-char verilog-fsm-parameter-position)
+    (goto-char larumbe/verilog-fsm-parameter-position)
     (electric-verilog-terminate-line)
     (insert (concat "parameter " param-read " = " (read-string "Param value: ") ";"))
-    (setq verilog-fsm-parameter-position (point))))
+    (setq larumbe/verilog-fsm-parameter-position (point))))
 
 
 ;; Adds a state machine with two always blocks.
-(defun verilog-state-machine-async-custom-simple ()
+(defun larumbe/verilog-state-machine-async-custom-simple ()
   "Insert a state machine custom definition     .
 Two always blocks, one for next state and output logic and one for the state registers"
   (interactive)
@@ -340,11 +286,11 @@ Two always blocks, one for next state and output logic and one for the state reg
     (electric-verilog-tab)              ; Start indentation for comment block
     (insert (concat "// State registers for " verilog-custom-state))                                                                    (progn (electric-verilog-terminate-line) nil)
     (insert (concat "reg [" (read-string "msb: " "31") ":" (read-string "lsb: " "0") "] " verilog-custom-state ", next_" verilog-custom-state ";"))
-    (setq verilog-fsm-parameter-position (point))                                                                                       (progn (electric-verilog-terminate-line) nil)
+    (setq larumbe/verilog-fsm-parameter-position (point))                                                                                       (progn (electric-verilog-terminate-line) nil)
     (electric-verilog-terminate-line)
     ;; State registers
     (insert (concat "// State FF for " verilog-custom-state))                                                                           (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "always @ (posedge " (verilog-prompt-clock-custom) " or negedge " (verilog-prompt-reset-custom) ") begin"))   (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "always @ (posedge " (larumbe/verilog-prompt-clock-custom) " or negedge " (larumbe/verilog-prompt-reset-custom) ") begin"))   (progn (electric-verilog-terminate-line) nil)
     (insert (concat "if (!" verilog-reset-custom ")"))                                                                               (progn (electric-verilog-terminate-line) nil)
     (insert (concat verilog-custom-state " <= IDLE;"))                                                                                  (progn (electric-verilog-terminate-line) nil)
     (insert (concat "else"))                                                                                                            (progn (electric-verilog-terminate-line) nil)
@@ -362,7 +308,7 @@ Two always blocks, one for next state and output logic and one for the state reg
     (insert (concat "case (" verilog-custom-state ") "))
     ;; Case reading
     (while (not(string-equal (setq param-read (read-string "Case: ")) "")) ; Empty string ends with case addition
-      (verilog-state-machine-add-case  param-read)                                                                                   (progn (electric-verilog-terminate-line) nil)
+      (larumbe/verilog-state-machine-add-case  param-read)                                                                                   (progn (electric-verilog-terminate-line) nil)
       (insert (concat param-read ": begin"))                                                                                            (progn (electric-verilog-terminate-line) nil)
       (insert (concat "// Output statements... "))                                                                                      (progn (electric-verilog-terminate-line) nil)
       (insert (concat "next_" verilog-custom-state " <= <state>;"))                                                                     (progn (electric-verilog-terminate-line) nil)
@@ -376,20 +322,23 @@ Two always blocks, one for next state and output logic and one for the state reg
 
 
 ;; Only 1 parameter keyword for all parameter declarations (improves readability)
-(defun verilog-state-machine-add-case-fold (param-read pfx idx)
+(defun larumbe/verilog-state-machine-add-case-fold (param-read pfx idx )
   "Fills cases within the Next state and output logic and declares them as parameters at the beginning of the FSM.
 Parameter keyword is used only once, improving readability."
   (save-excursion
-    (goto-char verilog-fsm-parameter-position)
+    (goto-char larumbe/verilog-fsm-parameter-position)
     (delete-char -1)
     (insert ",")
     (electric-verilog-terminate-line)
     (insert (concat param-read " = " (read-string "Param value: " (concat pfx (number-to-string idx) ";"))))
-    (setq verilog-fsm-parameter-position (point))))
+    (setq larumbe/verilog-fsm-parameter-position (point))))
+
+
+
 
 
 ;; Returns "4'h." or "1'b." depending on msb and lsb.
-(defun verilog-state-machine-get-prefix (msb-str lsb-str)
+(defun larumbe/verilog-state-machine-get-prefix (msb-str lsb-str)
   "Very neat function that gets the prefix depending on the FSM state width.
 For the time being, since not very complex FSMs are being immplemented,
 just binary and hexadecimal prefix are returned"
@@ -404,59 +353,59 @@ just binary and hexadecimal prefix are returned"
 
 ;; Adds a state machine with two always blocks.
 ;; Improves previous function with automatic reset state insertion and automatic parameter width insertion
-(defun verilog-state-machine-async-custom ()
+(defun larumbe/verilog-state-machine-sync-custom ()
   "Insert a state machine custom definition     .
 Two always blocks, one for next state and output logic and one for the state registers"
   (interactive)
   (let (param-read rst-state-name msb lsb pfx (idx 0))
     (setq verilog-custom-state (read-string "Name of state variable: " "state"))
     (electric-verilog-tab)              ; Start indentation for comment block
-    (insert (concat "// State registers for " verilog-custom-state))                                                                                                            (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "reg [" (setq msb (read-string "msb: " "3")) ":" (setq lsb (read-string "lsb: " "0")) "] " verilog-custom-state ", next_" verilog-custom-state ";"))        (progn (electric-verilog-terminate-line) nil)
-    (setq pfx (verilog-state-machine-get-prefix msb  lsb))
-    (insert (concat "parameter " (setq rst-state-name (read-string "Reset State Name: " "IDLE"))  " = " (read-string "Reset Value: " (concat pfx "0;"))))
-    (setq verilog-fsm-parameter-position (point))                                                                                                                               (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "// State registers for " verilog-custom-state))                                                                                                       (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "logic [" (setq msb (read-string "msb: " "3")) ":" (setq lsb (read-string "lsb: " "0")) "] " verilog-custom-state ", next_" verilog-custom-state ";")) (progn (electric-verilog-terminate-line) nil)
+    (setq pfx (larumbe/verilog-state-machine-get-prefix msb  lsb))
+    (insert (concat "localparam " (setq rst-state-name (read-string "Reset State Name: " "IDLE"))  " = " (read-string "Reset Value: " (concat pfx "0;"))))
+    (setq larumbe/verilog-fsm-parameter-position (point))                                                                                                                          (progn (electric-verilog-terminate-line) nil)
     (electric-verilog-terminate-line)
     ;; State registers
-    (insert (concat "// State FF for " verilog-custom-state))                                                                                                                   (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "always @ (posedge " (verilog-prompt-clock-custom) " or negedge " (verilog-prompt-reset-custom) ") begin"))                                           (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "if (!" verilog-reset-custom ")"))                                                                                                                       (progn (electric-verilog-terminate-line) nil)
-    (insert (concat verilog-custom-state " <= " rst-state-name ";"))                                                                                                            (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "else"))                                                                                                                                                    (progn (electric-verilog-terminate-line) nil)
-    (insert (concat  verilog-custom-state " <= next_" verilog-custom-state ";"))                                                                                                (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                                                     (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "// State FF for " verilog-custom-state))                                                                                                              (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "always_ff @ (posedge " (larumbe/verilog-prompt-clock-custom) ") begin"))                                                                                      (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "if (!" verilog-reset-custom ")"))                                                                                                                     (progn (electric-verilog-terminate-line) nil)
+    (insert (concat verilog-custom-state " <= " rst-state-name ";"))                                                                                                       (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "else"))                                                                                                                                               (progn (electric-verilog-terminate-line) nil)
+    (insert (concat  verilog-custom-state " <= next_" verilog-custom-state ";"))                                                                                           (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "end"))                                                                                                                                                (progn (electric-verilog-terminate-line) nil)
     (electric-verilog-terminate-line)
     ;; Next state and output logic
-    (insert (concat "// Output and next State Logic for " verilog-custom-state))                                                                                                (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "always @ (posedge " verilog-clock-custom  " or negedge " verilog-reset-custom  ") begin"))                                                           (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "if (!" verilog-reset-custom ") begin"))                                                                                                                 (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "next_" verilog-custom-state " <= "rst-state-name ";"))                                                                                                     (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "// Output resets..."))                                                                                                                                     (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                                                     (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "else begin"))                                                                                                                                              (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "case (" verilog-custom-state ") "))                                                                                                                        (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "// Output and next State Logic for " verilog-custom-state))                                                                                           (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "always_ff @ (posedge " verilog-clock-custom  ") begin"))                                                                                              (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "if (!" verilog-reset-custom ") begin"))                                                                                                               (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "next_" verilog-custom-state " <= "rst-state-name ";"))                                                                                                (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "// Output resets..."))                                                                                                                                (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "end"))                                                                                                                                                (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "else begin"))                                                                                                                                         (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "case (" verilog-custom-state ") "))                                                                                                                   (progn (electric-verilog-terminate-line) nil)
     ;; Reset State text insertion
-    (insert (concat rst-state-name ": begin"))                                                                                                                                  (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "// Output statements... "))                                                                                                                                (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "next_" verilog-custom-state " <= <state>;"))                                                                                                               (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                                                     (progn (electric-verilog-terminate-line) nil)
+    (insert (concat rst-state-name ": begin"))                                                                                                                             (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "// Output statements... "))                                                                                                                           (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "next_" verilog-custom-state " <= <state>;"))                                                                                                          (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "end"))                                                                                                                                                (progn (electric-verilog-terminate-line) nil)
     ;; Case reading
     (while (not(string-equal (setq param-read (read-string "Case: ")) "")) ; Empty string ends with case addition
       (setq idx (1+ idx))
-      (verilog-state-machine-add-case-fold param-read pfx idx)                                                                                                               (progn (electric-verilog-terminate-line) nil)
-      (insert (concat param-read ": begin"))                                                                                                                                    (progn (electric-verilog-terminate-line) nil)
-      (insert (concat "// Output statements... "))                                                                                                                              (progn (electric-verilog-terminate-line) nil)
-      (insert (concat "next_" verilog-custom-state " <= <state>;"))                                                                                                             (progn (electric-verilog-terminate-line) nil)
-      (insert (concat "end"))                                                                                                                                                   (progn (electric-verilog-terminate-line) nil)
+      (larumbe/verilog-state-machine-add-case-fold param-read pfx idx)                                                                                                             (progn (electric-verilog-terminate-line) nil)
+      (insert (concat param-read ": begin"))                                                                                                                               (progn (electric-verilog-terminate-line) nil)
+      (insert (concat "// Output statements... "))                                                                                                                         (progn (electric-verilog-terminate-line) nil)
+      (insert (concat "next_" verilog-custom-state " <= <state>;"))                                                                                                        (progn (electric-verilog-terminate-line) nil)
+      (insert (concat "end"))                                                                                                                                              (progn (electric-verilog-terminate-line) nil)
       )
-    (insert (concat "endcase"))                                                                                                                                                 (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                                                     (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                                                     (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "endcase"))                                                                                                                                            (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "end"))                                                                                                                                                (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "end"))                                                                                                                                                (progn (electric-verilog-terminate-line) nil)
     )
   )
 
 ;;;; Headers
-(defun verilog-header-hp ()
+(defun larumbe/verilog-header-hp ()
   "Insert an HP Verilog file header.
 See also `verilog-header' for an alternative format."
   (interactive)
@@ -505,36 +454,607 @@ See also `verilog-header' for an alternative format."
       (replace-match (user-login-name) t t)
       (search-forward "<credate>") (replace-match "" t t)
       (verilog-insert-date)
-      (let (string)
-        (goto-char start)
-        (setq string (read-string "Function: "))
-        (search-forward "<function>")
-        (replace-match string t t)
-        (setq string (read-string "Description: "))
-        (search-forward "<description>")
-        (replace-match string t t))
-      ))
-  )
+      (if (called-interactively-p 'any)
+          (progn
+            (let (string)
+              (goto-char start)
+              (setq string (read-string "Function: "))
+              (search-forward "<function>")
+              (replace-match string t t)
+              (setq string (read-string "Description: "))
+              (search-forward "<description>")
+              (replace-match string t t)))
+        (progn
+          (goto-char start)
+          (search-forward "<function>")
+          (replace-match "" t t)
+          (search-forward "<description>")
+          (replace-match "" t t))))))
+
+;;;; Instances
+(setq larumbe/verilog-auto-template-header "// Beginning of Larumbe's Verilog AUTO_TEMPLATE")
+(setq larumbe/verilog-auto-template-footer "// End of Larumbe's Verilog AUTO_TEMPLATE")
+
+(defmacro larumbe/verilog-auto-template (template)
+  (concat "\n" larumbe/verilog-auto-template-header " " template " " larumbe/verilog-auto-template-footer "\n"))
+
+
+(setq larumbe/verilog-auto-template-connected-ports
+      (larumbe/verilog-auto-template "
+/* <module> AUTO_TEMPLATE (
+ .\\(.*\\) (\\1),
+ ); */"
+))
+
+(setq larumbe/verilog-auto-template-disconnected-ports
+      (larumbe/verilog-auto-template "
+/* <module> AUTO_TEMPLATE (
+ .\\(.*\\) (),
+ ); */"
+))
+
+(setq larumbe/verilog-auto-template-connected-ports-subscripts
+      (larumbe/verilog-auto-template "
+/* <module> AUTO_TEMPLATE (
+ .\\(.*\\) (\\1[]),
+ ); */"
+))
+
+
+(setq larumbe/verilog-autoinst-template-simple "\
+<module> <instance_name> (/*AUTOINST*/);
+")
+
+(setq larumbe/verilog-autoinst-autoparam-template "\
+<module> # (/*AUTOINSTPARAM*/) <instance_name> (/*AUTOINST*/);
+")
+
+
+
+(defun larumbe/verilog-choose-template ()
+  "Choose current // AUTO_TEMPLATE for instantiation"
+  (let (templates-list)
+    (setq templates-list (completing-read "AUTO_TEMPLATE: " '("Connected Ports" "Disconnected Ports" "Connected Ports with subscripts")))
+    (pcase templates-list
+      ("Connected Ports"                 (eval larumbe/verilog-auto-template-connected-ports))
+      ("Disconnected Ports"              (eval larumbe/verilog-auto-template-disconnected-ports))
+      ("Connected Ports with subscripts" (eval larumbe/verilog-auto-template-connected-ports-subscripts))
+      (_                                 (error "Error @ larumbe/verilog-choose-template: Unexpected string")))))
+
+(defun larumbe/verilog-choose-autoinst ()
+  "Choose current /*AUTOINST*/ (and /*AUTOPARAMINST*/) for instantiation"
+  (let (autoinst-list)
+    (setq autoinst-list (completing-read "AUTOINST:" '("Simple" "With Parameters")))
+    (pcase autoinst-list
+      ("Simple"          (eval larumbe/verilog-autoinst-template-simple))
+      ("With Parameters" (eval larumbe/verilog-autoinst-autoparam-template))
+      (_                 (error "Error @ larumbe/verilog-choose-autoinst: Unexpected string")))))
+
+
+(defun larumbe/verilog-autoinst-processing ()
+  "Called from `larumbe/verilog-insert-instance-from-file' (refactoring purposes)"
+  (let (beg end)
+    (save-excursion ;; Remove comments
+      (setq beg (point))
+      (setq end (re-search-forward ")[[:blank:]]*;[[:blank:]]*// Templated"))
+      (replace-regexp "[[:blank:]]*// Templated" "" nil beg end))
+    (save-excursion ;; Open final parenthesis
+      (re-search-forward "));")
+      (backward-char 2)
+      (electric-verilog-terminate-line))
+    (save-excursion ;; Remove /*AUTOINST*/
+      (setq beg (point))
+      (setq end (re-search-forward ");")) ; Last /*AUTOINST*/ comment by AUTO_TEMPLATE
+      (replace-string "/*AUTOINST*/" "" nil beg end))))
+
+
+(defun larumbe/verilog-autoparam-processing ()
+  "Called from `larumbe/verilog-insert-instance-from-file' (refactoring purposes)"
+  (let (beg end)
+    (save-excursion
+      (setq beg (point))
+      (setq end (re-search-forward "))"))
+      (backward-char 1)
+      (electric-verilog-terminate-line))
+    (save-excursion ; Remove /*AUTOINSTPARAM*/
+      (setq beg (point))
+      (setq end (re-search-forward ");"))
+      (replace-string "/*AUTOINSTPARAM*/" "" nil beg end))
+    (save-excursion ; Remove ' // Parameters ' string
+      (next-line 1)
+      (beginning-of-line)
+      (kill-line 1))))
+
+
+(defun larumbe/verilog-insert-instance-from-file (file)
+  "DANGER: Assumes filename and module name are the same.
+TODO: In the future, a list that returns modules in a file could be retrieved and used as an input"
+  (interactive "FSelect module from file:")
+  (let* ((module-name (file-name-sans-extension (file-name-nondirectory file)))
+         (instance-name (read-string "Instance-name: " (concat "I_" (upcase module-name))))
+         (start-template (point))
+         start-instance template inst-template autoparam)
+    ;; Prepare instantiation template
+    (add-to-list 'verilog-library-files file)
+    (if current-prefix-arg
+        (setq template (larumbe/verilog-choose-template)) ; If universal-arg given ask for AUTO_TEMPLATE and parameterized module to choose
+      (setq template larumbe/verilog-auto-template-connected-ports)) ; Default template
+    (insert template)
+    (save-excursion
+      (goto-char start-template)
+      (replace-string "<module>" module-name))
+    (if current-prefix-arg
+        (when (equal larumbe/verilog-autoinst-autoparam-template (setq inst-template (larumbe/verilog-choose-autoinst))) ; If Universal Argument given, then ask for AUTOINST template
+          (setq autoparam t))
+      (setq inst-template larumbe/verilog-autoinst-template-simple)) ; Default AUTOINST with no parameters
+    (setq start-instance (point))
+    ;; Instantiate module/instance
+    (save-excursion
+      (insert inst-template)
+      (goto-char start-instance)
+      (replace-string "<module>" module-name)
+      (goto-char start-instance)
+      (replace-string "<instance_name>" instance-name)
+      (verilog-auto))
+    ;; PostProcess instantiation
+    (larumbe/verilog-autoinst-processing)
+    (when autoparam
+      (larumbe/verilog-autoparam-processing))
+    ;; Remove AUTO_TEMPLATE comment code
+    (setq start-template (search-backward larumbe/verilog-auto-template-header))
+    (setq start-instance (search-forward larumbe/verilog-auto-template-footer))
+    (delete-region start-template (1+ start-instance))
+    ;; Beautify instantiation
+    (save-excursion
+      (search-forward instance-name)
+      (larumbe/verilog-indent-current-module module-name))
+    (save-excursion
+      (search-forward instance-name)
+      (next-line 1)
+      (larumbe/verilog-align-ports-current-module))
+    (when autoparam
+      (save-excursion
+        (search-forward instance-name)
+        (next-line 1)
+        (larumbe/verilog-align-parameters-current-module module-name)))))
+
+
+(defun larumbe/verilog-insert-instance-from-file-with-params (file)
+  "Necessary to be passed as a parameter for Hydra templates"
+  (interactive "FSelect module from file:")
+  (setq current-prefix-arg 4)
+  (larumbe/verilog-insert-instance-from-file file))
+
 
 ;;;; Testbenches
-(defun verilog-insert-testbench-template ()
+(defun larumbe/verilog-testbench-insert-template-simple (file)
   "WIP: Just a first sketch to check which AUTOS are needed"
-  (interactive)
-  (let ((start (point)) (module-name (read-string "Module name: ")))
+  (interactive "FSelect DUT from file:")
+  (let ((start (point))
+        (module-name (file-name-sans-extension (file-name-nondirectory file)))
+        (current-prefix-arg)
+        beg end)
     (insert "\
-module <module_name>_tb (/*AUTOARG*/) ;
+// TODO: unit space imported packages
+// import AxiLiteBfm_pkg::*;
 
-    /*AUTOWIRE*/
+module tb_<module_name> () ;
+
+    // Simulation parameters
+    timeprecision 1ps;
+    timeunit      1ns;
+    localparam CLKT = 10ns;  // 100 MHz
+
+    // TODO: Don't forget to INIT after (verilog-auto)!!
+    // DUT instance parameters
+    /*AUTOINOUTPARAM(\"<module_name>\")*/
+    // End of /*AUTOINOUTPARAM*/
+
+    // Non-auto signals
+    logic Clk   = 1'b0;
+    logic Rst_n = 1'b1;
+
+    // TODO: Init during declaration (before simulation time 0) to avoid unexpected triggering events
+    /* DUT Inputs */
     /*AUTOREGINPUT*/
 
-    <module_name> <module_name>_DUT(/*AUTOINST*/);
+    /* DUT Outputs */
+    /*AUTOLOGIC*/
 
-endmodule // <module_name>_tb
+
+    // System Clock
+    always begin
+        #(CLKT/2) Clk = ~Clk;
+    end
+
+    // TODO: Declare/Connect interfaces
+    // axi4_lite_if axil_if_<module_name> (.AClk(Clk), .AReset_n(Rst_n));
+    // ...
+
+    // TODO: Ensure SV interfaces connections
+    // DUT Instantiation
+
+    // TODO: Tasks
+    // ...
+
+    // TODO: TB Object declarations
+    // AxiLiteBfm axil;
+
+    // TODO: Stimuli
+    initial begin
+        // axil = new(axil_if_<module_name>);
+        // axil.wait_out_of_reset();
+        // ...
+        // #10 Rst_n = 0;
+        // ...
+        // $display(\"@%0d: TEST PASSED\", $time);
+        // $finish;
+        // ...
+    end
+
+
+endmodule // tb_<module_name>
 ")
     (goto-char start)
     (replace-string "<module_name>" module-name)
-    (verilog-auto)
-    ))
+    (goto-char start)
+    (search-forward "// DUT Instantiation")
+    (setq current-prefix-arg 4) ; Add DUT instance with parameters and choosing template
+    (larumbe/verilog-insert-instance-from-file file) ; Includes `verilog-auto' expansion
+    (goto-char start)
+    (search-forward "/*AUTOINOUTPARAM") ;; Postprocess /*AUTOINOUTPARAM*/
+    (save-excursion
+      (replace-regexp "logic[[:blank:]]+" "localparam " nil (point) (search-forward "// End of /*AUTOINOUTPARAM*/")))
+    (save-excursion
+      (replace-regexp "\\(localparam [a-zA-Z0-9_-]+\\);" "\\1 = 0;" nil (point) (search-forward "// End of /*AUTOINOUTPARAM*/")))
+    (call-interactively 'larumbe/verilog-header-hp)
+    (goto-char start)
+    ;; Beautify declarations and initialize values
+    (save-excursion
+      (search-forward "/*AUTOREGINPUT*/")
+      (beginning-of-line)
+      (verilog-pretty-declarations)
+      (save-excursion ; Init to '0 every input signal
+        (setq beg (point))
+        (forward-paragraph 1)
+        (setq end (point))
+        (replace-regexp "\\(logic [a-zA-Z0-9_-]+\\);" "\\1 = '0;" nil beg end))
+      (save-excursion ; Align // To or // From auto comments
+        (setq beg (point))
+        (forward-paragraph 2)
+        (setq end (point))
+        (align-regexp beg end "\\(\\s-*\\)//" 1 1 nil)))
+    ;; Delete /*AUTO[.*]*/ and generated code
+    (save-excursion
+      (while (re-search-forward "/\\*AUTO.*\*\/" nil t)
+        (beginning-of-line)
+        (kill-line 1)))
+    (save-excursion
+      (while (search-forward "// Beginning of automatic" nil t)
+        (beginning-of-line)
+        (kill-line 1)))
+    (save-excursion
+      (while (search-forward "// End of automatics" nil t)
+        (beginning-of-line)
+        (kill-line 1)))
+    (search-forward "// TODO")))
+
+
+
+(defun larumbe/verilog-testbench-environment-clocks (file)
+  "Create `tb_clocks' file and module from template"
+  (with-temp-file file
+    (insert "\
+import tb_defs_pkg::CLKT;
+// import other clock periods
+
+module tb_clocks (
+    output logic Clk
+    // Other clocks
+    );
+
+    // System Clock
+    always begin
+        #(CLKT/2) Clk = ~Clk;
+    end
+
+    // Other clocks
+    // ...
+
+    // Initial clock values
+    initial begin
+        Clk = 1;
+    end
+
+
+endmodule: tb_clocks
+"))
+  (find-file file)
+  (larumbe/verilog-header-hp)
+  (save-buffer))
+
+
+(defun larumbe/verilog-testbench-environment-program (file)
+  "Create `tb_program' module from template"
+  (with-temp-file file
+    (insert "\
+import tb_defs_pkg::*;
+import tb_classes::*;
+// import Bfms
+
+program automatic tb_program (
+    // Interfaces from/to DUT
+    // ...
+    input logic Clk,
+    output logic Rst_n
+    );
+
+
+    // Testbench tb;
+
+    initial begin
+        // tb = new();
+        $display(\"Starting simulation...\");
+
+
+
+        // tb.finish_simulation();
+    end
+
+
+endprogram: tb_program
+"))
+  (find-file file)
+  (larumbe/verilog-header-hp)
+  (save-buffer))
+
+
+(defun larumbe/verilog-testbench-environment-defs-pkg (file)
+  "Create `tb_defs_pkg' module from template"
+  (with-temp-file file
+    (insert "\
+package tb_defs_pkg;
+    // Simulation parameters
+    timeprecision   = 1ps;
+    timeunit        = 1ns;
+    localparam CLKT = 10ns;  // 100 MHz
+
+    // DUT instance parameters
+    // ...
+
+    // Other parameters
+    // ...
+endpackage : tb_defs_pkg
+"))
+  (find-file file)
+  (larumbe/verilog-header-hp)
+  (save-buffer))
+
+
+
+(defun larumbe/verilog-testbench-environment-classes-pkg (file)
+  "Create `tb_classes_pkg' module from template"
+  (with-temp-file file
+    (insert "\
+package tb_classes_pkg;
+
+// Drivers
+// ...
+
+// Monitor
+// ...
+
+// Test
+// ...
+
+endpackage : tb_defs_pkg
+"))
+  (find-file file)
+  (larumbe/verilog-header-hp)
+  (save-buffer))
+
+
+(defun larumbe/verilog-testbench-environment-top (file dut-file clocks-file)
+  "Create `tb_classes_pkg' module from template"
+  (find-file file)
+  (insert "\
+// TODO: unit space imported packages
+
+module tb_top () ;
+
+    logic Clk;
+    logic Rst_n;
+
+    // TODO: Declare/Connect interfaces
+    // axi4_lite_if axil_if (.AClk(Clk), .AReset_n(Rst_n));
+    // ...
+
+    // Clocks
+
+    // Testbench
+    tb_program I_TB_PROGRAM (
+        .Clk   (Clk),
+        .Rst_n (Rst_n)
+        );
+
+
+    // DUT Instantiation
+
+endmodule // tb_<module_name>
+")
+  (goto-char (point-min))
+  (search-forward "// DUT Instantiation")
+  (setq current-prefix-arg 4) ; Add DUT instance with parameters and choosing template
+  (larumbe/verilog-insert-instance-from-file dut-file) ; Includes `verilog-auto' expansion
+  ;; Clocks
+  (goto-char (point-min))
+  (search-forward "// Clocks")
+  (larumbe/verilog-insert-instance-from-file clocks-file)
+  ;; Header and postprocessing
+  (larumbe/verilog-header-hp)
+  (save-buffer))
+
+
+
+
+
+(defun larumbe/verilog-testbench-environment (dut-file dir)
+  "DUT-FILE corresponds to the path of the DUT, assumming there is a module per file
+Environment files will be created at specified DIR (clocks, program, defs_pkg, classes_pkg...)"
+  (interactive "FSelect module from file: \nDSelect environment directory: ")
+  (let ((module-name      (file-name-sans-extension (file-name-nondirectory dut-file)))
+        (clocks-file      (concat (file-name-as-directory dir) "tb_clocks.sv"))
+        (program-file     (concat (file-name-as-directory dir) "tb_program.sv"))
+        (defs-pkg-file    (concat (file-name-as-directory dir) "tb_defs_pkg.sv"))
+        (classes-pkg-file (concat (file-name-as-directory dir) "tb_classes_pkg.sv"))
+        (top-file         (concat (file-name-as-directory dir) "tb_top.sv")))
+    ;; Create Environment files
+    (larumbe/verilog-testbench-environment-clocks      clocks-file)
+    (larumbe/verilog-testbench-environment-program     program-file)
+    (larumbe/verilog-testbench-environment-defs-pkg    defs-pkg-file)
+    (larumbe/verilog-testbench-environment-classes-pkg classes-pkg-file)
+    (larumbe/verilog-testbench-environment-top         top-file dut-file clocks-file)))
+
+
+;;;; Case
+(defun larumbe/verilog-case-template ()
+  "Fetched and modified from `verilog-state-machine-add-case-fold' for sync FSMs"
+  (interactive)
+  (let (param-read)
+    (insert "case (" (read-string "Expression: ") ")") (progn (electric-verilog-terminate-line) nil)
+    (while (not(string-equal (setq param-read (read-string "Case: ")) "")) ; Empty string ends with case addition
+      (insert (concat param-read ": begin"))       (progn (electric-verilog-terminate-line) nil)
+      (insert (concat "// Output statements... ")) (progn (electric-verilog-terminate-line) nil)
+      (insert (concat "end"))                      (progn (electric-verilog-terminate-line) nil)
+      (electric-verilog-terminate-line))
+    (insert "endcase") (electric-verilog-terminate-line)))
+
+
+;;;; Enum, Typedef, Struct
+(defvar larumbe-verilog-enum-types '("logic" "bit" "int" "integer" "other"))
+
+(defun larumbe/verilog-compute-vector-width ()
+  "Will return [width-1:0] as a string for enum/struct templates.
+If a number is set, then calculus will be automatically performed. If set to 0 or 1, then do not set a vector.
+If a constant is set, then it will be set to [CONSTANT-1:0].
+DANGER: If width introduced is 0, it will be assumed as a human mistake and width 1 will be computed"
+  (let (width-str width-num)
+    (setq width-str (read-string "Width: "))
+    (setq width-num (string-to-number width-str))
+    ;; Corner case if width 0 or no width is introduced (assume 1)
+    (when (or (string-equal width-str "0") (string-equal width-str ""))
+      (setq width-num 1))
+    ;; End of corner case
+    (if (not (eq width-num 0)) ; width was a number different from 0, not a constant
+        (if (> width-num 1)    ; Greater than 1 (i.e. a vector with brackets)
+            (progn
+              (setq width-num (1- width-num))
+              (setq width-str (number-to-string width-num))
+              (setq width-str (concat "[" width-str ":0]")))
+          (setq width-str "")) ; Width was 1, just a signal without brackets
+      (setq width-str (concat "[" width-str "-1:0]"))))) ;; If width was not a number but a constant, format properly [width-1:0]
+
+
+(defun larumbe/verilog-enum-typedef-template (&optional typedef)
+  "Insert enum contents for [typedef] enum template"
+  (let (enum-item type (width ""))
+    ;; Set typedef if specified
+    (when typedef
+      (insert "typedef "))
+    ;; Select type for enum
+    (setq type (completing-read "Type: " larumbe-verilog-enum-types))
+    (if (string-equal type "other")
+        (setq type (read-string "Type: ")))
+    ;; Select width
+    (if (or (string-equal type "logic") (string-equal type "bit"))
+        (setq width (larumbe/verilog-compute-vector-width))
+      (setq width "")) ; If not a vector disable width field
+    (insert "enum " type width " {")
+    (while (not (string-equal (setq enum-item (read-string "Item: ")) "")) ; Empty string ends with item addition
+      (insert enum-item ", "))
+    ;; Last item
+    (delete-char -2)
+    (insert "} ")
+    ;; Name
+    (if typedef
+        (insert (read-string "Type Name: ") ";") ; Typedef
+      (insert (read-string "Enum Name: ") ";"))  ; Enum
+    (electric-verilog-terminate-line)))
+
+
+(defun larumbe/verilog-struct-typedef-template (&optional typedef union)
+  "Insert enum contents for [typedef] struct template"
+  (let (struct-item type (width ""))
+    ;; Set typedef if specified
+    (when typedef
+      (insert "typedef "))
+    ;; Struct Header
+    (if union
+        (insert "union ")
+      (insert "struct "))
+    (when (yes-or-no-p "Packed?")
+      (insert "packed "))
+    (insert "{")
+    (electric-verilog-terminate-line)
+    ;; Struct fields
+    (while (not (string-equal (setq struct-item (read-string "Item: ")) "")) ; Empty string ends with item addition
+      (setq type (read-string "Type: " "logic"))
+      ;; Select width
+      (if (or (string-equal type "logic") (string-equal type "bit"))
+          (setq width (larumbe/verilog-compute-vector-width))
+        (setq width "")) ; If not a vector disable width field
+      (insert type " " width " " struct-item ";")
+      (electric-verilog-terminate-line))
+    (insert "} ")
+    ;; Struct Name
+    (if typedef
+        (insert (read-string "Type Name: ") ";")   ; Typedef
+      (insert (read-string "Struct Name: ") ";"))  ; Enum
+    (electric-verilog-terminate-line)))
+
+
+;;;; Task
+(defun larumbe/verilog-task-add-port (direction read)
+  "Add inputs to task template"
+  (let (type width)
+    ;; Select type
+    (setq type (read-string "Type: " "logic"))
+    ;; Select width
+    (if (or (string-equal type "logic") (string-equal type "bit"))
+        (setq width (larumbe/verilog-compute-vector-width))
+      (setq width "")) ; If not a vector disable width field
+    ;; Insert port
+    (insert direction " " type " " width " " read ",")
+    (electric-verilog-terminate-line)))
+
+
+(defun larumbe/verilog-task-custom ()
+  "Insert a task definition."
+  (interactive)
+  (let (in-read out-read)
+    (insert "task ")
+    (insert (read-string "Task name: ") " (")
+    (electric-verilog-terminate-line)
+    (while (not(string-equal (setq in-read (read-string "Input signal: ")) ""))
+      (larumbe/verilog-task-add-port "input" in-read))
+    (while (not(string-equal (setq out-read (read-string "Output signal: ")) ""))
+      (larumbe/verilog-task-add-port "output" out-read))
+    ;; TODO: "inout" or "ref" could be added in the future via universal-arg
+    (insert ");") (electric-verilog-terminate-line)
+    (save-excursion
+      (electric-verilog-terminate-line)
+      (insert (concat "endtask"))
+      (electric-verilog-terminate-line)
+      (electric-verilog-tab))
+    ;; Align port declarations
+    (re-search-backward "(")
+    (beginning-of-line)
+    (next-line)
+    (verilog-pretty-declarations)
+    (re-search-forward ");")
+    (next-line)
+    (electric-verilog-tab)))
+
 
 
 ;;; Regexps things (imenu+instance finding)
@@ -674,12 +1194,143 @@ endmodule // <module_name>_tb
 ;; TODO: Ignore outshine comments for indentation, but conflicts? with modi advice?
 (advice-add 'verilog-indent-line-relative :before-until #'my/verilog-selective-indent)
 
-;; Select default LFP Gtags/AG/Vhier default project
-;; (larumbe/lfp-project-set-active-project)
+
+(defun larumbe/verilog-indent-current-module (&optional module)
+  "Indent current module, the one pointed to by `which-func' (not instant)
+
+For use programatically, an argument needs to be specified as current-module is determined by `which-func' and that takes time,
+therefore not detecting the proper module but the previous one."
+  (interactive)
+  (let (current-module)
+    (if module
+        (setq current-module module)
+      (setq current-module modi/verilog-which-func-xtra)) ; Find module header (modi/verilog-which-func-xtra)
+    (save-excursion
+      (re-search-backward (concat "\\_<" current-module "\\_>"))
+      (beginning-of-line) ; INFO: Needed to detect current instantiation and avoid the "No more instances forward" error message
+      (set-mark (point))
+      (larumbe/find-verilog-module-instance-fwd)
+      (electric-verilog-tab))))
 
 
-;; TODO: elisp expresion to copy files from gtags.files to sllc_src scons folder
-;; (copy-file (thing-at-point 'filename) "/home/martigon/Repos/svn/smc/trunk/projects/dogmatix/x02_tsabar/top/tb/asxmodel/sllc_src" t)
+(defun larumbe/verilog-align-parameters-current-module (&optional module)
+  "Align parenthesis PARAMETERS of current module, the one pointed to by `which-func' (not instant).
+It will align parameters contained between module name and instance name.
+
+For use programatically, an argument needs to be specified as current-module is determined by `which-func' and that takes time,
+therefore not detecting the proper module but the previous one."
+  (interactive)
+  (let (current-module current-instance beg end)
+    (setq current-instance (substring-no-properties (modi/verilog-find-module-instance)))
+    (if module
+        (setq current-module module)
+      (setq current-module modi/verilog-which-func-xtra)) ; Find module header (modi/verilog-which-func-xtra)
+    (save-excursion
+      (re-search-backward (concat "\\_<" current-module "\\_>"))
+      (next-line 1) ; Assumes ports start at next line from instance name
+      (setq beg (point))
+      (setq end (re-search-forward current-instance)))
+    (align-regexp beg end "\\(\\s-*\\)(" 1 1 nil) ; Requires one capture group: https://stackoverflow.com/questions/14583702/align-regexp-from-emacs-lisp
+    (message "Parameters aligned...")))
+
+
+(defun larumbe/verilog-align-ports-current-module ()
+  "Align parenthesis PORTS of current module, the one pointed to by `modi/verilog-find-module-instance'
+It will only align ports, i.e., between instance name and end of instantiation."
+  (interactive)
+  (let (current-instance beg end)
+    (setq current-instance (substring-no-properties (modi/verilog-find-module-instance)))
+    (save-excursion
+      (re-search-backward (concat "\\_<" current-instance "\\_>"))
+      (next-line 1) ; Assumes ports start at next line from instance name
+      (setq beg (point))
+      (setq end (re-search-forward ");")))
+    (align-regexp beg end "\\(\\s-*\\)(" 1 1 nil) ; Requires one capture group: https://stackoverflow.com/questions/14583702/align-regexp-from-emacs-lisp
+    (message "Ports aligned...")))
+
+
+(defun larumbe/verilog-beautify-current-module ()
+  "Beautify current module (open parenthesis +indent + align)"
+  (interactive)
+  (save-excursion
+    (larumbe/verilog-indent-current-module)
+    (larumbe/verilog-align-ports-current-module)
+    (larumbe/verilog-align-parameters-current-module)))
+
+
+(defvar larumbe/connect-disconnect-port-re "\\.\\(?1:[a-zA-Z0-9_-]+\\)\\(?2:[[:blank:]]*\\)")
+(defvar larumbe/connect-disconnect-conn-re "(\\(?3:.*\\))")
+(defvar larumbe/connect-disconnect-not-found "No port detected at current line")
+
+(defun larumbe/verilog-toggle-connect-port (force-connect)
+  "Connect/disconnect port @ current line (regexp based).
+If regexp detects that port is connected, then disconnect it. The other way round works the same.
+If called with universal arg, `force-connect' parameter will force connection of current port, no matter it is connected/disconnected"
+  (interactive "P")
+  (let* ((port-regex larumbe/connect-disconnect-port-re)
+         (conn-regex larumbe/connect-disconnect-conn-re)
+         (line-regex (concat port-regex conn-regex))
+         port conn sig
+         (start (point)))
+    ;; Find '.port (conn)' verilog regexp
+    (beginning-of-line)
+    (if (re-search-forward line-regex (point-at-eol) t)
+        (progn
+          (setq port (substring-no-properties (match-string 1)))
+          (setq conn (substring-no-properties (match-string 3)))
+          (if (or (string-equal conn "") force-connect) ; If it is disconnected or connection is forced via parameter...
+              (progn ; Connect
+                (setq sig (read-string (concat "Connect [" port "] to: ") conn))
+                (replace-match (concat ".\\1\\2\(" sig "\)") t))
+            (progn ; Else disconnect
+              (replace-match (concat ".\\1\\2()") t)))
+          (goto-char start)
+          (next-line 1))
+      (progn ; No port found
+        (goto-char start)
+        (message larumbe/connect-disconnect-not-found)))))
+
+
+(defun larumbe/verilog-connect-ports-recursively ()
+  "Ask recursively for ports to be connected until no port is found at current line"
+  (interactive)
+  (while (not (string-equal (larumbe/verilog-toggle-connect-port t) larumbe/connect-disconnect-not-found))))
+
+
+
+
+(defun larumbe/verilog-def-logic (sig)
+  "Replaces `verilog-sk-def-reg' for use within `larumbe/verilog-define-signal'"
+  (let (width str)
+    (split-line) ;; Keep indentation
+    (setq width (larumbe/verilog-compute-vector-width))
+    (setq str (concat "logic " width " " sig ";"))
+    (insert str)
+    (message (concat "[Line " (format "%s" (line-number-at-pos)) "]: " str))))
+
+
+(defun larumbe/verilog-define-signal ()
+  "INFO: Copied/modified from `verilog-mode.el' function: `verilog-sk-define-signal'.
+There were some issues with this skeleton, an a function offers more flexibility.
+
+Insert a definition of signal under point at top of module."
+  (interactive "*")
+  (let* ((sig-re "[a-zA-Z0-9_]*")
+         (sig (buffer-substring
+               (save-excursion
+                 (skip-chars-backward sig-re)
+                 (point))
+               (save-excursion
+                 (skip-chars-forward sig-re)
+                 (point)))))
+    (if (not (member sig verilog-keywords))
+        (save-excursion
+          (verilog-beg-of-defun)
+          (verilog-end-of-statement)
+          (verilog-forward-syntactic-ws)
+          (larumbe/verilog-def-logic sig))
+      (message "object at point (%s) is a keyword" sig))))
+
 
 
 (defun larumbe/gtags-verilog-files-pwd-recursive ()
@@ -699,7 +1350,6 @@ endmodule // <module_name>_tb
 ;;; Verilog-Perl hierarchy
 ;; INFO: First preprocesses input files in a file for `include' and `define' resolution. Then extracts hierarchy from that preprocessed file.
 ;; Init variables for VHIER Generation to nil
-(setq larumbe-verilog-perl-project-path nil)
 (setq larumbe-verilog-perl-top-module nil)
 (setq larumbe-verilog-perl-project-vhier-path nil)
 (setq larumbe-verilog-perl-hier-input-files nil)
@@ -711,11 +1361,10 @@ endmodule // <module_name>_tb
 
 ;; Projects list
 ;; Name of the project (+plus)
-;; 1) Root path of the project (Just INFO, not used by variables)
-;; 2) Name of the top-module
-;; 3) Input files for hierarchy elaboration
-;; 4) vhier folder path (for generation and further reading)
-;; 5) Output hierarchy file path
+;; 1) Name of the top-module
+;; 2) Input files for hierarchy elaboration
+;; 3) vhier folder path (for generation and further reading)
+;; 4) Output hierarchy file path
 
 
 ;; Retrieve VHIER project list and set variables accordingly
@@ -726,11 +1375,10 @@ endmodule // <module_name>_tb
     (setq vhier-project (completing-read "Select project: " (mapcar 'car larumbe-verilog-perl-projects))) ;; Read previous variable and get list of first element of each assoc list
     (setq files-list (cdr (assoc vhier-project larumbe-verilog-perl-projects)))
     ;; Set parameters accordingly
-    (setq larumbe-verilog-perl-project-path       (nth 0 files-list))
-    (setq larumbe-verilog-perl-top-module         (nth 1 files-list))
-    (setq larumbe-verilog-perl-hier-input-files   (nth 2 files-list))
-    (setq larumbe-verilog-perl-project-vhier-path (nth 3 files-list))
-    (setq larumbe-verilog-perl-hier-file          (nth 4 files-list))
+    (setq larumbe-verilog-perl-top-module         (nth 0 files-list))
+    (setq larumbe-verilog-perl-hier-input-files   (nth 1 files-list))
+    (setq larumbe-verilog-perl-project-vhier-path (nth 2 files-list))
+    (setq larumbe-verilog-perl-hier-file          (nth 3 files-list))
 
     (setq larumbe-verilog-perl-preprocessed-file
           (concat
@@ -750,22 +1398,26 @@ endmodule // <module_name>_tb
 
 ;; Has to be done in the file with the relative include path so that it can be found (e.g. sllc_tb.sv)
 (defun larumbe/verilog-preprocess-hierarchy-file ()
-  "Preproecss hierarchy of top-level module for `includes and `defines'"
+  "Preprocess hierarchy of top-level module for `includes and `defines'"
   (interactive)
-  (let ((processed-files (concat larumbe-verilog-perl-project-vhier-path "tempvhierfiles")))
+  (let ((processed-files (concat larumbe-verilog-perl-project-vhier-path "vhier.files"))
+        (sorted-files-p nil) ; Used inside while loop to decide when every `defs_pkg' has been put at the beginning
+        )
     (shell-command
      (concat "mkdir -p " larumbe-verilog-perl-project-vhier-path)) ; Create vhier folder if it did not exist
-    ;; Replace header `include' files with -y library flag
-    (find-file processed-files)
     (with-temp-buffer
+      ;; (view-buffer-other-window (current-buffer))      ; INFO: Debug for `with-temp-buffer'
+      ;; (clone-indirect-buffer-other-window "*debug*" t) ; INFO: Debug for `with-temp-buffer'
       (insert-file-contents larumbe-verilog-perl-hier-input-files)
-      (replace-regexp "\\(.*/\\).*\.[s]?vh" "-y \\1" nil (point-min) (point-max))
+      (replace-regexp "\\(.*/\\).*\.[s]?vh$" "-y \\1" nil (point-min) (point-max)) ; Replace header `include' files with -y library flag
+      (larumbe/sort-regexp-at-the-beginning-of-file "_defs_pkg.sv") ;; Move every _defs_pkg.sv at the beginning
       (write-file processed-files))
+    ;; Eecute preprocess command
     (shell-command
      (concat "vppreproc "
              "-f " processed-files " "
-             larumbe-verilog-perl-prep-outargs
-             ))))
+             larumbe-verilog-perl-prep-outargs))))
+
 
 (defun larumbe/verilog-process-hierarchy-file ()
   "Process Verilog-Perl file prior to write it to hierarchy.v"
@@ -811,7 +1463,7 @@ endmodule // <module_name>_tb
   (write-file larumbe-verilog-perl-hier-file)
   (setq buffer-read-only t)
   (vhier-outline-mode)
-  (find-alternate-file larumbe-verilog-perl-hier-file)
+  ;; (find-alternate-file larumbe-verilog-perl-hier-file)
   )
 
 

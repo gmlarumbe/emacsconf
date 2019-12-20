@@ -466,7 +466,7 @@ the project."
         (let* ((ag-arguments ag-arguments)) ;Save the global value of `ag-arguments'
           ;; Search only through verilog type files.
           ;; See "ag --list-file-types".
-          ;; (add-to-list 'ag-arguments "--verilog" :append) ; Modi's
+          (add-to-list 'ag-arguments "--verilog" :append) ; Modi's
           (when (bound-and-true-p larumbe/ag-use-input-regexps)
             (add-to-list 'ag-arguments "-G" :append)
             (add-to-list 'ag-arguments (concat "\"" (larumbe/lfp-project-ag-regexps) "\"") :append))
@@ -618,50 +618,118 @@ for all the `included files."
 (defhydra hydra-verilog-template (:color blue
                                          :hint nil)
   "
-_i_nitial        _?_ if             _j_ fork           _A_ssign                _uc_ uvm-component
-_b_egin          _:_ else-if        _m_odule           _I_nput                 _uo_ uvm-object
-_a_lways         _f_or              _g_enerate         _O_utput                _T_estbench
-^^               _w_hile            _p_rimitive        _=_ inout
-^^               _r_epeat           _s_pecify          _S_tate-machine         _h_eader
-^^               _c_ase             _t_ask             _W_ire                  _/_ comment
-^^               ^^                 _F_unction         _R_eg                   _B_lock comment
-^^               ^^                 ^^                 _D_efine-signal
+RTL                          TESTBENCH                       COMMON
+^^
+_af_: always ff                _pg_: program                     _for_: for             _td_: typedef
+_ac_: always comb              _in_: initial                     _ff_: function         _en_: enum
+_aa_: always                   _ta_: task (1 line)               _ll_: logic signal     _te_: typedef enum
+_ms_: module simple            _tk_: task template               _lv_: logic vector     _st_: struct
+_md_: module w/params          _cl_: class                       _lp_: localparam       _ts_: typedef struct
+_gn_: generate                 _fv_: forever                     _pm_: parameter        _un_: union
+_it_: interface                _rp_: repeat                      _pc_: package          _tu_: typedef union
+_mp_: modport                  _fj_: fork-join                   _bg_: begin/end        ^^
+_cc_: case                     _fa_: fork-join any               _fe_: foreach          _/_: Star comment
+_as_: assign                   _fn_: fork-join none              _if_: if               _B_: Block comment
+_FS_: FSM sync                 _rn_: rand/constraint             _ei_: else if          _D_: Define signal
+_IS_: Inst simple              _cb_: clocking block              _el_: else             _hd_: HP Header
+_IP_: Inst w/params            _d_:  display                     _wh_: while            ^^
+^^                             _ai_: assert immediate            _wd_: do-while^^
+^^                             _ap_: assert property             ^^
+^^                             _pr_: property                    ^^
+^^                             _sq_: sequence                    ^^
+^^                             _fl_: final                       ^^
+^^                             _TS_: Testbench Simple            ^^
+^^                             _TE_: Testbench Environment       ^^
 "
+  ;;;;;;;;;
+  ;; RTL ;;
+  ;;;;;;;;;
+  ("af"  (larumbe/hydra-yasnippet "af"))  ; always_ff
+  ("ac"  (larumbe/hydra-yasnippet "ac"))  ; always_comb
+  ("aa"  (larumbe/hydra-yasnippet "aa"))  ; always
+  ("ms"  (larumbe/hydra-yasnippet "ms"))  ; module simple
+  ("md"  (larumbe/hydra-yasnippet "md"))  ; module with parameter
+  ("gn"  (larumbe/hydra-yasnippet "gn"))  ; generate
+  ("it"  (larumbe/hydra-yasnippet "it"))  ; interface
+  ("mp"  (larumbe/hydra-yasnippet "mp"))  ; Modport
+  ("cc"  (larumbe/verilog-case-template)) ; case
+  ("as"  (larumbe/hydra-yasnippet "as"))  ; assign
+  ;; FSM
+  ("FS"  (larumbe/verilog-state-machine-sync-custom)) ; Sync FSM
+  ;; Instances from file
+  ("IS"  (call-interactively 'larumbe/verilog-insert-instance-from-file))             ; Simple (no params)
+  ("IP"  (call-interactively 'larumbe/verilog-insert-instance-from-file-with-params)) ; With params
 
-  ("a"   (larumbe/hydra-yasnippet "always"))
-  ("b"   (larumbe/hydra-yasnippet "begin"))
-  ("c"   (larumbe/hydra-yasnippet "case"))
-  ("f"   (larumbe/hydra-yasnippet "for"))
-  ("g"   (larumbe/hydra-yasnippet "generate"))
-  ("h"   (larumbe/hydra-yasnippet "headerhp"))
-  ("i"   (larumbe/hydra-yasnippet "initial"))
-  ("j"   (larumbe/hydra-yasnippet "fork"))
-  ("m"   (larumbe/hydra-yasnippet "module"))
-  ("p"   (larumbe/hydra-yasnippet "primitive"))
-  ("r"   (larumbe/hydra-yasnippet "repeat"))
-  ("s"   (larumbe/hydra-yasnippet "specify"))
-  ("t"   (larumbe/hydra-yasnippet "task"))
-  ("w"   (larumbe/hydra-yasnippet "while"))
-  ("x"   (larumbe/hydra-yasnippet "casex"))
-  ("z"   (larumbe/hydra-yasnippet "casez"))
-  ("?"   (larumbe/hydra-yasnippet "if"))
-  (":"   (larumbe/hydra-yasnippet "else if"))
-  ("/"   (larumbe/hydra-yasnippet "comment"))
-  ("A"   (larumbe/hydra-yasnippet "assign"))
-  ("F"   (larumbe/hydra-yasnippet "function"))
-  ("I"   (larumbe/hydra-yasnippet "input"))
-  ("O"   (larumbe/hydra-yasnippet "output"))
-  ("S"   (verilog-sk-state-machine-async-custom))
-  ("="   (larumbe/hydra-yasnippet "inout"))
-  ("uc"  (larumbe/hydra-yasnippet "uvm-component"))
-  ("uo"  (larumbe/hydra-yasnippet "uvm-object"))
-  ("W"   (larumbe/hydra-yasnippet "wire"))
-  ("R"   (larumbe/hydra-yasnippet "reg"))
-  ("D"   (larumbe/hydra-yasnippet "define-signal"))
-  ("T"   (verilog-insert-testbench-template))
-  ("B"   (verilog-add-block-comment))
+  ;;;;;;;;;;;;;;;
+  ;; TestBench ;;
+  ;;;;;;;;;;;;;;;
+  ("pg"  (larumbe/hydra-yasnippet "pg")) ; Program
+  ("in"  (larumbe/hydra-yasnippet "in")) ; Initial
+  ("ta"  (larumbe/hydra-yasnippet "ta")) ; Task 1 line
+  ("tk"  (larumbe/verilog-task-custom))  ; Task multiple ports
+  ("cl"  (larumbe/hydra-yasnippet "cl")) ; Class
+  ("fv"  (larumbe/hydra-yasnippet "fv")) ; Forever
+  ("rp"  (larumbe/hydra-yasnippet "rp")) ; Repeat
+  ("fj"  (larumbe/hydra-yasnippet "fj")) ; Fork-join
+  ("fa"  (larumbe/hydra-yasnippet "fa")) ; Fork-join_any
+  ("fn"  (larumbe/hydra-yasnippet "fn")) ; Fork-join_none
+  ("rn"  (larumbe/hydra-yasnippet "rn")) ; Rand/Constraint
+  ("cb"  (larumbe/hydra-yasnippet "cb")) ; Clocking block
+  ("d"   (larumbe/hydra-yasnippet "d"))  ; Display for debug
+  ("ai"  (larumbe/hydra-yasnippet "ai")) ; assert immediate
+  ("ap"  (larumbe/hydra-yasnippet "ap")) ; assert property
+  ("pr"  (larumbe/hydra-yasnippet "pr")) ; property
+  ("sq"  (larumbe/hydra-yasnippet "sq")) ; sequence
+  ("fl"  (larumbe/hydra-yasnippet "fl")) ; Final
+  ;; Testbench from DUT file
+  ("TS"   (call-interactively 'larumbe/verilog-testbench-insert-template-simple))
+  ("TE"   (call-interactively 'larumbe/verilog-testbench-environment))
+  ;;  TODO: Coverage at some point?
+  ;;      : More constraints, rand and randc
+  ;;         - Distribution templates?
+
+  ;;;;;;;;;;;;
+  ;; Common ;;
+  ;;;;;;;;;;;;
+  ("for" (larumbe/hydra-yasnippet "for"))  ; For
+  ("ff"  (larumbe/hydra-yasnippet "ff")) ; function
+  ("ll"  (larumbe/hydra-yasnippet "ll")) ; logic signal
+  ("lv"  (larumbe/hydra-yasnippet "lv")) ; logic vector
+  ("lp"  (larumbe/hydra-yasnippet "lp")) ; Localparam
+  ("pm"  (larumbe/hydra-yasnippet "pm")) ; Parameter
+  ("pc"  (larumbe/hydra-yasnippet "pc")) ; Package
+  ("bg"  (larumbe/hydra-yasnippet "bg")) ; begin/end
+  ("fe"  (larumbe/hydra-yasnippet "fe")) ; Foreach
+  ("if"  (larumbe/hydra-yasnippet "if"))
+  ("ei"  (larumbe/hydra-yasnippet "ei")) ; Else if
+  ("el"  (larumbe/hydra-yasnippet "el")) ; else
+  ("wh"  (larumbe/hydra-yasnippet "wh")) ; While
+  ("wd"  (larumbe/hydra-yasnippet "wd")) ; Do-while
+  ("td"  (larumbe/hydra-yasnippet "td")) ; Generic typedef
+  ("en"  (larumbe/verilog-enum-typedef-template nil))     ; Enum
+  ("te"  (larumbe/verilog-enum-typedef-template t))       ; Typedef Enum
+  ("st"  (larumbe/verilog-struct-typedef-template nil))   ; Struct
+  ("ts"  (larumbe/verilog-struct-typedef-template t))     ; Typedef struct
+  ("un"  (larumbe/verilog-struct-typedef-template nil t)) ; Union
+  ("tu"  (larumbe/verilog-struct-typedef-template t t))   ; Typedef Union
+  ("/"   (larumbe/hydra-yasnippet "/"))  ; Star comment
+  ("B"   (larumbe/verilog-add-block-comment))
+  ("D"   (larumbe/verilog-define-signal))
+  ("hd"  (call-interactively 'larumbe/verilog-header-hp)) ; header for HP
+
+  ;;;;;;;;;
+  ;; UVM ;;
+  ;;;;;;;;;
+  ;; TODO:
+  ;; ("uc"  (larumbe/hydra-yasnippet "uvm-component"))
+  ;; ("uo"  (larumbe/hydra-yasnippet "uvm-object"))
+
+  ;;;;;;;;;;;;
+  ;; Others ;;
+  ;;;;;;;;;;;;
   ("q"   nil nil :color blue)
   ("C-g" nil nil :color blue))
+
 
 ;;;; imenu + outshine
 (with-eval-after-load 'outshine
@@ -703,7 +771,7 @@ _a_lways         _f_or              _g_enerate         _O_utput                _
   ;; super-huge .v RTL/Netlist files.
   (when (and (buffer-file-name)
              (string= "sv" (file-name-extension (buffer-file-name)))
-             ;; Do not add this hook when working in the verilog-mode repo
+             ;; Do not add this hook when working in the verilog-mode reop
              (not (and (buffer-file-name) ;Has to be a file, and
                        (vc-git-root (buffer-file-name)) ;In a git repo, and
                        (when-let* ((git-repo-remote (vc-git--out-ok "config" "remote.upstream.url")))

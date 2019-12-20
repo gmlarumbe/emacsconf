@@ -3213,9 +3213,13 @@ See also `verilog-font-lock-extra-types'.")
              ;; "sinh" "slew" "sqrt" "tan" "tanh" "timer" "transition" "white_noise"
              ;; "wreal" "zi_nd" "zi_np" "zi_zd"
 
-             ;; DANGER Added by DJ Larumbe for the sake of HP Vancouver DANGER
-             "register"                             ; Regtool
-             "insert_ifdef" "replace_ifdef" "endif" ; cde_preprocessor
+             ;; DANGER (Legacy) Added by DJ Larumbe for the sake of HP Vancouver
+             ;; "register"                             ; Regtool
+             ;; "insert_ifdef" "replace_ifdef" "endif" ; cde_preprocessor
+
+             ;; Added some years later for the sake of HP LFP
+             "mark_debug" "dont_touch" "DONT_TOUCH"
+             ;; End of DANGER
 
              ) nil )))
 
@@ -3334,7 +3338,8 @@ See also `verilog-font-lock-extra-types'.")
 (setq testing/brackets-regex "[()]")
 (setq testing/curly-brackets-regex "[{}]")
 (setq testing/width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xz]+\\)")
-(setq testing/other-punctuation-regex "[,;:?#'=<&^~]")
+(setq testing/other-punctuation-regex "[,;:?#'=<&^~+-]")
+(setq testing/special-characters-that-brought-me-issues "|") ; Workaround as \| and \\| did not work inside [.*] for previous regexp
   (setq verilog-font-lock-keywords-3
         (append verilog-font-lock-keywords-2
                 (when verilog-highlight-translate-off
@@ -3348,6 +3353,7 @@ See also `verilog-font-lock-extra-types'.")
                  (list testing/braces-content-regex 1 font-lock-variable-name-face) ; Bit-range
                  (list testing/braces-regex 0 font-lock-preprocessor-face)
                  (list testing/other-punctuation-regex 0 font-lock-string-face) ; Overrides bracket range
+                 (list testing/special-characters-that-brought-me-issues 0 font-lock-string-face) ; Overrides bracket range
 
 
                  (list testing/brackets-regex 0 font-lock-preprocessor-face)
