@@ -1,0 +1,6 @@
+[submodule ".elisp/download/erc-sasl"]
+        path = download/erc-sasl
+        url = https://gitlab.com/psachin/erc-sasl.git
+[submodule ".elisp/download/howdoi"]
+        path = download/howdoi
+        url = https://github.com/arthurnn/howdoi-emacs.git
