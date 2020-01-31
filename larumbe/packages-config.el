@@ -330,6 +330,8 @@
 
 ;;; HELM
 ;;;; Helm Support
+(use-package helm-org)
+
 (use-package helm
   :diminish
   :bind (("C-x c /" . helm-find) ; Enable C-x c prefix commands
