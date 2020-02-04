@@ -330,6 +330,8 @@
 
 ;;; HELM
 ;;;; Helm Support
+(use-package helm-org)
+
 (use-package helm
   :diminish
   :bind (("C-x c /" . helm-find) ; Enable C-x c prefix commands
@@ -462,39 +464,6 @@ function to return a regular expression, or
             ".*$"))
   )
 
-
-;;; Global, ggtags
-(use-package ggtags
-  :diminish
-
-  :bind (:map ggtags-navigation-map
-              ("M-o"     . nil)
-              ("C-c C-k" . nil)         ; EXWM character mode
-              ("M->"     . nil)
-              ("M-<"     . nil))
-
-  :config
-  (setq ggtags-sort-by-nearness nil) ; Enabling nearness requires global 6.5+
-  (setq ggtags-navigation-mode-lighter nil)
-  (setq ggtags-mode-line-project-name nil)
-  ;; (setq ggtags-oversize-limit (* 30 1024 1024)) ; 30 MB
-
-  ;; BUG: Set to 0 to avoid the `global -u' automatic GTAGS update if tags file is smaller than the variable.
-  ;; Problem is that that automatic command called from (ggtags-update-tags) does not read the Larumbe's verilog source file
-  (setq ggtags-oversize-limit 1)      ; If set to nil it seems that there is no limit...
-  (setq ggtags-update-on-save nil)   ;; Try to avoid the `global -u in progress...'
-
-  ;; Don't consider ` (back quote) as part of `tag' when looking for a Verilog macro definition
-  (defun ggtags-tag-at-point ()
-    (pcase (funcall ggtags-bounds-of-tag-function)
-      (`(,beg . ,end)
-       (if (eq ?` (string-to-char (buffer-substring beg end)))
-           ;; If `(buffer-substring beg end)' returns "`uvm_info" (for example),
-           ;; discard the ` and return just "uvm_info"
-           (buffer-substring (1+ beg) end)
-         ;; else return the whole `(buffer-substring beg end)'
-         (buffer-substring beg end)))))
-  )
 
 
 ;;; Own modes

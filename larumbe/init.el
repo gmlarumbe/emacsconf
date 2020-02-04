@@ -17,7 +17,7 @@
     ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
  '(package-selected-packages
    (quote
-    (elgrep magithub csv csv-mode jinja2-mode ssh-tunnels yasnippet-snippets yasnippet html-mode conf-space-mode python-mode matlab-mode helm-ag ggtag unison-mode dired vc-mode vc-dir vc-svn move-lines whole-line-or-region virtualenv use-package sudo-ext smart-mode-line popwin php-runtime markdown-mode magit json-mode jenkins jedi-core imenu-list helm-youtube helm-projectile helm-navi google-this go-mode ggtags fic-mode exwm elmacro dsvn dired-quick-sort dired-narrow diminish conda coin-ticker bind-chord auto-complete ag))))
+    (helm-org helm elgrep magithub csv csv-mode jinja2-mode ssh-tunnels yasnippet-snippets yasnippet html-mode conf-space-mode python-mode matlab-mode helm-ag ggtag unison-mode dired vc-mode vc-dir vc-svn move-lines whole-line-or-region virtualenv use-package sudo-ext smart-mode-line popwin php-runtime markdown-mode magit json-mode jenkins jedi-core imenu-list helm-youtube helm-projectile helm-navi google-this go-mode ggtags fic-mode exwm elmacro dsvn dired-quick-sort dired-narrow diminish conda coin-ticker bind-chord auto-complete ag))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -40,7 +40,10 @@
 (load "~/.elisp/larumbe/config-basic.el")
 
 ;; Emacs Packages setup
-(load "~/.elisp/larumbe/packages-config.el")
+(load "~/.elisp/larumbe/packages-settings.el")
+
+;; Emacs Packages setup
+(load "~/.elisp/larumbe/ggtags-settings.el")
 
 ;; Custom functions
 (load "~/.elisp/larumbe/custom-functions.el")
@@ -55,7 +58,7 @@
 (load "~/.elisp/larumbe/programming-settings.el")
 
 ;; Emacs X-Window Manager config
-(load "~/.elisp/larumbe/exwm-config.el")
+(load "~/.elisp/larumbe/exwm-settings.el")
 
 ;; Machine specific settings files:
 ;;   - This file will not be present in the repo

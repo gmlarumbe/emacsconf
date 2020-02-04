@@ -506,6 +506,65 @@ Otherwise create it"
       (message "No region selected motherfucker!"))))
 
 
+;;;; Docbook
+;; https://stackoverflow.com/questions/2615002/how-to-generate-pdf-from-docbook-5-0/2651158
+(setq larumbe/docbook-xsl-program "xsltproc")
+(setq larumbe/docbook-fo-program "fop")
+
+(defun larumbe/docbook-to-pdf ()
+  "Render XML Docbook file to PDF"
+  (interactive)
+  (let (xml-file pdf-out fo-file cmd)
+    (setq xml-file (read-file-name "Docbook file: "))
+    (if (string-equal (file-name-extension xml-file) "xml") ; File must be a xml
+        (progn
+          (setq pdf-out (concat (file-name-sans-extension (file-name-nondirectory xml-file)) ".pdf"))
+          (setq fo-file (concat (file-name-sans-extension (file-name-nondirectory xml-file)) ".fo"))
+          (setq cmd
+                (concat
+                 larumbe/docbook-xsl-program " "
+                 "-xinclude "
+                 larumbe/docbook-xsl-stylesheet " "
+                 xml-file " > " fo-file " "
+                 "&& "
+                 larumbe/docbook-fo-program " -fo " fo-file " -pdf " pdf-out))
+          (shell-command "ln -s images/* .") ;; Create symlinks to all images to get them rendered (assumed to be contained within a 'images' folder)
+          (shell-command cmd "*Docbook2PDF*")
+          (shell-command "find . -lname 'images/*' -delete") ;; Remove all the symbolic links to images once file has been rendered to PDF
+          )
+      (message "File isn't .xml!!"))))
+
+
+(defun larumbe/docbook-to-pdf-current-buffer (&optional no-preview)
+  "Render current buffer XML Docbook file to PDF.
+If Universal Argument is provided, then do not preview file"
+  (interactive "P")
+  (let (xml-file pdf-out fo-file cmd docbuf-pdf docbuf-okular)
+    (setq docbuf-pdf "*Docbook2PDF*")
+    (setq docbuf-okular "*DocbookOkular*")
+    (setq xml-file (file-name-nondirectory buffer-file-name))
+    (if (string-equal (file-name-extension xml-file) "xml") ; File must be a xml
+        (progn
+          (setq pdf-out (concat (file-name-sans-extension (file-name-nondirectory xml-file)) ".pdf"))
+          (setq fo-file (concat (file-name-sans-extension (file-name-nondirectory xml-file)) ".fo"))
+          (setq cmd
+                (concat
+                 larumbe/docbook-xsl-program " "
+                 "-xinclude "
+                 larumbe/docbook-xsl-stylesheet " "
+                 xml-file " > " fo-file " "
+                 "&& "
+                 larumbe/docbook-fo-program " -fo " fo-file " -pdf " pdf-out))
+          (message (concat "Rendering " xml-file "..."))
+          (shell-command "ln -sf images/* .") ;; Create symlinks to all images to get them rendered (assumed to be contained within a 'images' folder)
+          (shell-command cmd docbuf-pdf)
+          (shell-command (concat "rm " fo-file))
+          (shell-command "find . -lname 'images/*' -delete") ;; Remove all the symbolic links to images once file has been rendered to PDF
+          (unless no-preview
+            (start-process-shell-command docbuf-okular docbuf-okular (concat "okular " pdf-out))))
+      (message "File isn't .xml!!"))))
+
+
 
 ;;; My functions
 ;;;; Aux functions from other programmers
