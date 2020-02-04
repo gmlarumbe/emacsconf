@@ -1347,6 +1347,36 @@ Insert a definition of signal under point at top of module."
   (ggtags-create-tags default-directory))
 
 
+;; Recorded with elmacro, and used to remove spaces on verilog instances (still in test)
+;; First, searches for (.*) and then removes blank spaces.
+;; Still needs to be called inside an instantiation and later aligned with previous regexp
+(defun larumbe/verilog-remove-spaces-parenthesis ()
+  (interactive)
+  (hide/show-comments-toggle (point-min) (point-max))
+  (isearch-forward-regexp nil 1)
+  (isearch-printing-char 40 1)
+  (isearch-printing-char 46 1)
+  (isearch-printing-char 42 1)
+  (isearch-printing-char 41 1)
+  (isearch-exit)
+  (electric-verilog-backward-sexp)
+  (forward-char 1)
+  (delete-horizontal-space nil)
+  (backward-char 1)
+  (electric-verilog-forward-sexp)
+  (backward-char 1)
+  (delete-horizontal-space nil)
+  (hide/show-comments-toggle (point-min) (point-max))
+  )
+
+
+;; TODO Create a function that fixes comments ending in ; at instantiations
+;; This avoid proper detection of instatiations for imenu
+;; To fix, use the following command regexp based
+;; (query-replace-regexp "//\(.*\); -> /\1")
+
+
+
 ;;; Verilog-Perl hierarchy
 ;; INFO: First preprocesses input files in a file for `include' and `define' resolution. Then extracts hierarchy from that preprocessed file.
 ;; Init variables for VHIER Generation to nil

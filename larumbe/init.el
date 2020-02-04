@@ -40,7 +40,10 @@
 (load "~/.elisp/larumbe/config-basic.el")
 
 ;; Emacs Packages setup
-(load "~/.elisp/larumbe/packages-config.el")
+(load "~/.elisp/larumbe/packages-settings.el")
+
+;; Emacs Packages setup
+(load "~/.elisp/larumbe/ggtags-settings.el")
 
 ;; Custom functions
 (load "~/.elisp/larumbe/custom-functions.el")
@@ -55,7 +58,7 @@
 (load "~/.elisp/larumbe/programming-settings.el")
 
 ;; Emacs X-Window Manager config
-(load "~/.elisp/larumbe/exwm-config.el")
+(load "~/.elisp/larumbe/exwm-settings.el")
 
 ;; Machine specific settings files:
 ;;   - This file will not be present in the repo
