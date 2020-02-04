@@ -45,6 +45,7 @@
 ;; 4) Name of the file that will be read by global to generate GTAGS (e.g. verilog files)
 
 ;; Init variables for GTAGS generation to nil (this should work as ASSOC list with project name only has 1 element)
+(setq larumbe/vivado-projects nil)
 (setq larumbe/project-xpr-dir              (nth 1 (car larumbe/vivado-projects)))
 (setq larumbe/project-xpr-file             (nth 2 (car larumbe/vivado-projects)))
 (setq larumbe/project-gtags-dirs-directory (nth 3 (car larumbe/vivado-projects)))
@@ -65,10 +66,7 @@
         (files-list)
         (gtags-args))
     ;; Get Project name
-    (if (bound-and-true-p larumbe/project-xpr-dir)
-        (setq project (completing-read "Select project: " (mapcar 'car larumbe/vivado-projects))) ;; Read previous variable and get list of first element of each assoc list
-      (progn
-        (setq project (car (car larumbe/vivado-projects)))))  ; If no project is defined, use default (first one)
+    (setq project (completing-read "Select project: " (mapcar 'car larumbe/vivado-projects))) ;; Read previous variable and get list of first element of each assoc list
     (setq files-list (cdr (assoc project larumbe/vivado-projects)))
     ;; Set parameters accordingly
     (setq larumbe/project-xpr-dir              (nth 0 files-list))
@@ -128,6 +126,7 @@ Avoid creating GTAGS for every project included inside a repo folder"
 
 
 ;;; Quartus
+(setq larumbe/quartus-projects nil)
 (setq larumbe/project-altera-dir                  (nth 1 (car larumbe/quartus-projects)))
 (setq larumbe/project-altera-file                 (nth 2 (car larumbe/quartus-projects)))
 (setq larumbe/project-altera-gtags-dirs-directory (nth 3 (car larumbe/quartus-projects)))
@@ -178,10 +177,7 @@ Checks Works in current buffer"
         (files-list)
         (gtags-args))
     ;; Get Project name
-    (if (bound-and-true-p larumbe/project-altera-dir)
-        (setq project (completing-read "Select project: " (mapcar 'car larumbe/quartus-projects))) ;; Read previous variable and get list of first element of each assoc list
-      (progn
-        (setq project (car (car larumbe/quartus-projects)))))  ; If no project is defined, use default (first one)
+    (setq project (completing-read "Select project: " (mapcar 'car larumbe/quartus-projects))) ;; Read previous variable and get list of first element of each assoc list
     (setq files-list (cdr (assoc project larumbe/quartus-projects)))
     ;; Set parameters accordingly
     (setq larumbe/project-altera-dir                  (nth 0 files-list))
