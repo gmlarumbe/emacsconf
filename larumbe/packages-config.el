@@ -505,6 +505,9 @@ function to return a regular expression, or
 ;;;;; unison-sync
 (use-package unison-sync-minor-mode
   :load-path "~/.elisp/larumbe/own-modes/minors/")
+;; DANGER:
+;; This was declared when initializing unison-mode and might not work if no .prf file is open
+;; (setq unison-command-name "unison")
 
 ;;;;; vhier-outline
 (use-package vhier-outline-mode
