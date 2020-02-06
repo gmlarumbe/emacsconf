@@ -379,13 +379,13 @@ It's faster than Vivado elaboration since it does not elaborate design"
 shell as an *ansi-term*, regarding environment and aliases without the need of setting
 `shell-command-switch' to '-ic'.
 Useful to spawn a *tcl-shell* with Vivado regexps, or to init sandbox modules."
-  (when (get-buffer-window bufname)
+  (when (get-buffer bufname)
+    (pop-to-buffer bufname)
     (error (concat "Buffer " bufname " already in use!")))
   (compile command t)
   (select-window (get-buffer-window "*compilation*"))
   (end-of-buffer)
   (setq truncate-lines t)
-  (linum-mode)
   (funcall re-func)
   (rename-buffer bufname))
 
@@ -421,3 +421,15 @@ When the region is active, send the region instead."
     (comint-send-string proc (buffer-substring-no-properties from to))
     (comint-send-string proc "\n")
     (goto-char end)))
+
+
+;;;; Sandboxes
+(defun larumbe/shell-compilation-sandbox (initcmd buildcmd bufname re-func)
+  "Initialize a bash sandbox and execute build command.
+Basically a wrapper for `larumbe/shell-compilation-regexp-interactive' with an additional build command."
+  (let ((command initcmd)
+        (proc))
+    (larumbe/shell-compilation-regexp-interactive command bufname re-func)
+    (setq proc (get-buffer-process bufname))
+    (comint-send-string proc buildcmd)
+    (comint-send-string proc "\n")))
