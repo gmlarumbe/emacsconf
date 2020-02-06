@@ -292,6 +292,5 @@ An alternative manual method would be to use a (helm-projectile-grep)"
       (insert-file-contents sources-file)
       (keep-lines larumbe/hdl-source-extension-regex)
       (delete-duplicate-lines (point-min) (point-max)) ; for libraries setup of previous files
-      (replace-regexp "../../../" "trunk/")
       (larumbe/buffer-expand-filenames)
       (write-file output-file))))

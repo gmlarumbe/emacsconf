@@ -307,7 +307,7 @@ _c_hapter       _I_talicRegion
 
 ;;;; TCL
 ;; Copied from sh-send-line-or-regin-and-step for SH Shell scripting
-(defun tcl-send-line-or-region-and-step ()
+(defun larumbe/tcl-send-line-or-region-and-step ()
   "Send the current line to the inferior shell and step to the next line.
 When the region is active, send the region instead."
   (interactive)
@@ -322,41 +322,6 @@ When the region is active, send the region instead."
     (tcl-send-string proc (buffer-substring-no-properties from to))
     (tcl-send-string proc "\n")
     (goto-char end)))
-
-
-(setq larumbe/vivado-tcl-shell-buffer "*vivado-tcl*")
-;; Same as before but intended for sending text to a *compilation* Vivado Shell with regexps
-(defun tcl-send-line-or-region-and-step-vivado-shell ()
-  "Send the current line to the inferior shell and step to the next line.
-When the region is active, send the region instead."
-  (interactive)
-  (let (from to end (proc (get-buffer-process larumbe/vivado-tcl-shell-buffer)))
-    (if (use-region-p)
-        (setq from (region-beginning)
-              to (region-end)
-              end to)
-      (setq from (line-beginning-position)
-            to (line-end-position)
-            end (1+ to)))
-    (comint-send-string proc (buffer-substring-no-properties from to))
-    (comint-send-string proc "\n")
-    (goto-char end)))
-
-
-;; Fake TCL Shell based on compilation/comint modes to allow for regexps
-;; Advantages over `inferior-tcl': Can parse Regexps
-;; Drawbacks over `inferior-tcl': Requires custom function to send lines/regions from a .tcl buffer
-;;   - This would be previous function :)
-(defun larumbe/vivado-tcl-shell-compilation ()
-  "Invoke a TCL vivado shell with the proper regexps, suited for compilation"
-  (interactive)
-  (compile (concat tcl-application " " (mapconcat 'identity tcl-command-switches " ")) t)
-  (select-window (get-buffer-window "*compilation*"))
-  (end-of-buffer)
-  (setq truncate-lines t)
-  (linum-mode)
-  (larumbe/vivado-error-regexp-set-emacs)
-  (rename-buffer larumbe/vivado-tcl-shell-buffer))
 
 
 

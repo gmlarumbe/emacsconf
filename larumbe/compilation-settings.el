@@ -222,7 +222,7 @@
     (setq vivado-batch-compilation-command
           (concat
            "cd " vivado-batch-project-path " && " ; Temp files will be stored in this path
-           vivado-binary-path-2018 " -mode tcl "
+           vivado-binary-path " -mode tcl "
            vivado-batch-project-name
            " -source "
            vivado-batch-script-path))))
@@ -370,3 +370,54 @@ It's faster than Vivado elaboration since it does not elaborate design"
     ;; Compile
     (compile larumbe-reggen-command)))
 
+
+
+
+;;; Compilation interactive with regexp
+(defun larumbe/shell-compilation-regexp-interactive (command bufname re-func)
+  "Creates a `compilation-mode' comint shell that allows having an identical
+shell as an *ansi-term*, regarding environment and aliases without the need of setting
+`shell-command-switch' to '-ic'.
+Useful to spawn a *tcl-shell* with Vivado regexps, or to init sandbox modules."
+  (when (get-buffer-window bufname)
+    (error (concat "Buffer " bufname " already in use!")))
+  (compile command t)
+  (select-window (get-buffer-window "*compilation*"))
+  (end-of-buffer)
+  (setq truncate-lines t)
+  (linum-mode)
+  (funcall re-func)
+  (rename-buffer bufname))
+
+
+;;;; Vivado-TCL shell
+(setq larumbe/vivado-tcl-shell-buffer "*vivado-tcl*")
+;; Fake TCL Shell based on compilation/comint modes to allow for regexps
+;; Advantages over `inferior-tcl': Can parse Regexps
+;; Drawbacks over `inferior-tcl': Requires custom function to send lines/regions from a .tcl buffer
+;;   - This would be previous function :)
+(defun larumbe/shell-compilation-tcl-vivado ()
+  "Invoke a TCL vivado shell with the proper regexps, suited for compilation"
+  (interactive)
+  (let ((command (concat tcl-application " " (mapconcat 'identity tcl-command-switches " ")))
+        (bufname larumbe/vivado-tcl-shell-buffer)
+        (re-func 'larumbe/vivado-error-regexp-set-emacs))
+    (larumbe/shell-compilation-regexp-interactive command bufname re-func)))
+
+
+;; Same as `larumbe/tcl-send-line-or-region-and-step'  but intended for sending text to a *compilation* Vivado Shell with regexps
+(defun larumbe/tcl-send-line-or-region-and-step-vivado-shell ()
+  "Send the current line to the inferior shell and step to the next line.
+When the region is active, send the region instead."
+  (interactive)
+  (let (from to end (proc (get-buffer-process larumbe/vivado-tcl-shell-buffer)))
+    (if (use-region-p)
+        (setq from (region-beginning)
+              to (region-end)
+              end to)
+      (setq from (line-beginning-position)
+            to (line-end-position)
+            end (1+ to)))
+    (comint-send-string proc (buffer-substring-no-properties from to))
+    (comint-send-string proc "\n")
+    (goto-char end)))

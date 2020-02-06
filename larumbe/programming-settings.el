@@ -19,7 +19,6 @@
 ;;;; Keymapping
 (defun my-prog-mode-hook ()
   (local-set-key (kbd "C-<tab>") 'hs-toggle-hiding)
-  (local-set-key (kbd "<M-f5>") 'flyspell-toggle)
   (local-set-key (kbd "C-c C-n") 'align-regexp)
   )
 (add-hook 'prog-mode-hook 'my-prog-mode-hook)
@@ -169,8 +168,8 @@ while inde_x_ed          _p_rint
 
 ;;;; TCL
 (defun my-tcl-hook ()
-  (local-set-key (kbd "C-c C-p") 'tcl-send-line-or-region-and-step)
-  (local-set-key (kbd "C-c C-k") 'tcl-send-line-or-region-and-step-vivado-shell)
+  (local-set-key (kbd "C-c C-p") 'larumbe/tcl-send-line-or-region-and-step)
+  (local-set-key (kbd "C-c C-k") 'larumbe/tcl-send-line-or-region-and-step-vivado-shell)
 
   (modify-syntax-entry ?$ ".")
   )
