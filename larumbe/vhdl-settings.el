@@ -48,5 +48,22 @@
 (add-hook 'vhdl-mode-hook '(lambda () (setq compilation-error-regexp-alist (delete 'gnu compilation-error-regexp-alist))))
 
 
+
+;;; Gtags
+(defun larumbe/gtags-vhdl-files-pwd-recursive ()
+  "Generate gtags.files for current directory. Purpose is to be used with dired mode for small projects, to save the regexp"
+  (interactive)
+  (larumbe/directory-files-recursively-to-file (list default-directory) "gtags.files" ".vhd[l]?$")
+  )
+
+
+(defun larumbe/ggtags-create-vhdl-tags-recursive ()
+  (interactive)
+  (shell-command "touch GTAGS")
+  (larumbe/gtags-vhdl-files-pwd-recursive)
+  (ggtags-create-tags default-directory))
+
+
+
 ;;; Functions redefinition
 ;; ...
