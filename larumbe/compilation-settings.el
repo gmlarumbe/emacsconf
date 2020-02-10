@@ -205,8 +205,8 @@
 
 
 
-;;; Vivado compilation functions
-;;;; Synthesis
+;;; FPGA compilation functions
+;;;; Vivado Synthesis
 (setq vivado-batch-project-path nil)
 (setq vivado-batch-project-name nil)
 (setq vivado-batch-compilation-command nil)
@@ -237,7 +237,7 @@
   )
 
 
-;;;; XSim simulation
+;;;; Vivado Simulation (XSim)
 ;; INFO: It is required to create the simulation first with Vivado GUI, and then run the script
 (setq vivado-sim-project-path nil)
 
@@ -263,6 +263,56 @@
       (setq cmd vivado-sim-compilation-command))
     (compile cmd)
     (show-custom-compilation-buffers-vivado)))
+
+
+;;;; Irun
+(setq larumbe/irun-sources-file       nil)
+(setq larumbe/irun-top-module         nil)
+(setq larumbe/irun-compilation-dir    nil)
+(setq larumbe/irun-opts
+      (concat
+       "-64bit "
+       "-v93 "
+       "-relax "
+       "-access +rwc "
+       "-namemap_mixgen "
+       "-clean "
+       ))
+
+(defun larumbe/irun-set-active-project ()
+  (interactive)
+  (let (irun-project files-list)
+    (setq irun-project (completing-read "Select project: " (mapcar 'car larumbe/irun-projects)))
+    (setq files-list (cdr (assoc irun-project larumbe/irun-projects)))
+    (setq larumbe/irun-sources-file    (nth 0 files-list))
+    (setq larumbe/irun-top-module      (nth 1 files-list))
+    (setq larumbe/irun-compilation-dir (nth 2 files-list))
+    (setq larumbe/irun-command
+          (concat
+           "irun "
+           larumbe/irun-opts
+           larumbe/irun-vivado-simlib-args
+           "-f " larumbe/irun-sources-file " "
+           "-top xil_defaultlib." larumbe/irun-top-module " "
+           "-top glbl " larumbe/irun-glbl-path))))
+
+
+
+(defun larumbe/irun-sim-elab (&optional universal-arg)
+  "Simulate a design with `irun' after selecting corresponding project with previous function.
+If universal-arg is given, then elaborate the design instead."
+  (interactive "P")
+  (let (cmd)
+    (larumbe/irun-set-active-project)
+    (if universal-arg
+        (setq cmd (concat larumbe/irun-command " -elaborate"))
+      (setq cmd larumbe/irun-command))
+    (set (make-local-variable 'compile-command) cmd)
+    (compile (concat "cd " larumbe/irun-compilation-dir " && " compile-command))
+    (show-custom-compilation-buffers)
+    (enlarge-window 18)
+    (larumbe/irun-error-regexp-set-emacs)))
+
 
 
 ;;;; Verilator
@@ -372,7 +422,6 @@ It's faster than Vivado elaboration since it does not elaborate design"
 
 
 
-
 ;;; Compilation interactive with regexp
 (defun larumbe/shell-compilation-regexp-interactive (command bufname re-func)
   "Creates a `compilation-mode' comint shell that allows having an identical
@@ -388,6 +437,7 @@ Useful to spawn a *tcl-shell* with Vivado regexps, or to init sandbox modules."
   (setq truncate-lines t)
   (funcall re-func)
   (rename-buffer bufname))
+
 
 
 ;;;; Vivado-TCL shell
