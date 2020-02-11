@@ -1491,10 +1491,8 @@ Insert a definition of signal under point at top of module."
   (larumbe/verilog-process-hierarchy-file)
   ;; Save-file and enable verilog-mode for tag navigation
   (write-file larumbe-verilog-perl-hier-file)
-  (setq buffer-read-only t)
   (vhier-outline-mode)
-  ;; (find-alternate-file larumbe-verilog-perl-hier-file)
-  )
+  (setq buffer-read-only t))
 
 
 ;;; Modi config

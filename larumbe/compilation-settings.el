@@ -21,6 +21,10 @@
 (define-key compilation-mode-map (kbd "j") 'larumbe/recompile-with-regexp-alist)
 (define-key compilation-mode-map (kbd "C-(") 'larumbe/show-only-vivado-warnings)
 
+;; Comint (sandbox oriented)
+(define-key comint-mode-map (kbd "C-j") 'larumbe/shell-compilation-recompile)
+
+
 ;;; Compilation-mode related functions
 ;;;; Filtering
 (defun larumbe/show-only-vivado-warnings ()
@@ -277,6 +281,7 @@
        "-access +rwc "
        "-namemap_mixgen "
        "-clean "
+       "-vlog_ext +.vh "
        ))
 
 (defun larumbe/irun-set-active-project ()
@@ -480,6 +485,17 @@ Basically a wrapper for `larumbe/shell-compilation-regexp-interactive' with an a
   (let ((command initcmd)
         (proc))
     (larumbe/shell-compilation-regexp-interactive command bufname re-func)
+    (setq-local larumbe/shell-compilation-sandbox-buildcmd buildcmd)
     (setq proc (get-buffer-process bufname))
     (comint-send-string proc buildcmd)
+    (comint-send-string proc "\n")))
+
+
+(defun larumbe/shell-compilation-recompile ()
+  "Will only work in comint mode for previous functions.
+Makes use of local variable `larumbe/shell-compilation-sandbox-buildcmd' to rebuild a target."
+  (interactive)
+  (when (string= major-mode "comint-mode")
+    (setq proc (get-buffer-process (current-buffer)))
+    (comint-send-string proc larumbe/shell-compilation-sandbox-buildcmd)
     (comint-send-string proc "\n")))
