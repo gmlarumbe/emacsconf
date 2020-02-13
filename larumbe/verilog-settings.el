@@ -101,14 +101,14 @@
 ;;; Lint, Compilation and Simulation Tools
 ;;;; Common
 (setq verilog-tool 'verilog-linter)
-(setq verilog-linter "verilator --lint-only -sv") ; 'compile' default command
+(setq verilog-linter "verilator --lint-only +1800-2012ext+sv") ; 'compile' default command
 ;; (setq verilog-coverage "coverage ...)
 ;; (setq verilog-simulator "verilator ... ")
 ;; (setq verilog-compiler "verilator ... ")
 
 
 ;;;; Verilator Linter
-(defun compile-verilator ()
+(defun larumbe/compile-verilator ()
   (interactive)
   (verilog-set-compile-command) ; Set to verilator linter (current file)
   (compile compile-command)
@@ -154,7 +154,7 @@
 (defun iverilog-run-vvp()
   "Run Icarus Verilog simulator engine. Generate dumpfile <top_tb_module>.lxt2 from .compiled extension iverilog previous step file."
   (interactive)
-  (if (string-equal (file-name-extension (buffer-file-name)) "v")
+  (if (string-match "[s]?v[h]?$" (file-name-extension (buffer-file-name))) ; File must be Verilog/SystemVerilog
       (if (string-match-p (regexp-quote "_tb") (file-title))
           (progn
             (compile (iverilog-vvp-command)))
@@ -164,7 +164,7 @@
 (defun iverilog-update-simulation ()
   "Update simulation for GTKwave refreshing"
   (interactive)
-  (if (string-equal (file-name-extension (buffer-file-name)) "v") ; File must be .v
+  (if (string-match "[s]?v[h]?$" (file-name-extension (buffer-file-name))) ; File must be Verilog/SystemVerilog
       (if (string-match-p (regexp-quote "_tb") (file-title))
           (save-window-excursion
             (progn

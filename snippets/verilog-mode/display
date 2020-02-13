@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# key: d
+# --
+
+$display("@%0d: $1", $time);
+$0
