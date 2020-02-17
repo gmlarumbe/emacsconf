@@ -405,6 +405,62 @@ Two always blocks, one for next state and output logic and one for the state reg
   )
 
 ;;;; Headers
+(defun larumbe/verilog-header ()
+  "Insert a standard Verilog file header.
+See also `verilog-sk-header' for an alternative format."
+  (interactive)
+  (let ((start (point)))
+    (insert "\
+//-----------------------------------------------------------------------------
+// Title         : <title>
+// Project       : <project>
+//-----------------------------------------------------------------------------
+// File          : <filename>
+// Author        : <author>
+// Created       : <credate>
+// Last modified : <moddate>
+//-----------------------------------------------------------------------------
+// Description :
+// <description>
+//-----------------------------------------------------------------------------
+// Copyright (c) <author>
+//
+//------------------------------------------------------------------------------
+// Modification history :
+// <modhist>
+//-----------------------------------------------------------------------------
+
+")
+    (goto-char start)
+    (search-forward "<filename>")
+    (replace-match (buffer-name) t t)
+    (search-forward "<author>") (replace-match "" t t)
+    (insert (user-full-name))
+    (search-forward "<credate>") (replace-match "" t t)
+    (verilog-insert-date)
+    (search-forward "<moddate>") (replace-match "" t t)
+    (verilog-insert-date)
+    (search-forward "<author>") (replace-match "" t t)
+    (insert (user-full-name))
+    (insert "  <gonzalomlarumbe@gmail.com> ")
+    (search-forward "<modhist>") (replace-match "" t t)
+    (verilog-insert-date)
+    (insert " : created")
+    (goto-char start)
+    (let (string)
+      (setq string (read-string "title: "))
+      (search-forward "<title>")
+      (replace-match string t t)
+      (setq string (read-string "project: " verilog-project))
+      (setq verilog-project string)
+      (search-forward "<project>")
+      (replace-match string t t)
+      (replace-match string t t)
+      (search-forward "<description>")
+      (replace-match "" t t))))
+
+
+
 (defun larumbe/verilog-header-hp ()
   "Insert an HP Verilog file header.
 See also `verilog-header' for an alternative format."
