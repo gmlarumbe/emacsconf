@@ -101,14 +101,14 @@
 ;;; Lint, Compilation and Simulation Tools
 ;;;; Common
 (setq verilog-tool 'verilog-linter)
-(setq verilog-linter "verilator --lint-only -sv") ; 'compile' default command
+(setq verilog-linter "verilator --lint-only +1800-2012ext+sv") ; 'compile' default command
 ;; (setq verilog-coverage "coverage ...)
 ;; (setq verilog-simulator "verilator ... ")
 ;; (setq verilog-compiler "verilator ... ")
 
 
 ;;;; Verilator Linter
-(defun compile-verilator ()
+(defun larumbe/compile-verilator ()
   (interactive)
   (verilog-set-compile-command) ; Set to verilator linter (current file)
   (compile compile-command)
@@ -154,7 +154,7 @@
 (defun iverilog-run-vvp()
   "Run Icarus Verilog simulator engine. Generate dumpfile <top_tb_module>.lxt2 from .compiled extension iverilog previous step file."
   (interactive)
-  (if (string-equal (file-name-extension (buffer-file-name)) "v")
+  (if (string-match "[s]?v[h]?$" (file-name-extension (buffer-file-name))) ; File must be Verilog/SystemVerilog
       (if (string-match-p (regexp-quote "_tb") (file-title))
           (progn
             (compile (iverilog-vvp-command)))
@@ -164,7 +164,7 @@
 (defun iverilog-update-simulation ()
   "Update simulation for GTKwave refreshing"
   (interactive)
-  (if (string-equal (file-name-extension (buffer-file-name)) "v") ; File must be .v
+  (if (string-match "[s]?v[h]?$" (file-name-extension (buffer-file-name))) ; File must be Verilog/SystemVerilog
       (if (string-match-p (regexp-quote "_tb") (file-title))
           (save-window-excursion
             (progn
@@ -405,6 +405,62 @@ Two always blocks, one for next state and output logic and one for the state reg
   )
 
 ;;;; Headers
+(defun larumbe/verilog-header ()
+  "Insert a standard Verilog file header.
+See also `verilog-sk-header' for an alternative format."
+  (interactive)
+  (let ((start (point)))
+    (insert "\
+//-----------------------------------------------------------------------------
+// Title         : <title>
+// Project       : <project>
+//-----------------------------------------------------------------------------
+// File          : <filename>
+// Author        : <author>
+// Created       : <credate>
+// Last modified : <moddate>
+//-----------------------------------------------------------------------------
+// Description :
+// <description>
+//-----------------------------------------------------------------------------
+// Copyright (c) <author>
+//
+//------------------------------------------------------------------------------
+// Modification history :
+// <modhist>
+//-----------------------------------------------------------------------------
+
+")
+    (goto-char start)
+    (search-forward "<filename>")
+    (replace-match (buffer-name) t t)
+    (search-forward "<author>") (replace-match "" t t)
+    (insert (user-full-name))
+    (search-forward "<credate>") (replace-match "" t t)
+    (verilog-insert-date)
+    (search-forward "<moddate>") (replace-match "" t t)
+    (verilog-insert-date)
+    (search-forward "<author>") (replace-match "" t t)
+    (insert (user-full-name))
+    (insert "  <gonzalomlarumbe@gmail.com> ")
+    (search-forward "<modhist>") (replace-match "" t t)
+    (verilog-insert-date)
+    (insert " : created")
+    (goto-char start)
+    (let (string)
+      (setq string (read-string "title: "))
+      (search-forward "<title>")
+      (replace-match string t t)
+      (setq string (read-string "project: " verilog-project))
+      (setq verilog-project string)
+      (search-forward "<project>")
+      (replace-match string t t)
+      (replace-match string t t)
+      (search-forward "<description>")
+      (replace-match "" t t))))
+
+
+
 (defun larumbe/verilog-header-hp ()
   "Insert an HP Verilog file header.
 See also `verilog-header' for an alternative format."
