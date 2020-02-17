@@ -2,6 +2,6 @@
 # key: rp
 # --
 
-repeat (${1:N}) begin
+repeat (${1:N}) ${2:begin
    $0
-end
+end}

@@ -620,7 +620,7 @@ for all the `included files."
   "
 RTL                          TESTBENCH                       COMMON
 ^^
-_af_: always ff                _pg_: program                     _for_: for             _td_: typedef
+_af_: always ff                _@_:  (posedge Clk)               _for_: for             _td_: typedef
 _ac_: always comb              _in_: initial                     _ff_: function         _en_: enum
 _aa_: always                   _ta_: task (1 line)               _ll_: logic signal     _te_: typedef enum
 _ms_: module simple            _tk_: task template               _lv_: logic vector     _st_: struct
@@ -638,6 +638,7 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
 ^^                             _pr_: property                    ^^
 ^^                             _sq_: sequence                    ^^
 ^^                             _fl_: final                       ^^
+^^                             _pg_: program                     ^^
 ^^                             _TS_: Testbench Simple            ^^
 ^^                             _TE_: Testbench Environment       ^^
 "
@@ -663,7 +664,7 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ;;;;;;;;;;;;;;;
   ;; TestBench ;;
   ;;;;;;;;;;;;;;;
-  ("pg"  (larumbe/hydra-yasnippet "pg")) ; Program
+  ("@"   (larumbe/hydra-yasnippet "@"))  ; Clk posedge
   ("in"  (larumbe/hydra-yasnippet "in")) ; Initial
   ("ta"  (larumbe/hydra-yasnippet "ta")) ; Task 1 line
   ("tk"  (larumbe/verilog-task-custom))  ; Task multiple ports
@@ -681,6 +682,7 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ("pr"  (larumbe/hydra-yasnippet "pr")) ; property
   ("sq"  (larumbe/hydra-yasnippet "sq")) ; sequence
   ("fl"  (larumbe/hydra-yasnippet "fl")) ; Final
+  ("pg"  (larumbe/hydra-yasnippet "pg")) ; Program
   ;; Testbench from DUT file
   ("TS"   (call-interactively 'larumbe/verilog-testbench-insert-template-simple))
   ("TE"   (call-interactively 'larumbe/verilog-testbench-environment))

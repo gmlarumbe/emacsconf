@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# key: md
+# --
+
+module # (
+    parameter ${1:NAME}
+) ${2:module_name} (
+    ${3:// ports}
+    );
+
+    $0
+
+endmodule: $1

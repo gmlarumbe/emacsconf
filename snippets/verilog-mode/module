@@ -2,9 +2,9 @@
 # key: ms
 # --
 
-module ${1:module_name} (${2:
-    // ...
-    });
+module ${1:module_name} (
+    ${2:// Ports}
+    );
 
     $0
 
