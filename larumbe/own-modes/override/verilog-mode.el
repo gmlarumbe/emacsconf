@@ -3332,13 +3332,14 @@ See also `verilog-font-lock-extra-types'.")
                  ;; End of DANGER
                  )))
 
+;; DANGER: More regexps to detect for highlighting
 (setq testing/braces-regex "\\(\\[\\|\\]\\)")
 ;; (setq testing/braces-content-regex "\\[\\(?1:[ -_\+\*()$0-9a-zA-Z:]*\\)\\]")
 (setq testing/braces-content-regex "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
 (setq testing/brackets-regex "[()]")
 (setq testing/curly-brackets-regex "[{}]")
 (setq testing/width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xz]+\\)")
-(setq testing/other-punctuation-regex "[,;:?#'=<&^~+-]")
+(setq testing/other-punctuation-regex "[,;:?#'=<>&^~+-]")
 (setq testing/special-characters-that-brought-me-issues "|") ; Workaround as \| and \\| did not work inside [.*] for previous regexp
   (setq verilog-font-lock-keywords-3
         (append verilog-font-lock-keywords-2
