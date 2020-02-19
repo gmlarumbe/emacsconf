@@ -20,6 +20,7 @@
 (defun my-prog-mode-hook ()
   (local-set-key (kbd "C-<tab>") 'hs-toggle-hiding)
   (local-set-key (kbd "C-c C-n") 'align-regexp)
+  (local-set-key (kbd "C-c <C-f5>") 'flycheck-mode)
   )
 (add-hook 'prog-mode-hook 'my-prog-mode-hook)
 
@@ -70,7 +71,6 @@
 
 ;;;;; Hooks
 (defun my-python-hook ()
-  (local-set-key (kbd "<C-f5>") 'flycheck-mode)
   (local-set-key (kbd "C-c C-p") 'python-send-line-or-region-and-step) ; Overrides `run-python'
   (local-set-key (kbd "C-c C-c") 'run-python)                          ; Overrides `python-shell-send-buffer'
   (local-set-key (kbd "C-M-n") 'forward-same-indent)

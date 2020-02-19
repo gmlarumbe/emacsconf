@@ -35,6 +35,14 @@
 
 
 ;;; Basic Packages
+(use-package quelpa-use-package)
+
+(use-package so-long
+  :quelpa (so-long :url "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/so-long.el" :fetcher url)
+  :config (global-so-long-mode 1)
+  :diminish
+  )
+
 (use-package move-lines
   :load-path "~/.elisp/download/")
 
@@ -377,6 +385,7 @@
               ("C-c p a" . helm-projectile-ag)
               ("C-c p g" . helm-projectile-grep)
               ("C-c p c" . projectile-compile-project)
+              ("C-c p f" . projectile-find-file)
               )
   :config
   (add-to-list 'projectile-project-root-files-bottom-up ".repo") ; Detect `repo' Git sandboxes (Sandbox preference over IP)
