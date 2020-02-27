@@ -639,6 +639,7 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
 ^^                             _sq_: sequence                    ^^
 ^^                             _fl_: final                       ^^
 ^^                             _pg_: program                     ^^
+^^                             _cg_: covergroup                  ^^
 ^^                             _TS_: Testbench Simple            ^^
 ^^                             _TE_: Testbench Environment       ^^
 "
@@ -683,6 +684,7 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ("sq"  (larumbe/hydra-yasnippet "sq")) ; sequence
   ("fl"  (larumbe/hydra-yasnippet "fl")) ; Final
   ("pg"  (larumbe/hydra-yasnippet "pg")) ; Program
+  ("cg"  (larumbe/hydra-yasnippet "cg")) ; Covergroup
   ;; Testbench from DUT file
   ("TS"   (call-interactively 'larumbe/verilog-testbench-insert-template-simple))
   ("TE"   (call-interactively 'larumbe/verilog-testbench-environment))

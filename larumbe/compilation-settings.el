@@ -390,6 +390,7 @@ It's faster than Vivado elaboration since it does not elaborate design"
         (larumbe-reggen-output-file)
         (larumbe-reggen-output-filename)
         (larumbe-reggen-template))
+    (larumbe/reggen-set-active-project)
     ;; Check which type of output has to be generated
     (setq larumbe-reggen-template (completing-read "Select template: " larumbe-reggen-template-types))
     ;; Set output filename extension
