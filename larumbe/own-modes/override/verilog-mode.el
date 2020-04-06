@@ -2780,6 +2780,13 @@ find the errors."
        "struct" "union"
        ;; builtin classes
        "mailbox" "semaphore"
+       ;; DANGER: Add LFP SV interface port declarations for auto-alignment with `verilog-pretty-declarations'
+       "reg_bus_if.slave" "reg_bus_if.master" "reg_bus_if"
+       "axi4_lite_if.slave" "axi4_lite_if.master" "axi4_lite_if"
+       "axi_full_if.master_mp" "axi_full_if.slave_mp" "axi_full_if"
+       "axi_stream_if.master_mp" "axi_stream_if.slave_mp" "axi_stream_if"
+       "pbi_if.pbi_mp" "pbi_if.ser_mp" "pbi_if"
+       ;; End of DANGER
        ))))
 (defconst verilog-declaration-re
   (concat "\\(" verilog-declaration-prefix-re "\\s-*\\)?" verilog-declaration-core-re))
@@ -3281,15 +3288,16 @@ See also `verilog-font-lock-extra-types'.")
 
 
   ;; DANGER: Regexps for verilog-font-keywords
-  (setq larumbe/port-connection-regex "\\.\\([0-9a-zA-Z*_-]*\\)[ ]*\\(([^)]*)\\|\\)")
-  (setq testing/braces-regex "\\(\\[\\|\\]\\)")
-  ;; (setq testing/braces-content-regex "\\[\\(?1:[ -_\+\*()$0-9a-zA-Z:]*\\)\\]")
-  (setq testing/braces-content-regex "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
-  (setq testing/brackets-regex "[()]")
-  (setq testing/curly-brackets-regex "[{}]")
-  (setq testing/width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xz]+\\)")
-  (setq testing/other-punctuation-regex "[,;:?#'=<>&^~+-]")
-  (setq testing/special-characters-that-brought-me-issues "|") ; Workaround as \| and \\| did not work inside [.*] for previous regexp
+  (setq larumbe/port-connection-regex "[( ]\\.\\([0-9a-zA-Z*_-]*\\)")
+  (setq larumbe/dotted-interface-struct-regex "\\([0-9a-zA-Z*_-]+\\)\\.\\([0-9a-zA-Z*_-]+\\)")
+
+  (setq larumbe/brackets-regex "[()]")
+  (setq larumbe/curly-brackets-regex "[{}]")
+  (setq larumbe/braces-regex "\\(\\[\\|\\]\\)")
+  (setq larumbe/braces-content-regex "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
+  (setq larumbe/width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xz]+\\)")
+  (setq larumbe/other-punctuation-regex "[,;:?#'=<>&^~+-]")
+  (setq larumbe/special-characters-that-brought-me-issues "|") ; Workaround as \| and \\| did not work inside [.*] for previous regexp
   ;; End of DANGER
 
   (setq verilog-font-lock-keywords
@@ -3352,6 +3360,7 @@ See also `verilog-font-lock-extra-types'.")
                  ;; DANGER: Modified for instances syntax highlighting tweaking
                  ;; '("\\([A-Za-z][A-Za-z0-9_]*\\)\\s-*(" 1 font-lock-function-name-face)
                  (list larumbe/port-connection-regex 1 font-lock-doc-face)
+                 (list larumbe/dotted-interface-struct-regex 1 font-lock-doc-face)
                  ;; End of DANGER
                  )))
 
@@ -3364,15 +3373,15 @@ See also `verilog-font-lock-extra-types'.")
                      (0 'verilog-font-lock-translate-off-face prepend))
                    ))
 
-                ;; DANGER: Include additional own custom regexps
+                ;; DANGER: Include additional own custom regexps: ORDER DEPENDANT
                 (list
-                 (list testing/braces-content-regex 1 font-lock-variable-name-face) ; Bit-range
-                 (list testing/braces-regex 0 font-lock-preprocessor-face)
-                 (list testing/other-punctuation-regex 0 font-lock-string-face) ; Overrides bracket range
-                 (list testing/special-characters-that-brought-me-issues 0 font-lock-string-face) ; Overrides bracket range
-                 (list testing/brackets-regex 0 font-lock-preprocessor-face)
-                 (list testing/curly-brackets-regex 0 font-lock-preprocessor-face)
-                 (list testing/width-signal-regex
+                 (list larumbe/braces-content-regex 1 font-lock-variable-name-face) ; Bit-range
+                 (list larumbe/braces-regex 0 font-lock-preprocessor-face)
+                 (list larumbe/other-punctuation-regex 0 font-lock-string-face) ; Overrides bracket range
+                 (list larumbe/special-characters-that-brought-me-issues 0 font-lock-string-face) ; Overrides bracket range
+                 (list larumbe/brackets-regex 0 font-lock-preprocessor-face)
+                 (list larumbe/curly-brackets-regex 0 font-lock-preprocessor-face)
+                 (list larumbe/width-signal-regex
                        '(1 font-lock-variable-name-face)
                        '(2 font-lock-keyword-face)
                        ;; '(3 font-lock-preprocessor-face)
@@ -4651,8 +4660,9 @@ Uses `verilog-scan' cache."
                 (= (preceding-char) ?\;)
                 (progn
                   (verilog-backward-token)
-                  (looking-at verilog-ends-re))
-                )
+                  (looking-at verilog-ends-re)
+                  (looking-at "begin")  ; First instance within generate
+                  ))
             (progn
               (goto-char pt)
               (throw 'done t)))))
@@ -6899,11 +6909,14 @@ Only look at a few lines to determine indent level."
               ;;        (current-column)))
 
               ;; New code to indent with `verilog-indent-lists' as `t' as if it was false
+              (close-par (looking-at ")"))
               (val (save-excursion
                      (verilog-backward-up-list 1)
                      (verilog-beg-of-statement-2)
                      (setq here (point))
-                     (+ (current-column) verilog-indent-level)))
+                     (if close-par
+                         (current-column)
+                       (+ (current-column) verilog-indent-level))))
               ;; End of DANGER
 
               (decl (save-excursion
