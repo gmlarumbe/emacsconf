@@ -51,7 +51,7 @@
   (setq verilog-date-scientific-format          t)
   (setq verilog-case-fold                       nil) ; Regexps should NOT ignore case
 
-  (setq verilog-indent-lists      nil) ; How to treat indenting items in a list. TODO: Change this to resemble old-style?
+  (setq verilog-indent-lists      t) ; How to treat indenting items in a list. TODO: Change this to resemble old-style?
   (setq verilog-auto-lineup       nil) ; other options are 'declarations or 'all
   (setq verilog-auto-newline      nil)
   (setq verilog-align-ifelse      nil)

@@ -4635,6 +4635,31 @@ Uses `verilog-scan' cache."
 ;;      (goto-char pt)
 ;;   ;(verilog-forward-syntactic-ws)
 
+
+;; DANGER: Added by Larumbe (copied from previous one) for the sake of emulating the effect of `verilog-indent-lists'
+(defun verilog-beg-of-statement-2 ()
+  "Move backward to beginning of statement."
+  (interactive)
+  (if (verilog-in-comment-p)
+      (verilog-backward-syntactic-ws))
+  (let ((pt (point)))
+    (catch 'done
+      (while (not (looking-at verilog-defun-level-not-generate-re))
+        (setq pt (point))
+        (verilog-backward-syntactic-ws)
+        (if (or (bolp)
+                (= (preceding-char) ?\;)
+                (progn
+                  (verilog-backward-token)
+                  (looking-at verilog-ends-re))
+                )
+            (progn
+              (goto-char pt)
+              (throw 'done t)))))
+    (verilog-forward-syntactic-ws)))
+;; End of DANGER
+
+
 (defun verilog-end-of-statement ()
   "Move forward to end of current statement."
   (interactive)
@@ -5744,7 +5769,7 @@ Return a list of two elements: (INDENT-TYPE INDENT-LEVEL)."
                    ;; if we are in a parenthesized list, and the user likes to indent these, return.
                    ;; unless we are in the newfangled coverpoint or constraint blocks
                    (if (and
-                        ;; DANGER: Comment to avoid issues when indenting parameters and ports if this parameter is set to true
+                        ;; DANGER: Comment to avoid issues when indenting parameters and ports if this parameter is set to nil
                         ;; verilog-indent-lists
                         ;; End of DANGER
                         (verilog-in-paren)
@@ -6862,14 +6887,24 @@ Only look at a few lines to determine indent level."
      (; handle inside parenthetical expressions
       (eq type 'cparenexp)
       (let* ( here
+              ;; DANGER (instances and parameters/ports alignment)
+              ;; Commented
+              ;; (val (save-excursion
+              ;;        (verilog-backward-up-list 1)
+              ;;        (forward-char 1)
+              ;;        (if verilog-indent-lists
+              ;;            (skip-chars-forward " \t")
+              ;;          (verilog-forward-syntactic-ws))
+              ;;        (setq here (point))
+              ;;        (current-column)))
+
+              ;; New code to indent with `verilog-indent-lists' as `t' as if it was false
               (val (save-excursion
                      (verilog-backward-up-list 1)
-                     (forward-char 1)
-                     (if verilog-indent-lists
-                         (skip-chars-forward " \t")
-                       (verilog-forward-syntactic-ws))
+                     (verilog-beg-of-statement-2)
                      (setq here (point))
-                     (current-column)))
+                     (+ (current-column) verilog-indent-level)))
+              ;; End of DANGER
 
               (decl (save-excursion
                       (goto-char here)
