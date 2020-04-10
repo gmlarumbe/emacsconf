@@ -70,25 +70,10 @@
 
 ;;; Common settings and hooks
 (defun my-verilog-hook ()
-  (set 'ac-sources ; Auto-complete verilog-sources
-       '(
-         ac-source-verilog
-         ac-source-gtags
-         )
-       )
-
-  (setq verilog-library-directories ;; Auto Folder Compute
-        '(
-          ;; LVDS Training & ICarus Verilog
-          "."                       ; current directory
-          "../src/"                 ; In case of a _tb within sim directory (Icarus custom sims)
-          ))
-  (setq verilog-library-files
-        '(
-          ;; "/home/martigon/Repos/lfp_GitHub/git_metaljf/metaljf/top/rtl/metaljf_debug.sv"
-          ))
-
-  (modify-syntax-entry ?` ".")     ; TODO: Breaks syntax table anyhow?
+  (set 'ac-sources '(ac-source-verilog ac-source-gtags))                                ; Auto-complete verilog-sources
+  (setq verilog-library-directories (larumbe/verilog-list-directories-of-open-buffers)) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
+  (setq flycheck-verilator-include-path (larumbe/verilog-list-directories-of-open-buffers))
+  (modify-syntax-entry ?` ".")                                                          ; Avoid including preprocessor tags while isearching
   )
 
 ;; Verilog Hooks
@@ -1424,6 +1409,19 @@ Insert a definition of signal under point at top of module."
   (delete-horizontal-space nil)
   (hide/show-comments-toggle (point-min) (point-max))
   )
+
+
+(defun larumbe/verilog-list-directories-of-open-buffers ()
+  "Base content fetched from: https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
+Returns a list of directories from current verilog opened files. Useful for `verilator' flycheck include directories"
+  (interactive)
+  (let (verilog-opened-dirs)
+    (dolist ($buf (buffer-list (current-buffer)))
+      (with-current-buffer $buf
+        (when (string-equal major-mode "verilog-mode")
+          (add-to-list 'verilog-opened-dirs default-directory))))
+    (eval 'verilog-opened-dirs) ; Return list of -I directories
+    ))
 
 
 ;; TODO Create a function that fixes comments ending in ; at instantiations
