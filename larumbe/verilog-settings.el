@@ -1388,33 +1388,29 @@ Insert a definition of signal under point at top of module."
   (ggtags-create-tags default-directory))
 
 
-;; Recorded with elmacro, and used to remove spaces on verilog instances (still in test)
-;; First, searches for (.*) and then removes blank spaces.
-;; Still needs to be called inside an instantiation and later aligned with previous regexp
-(defun larumbe/verilog-remove-spaces-parenthesis ()
+(defun larumbe/verilog-clean-parenthesis-blanks ()
+  "Cleans blanks inside parenthesis blocks (Verilog port connections).
+If region is not used, then a query replacement is performed instead.
+DANGER: It may wrongly detect some `old-end' regexp matches, but seems too complex for the effort..."
   (interactive)
-  (hide/show-comments-toggle (point-min) (point-max))
-  (isearch-forward-regexp nil 1)
-  (isearch-printing-char 40 1)
-  (isearch-printing-char 46 1)
-  (isearch-printing-char 42 1)
-  (isearch-printing-char 41 1)
-  (isearch-exit)
-  (electric-verilog-backward-sexp)
-  (forward-char 1)
-  (delete-horizontal-space nil)
-  (backward-char 1)
-  (electric-verilog-forward-sexp)
-  (backward-char 1)
-  (delete-horizontal-space nil)
-  (hide/show-comments-toggle (point-min) (point-max))
-  )
+  (let ((old-start "([ ]+\\(.*\\))")
+        (new-start "(\\1)")
+        (old-end "(\\([^ ]+\\)[ ]+)")
+        (new-end "(\\1)"))
+    (if (use-region-p)
+        (progn
+          (message "Removing blanks at the beginning...")
+          (replace-regexp old-start new-start nil (region-beginning) (region-end))
+          (replace-regexp old-end   new-end   nil (region-beginning) (region-end)))
+      (progn
+        (message "Removing blanks at the end...")
+        (query-replace-regexp old-start new-start nil (point-min) (point-max))
+        (query-replace-regexp old-end   new-end   nil (point-min) (point-max))))))
 
 
 (defun larumbe/verilog-list-directories-of-open-buffers ()
   "Base content fetched from: https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
 Returns a list of directories from current verilog opened files. Useful for `verilator' flycheck include directories"
-  (interactive)
   (let (verilog-opened-dirs)
     (dolist ($buf (buffer-list (current-buffer)))
       (with-current-buffer $buf
@@ -1424,10 +1420,13 @@ Returns a list of directories from current verilog opened files. Useful for `ver
     ))
 
 
-;; TODO Create a function that fixes comments ending in ; at instantiations
-;; This avoid proper detection of instatiations for imenu
-;; To fix, use the following command regexp based
-;; (query-replace-regexp "//\(.*\); -> /\1")
+
+(defun larumbe/verilog-erase-semicolons-at-instance-comments ()
+  "Custom function to allow proper detection of instatiations for Imenu instances"
+  (interactive)
+  (let ((disturbing-regex "//\\(.*\\);") ; DANGER: Detects whole isolated commented statements, such as '//wire commonreset_t;'
+        (new-regex        "//\1"))
+    (query-replace-regexp disturbing-regex new-regex)))
 
 
 

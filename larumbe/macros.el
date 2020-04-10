@@ -164,26 +164,3 @@
   (handle-focus-in
    `(focus-in ,(elmacro-get-frame "0x6cabe70")))
   (setq last-command-event 'f4))
-
-
-(defun larumbe/verilog-clean-parenthesis-blanks ()
-  "Cleans blanks inside parenthesis blocks (Verilog port connections).
-If region is not used, then a query replacement is performed instead"
-  (interactive)
-  (let ((old-start "([ ]+\\(.*\\))")
-        (new-start "(\\1)")
-        (old-end "[ ]+)")
-        (new-end ")"))
-    (if (use-region-p)
-        (progn
-          (message "Removing blanks at the beginning...")
-          (replace-regexp old-start new-start nil (region-beginning) (region-end))
-          (replace-regexp old-end   new-end   nil (region-beginning) (region-end)))
-      (progn
-        (message "Removing blanks at the end...")
-        (query-replace-regexp old-start new-start nil (point-min) (point-max))
-        (query-replace-regexp old-end   new-end   nil (point-min) (point-max))))))
-
-
-
-
