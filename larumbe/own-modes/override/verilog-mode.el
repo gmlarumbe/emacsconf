@@ -2781,11 +2781,11 @@ find the errors."
        ;; builtin classes
        "mailbox" "semaphore"
        ;; DANGER: Add LFP SV interface port declarations for auto-alignment with `verilog-pretty-declarations'
-       "reg_bus_if.slave" "reg_bus_if.master" "reg_bus_if"
-       "axi4_lite_if.slave" "axi4_lite_if.master" "axi4_lite_if"
-       "axi_full_if.master_mp" "axi_full_if.slave_mp" "axi_full_if"
-       "axi_stream_if.master_mp" "axi_stream_if.slave_mp" "axi_stream_if"
-       "pbi_if.pbi_mp" "pbi_if.ser_mp" "pbi_if"
+       "reg_bus_if.slave" "reg_bus_if.master"
+       "axi4_lite_if.slave" "axi4_lite_if.master"
+       "axi_full_if.master_mp" "axi_full_if.slave_mp"
+       "axi_stream_if.master_mp" "axi_stream_if.slave_mp"
+       "pbi_if.pbi_mp" "pbi_if.ser_mp"
        ;; End of DANGER
        ))))
 (defconst verilog-declaration-re

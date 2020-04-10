@@ -148,6 +148,7 @@
 (global-set-key (kbd "C-x C-/") 'larumbe/pwd-to-kill-ring-with-line)
 (global-set-key (kbd "C-x C-,") 'revert-buffer)            ; Bind to `larumbe/revert-buffer-no-confirm' to avoid asking
 (global-set-key (kbd "<C-return>") 'completion-at-point)
+(global-set-key (kbd "<S-return>") 'auto-complete)
 (global-set-key (kbd "<C-M-return>") 'yas-expand)          ; Outline-minor mode replaces this yas keybinding
 (global-set-key (kbd "C-c / y") 'helm-youtube)             ; Analogous to google-this mode keybindings
 ;;;;;; Dired

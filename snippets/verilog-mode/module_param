@@ -2,9 +2,9 @@
 # key: md
 # --
 
-module # (
-    parameter ${1:NAME}
-) ${2:module_name} (
+module ${1:module_name} # (
+    ${2:// parameters}
+)   (
     ${3:// ports}
     );
 
