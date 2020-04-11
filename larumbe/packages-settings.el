@@ -475,6 +475,10 @@ function to return a regular expression, or
   )
 
 
+(use-package outshine
+  :config
+  (setq outshine-imenu-show-headlines-p nil)) ; Do not include outshine tags at imenu
+
 
 ;;; Own modes
 ;;;; Major Modes
