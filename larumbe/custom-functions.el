@@ -682,24 +682,6 @@ It is assumed to be used after a `M-x' then e.g. `org-', then `C-g' and finally 
 
 
 
-
-(defun larumbe/verilog-imenu-hide-all (&optional first)
-  "Hides all the blocks @ Imenu-list buffer.
-If optional FIRST is used, then shows first block (Verilog *instances/interfaces*)"
-  (interactive)
-  (if (string-equal major-mode "imenu-list-major-mode")
-      (progn
-        (beginning-of-buffer)
-        (while (< (point) (point-max))
-          (hs-hide-block)
-          (next-line))
-        (beginning-of-buffer)
-        ;; If there is an optional argument, unfold first block
-        (when first
-          (hs-show-block)))
-    (message "Not in imenu-list mode !!")))
-
-
 (defun larumbe/untabify-trailing-whitespace-toggle ()
   "Toggle untabify and trailing whitespace for some customized programming modes."
   (interactive)

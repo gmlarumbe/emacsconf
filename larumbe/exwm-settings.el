@@ -125,10 +125,7 @@
 (global-set-key (kbd "M-g a") 'helm-do-grep-ag) ; Avoid `C-x c' prefix
 ;;;;; Imenu
 (global-set-key (kbd "M-I") 'helm-imenu)
-(global-set-key (kbd "M-i") '(lambda ()
-                               (interactive)
-                               (imenu-list)
-                               (larumbe/verilog-imenu-hide-all t)))
+(global-set-key (kbd "M-i") 'imenu-list)
 ;;;;; Version Control
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x M-g") 'magit-dispatch)

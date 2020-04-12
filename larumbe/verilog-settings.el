@@ -11,6 +11,7 @@
          ("\\.vinc\\'"        . verilog-mode)
          ("\\.vsrc\\'"        . verilog-mode)) ; Custom, for Gigatron vsrc files
   :bind (:map verilog-mode-map
+              ("M-i"     . larumbe/verilog-imenu)
               ("M-f"     . verilog-forward-word)
               ("M-b"     . verilog-backward-word)
               ([delete]  . delete-forward-char)
@@ -74,6 +75,7 @@
   (setq verilog-library-directories (larumbe/verilog-list-directories-of-open-buffers)) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
   (setq flycheck-verilator-include-path (larumbe/verilog-list-directories-of-open-buffers))
   (modify-syntax-entry ?` ".")                                                          ; Avoid including preprocessor tags while isearching
+  (larumbe/verilog-find-semicolon-in-instance-comments)
   )
 
 ;; Verilog Hooks
@@ -1137,73 +1139,102 @@ DANGER: If width introduced is 0, it will be assumed as a human mistake and widt
 
 ;; Set imenu patterns (SystemVerilog): https://www.veripool.org/issues/1025-Verilog-mode-Integration-with-the-speedbar
 ;; This function overrides the value of the variable present in `verilog-mode.el'
-;; FIXME: Still does note recognize instances when there are line-comments that end in ; (due to line 608 regexp)
+;; INFO: Does note recognize instances when there are line-comments that end in `;'
 (setq verilog-imenu-generic-expression
-      '((nil "^\\s-*\\(?:m\\(?:odule\\|acromodule\\)\\|p\\(?:rimitive\\|rogram\\|ackage\\)\\)\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
-        ("*Vars*" "^\\s-*\\(reg\\|wire\\|logic\\)\\s-+\\(\\|\\[[^]]+\\]\\s-+\\)\\([A-Za-z0-9_]+\\)" 3)
-        ("*Classes*" "^\\s-*\\(?:virtual\\s-+\\)?class\\s-+\\([a-zA-Z_0-9]+\\)" 1)
-        ("*Tasks*" "^\\s-*\\(?:virtual\\s-+\\)?task\\s-+\\([a-zA-Z_0-9:]+\\)\\s-*[(;]" 1)
-        ("*Funct*" "^\\s-*\\(?:virtual\\s-+\\)?function\\s-+\\(?:\\w+\\s-+\\)?\\([a-zA-Z_0-9:]+\\)\\s-*[(;]" 1)
+      '((nil            "^\\s-*\\(?:connectmodule\\|m\\(?:odule\\|acromodule\\)\\|p\\(?:rimitive\\|rogram\\|ackage\\)\\)\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
+        ("*Variables*"  "^\\s-*\\(reg\\|wire\\|logic\\)\\s-+\\(\\|\\[[^]]+\\]\\s-+\\)\\([A-Za-z0-9_]+\\)" 3)
+        ("*Classes*"    "^\\s-*\\(?:\\(?:virtual\\|interface\\)\\s-+\\)?class\\s-+\\([A-Za-z_][A-Za-z0-9_]+\\)" 1)
+        ("*Tasks*"      "^\\s-*\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*task\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\([A-Za-z_][A-Za-z0-9_:]+\\)" 1)
+        ("*Functions*"  "^\\s-*\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*function\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?:\\w+\\s-+\\)?\\(?:\\(?:un\\)signed\\s-+\\)?\\([A-Za-z_][A-Za-z0-9_:]+\\)" 1)
         ("*Interfaces*" "^\\s-*interface\\s-+\\([a-zA-Z_0-9]+\\)" 1)
-        ("*Types*" "^\\s-*typedef\\s-+.*\\s-+\\([a-zA-Z_0-9]+\\)\\s-*;" 1)
+        ("*Types*"      "^\\s-*typedef\\s-+.*\\s-+\\([a-zA-Z_0-9]+\\)\\s-*;" 1)
         ;; Larumbe's shit
-        ("*Localparams*" "^\\s-*localparam\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
-        ("*Defines*" "^\\s-*`define\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
-        ("*Assigns*" "^\\s-*assign\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
-        ("*Always blocks*" "^\\s-*always\\(_ff\\|_comb\\|_latch\\)?\\s-*\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)" 4)
-        ;; ("*Always blocks*" "^\\s-*always\\s-+\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)" 3)
+        ("*Localparams*"    "^\\s-*localparam\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
+        ("*Defines*"        "^\\s-*`define\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
+        ("*Assigns*"        "^\\s-*assign\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
+        ("*Always blocks*"  "^\\s-*always\\(_ff\\|_comb\\|_latch\\)?\\s-*\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)" 4)
         ("*Initial blocks*" "^\\s-*initial\\s-+\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)" 3)
-
         ;; Larumbe's instantiations for comment-erased buffer
-        ("*Instances/Interfaces*" "^[[:blank:]]*\\(?1:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(?:[[:blank:]\n]\\)*\\(#\\(?:[[:blank:]\n]\\)*([^;]+?)\\([[:blank:]]*//.*?\\)*[^;\\./]+?\\)*\\(?2:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(\\[.*\\]\\)*\\(?:[[:blank:]\n]\\)*(\\(?:[[:blank:]\n]\\)*[^;]*?)\\(?:[[:blank:]\n]\\)*;" 1)
-        ;; ("*Instances/Interfaces Names*" "^[[:blank:]]*\\(?1:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(?:[[:blank:]\n]\\)*\\(#\\(?:[[:blank:]\n]\\)*([^;]+?)\\([[:blank:]]*//.*?\\)*[^;\\./]+?\\)*\\(?2:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(\\[.*\\]\\)*\\(?:[[:blank:]\n]\\)*(\\(?:[[:blank:]\n]\\)*[^;]*?)\\(?:[[:blank:]\n]\\)*;" 2)
-
-        ;; DANGER: Unused, just to show what the problems were when dealing with this regexp bullcrap
-        ;; Same as next one but including point (problem if comments after connections, but avoids interfaces and keywords)
-        ;; ("*Instances*" "^[[:blank:]]*\\(?1:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(?:[[:blank:]\n]\\)*\\(#\\(?:[[:blank:]\n]\\)*([^;]+?)\\([[:blank:]]*//.*?\\)*[^;\\./]+?\\)*\\(?2:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(\\[.*\\]\\)*\\(?:[[:blank:]\n]\\)*(\\(?:[[:blank:]\n]\\)*[\.]" 1)
-        ;; Instance including no space between instance name and # when there are parameters
-        ;; ("*Instances*" "^[[:blank:]]*\\(?1:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(?:[[:blank:]\n]\\)*\\(#\\(?:[[:blank:]\n]\\)*([^;]+?)\\([[:blank:]]*//.*?\\)*[^;\\./]+?\\)*\\(?2:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(\\[.*\\]\\)*\\(?:[[:blank:]\n]\\)*(" 1)
-        ;; Instance without points (problem with keywords and when <name>#() with no space )
-        ;; ("*Instances*" "^[[:blank:]]*\\(?1:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(?:[[:blank:]\n]\\)+\\(#\\(?:[[:blank:]\n]\\)*([^;]+?)\\([[:blank:]]*//.*?\\)*[^;\\./]+?\\)*\\(?2:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(\\[.*\\]\\)*\\(?:[[:blank:]\n]\\)*(" 1)
-        ;; Instance with point (to avoid keywords, but problems with SV)
-        ;; ("*Instances*" "^[[:blank:]]*\\(?1:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(?:[[:blank:]\n]\\)+\\(#\\(?:[[:blank:]\n]\\)*([^;]+?)\\([[:blank:]]*//.*?\\)*[^;\\./]+?\\)*\\(?2:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(\\[.*\\]\\)*\\(?:[[:blank:]\n]\\)*(\\(?:[[:blank:]\n]\\)*[.]" 1)
-
-        ;; Same as next one but including point (problem if comments after connections, but avoids interfaces and keywords)
-        ;; ("*Instances Names*" "^[[:blank:]]*\\(?1:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(?:[[:blank:]\n]\\)*\\(#\\(?:[[:blank:]\n]\\)*([^;]+?)\\([[:blank:]]*//.*?\\)*[^;\\./]+?\\)*\\(?2:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(\\[.*\\]\\)*\\(?:[[:blank:]\n]\\)*(\\(?:[[:blank:]\n]\\)*[\.]" 2)
-        ;; ("*Instances Names*" "^[[:blank:]]*\\(?1:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(?:[[:blank:]\n]\\)*\\(#\\(?:[[:blank:]\n]\\)*([^;]+?)\\([[:blank:]]*//.*?\\)*[^;\\./]+?\\)*\\(?2:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(\\[.*\\]\\)*\\(?:[[:blank:]\n]\\)*(" 2)
-        ;; ("*Instances Names*" "^[[:blank:]]*\\(?1:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(?:[[:blank:]\n]\\)+\\(#\\(?:[[:blank:]\n]\\)*([^;]+?)\\([[:blank:]]*//.*?\\)*[^;\\./]+?\\)*\\(?2:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(\\[.*\\]\\)*\\(?:[[:blank:]\n]\\)*(" 2)
-        ;; ("*Instances Names**" "^[[:blank:]]*\\(?1:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(?:[[:blank:]\n]\\)+\\(#\\(?:[[:blank:]\n]\\)*([^;]+?)\\([[:blank:]]*//.*?\\)*[^;\\./]+?\\)*\\(?2:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(\\[.*\\]\\)*\\(?:[[:blank:]\n]\\)*(\\(?:[[:blank:]\n]\\)*[.]" 2)
-        ;; End of DANGER
+        ("*Instances*" "^[[:blank:]]*\\(?1:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(?:[[:blank:]\n]\\)*\\(#\\(?:[[:blank:]\n]\\)*([^;]+?)\\([[:blank:]]*//.*?\\)*[^;\\./]+?\\)*\\(?2:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(\\[.*\\]\\)*\\(?:[[:blank:]\n]\\)*(\\(?:[[:blank:]\n]\\)*[^;]*?)\\(?:[[:blank:]\n]\\)*;" 1) ;; Use regexp index 2 to get instance names
         ))
+
+;; INFO: Issues with imenu
+;; 1 - Imenu must work on current buffer. Creates an alist of (elements . #<mark pos at buffer>)
+;;     Therefore, must be executed on the buffer on which it will have the effect (cannot use with-temp-buffer and reassociate)
+;;
+;; 2 - Imenu just ignores comments starting at the beginning of line, not inline comments that might be within the instance regexp.
+;;
+;; 3 - It is not possible to work with (with-comments-hidden) since it makes comments invisible, and imenu ignores invisible characters
+;;     by looking for the next non-invisible regexp, since `re-search-forward' cannot ignore invisible, just skip to the next.
+;;     The problem is that instances regexp are multiline, and if an unexpected character such as comment with semicolon appears, it won't
+;;     be recognized, and there wont be any chance of skip to the next. It will be missed.
+;;
+;; 4 - A first solution seemed to be executing `imenu' after erasing comments from current buffer and then returning it to its initial state
+;;     But that would require use of `larumbe/delete-comments-from-buffer' (very slow) and `undo', with some issues programatically.
+;;     That would need  to be done with `larumbe/find-verilog-module-instance-fwd' as well. The profit would not be worth the effort due to
+;;     an extreme fall in performance.
+;;
+;; 5 - Best solution is to create a function that checks if there are problematic regexps in a verilog file, and set is as a hook every time
+;;     a file is opened, or Imenu is executed.
+
+(defun larumbe/verilog-imenu ()
+  "Custom imenu function with `imenu-list' for verilog-mode. Focuses on instance highlighting.
+Checks if there is a semicolon in instance comments that might cause issues detecting the regexp."
+  (interactive)
+  (let ((issue))
+    (setq issue (larumbe/verilog-find-semicolon-in-instance-comments))
+    (imenu-list)
+    (larumbe/verilog-imenu-hide-all t)
+    (when issue
+      (error "Imenu DANGER!: semicolon in comment instance!!"))))
+
+
+(defun larumbe/verilog-imenu-hide-all (&optional first)
+  "Hides all the blocks @ Imenu-list buffer.
+If optional FIRST is used, then shows first block (Verilog *instances/interfaces*)"
+  (interactive)
+  (if (string-equal major-mode "imenu-list-major-mode")
+      (progn
+        (beginning-of-buffer)
+        (while (< (point) (point-max))
+          (hs-hide-block)
+          (next-line))
+        (beginning-of-buffer)
+        ;; If there is an optional argument, unfold first block
+        (when first
+          (hs-show-block)))
+    (message "Not in imenu-list mode !!")))
+
+
+(defun larumbe/verilog-find-semicolon-in-instance-comments ()
+  "Find semicolons in instance comments to avoid missing instantiation detections with `imenu' and `larumbe/find-verilog-module-instance-fwd' functions.
+Point to problematic regexp in case it is found."
+  (let ((problem-re ")[, ]*\\(//\\|/\\*\\).*;") ; DANGER: Does not detect semicolon if newline within /* comment */
+        (found))
+    (save-excursion
+      (beginning-of-buffer)
+      (when (re-search-forward problem-re nil t)
+        (setq found t)))
+    (when found
+      (beginning-of-buffer)
+      (re-search-forward problem-re nil t)
+      (message "Imenu DANGER!: semicolon in comment instance!!"))))
 
 
 (defun larumbe/find-verilog-module-instance-fwd ()
-  "Test"
+  "with-comments-hidden will make comments invisible, but that does not work with `search-forward'..."
   (interactive)
-  (setq ignore-comments-flag t)
-  (with-comments-hidden
-   (point-min)
-   (point-max)
-   (if (not (re-search-forward larumbe/verilog-module-instance-re nil t))
-       (message "No more instances forward")
-     t)))
+  (if (not (re-search-forward larumbe/verilog-module-instance-re nil t))
+      (message "No more instances forward")
+    (message "%s" (match-string 1))))
+
 
 (defun larumbe/find-verilog-module-instance-bwd ()
-  "Test"
+  "with-comments-hidden will make comments invisible, but that does not work with `search-forward'..."
   (interactive)
-  (setq ignore-comments-flag t)
-  (with-comments-hidden
-   (point-min)
-   (point-max)
-   (if (not (re-search-backward larumbe/verilog-module-instance-re nil t))
+  (if (not (re-search-backward larumbe/verilog-module-instance-re nil t))
        (message "No more instances backwards")
-     t)))
-
-
-;; INFO: Perl Regexps
-;; Convert Perl-Regexp to Elisp Regexp (https://stackoverflow.com/questions/15856154/perl-style-regular-expressions-in-emacs)
-;; Use: Detect Verilog instantiations with Regexp from Verilog-Perl instead of modi's
-;; Just M-x pcre-query-replace-regexp
+    (message "%s" (match-string 1))))
 
 
 ;;; Custom Functions
@@ -1418,15 +1449,6 @@ Returns a list of directories from current verilog opened files. Useful for `ver
           (add-to-list 'verilog-opened-dirs default-directory))))
     (eval 'verilog-opened-dirs) ; Return list of -I directories
     ))
-
-
-
-(defun larumbe/verilog-erase-semicolons-at-instance-comments ()
-  "Custom function to allow proper detection of instatiations for Imenu instances"
-  (interactive)
-  (let ((disturbing-regex "//\\(.*\\);") ; DANGER: Detects whole isolated commented statements, such as '//wire commonreset_t;'
-        (new-regex        "//\1"))
-    (query-replace-regexp disturbing-regex new-regex)))
 
 
 
