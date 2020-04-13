@@ -469,7 +469,7 @@ the project."
           (add-to-list 'ag-arguments "--verilog" :append) ; Modi's
           (when (bound-and-true-p larumbe/ag-use-input-regexps)
             (add-to-list 'ag-arguments "-G" :append)
-            (add-to-list 'ag-arguments (concat "\"" (larumbe/lfp-project-ag-regexps) "\"") :append))
+            (add-to-list 'ag-arguments (concat "\"" (larumbe/project-ag-regexps) "\"") :append))
           (ag-regexp module-instance-pcre (projectile-project-root)))))))
 
 ;;;; modi/verilog-selective-indent
@@ -527,10 +527,7 @@ The match with \"//.\" resolves this issue:
                  outline-comment)
         (delete-horizontal-space))
       do-not-run-orig-fn)))
-;; Advise the indentation behavior of `indent-region' done using `C-M-\'
-(advice-add 'verilog-indent-line-relative :before-until #'modi/verilog-selective-indent)
-;; Advise the indentation done by hitting `TAB'
-(advice-add 'verilog-indent-line :before-until #'modi/verilog-selective-indent)
+
 
 ;;;; modi/verilog-compile
 (defun modi/verilog-compile (option)
@@ -553,6 +550,7 @@ If OPTION is \\='(16) (using `\\[universal-argument] \\[universal-argument]' pre
   "Run verilog/SystemVerilog simulation."
   (interactive)
   (modi/verilog-compile '(4)))
+
 
 ;;;; convert block-end comments to block names
 (defun modi/verilog-block-end-comments-to-block-names ()
@@ -580,7 +578,7 @@ Examples: endmodule // module_name             → endmodule : module_name
       (when (not (string-match-p modi/verilog-keywords-re (match-string 2)))
         (replace-match "\\1 : \\2")))))
 
-;;;; Do not open all `included files
+;;;; Do not open all `included and `defines files for verilog AUTO
 (defun modi/verilog-do-not-read-includes ()
   "Replacement for `verilog-read-includes'."
   (message "`verilog-read-includes' has been advised to do nothing"))
@@ -613,126 +611,6 @@ for all the `included files."
                               verilog-forward-sexp-function))
   )
 
-;;;; hydra-verilog-template
-;; INFO: Functions Modified by Larumbe to accomodate YAsnippets
-(defhydra hydra-verilog-template (:color blue
-                                         :hint nil)
-  "
-RTL                          TESTBENCH                       COMMON
-^^
-_af_: always ff                _@_:  (posedge Clk)               _for_: for             _td_: typedef
-_ac_: always comb              _in_: initial                     _ff_: function         _en_: enum
-_aa_: always                   _ta_: task (1 line)               _ll_: logic signal     _te_: typedef enum
-_ms_: module simple            _tk_: task template               _lv_: logic vector     _st_: struct
-_md_: module w/params          _cl_: class                       _lp_: localparam       _ts_: typedef struct
-_gn_: generate                 _fv_: forever                     _pm_: parameter        _un_: union
-_it_: interface                _rp_: repeat                      _pc_: package          _tu_: typedef union
-_mp_: modport                  _fj_: fork-join                   _bg_: begin/end        ^^
-_cc_: case                     _fa_: fork-join any               _fe_: foreach          _/_: Star comment
-_as_: assign                   _fn_: fork-join none              _if_: if               _B_: Block comment
-_FS_: FSM sync                 _rn_: rand/constraint             _ei_: else if          _D_: Define signal
-_IS_: Inst simple              _cb_: clocking block              _el_: else             _hd_: HP Header
-_IP_: Inst w/params            _d_:  display                     _wh_: while            ^^
-^^                             _ai_: assert immediate            _wd_: do-while^^
-^^                             _ap_: assert property             ^^
-^^                             _pr_: property                    ^^
-^^                             _sq_: sequence                    ^^
-^^                             _fl_: final                       ^^
-^^                             _pg_: program                     ^^
-^^                             _cg_: covergroup                  ^^
-^^                             _TS_: Testbench Simple            ^^
-^^                             _TE_: Testbench Environment       ^^
-"
-  ;;;;;;;;;
-  ;; RTL ;;
-  ;;;;;;;;;
-  ("af"  (larumbe/hydra-yasnippet "af"))  ; always_ff
-  ("ac"  (larumbe/hydra-yasnippet "ac"))  ; always_comb
-  ("aa"  (larumbe/hydra-yasnippet "aa"))  ; always
-  ("ms"  (larumbe/hydra-yasnippet "ms"))  ; module simple
-  ("md"  (larumbe/hydra-yasnippet "md"))  ; module with parameter
-  ("gn"  (larumbe/hydra-yasnippet "gn"))  ; generate
-  ("it"  (larumbe/hydra-yasnippet "it"))  ; interface
-  ("mp"  (larumbe/hydra-yasnippet "mp"))  ; Modport
-  ("cc"  (larumbe/verilog-case-template)) ; case
-  ("as"  (larumbe/hydra-yasnippet "as"))  ; assign
-  ;; FSM
-  ("FS"  (larumbe/verilog-state-machine-sync-custom)) ; Sync FSM
-  ;; Instances from file
-  ("IS"  (call-interactively 'larumbe/verilog-insert-instance-from-file))             ; Simple (no params)
-  ("IP"  (call-interactively 'larumbe/verilog-insert-instance-from-file-with-params)) ; With params
-
-  ;;;;;;;;;;;;;;;
-  ;; TestBench ;;
-  ;;;;;;;;;;;;;;;
-  ("@"   (larumbe/hydra-yasnippet "@"))  ; Clk posedge
-  ("in"  (larumbe/hydra-yasnippet "in")) ; Initial
-  ("ta"  (larumbe/hydra-yasnippet "ta")) ; Task 1 line
-  ("tk"  (larumbe/verilog-task-custom))  ; Task multiple ports
-  ("cl"  (larumbe/hydra-yasnippet "cl")) ; Class
-  ("fv"  (larumbe/hydra-yasnippet "fv")) ; Forever
-  ("rp"  (larumbe/hydra-yasnippet "rp")) ; Repeat
-  ("fj"  (larumbe/hydra-yasnippet "fj")) ; Fork-join
-  ("fa"  (larumbe/hydra-yasnippet "fa")) ; Fork-join_any
-  ("fn"  (larumbe/hydra-yasnippet "fn")) ; Fork-join_none
-  ("rn"  (larumbe/hydra-yasnippet "rn")) ; Rand/Constraint
-  ("cb"  (larumbe/hydra-yasnippet "cb")) ; Clocking block
-  ("d"   (larumbe/hydra-yasnippet "d"))  ; Display for debug
-  ("ai"  (larumbe/hydra-yasnippet "ai")) ; assert immediate
-  ("ap"  (larumbe/hydra-yasnippet "ap")) ; assert property
-  ("pr"  (larumbe/hydra-yasnippet "pr")) ; property
-  ("sq"  (larumbe/hydra-yasnippet "sq")) ; sequence
-  ("fl"  (larumbe/hydra-yasnippet "fl")) ; Final
-  ("pg"  (larumbe/hydra-yasnippet "pg")) ; Program
-  ("cg"  (larumbe/hydra-yasnippet "cg")) ; Covergroup
-  ;; Testbench from DUT file
-  ("TS"   (call-interactively 'larumbe/verilog-testbench-insert-template-simple))
-  ("TE"   (call-interactively 'larumbe/verilog-testbench-environment))
-  ;;  TODO: Coverage at some point?
-  ;;      : More constraints, rand and randc
-  ;;         - Distribution templates?
-
-  ;;;;;;;;;;;;
-  ;; Common ;;
-  ;;;;;;;;;;;;
-  ("for" (larumbe/hydra-yasnippet "for"))  ; For
-  ("ff"  (larumbe/hydra-yasnippet "ff")) ; function
-  ("ll"  (larumbe/hydra-yasnippet "ll")) ; logic signal
-  ("lv"  (larumbe/hydra-yasnippet "lv")) ; logic vector
-  ("lp"  (larumbe/hydra-yasnippet "lp")) ; Localparam
-  ("pm"  (larumbe/hydra-yasnippet "pm")) ; Parameter
-  ("pc"  (larumbe/hydra-yasnippet "pc")) ; Package
-  ("bg"  (larumbe/hydra-yasnippet "bg")) ; begin/end
-  ("fe"  (larumbe/hydra-yasnippet "fe")) ; Foreach
-  ("if"  (larumbe/hydra-yasnippet "if"))
-  ("ei"  (larumbe/hydra-yasnippet "ei")) ; Else if
-  ("el"  (larumbe/hydra-yasnippet "el")) ; else
-  ("wh"  (larumbe/hydra-yasnippet "wh")) ; While
-  ("wd"  (larumbe/hydra-yasnippet "wd")) ; Do-while
-  ("td"  (larumbe/hydra-yasnippet "td")) ; Generic typedef
-  ("en"  (larumbe/verilog-enum-typedef-template nil))     ; Enum
-  ("te"  (larumbe/verilog-enum-typedef-template t))       ; Typedef Enum
-  ("st"  (larumbe/verilog-struct-typedef-template nil))   ; Struct
-  ("ts"  (larumbe/verilog-struct-typedef-template t))     ; Typedef struct
-  ("un"  (larumbe/verilog-struct-typedef-template nil t)) ; Union
-  ("tu"  (larumbe/verilog-struct-typedef-template t t))   ; Typedef Union
-  ("/"   (larumbe/hydra-yasnippet "/"))  ; Star comment
-  ("B"   (larumbe/verilog-add-block-comment))
-  ("D"   (larumbe/verilog-define-signal))
-  ("hd"  (call-interactively 'larumbe/verilog-header-hp)) ; header for HP
-
-  ;;;;;;;;;
-  ;; UVM ;;
-  ;;;;;;;;;
-  ;; TODO:
-  ;; ("uc"  (larumbe/hydra-yasnippet "uvm-component"))
-  ;; ("uo"  (larumbe/hydra-yasnippet "uvm-object"))
-
-  ;;;;;;;;;;;;
-  ;; Others ;;
-  ;;;;;;;;;;;;
-  ("q"   nil nil :color blue)
-  ("C-g" nil nil :color blue))
 
 
 ;;;; imenu + outshine
@@ -763,7 +641,9 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
                                       "// \\*\\{3\\} \\(?1:.*$\\)")
                              1))
                           verilog-imenu-generic-expression))))
-  (advice-add 'outshine-mode :after #'modi/verilog-outshine-imenu-generic-expression)
+
+  ;; INFO: Commented out, since `helm-navi' seems to do the trick in a much cleaner manner
+  ;; (advice-add 'outshine-mode :after #'modi/verilog-outshine-imenu-generic-expression)
   ;; (advice-remove 'outshine-hook-function #'modi/verilog-outshine-imenu-generic-expression)
   )
 
@@ -782,25 +662,12 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
                          (string-match-p "veripool/verilog-mode" git-repo-remote))))) ;Upstream URL has to match this.
     (add-hook 'before-save-hook #'modi/verilog-block-end-comments-to-block-names nil :local))
 
-  ;; Stop cluttering my buffer list by not opening all the `included files.
-  (modi/verilog-do-not-read-includes-defines-mode 1)
 
-  ;; TODO: Are they still highlighted?
-  ;; Remove highlighting of AMS keywords
-  ;; (setq verilog-font-lock-keywords
-  ;;       (delete (rassoc 'verilog-font-lock-ams-face verilog-font-lock-keywords)
-  ;;               verilog-font-lock-keywords))
-  ;; (setq verilog-font-lock-keywords-1
-  ;;       (delete (rassoc 'verilog-font-lock-ams-face verilog-font-lock-keywords-1)
-  ;;               verilog-font-lock-keywords-1))
-  ;; (setq verilog-font-lock-keywords-2
-  ;;       (delete (rassoc 'verilog-font-lock-ams-face verilog-font-lock-keywords-2)
-  ;;               verilog-font-lock-keywords-2))
-  ;; (setq verilog-font-lock-keywords-3
-  ;;       (delete (rassoc 'verilog-font-lock-ams-face verilog-font-lock-keywords-3)
-  ;;               verilog-font-lock-keywords-3))
+  ;; INFO: Larumbe: For Verilog AUTO. Set to 1 by modi to: "Stop cluttering my buffer list by not opening all the `included files."
+  (modi/verilog-do-not-read-includes-defines-mode -1)
 
   ;; TODO: How is outshine alignment working?
+  ;; INFO: Larumbe: Seems it is overriden by own indentation functions
   (with-eval-after-load 'outshine
     ;; Do not require the "// *" style comments used by `outshine' to
     ;; start at column 0 just for this major mode.
@@ -813,5 +680,4 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
 ;; `modi/verilog-mode-customization' to `verilog-mode-hook'. This ensures
 ;; that that variable is set correctly *before* `outline-minor-mode' is
 ;; enabled (the act of which runs `outshine-hook-function').
-(add-hook 'verilog-mode-hook #'modi/verilog-mode-customization)
 
