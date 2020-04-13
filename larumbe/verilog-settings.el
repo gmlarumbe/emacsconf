@@ -32,6 +32,7 @@
               ("C-^"     . modi/verilog-jump-to-header-dwim)
               ("C-&"     . modi/verilog-jump-to-header-dwim-fwd)
               ("<f8>"    . larumbe/verilog-vhier-current-file)
+              ("C-c C-p" . larumbe/verilog-preprocess)
               )
   :demand ; INFO: Avoid deferring to properly load modi settings
   :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
@@ -1586,6 +1587,16 @@ Returns a list of directories from current verilog opened files. Useful for `ver
     (eval 'verilog-opened-dirs) ; Return list of -I directories
     ))
 
+
+
+(defun larumbe/verilog-preprocess ()
+  "Wrapper for `verilog-preprocess' that allows to choose between `verilator' and Verilog-Perl `vppreproc'.
+Seems that all the libraries/incdirs are computed internally at verilog-mode"
+  (interactive)
+  (pcase (completing-read "Select tool: " '("verilator" "vppreproc"))
+    ("verilator" (setq verilog-preprocessor "verilator -E __FLAGS__ __FILE__"))
+    ("vppreproc" (setq verilog-preprocessor "vppreproc __FLAGS__ __FILE__")))
+  (verilog-preprocess))
 
 
 ;;; Verilog-Perl hierarchy
