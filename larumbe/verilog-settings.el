@@ -30,7 +30,9 @@
               ("C-c c"   . larumbe/verilog-toggle-connect-port)
               ("C-c C-c" . larumbe/verilog-connect-ports-recursively)
               ("C-^"     . modi/verilog-jump-to-header-dwim)
-              ("C-&"     . modi/verilog-jump-to-header-dwim-fwd))
+              ("C-&"     . modi/verilog-jump-to-header-dwim-fwd)
+              ("<f8>"    . larumbe/verilog-vhier-current-file)
+              )
   :demand ; INFO: Avoid deferring to properly load modi settings
   :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
   (setq larumbe/verilog-indent-level 4)
@@ -76,11 +78,17 @@
 
 
 ;;; Common settings and hooks
+(defvar larumbe/verilog-open-dirs nil
+  "List with directories of current opened `verilog-mode' buffers.
+Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
+
+
 (defun my-verilog-hook ()
-  (set 'ac-sources '(ac-source-verilog ac-source-gtags))                                ; Auto-complete verilog-sources
-  (setq verilog-library-directories (larumbe/verilog-list-directories-of-open-buffers)) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
-  (setq flycheck-verilator-include-path (larumbe/verilog-list-directories-of-open-buffers))
-  (modify-syntax-entry ?` ".")                                                          ; Avoid including preprocessor tags while isearching
+  (set 'ac-sources '(ac-source-verilog ac-source-gtags)) ; Auto-complete verilog-sources
+  (setq larumbe/verilog-open-dirs (larumbe/verilog-list-directories-of-open-buffers))
+  (setq verilog-library-directories larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
+  (setq flycheck-verilator-include-path larumbe/verilog-open-dirs)
+  (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching
   (larumbe/verilog-find-semicolon-in-instance-comments)
   )
 
@@ -114,7 +122,7 @@
 (setq iverilog-vpi-file "my_vpi.c")      ; VPI Icarus verilog C routines
 (setq iverilog-vpi-flags (concat "-m" (file-name-sans-extension (file-name-nondirectory (concat "./" iverilog-vpi-file)))))
 
-(defun file-title()
+(defun file-title ()
   "Return file title; eg returns asdf for /otp/asdf.txt ."
   (file-name-sans-extension(file-name-nondirectory (buffer-file-name))))
 
@@ -1601,7 +1609,7 @@ Returns a list of directories from current verilog opened files. Useful for `ver
 
 
 ;; Retrieve VHIER project list and set variables accordingly
-(defun larumbe/lfp-project-set-active-project-vhier ()
+(defun larumbe/verilog-vhier-set-active-project ()
   (let ((vhier-project)
         (files-list))
     ;; Get Project name
@@ -1630,9 +1638,9 @@ Returns a list of directories from current verilog opened files. Useful for `ver
 
 
 ;; Has to be done in the file with the relative include path so that it can be found (e.g. sllc_tb.sv)
-(defun larumbe/verilog-preprocess-hierarchy-file ()
-  "Preprocess hierarchy of top-level module for `includes and `defines'"
-  (interactive)
+(defun larumbe/verilog-vhier-preprocess-hierarchy ()
+  "Preprocess hierarchy of top-level module for `includes and `defines.
+Only used if hierarchy is extracted in project mode."
   (let ((processed-files (concat larumbe-verilog-perl-project-vhier-path "vhier.files"))
         (sorted-files-p nil) ; Used inside while loop to decide when every `defs_pkg' has been put at the beginning
         )
@@ -1652,10 +1660,10 @@ Returns a list of directories from current verilog opened files. Useful for `ver
              larumbe-verilog-perl-prep-outargs))))
 
 
-(defun larumbe/verilog-process-hierarchy-file ()
-  "Process Verilog-Perl file prior to write it to hierarchy.v"
-  ;; Process Output to get an outline/outshine accessible view (for use with GTAGS)
-  (switch-to-buffer (get-buffer "Verilog-Perl"))
+(defun larumbe/verilog-vhier-process-hierarchy ()
+  "Process Verilog-Perl file prior to write it to hierarchy file.
+Make an outline/outshine accessible view for use with Gtags)"
+  (pop-to-buffer (get-buffer "Verilog-Perl"))
   (save-excursion
     (replace-regexp "  " "*" nil (point-min) (point-max)) ; Replace blank spaces by * for outline
     (replace-regexp "*\\([a-zA-Z0-9_-]\\)" "* \\1" nil (point-min) (point-max)) ; Add blank after asterisks
@@ -1672,32 +1680,68 @@ Returns a list of directories from current verilog opened files. Useful for `ver
       (beginning-of-line)
       (open-line 2)
       (forward-line)
-      (insert "// * Not found files or not present in hierarchy") ; Create level for not found
+      (insert "// * Not found module references") ; Create level for not found
       (replace-string "// * " "// ** " nil (point) (point-max)))
     ;; Insert header to get some info of the file
     (beginning-of-buffer)
     (open-line 1)
     (insert
-     (concat "// This file was created by Larumbe at " (format-time-string "%d-%m-%Y, %H:%M:%S") "\n"
-             "// Hierarchy extracted from files included in: " larumbe-verilog-perl-hier-input-files "\n"))))
+     (concat "// Created by Larumbe at " (format-time-string "%d-%m-%Y, %H:%M:%S") "\n"))
+    (if larumbe-verilog-perl-hier-input-files
+        (insert (concat "// Hierarchy extracted from files included in: " larumbe-verilog-perl-hier-input-files "\n"))
+      (insert (concat "// Hierarchy extracted from `larumbe/verilog-open-dirs' variable\n")))))
 
-(defun larumbe/verilog-extract-hierarchy-file ()
+
+(defun larumbe/verilog-vhier-from-project ()
   "Extract hierarchy of top-level module using Verilog-Perl backend"
   (interactive)
-  (larumbe/lfp-project-set-active-project-vhier)
-  (larumbe/verilog-preprocess-hierarchy-file)
+  (larumbe/verilog-vhier-set-active-project)
+  (larumbe/verilog-vhier-preprocess-hierarchy)
   (shell-command
    (concat "vhier "
            larumbe-verilog-perl-outargs
            larumbe-verilog-perl-preprocessed-file)
    "Verilog-Perl")
-  (larumbe/verilog-process-hierarchy-file)
+  (larumbe/verilog-vhier-process-hierarchy)
   ;; Save-file and enable verilog-mode for tag navigation
   (write-file larumbe-verilog-perl-hier-file)
   (vhier-outline-mode)
   (setq buffer-read-only t))
 
 
-;;; Modi config
-;; Many thanks to Kaushal Modi (https://scripter.co/)
-(load "~/.elisp/larumbe/verilog-modi-setup.el")
+(defun larumbe/verilog-vhier-current-file (&optional extra-files)
+  "Extract hierarchy of current file module using Verilog-Perl backend.
+To handle packages that require being sourced before the rest of the files, use universal argument.
+Prompt for a file of with the following format:
+
+/path/to/package/pkg1.sv
+/path/to/package/pkg2.sv
+"
+  (interactive "P")
+  (let* ((library-args (mapconcat
+                        (lambda (x) (concat "-y " x))
+                        larumbe/verilog-open-dirs
+                        " "))
+         (pkg-files (when extra-files
+                      (concat "-f " (read-file-name "Pkg file:") " ")))
+         (top-module (file-title))
+         (cmd (concat
+               "vhier "
+               pkg-files
+               buffer-file-name " "
+               "+libext+.sv+.svh" " "
+               library-args " "
+               "--cells" " "
+               "--no-missing" " "
+               "--missing-modules" " "
+               "--top-module " top-module)))
+    ;; Body
+    (verilog-read-defines) ; Not sure if needed...
+    (verilog-read-includes)
+    ;; (message "%s" cmd) ;; INFO: Debug
+    (shell-command cmd "Verilog-Perl")
+    (larumbe/verilog-vhier-process-hierarchy)
+    (write-file (concat (projectile-project-root) "hier_" top-module ".v")) ; Ensure ggtags working by writing hier file into projectile root
+    (vhier-outline-mode)
+    (setq buffer-read-only t)))
+

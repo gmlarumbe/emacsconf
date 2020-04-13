@@ -13,26 +13,20 @@
   '(
     ;; Fetched from https://www.emacswiki.org/emacs/OutlineMinorMode
     ;; HIDE
-    ("q" . outline-hide-sublevels)    ; Hide everything but the top-level headings
-    ("t" . outline-hide-body)         ; Hide everything but headings (all body lines)
-    ("o" . outline-hide-other)        ; Hide other branches
-    ("c" . outline-hide-entry)        ; Hide this entry's body
-    ("l" . outline-hide-leaves)       ; Hide body lines in this entry and sub-entries
-    ("d" . outline-hide-subtree)      ; Hide everything in this entry and sub-entries
+    ("k" . vhier-hide-sublevels)      ; Hide everything but the top-level headings
+    ("K" . outline-hide-other)        ; Hide other branches
     ;; SHOW
     ("a" . outline-show-all)          ; Show (expand) everything
-    ("e" . outline-show-entry)        ; Show this heading's body
     ("i" . outline-show-children)     ; Show this heading's immediate child sub-headings
-    ("k" . outline-show-branches)     ; Show all sub-headings under this heading
-    ("s" . outline-show-subtree)      ; Show (expand) everything in this heading & below
+    ("I" . outline-show-branches)     ; Show all sub-headings under this heading
     ;; MOVE
-    ("u" . outline-up-heading)                ; Up
-    ("n" . outline-next-visible-heading)      ; Next
-    ("p" . outline-previous-visible-heading)  ; Previous
-    ("f" . outline-forward-same-level)        ; Forward - same level
-    ("b" . outline-backward-same-level)       ; Backward - same level
-    ;; OWN
-    ("j" . vhier-outline-jump-to-file)  ; Added by Larumbe
+    ("u" . vhier-up-heading)               ; Up
+    ("n" . vhier-next-visible-heading)     ; Next
+    ("p" . vhier-previous-visible-heading) ; Previous
+    ("f" . vhier-forward-same-level)       ; Forward - same level
+    ("b" . vhier-backward-same-level)      ; Backward - same level
+    ;; JUMP
+    ("j" . vhier-outline-jump-to-file)     ; Added by Larumbe
     )
   )
 
@@ -54,6 +48,51 @@
   (other-window 1)
   (end-of-line)
   (ggtags-find-tag-dwim (thing-at-point 'symbol t)))
+
+
+(defun vhier-previous-visible-heading ()
+  "Move through headings and point at the beginning of the tag so that gtags can be easily used"
+  (interactive)
+  (call-interactively 'outline-previous-visible-heading)
+  (skip-chars-forward "/ *"))
+
+
+(defun vhier-next-visible-heading ()
+  "Move through headings and point at the beginning of the tag so that gtags can be easily used"
+  (interactive)
+  (call-interactively 'outline-next-visible-heading)
+  (skip-chars-forward "/ *"))
+
+
+(defun vhier-up-heading ()
+  "Move through headings and point at the beginning of the tag so that gtags can be easily used"
+  (interactive)
+  (call-interactively 'outline-up-heading)
+  (skip-chars-forward "/ *"))
+
+
+(defun vhier-forward-same-level ()
+  "Move through headings and point at the beginning of the tag so that gtags can be easily used"
+  (interactive)
+  (call-interactively 'outline-forward-same-level)
+  (skip-chars-forward "/ *"))
+
+
+(defun vhier-backward-same-level ()
+  "Move through headings and point at the beginning of the tag so that gtags can be easily used"
+  (interactive)
+  (call-interactively 'outline-backward-same-level)
+  (skip-chars-forward "/ *"))
+
+
+(defun vhier-hide-sublevels ()
+  "Move through headings and point at the beginning of the tag so that gtags can be easily used"
+  (interactive)
+  (beginning-of-line)
+  (call-interactively 'outline-hide-sublevels)
+  (skip-chars-forward "/ *"))
+
+
 
 
 (provide 'vhier-outline-mode)
