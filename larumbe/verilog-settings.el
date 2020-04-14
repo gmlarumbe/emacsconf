@@ -1238,7 +1238,69 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
 
 
 
-;;; Regexps things (imenu+instance finding)
+;;; Imenu and instance navigating
+;; INFO: There are 3 ways of creating the index-alist for Imenu mode (from simpler to more complex):
+;;
+;;   1 - Define `imenu-generic-expression' (categories and regexps). This is the most common and default one.
+;;
+;;   2 - Define `imenu-prev-index-position-function' and `imenu-extract-index-name-function'.
+;;       If these variables are defined, the imenu-list creation function uses them to find the tags.
+;;
+;;   3 - Redefine `imenu-create-index-function' to make a custom more complex alist (e.g a tree recursively for nested classes)
+;;       This is the most complex and the one used in python mode.
+
+(defun larumbe/verilog-imenu (&optional test)
+  "Custom imenu function with `imenu-list' for verilog-mode.
+If inside a module, focuses on instance highlighting and checks if there is a semicolon
+in instance comments that might cause issues detecting the regexp.
+
+If inside a package, focuses on classes/methods highlighting with a custom tree build function.
+
+If TEST is passed as an universal argument, then build Imenu with method 2 just for testing purposes
+(in case it could be useful in the future...)
+"
+  (interactive "P")
+  (let ((end-keywords '("endmodule" "endpackage" "endprogram"))
+        issue
+        context)
+    (save-excursion
+      (end-of-buffer)
+      (unless (re-search-backward (regexp-opt end-keywords 'symbols) nil t)
+        (error "Imenu not supported for this kind of expression: %s not found" end-keywords))
+      (verilog-backward-sexp)
+      (setq context (thing-at-point 'symbol t))
+      (when test
+        (setq context "imenu-debug"))
+      (message "Context: %s" context)
+      (cond
+       ;; Imenu method 1: Generate Imenu for modules (RTL)
+       ((string= context "module")
+        (setq imenu-prev-index-position-function nil)
+        (setq imenu-extract-index-name-function nil)
+        (setq imenu-create-index-function 'imenu-default-create-index-function)
+        (setq issue (larumbe/verilog-find-semicolon-in-instance-comments))
+        (imenu-list)
+        (larumbe/verilog-imenu-hide-all t)
+        (when issue
+          (error "Imenu DANGER!: semicolon in comment instance!!")))
+       ;; Imenu method 3: Generate Imenu for packages/classes (TB)
+       ((or (string= context "package") (string= context "program"))
+        (setq imenu-prev-index-position-function nil)
+        (setq imenu-extract-index-name-function nil)
+        (setq imenu-create-index-function 'verilog--imenu-index)
+        (imenu-list))
+       ;; Imenu method 2: Unuseful for the moment...
+       ((string= context "imenu-debug")
+        (setq imenu-prev-index-position-function 'larumbe/verilog-imenu-prev-index-position-function)
+        (setq imenu-extract-index-name-function 'larumbe/verilog-imenu-extract-index-name)
+        (setq imenu-create-index-function 'imenu-default-create-index-function)
+        (imenu-list))
+       ;; Default fallback
+       (t
+        (error "File context: %s is neither `module' for RTL, nor `package' for TB!" context))))))
+
+
+;;;; Imenu method 1: Generic tree Imenu (RTL)
 ;; Same as modi's one
 (setq larumbe/verilog-identifier-re
       (concat "\\_<\\(?:"
@@ -1276,29 +1338,26 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
 
 
 ;; Set imenu patterns (SystemVerilog): https://www.veripool.org/issues/1025-Verilog-mode-Integration-with-the-speedbar
-;; This function overrides the value of the variable present in `verilog-mode.el'
-;; INFO: Does note recognize instances when there are line-comments that end in `;'
-(setq verilog-imenu-generic-expression
-      '((nil            "^\\s-*\\(?:connectmodule\\|m\\(?:odule\\|acromodule\\)\\|p\\(?:rimitive\\|rogram\\|ackage\\)\\)\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
-        ("*Variables*"  "^\\s-*\\(reg\\|wire\\|logic\\)\\s-+\\(\\|\\[[^]]+\\]\\s-+\\)\\([A-Za-z0-9_]+\\)" 3)
-        ("*Classes*"    "^\\s-*\\(?:\\(?:virtual\\|interface\\)\\s-+\\)?class\\s-+\\([A-Za-z_][A-Za-z0-9_]+\\)" 1)
-        ("*Tasks*"      "^\\s-*\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*task\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\([A-Za-z_][A-Za-z0-9_:]+\\)" 1)
-        ("*Functions*"  "^\\s-*\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*function\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?:\\w+\\s-+\\)?\\(?:\\(?:un\\)signed\\s-+\\)?\\([A-Za-z_][A-Za-z0-9_:]+\\)" 1)
-        ("*Interfaces*" "^\\s-*interface\\s-+\\([a-zA-Z_0-9]+\\)" 1)
-        ("*Types*"      "^\\s-*typedef\\s-+.*\\s-+\\([a-zA-Z_0-9]+\\)\\s-*;" 1)
-        ;; Larumbe's shit
-        ("*Localparams*"    "^\\s-*localparam\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
-        ("*Defines*"        "^\\s-*`define\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
-        ("*Assigns*"        "^\\s-*assign\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
-        ("*Always blocks*"  "^\\s-*always\\(_ff\\|_comb\\|_latch\\)?\\s-*\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)" 4)
-        ("*Initial blocks*" "^\\s-*initial\\s-+\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)" 3)
-        ;; Larumbe's instantiations for comment-erased buffer
-        ("*Instances*" "^[[:blank:]]*\\(?1:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(?:[[:blank:]\n]\\)*\\(#\\(?:[[:blank:]\n]\\)*([^;]+?)\\([[:blank:]]*//.*?\\)*[^;\\./]+?\\)*\\(?2:\\_<\\(?:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\)\\(\\[.*\\]\\)*\\(?:[[:blank:]\n]\\)*(\\(?:[[:blank:]\n]\\)*[^;]*?)\\(?:[[:blank:]\n]\\)*;" 1) ;; Use regexp index 2 to get instance names
-        ))
+;; This function extends the value of the variable present in `verilog-mode.el'
+;; DANGER: Does note recognize instances when there are line-comments that end in `;'
+(setq larumbe/verilog-imenu-generic-expression
+      (append
+       verilog-imenu-generic-expression
+       `(("*Localparams*"    "^\\s-*localparam\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
+         ("*Defines*"        "^\\s-*`define\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
+         ("*Assigns*"        "^\\s-*assign\\s-+\\([a-zA-Z0-9_.:]+\\)" 1)
+         ("*Always blocks*"  "^\\s-*always\\(_ff\\|_comb\\|_latch\\)?\\s-*\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)" 4)
+         ("*Initial blocks*" "^\\s-*initial\\s-+\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)" 3)
+         ;; Instantiations for comment-erased buffer
+         ("*Instances*"      ,larumbe/verilog-module-instance-re 1) ;; Use regexp index 2 if want to get instance name instead
+         )
+       ))
 
-;; INFO: Issues with imenu
+;; INFO: Issues with instance detection @ generic Imenu:
+;;
 ;; 1 - Imenu must work on current buffer. Creates an alist of (elements . #<mark pos at buffer>)
-;;     Therefore, must be executed on the buffer on which it will have the effect (cannot use with-temp-buffer and reassociate)
+;;     Therefore, must be executed on the buffer on which it will have the effect (cannot use with-temp-buffer in a buffer with no comments
+;;     and trying to reassociate afterwards)
 ;;
 ;; 2 - Imenu just ignores comments starting at the beginning of line, not inline comments that might be within the instance regexp.
 ;;
@@ -1315,16 +1374,20 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
 ;; 5 - Best solution is to create a function that checks if there are problematic regexps in a verilog file, and set is as a hook every time
 ;;     a file is opened, or Imenu is executed.
 
-(defun larumbe/verilog-imenu ()
-  "Custom imenu function with `imenu-list' for verilog-mode. Focuses on instance highlighting.
-Checks if there is a semicolon in instance comments that might cause issues detecting the regexp."
-  (interactive)
-  (let ((issue))
-    (setq issue (larumbe/verilog-find-semicolon-in-instance-comments))
-    (imenu-list)
-    (larumbe/verilog-imenu-hide-all t)
-    (when issue
-      (error "Imenu DANGER!: semicolon in comment instance!!"))))
+
+(defun larumbe/verilog-find-semicolon-in-instance-comments ()
+  "Find semicolons in instance comments to avoid missing instantiation detections with `imenu' and `larumbe/find-verilog-module-instance-fwd' functions.
+Point to problematic regexp in case it is found."
+  (let ((problem-re ")[, ]*\\(//\\|/\\*\\).*;") ; DANGER: Does not detect semicolon if newline within /* comment */
+        (found))
+    (save-excursion
+      (beginning-of-buffer)
+      (when (re-search-forward problem-re nil t)
+        (setq found t)))
+    (when found
+      (beginning-of-buffer)
+      (re-search-forward problem-re nil t)
+      (message "Imenu DANGER!: semicolon in comment instance!!"))))
 
 
 (defun larumbe/verilog-imenu-hide-all (&optional first)
@@ -1344,35 +1407,99 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
     (message "Not in imenu-list mode !!")))
 
 
-(defun larumbe/verilog-find-semicolon-in-instance-comments ()
-  "Find semicolons in instance comments to avoid missing instantiation detections with `imenu' and `larumbe/find-verilog-module-instance-fwd' functions.
-Point to problematic regexp in case it is found."
-  (let ((problem-re ")[, ]*\\(//\\|/\\*\\).*;") ; DANGER: Does not detect semicolon if newline within /* comment */
-        (found))
-    (save-excursion
-      (beginning-of-buffer)
-      (when (re-search-forward problem-re nil t)
-        (setq found t)))
-    (when found
-      (beginning-of-buffer)
-      (re-search-forward problem-re nil t)
-      (message "Imenu DANGER!: semicolon in comment instance!!"))))
+
+;;;; Imenu method 2 (debug)
+;; This method was insufficient to implement Imenu with functions/tasks within classes
+;; Code still here for the coming future... One never knows...
+(defun larumbe/verilog-imenu-prev-index-position-function ()
+  "Function to search backwards in the buffer for Imenu alist generation."
+  (verilog-beg-of-defun))
+
+(defun larumbe/verilog-imenu-extract-index-name ()
+  "Function to extract the tag."
+  (verilog-forward-word)
+  (verilog-forward-syntactic-ws)
+  (thing-at-point 'symbol t))
 
 
-(defun larumbe/find-verilog-module-instance-fwd ()
-  "with-comments-hidden will make comments invisible, but that does not work with `search-forward'..."
-  (interactive)
-  (if (not (re-search-forward larumbe/verilog-module-instance-re nil t))
-      (message "No more instances forward")
-    (message "%s" (match-string 1))))
+
+;;;; Imenu method 3: Custom tree builder functions (TB)
+;; Regexps fetched from `verilog-imenu-generic-expression' and adapted to match specific capture groups
+(defvar larumbe/verilog-task-re "^\\s-*\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*task\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
+(defvar larumbe/verilog-function-re "^\\s-*\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*function\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?:\\w+\\s-+\\)?\\(?:\\(?:un\\)signed\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
+(defvar larumbe/verilog-class-re "^\\s-*\\(?1:\\(?:\\(?:virtual\\|interface\\)\\s-+\\)?class\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
+
+(defun verilog-imenu-format-item-label (type name)
+  "Return Imenu label for single node using TYPE and NAME."
+  (let (short-type)
+    (setq short-type
+          (pcase type
+            ("task"      "T")
+            ("function"  "F")
+            (_           type)))
+    (format "%s (%s)" name short-type)))
 
 
-(defun larumbe/find-verilog-module-instance-bwd ()
-  "with-comments-hidden will make comments invisible, but that does not work with `search-forward'..."
-  (interactive)
-  (if (not (re-search-backward larumbe/verilog-module-instance-re nil t))
-       (message "No more instances backwards")
-    (message "%s" (match-string 1))))
+(defun verilog-imenu--put-parent (type name pos tree)
+  "Add the parent with TYPE, NAME and POS to TREE."
+  (let* ((label
+         (funcall 'verilog-imenu-format-item-label type name))
+         (jump-label label))
+    (if (not tree)
+        (cons label pos)
+      (cons label (cons (cons jump-label pos) tree)))))
+
+
+(defun verilog-imenu--build-tree (&optional tree)
+  "Build the imenu alist tree.
+Coded to work with verification files with CLASSES and METHODS.
+Adapted from `python-mode' imenu build-tree function."
+  (save-restriction
+    (narrow-to-region (point-min) (point))
+    (let* ((pos
+            (progn
+              ;; finds a top-level class
+              (verilog-beg-of-defun)
+              ;; stops behind the indented form at EOL
+              (verilog-forward-sexp)
+              ;; may find an inner def-or-class
+              (modi/verilog-jump-to-header-dwim nil)))
+           type
+           (name (when (and pos (or (looking-at larumbe/verilog-task-re)
+                                    (looking-at larumbe/verilog-function-re)
+                                    (looking-at larumbe/verilog-class-re)))
+                   (setq type (match-string-no-properties 1))
+                   (match-string-no-properties 2)))
+           (label (when name
+                    (funcall 'verilog-imenu-format-item-label type name))))
+      (cond ((not pos)
+             ;; Nothing found, probably near to bobp.
+             nil)
+            ((looking-at larumbe/verilog-class-re)
+             ;; The current indentation points that this is a parent
+             ;; node, add it to the tree and stop recursing.
+             (verilog-imenu--put-parent type name pos tree))
+            (t
+             (verilog-imenu--build-tree
+              (if (or (looking-at larumbe/verilog-task-re)
+                      (looking-at larumbe/verilog-function-re))
+                  (cons (cons label pos) tree)
+                (cons
+                 (verilog-imenu--build-tree
+                  (list (cons label pos)))
+                 tree))))))))
+
+
+(defun verilog--imenu-index ()
+  "Return tree Imenu alist for the current Verilog buffer. "
+  (save-excursion
+    (goto-char (point-max))
+    (let ((index)
+          (tree))
+      (while (setq tree (verilog-imenu--build-tree))
+        (setq index (cons tree index)))
+      index)))
+
 
 
 ;;; Custom Functions
@@ -1392,6 +1519,23 @@ Point to problematic regexp in case it is found."
     (modify-syntax-entry ?_ "_" table)
     (with-syntax-table table
       (backward-word arg))))
+
+
+(defun larumbe/find-verilog-module-instance-fwd ()
+  "with-comments-hidden will make comments invisible, but that does not work with `search-forward'..."
+  (interactive)
+  (if (not (re-search-forward larumbe/verilog-module-instance-re nil t))
+      (message "No more instances forward")
+    (message "%s" (match-string 1))))
+
+
+(defun larumbe/find-verilog-module-instance-bwd ()
+  "with-comments-hidden will make comments invisible, but that does not work with `search-forward'..."
+  (interactive)
+  (if (not (re-search-backward larumbe/verilog-module-instance-re nil t))
+       (message "No more instances backwards")
+    (message "%s" (match-string 1))))
+
 
 ;; https://emacs.stackexchange.com/questions/8032/configure-indentation-logic-to-ignore-certain-lines/8033#8033
 (defun larumbe/verilog-avoid-indenting-outshine-comments (&rest args)
