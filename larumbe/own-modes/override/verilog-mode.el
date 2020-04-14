@@ -1439,6 +1439,11 @@ See also `verilog-case-fold'."
     ("*Types*"      "^\\s-*typedef\\s-+.*\\s-+\\([a-zA-Z_0-9]+\\)\\s-*;" 1))
   "Imenu expression for Verilog mode.  See `imenu-generic-expression'.")
 
+;; DANGER: Own variable for imenu
+(defvar larumbe/verilog-imenu-generic-expression nil
+  "Overriden @ verilog-settings.el")
+;; End of DANGER
+
 ;;
 ;; provide a verilog-header function.
 ;; Customization variables:
@@ -3250,7 +3255,10 @@ See also `verilog-font-lock-extra-types'.")
              "endcase" "endconfig" "endfunction" "endgenerate" "endmodule"
              "endprimitive" "endspecify" "endtable" "endtask" "for" "force"
              "forever" "fork" "function" "generate" "if" "ifnone" "incdir"
-             "include" "initial" "instance" "join" "large" "liblist"
+             ;; DANGER: Remove include from general keywords as it must be highlighted as a macro
+             ;; "include"
+             ;; End of DANGER
+             "initial" "instance" "join" "large" "liblist"
              "library" "macromodule" "medium" "module" "negedge"
              "noshowcancelled" "posedge" "primitive" "pulsestyle_ondetect"
              "pulsestyle_onevent" "release" "repeat" "scalared"
@@ -4112,7 +4120,10 @@ Key bindings specific to `verilog-mode-map' are:
 
   ;; Tell imenu how to handle Verilog.
   (set (make-local-variable 'imenu-generic-expression)
-       verilog-imenu-generic-expression)
+       ;; DANGER: Own variable for imenu
+       ;; verilog-imenu-generic-expression)
+       larumbe/verilog-imenu-generic-expression)
+        ;; End of DANGER
   ;; Tell which-func-modes that imenu knows about verilog
   (when (and (boundp 'which-func-modes) (listp which-func-modes))
     (add-to-list 'which-func-modes 'verilog-mode))

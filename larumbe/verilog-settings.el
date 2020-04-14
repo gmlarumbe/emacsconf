@@ -15,12 +15,12 @@
               ("M-f"     . verilog-forward-word)
               ("M-b"     . verilog-backward-word)
               ([delete]  . delete-forward-char)
-              ("C-M-n"   . forward-same-indent)
-              ("C-M-p"   . backward-same-indent)
-              ("C-%"     . hide/show-comments-toggle)
+              ("C-M-n"   . modi/verilog-jump-to-header-dwim-fwd)
+              ("C-M-p"   . modi/verilog-jump-to-header-dwim)
               ("C-M-u"   . larumbe/find-verilog-module-instance-bwd)
               ("C-M-d"   . larumbe/find-verilog-module-instance-fwd)
               ("C-M-h"   . xah-select-current-block)
+              ("C-%"     . hide/show-comments-toggle)
               ("C-c C-t" . hydra-verilog-template/body)
               ("C-c l"   . larumbe/verilog-insert-instance-from-file)
               ("C-c i"   . larumbe/verilog-indent-current-module)
@@ -29,10 +29,8 @@
               ("C-c b"   . larumbe/verilog-beautify-current-module)
               ("C-c c"   . larumbe/verilog-toggle-connect-port)
               ("C-c C-c" . larumbe/verilog-connect-ports-recursively)
-              ("C-^"     . modi/verilog-jump-to-header-dwim)
-              ("C-&"     . modi/verilog-jump-to-header-dwim-fwd)
-              ("<f8>"    . larumbe/verilog-vhier-current-file)
               ("C-c C-p" . larumbe/verilog-preprocess)
+              ("<f8>"    . larumbe/verilog-vhier-current-file)
               )
   :demand ; INFO: Avoid deferring to properly load modi settings
   :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
@@ -60,15 +58,21 @@
   (setq verilog-auto-newline      nil)
   (setq verilog-align-ifelse      nil)
   (setq verilog-tab-to-comment    nil)
-  (setq verilog-highlight-modules nil) ; Experimental for highlight-buffer. TODO: Test how this works
+  (setq verilog-highlight-modules nil) ; Experimental for highlight-buffer. TODO: Test how this works (plus `verilog-highlight-includes')
 
   (setq verilog-minimum-comment-distance 10)
 
 
   :config
+  ;; Many thanks to Kaushal Modi (https://scripter.co/)
+  (load "~/.elisp/larumbe/verilog-modi-setup.el")
+
+  ;; Bind chords
   (bind-chord "\\\\" #'modi/verilog-jump-to-module-at-point verilog-mode-map) ;"\\"
   (when (executable-find "ag")
     (bind-chord "\|\|" #'modi/verilog-find-parent-module verilog-mode-map))
+
+  (modi/verilog-do-not-read-includes-defines-mode -1) ;; INFO: Larumbe: For Verilog AUTO. Set to 1 by modi to: "Stop cluttering my buffer list by not opening all the `included files."
 
   ;; Own advice to avoid indentation of outshine (overrides modi setup of `modi/outshine-allow-space-before-heading')
   (advice-add 'verilog-indent-line-relative :before-until #'larumbe/verilog-avoid-indenting-outshine-comments)
@@ -102,30 +106,31 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
 
 
 ;;; Lint, Compilation and Simulation Tools
-;;;; Common
-(setq verilog-tool 'verilog-linter)
-(setq verilog-linter "verilator --lint-only +1800-2012ext+sv") ; 'compile' default command
-;; (setq verilog-coverage "coverage ...)
-;; (setq verilog-simulator "verilator ... ")
-;; (setq verilog-compiler "verilator ... ")
+;; INFO: Discarding the following `verilog-set-compile-command' variables:
+;; - `verilog-linter:' replaced by FlyCheck with opened buffers as additional arguments, plus custom project parsing functions
+;; - `verilog-simulator': replaced by XSim and ncsim sim project funcions
+;; - `verilog-compiler': replaced by Vivado elaboration/synthesis project functions
+;; - `verilog-preprocessor': `larumbe/verilog-preprocess' wrapper of verilog-mode internal function' does the trick
+;; - `verilog-coverage' still not implemented as there are not many free alternatives...
 
 
-;;;; Verilator Linter
-(defun larumbe/compile-verilator ()
+;;;; Preprocessor
+(defun larumbe/verilog-preprocess ()
+  "Wrapper for `verilog-preprocess' that allows to choose between `verilator' and Verilog-Perl `vppreproc'.
+Seems that all the libraries/incdirs are computed internally at verilog-mode"
   (interactive)
-  (verilog-set-compile-command) ; Set to verilator linter (current file)
-  (compile compile-command)
-  (larumbe/verilator-error-regexp-set-emacs))
+  (pcase (completing-read "Select tool: " '("verilator" "vppreproc"))
+    ("verilator" (setq verilog-preprocessor "verilator -E __FLAGS__ __FILE__"))
+    ("vppreproc" (setq verilog-preprocessor "vppreproc __FLAGS__ __FILE__")))
+  (verilog-preprocess))
 
 
+;; TODO: Adapt it to work with makefile structure
 ;;;; Icarus Verilog + GtkWave
 (setq iverilog-compile-version "-g2012") ; Other options: -g2005-sv
 (setq iverilog-vpi-file "my_vpi.c")      ; VPI Icarus verilog C routines
 (setq iverilog-vpi-flags (concat "-m" (file-name-sans-extension (file-name-nondirectory (concat "./" iverilog-vpi-file)))))
 
-(defun file-title ()
-  "Return file title; eg returns asdf for /otp/asdf.txt ."
-  (file-name-sans-extension(file-name-nondirectory (buffer-file-name))))
 
 (defun iverilog-compile-command ()
   "Custom function to get current Icarus Verilog compile command depending on file-title"
@@ -1547,7 +1552,6 @@ Return t if the current line starts with '// *'."
     match))
 
 
-
 (defun larumbe/verilog-indent-current-module (&optional module)
   "Indent current module, the one pointed to by `which-func' (not instant)
 
@@ -1650,8 +1654,6 @@ If called with universal arg, `force-connect' parameter will force connection of
   (while (not (string-equal (larumbe/verilog-toggle-connect-port t) larumbe/connect-disconnect-not-found))))
 
 
-
-
 (defun larumbe/verilog-def-logic (sig)
   "Replaces `verilog-sk-def-reg' for use within `larumbe/verilog-define-signal'"
   (let (width str)
@@ -1689,8 +1691,7 @@ Insert a definition of signal under point at top of module."
 (defun larumbe/gtags-verilog-files-pwd-recursive ()
   "Generate gtags.files for current directory. Purpose is to be used with dired mode for small projects, to save the regexp"
   (interactive)
-  (larumbe/directory-files-recursively-to-file (list default-directory) "gtags.files" ".[s]?v[h]?$")
-  )
+  (larumbe/directory-files-recursively-to-file (list default-directory) "gtags.files" ".[s]?v[h]?$"))
 
 
 (defun larumbe/ggtags-create-verilog-tags-recursive ()
@@ -1728,23 +1729,15 @@ Returns a list of directories from current verilog opened files. Useful for `ver
       (with-current-buffer $buf
         (when (string-equal major-mode "verilog-mode")
           (add-to-list 'verilog-opened-dirs default-directory))))
-    (eval 'verilog-opened-dirs) ; Return list of -I directories
-    ))
+    (eval 'verilog-opened-dirs)))  ; Return list of -I directories
 
-
-
-(defun larumbe/verilog-preprocess ()
-  "Wrapper for `verilog-preprocess' that allows to choose between `verilator' and Verilog-Perl `vppreproc'.
-Seems that all the libraries/incdirs are computed internally at verilog-mode"
-  (interactive)
-  (pcase (completing-read "Select tool: " '("verilator" "vppreproc"))
-    ("verilator" (setq verilog-preprocessor "verilator -E __FLAGS__ __FILE__"))
-    ("vppreproc" (setq verilog-preprocessor "vppreproc __FLAGS__ __FILE__")))
-  (verilog-preprocess))
 
 
 ;;; Verilog-Perl hierarchy
-;; INFO: First preprocesses input files in a file for `include' and `define' resolution. Then extracts hierarchy from that preprocessed file.
+(defvar larumbe-verilog-perl-buffer-name "Verilog-Perl"
+  "Initial buffer name to use for the hierarchy file")
+
+;; INFO: First preprocesses input files in a file for `include' and `define' expansion. Then extracts hierarchy from that preprocessed file.
 ;; Init variables for VHIER Generation to nil
 (setq larumbe-verilog-perl-top-module nil)
 (setq larumbe-verilog-perl-project-vhier-path nil)
@@ -1815,10 +1808,10 @@ Only used if hierarchy is extracted in project mode."
              larumbe-verilog-perl-prep-outargs))))
 
 
-(defun larumbe/verilog-vhier-process-hierarchy ()
+(defun larumbe/verilog-vhier-format-hierarchy-file ()
   "Process Verilog-Perl file prior to write it to hierarchy file.
 Make an outline/outshine accessible view for use with Gtags)"
-  (pop-to-buffer (get-buffer "Verilog-Perl"))
+  (pop-to-buffer (get-buffer larumbe-verilog-perl-buffer-name))
   (save-excursion
     (replace-regexp "  " "*" nil (point-min) (point-max)) ; Replace blank spaces by * for outline
     (replace-regexp "*\\([a-zA-Z0-9_-]\\)" "* \\1" nil (point-min) (point-max)) ; Add blank after asterisks
@@ -1856,8 +1849,8 @@ Make an outline/outshine accessible view for use with Gtags)"
    (concat "vhier "
            larumbe-verilog-perl-outargs
            larumbe-verilog-perl-preprocessed-file)
-   "Verilog-Perl")
-  (larumbe/verilog-vhier-process-hierarchy)
+   larumbe-verilog-perl-buffer-name)
+  (larumbe/verilog-vhier-format-hierarchy-file)
   ;; Save-file and enable verilog-mode for tag navigation
   (write-file larumbe-verilog-perl-hier-file)
   (vhier-outline-mode)
@@ -1889,14 +1882,16 @@ Prompt for a file of with the following format:
                "--cells" " "
                "--no-missing" " "
                "--missing-modules" " "
-               "--top-module " top-module)))
+               "--top-module " top-module))
+         (file-path (concat (projectile-project-root) "vhier/" top-module ".v")))
     ;; Body
     (verilog-read-defines) ; Not sure if needed...
     (verilog-read-includes)
     ;; (message "%s" cmd) ;; INFO: Debug
-    (shell-command cmd "Verilog-Perl")
-    (larumbe/verilog-vhier-process-hierarchy)
-    (write-file (concat (projectile-project-root) "hier_" top-module ".v")) ; Ensure ggtags working by writing hier file into projectile root
+    (shell-command cmd larumbe-verilog-perl-buffer-name)
+    (larumbe/verilog-vhier-format-hierarchy-file)
+    (shell-command (concat "mkdir -p " (file-name-directory file-path))) ; Ensure vhier folder is created
+    (write-file file-path) ; Ensure ggtags working by writing hier file into projectile root
     (vhier-outline-mode)
     (setq buffer-read-only t)))
 

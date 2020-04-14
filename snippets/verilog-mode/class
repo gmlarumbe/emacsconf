@@ -2,7 +2,7 @@
 # key: cl
 # --
 
-class ${1:class_name} ${2:extends ${3:base_class}};
+class ${1:class_name}${2: extends ${3:base_class}};
    $0
    function new(${4:args});
       super.new($4);

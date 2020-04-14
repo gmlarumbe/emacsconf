@@ -575,6 +575,11 @@ If Universal Argument is provided, then do not preview file"
 
 
 ;;;; Larumbe's generic functions
+(defun file-title ()
+  "Return file title; eg returns asdf for /otp/asdf.txt ."
+  (file-name-sans-extension(file-name-nondirectory (buffer-file-name))))
+
+
 ;; Read file content into a String"
 ;; (Modified version, replaces newline with space, for ag-verilog arguments parsing)
 (defun larumbe/get-string-from-file-ag-arguments (filePath)

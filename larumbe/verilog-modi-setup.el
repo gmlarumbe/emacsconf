@@ -662,10 +662,6 @@ for all the `included files."
                          (string-match-p "veripool/verilog-mode" git-repo-remote))))) ;Upstream URL has to match this.
     (add-hook 'before-save-hook #'modi/verilog-block-end-comments-to-block-names nil :local))
 
-
-  ;; INFO: Larumbe: For Verilog AUTO. Set to 1 by modi to: "Stop cluttering my buffer list by not opening all the `included files."
-  (modi/verilog-do-not-read-includes-defines-mode -1)
-
   ;; TODO: How is outshine alignment working?
   ;; INFO: Larumbe: Seems it is overriden by own indentation functions
   (with-eval-after-load 'outshine

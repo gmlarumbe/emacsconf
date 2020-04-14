@@ -48,8 +48,8 @@
   (local-set-key (kbd "C-M-z") 'eval-region)
   )
 (add-hook 'emacs-lisp-mode-hook 'my-elisp-hook)
-(add-hook 'emacs-lisp-mode-hook '(lambda () ; TODO: Order in hooks cannot be ensured, so this might not work
-                                   (interactive)
+(add-hook 'emacs-lisp-mode-hook '(lambda ()           ; TODO: Order in hooks cannot be ensured, so this might not work
+                                   (interactive)      ; To avoid loading ggtags, just remove GTAGS, GGTAGS and GPATH generated files from (projectile-project-root)
                                    (ggtags-mode -1))) ; Better to use xref-find-definitions (since ggtags is generally enabled for prog-mode)
 
 
