@@ -4,7 +4,7 @@
 ;; - Allows for process output parsing     - ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Variable settings
-(setq compilation-skip-threshold 2) ; Compilation error jumping settings
+(setq compilation-skip-threshold 1) ; Compilation error jumping settings
     ;; Compilation motion commands skip less important messages. The value can be either
     ;; 2 -- skip anything less than error,
     ;; 1 -- skip anything less than warning or
@@ -74,7 +74,7 @@
 
 ;;; Compilation error regexp alist
 ;;;; Common
-(setq larumbe/custom-compilation-regexp-sets '("vivado" "irun" "scons" "verilator")) ; Used for custom recompile (edited by hand)
+(setq larumbe/custom-compilation-regexp-sets '("vivado" "irun" "verilator" "iverilog" "scons")) ; Used for custom recompile (edited by hand)
 (setq larumbe/custom-compilation-regexp-active nil)                                  ; Current active compilation regexp
 
 ;; Recompiling with regexp (active profile needs to be modified manually once set... this should be changed somehow in the future)
@@ -94,10 +94,12 @@
      (larumbe/vivado-error-regexp-set-emacs))
     ("irun"
      (larumbe/irun-error-regexp-set-emacs))
-    ("scons"
-     (larumbe/scons-error-regexp-set-emacs))
     ("verilator"
      (larumbe/verilator-error-regexp-set-emacs))
+    ("iverilog"
+     (larumbe/iverilog-error-regexp-set-emacs))
+    ("scons"
+     (larumbe/scons-error-regexp-set-emacs))
     )
   (end-of-buffer))
 
@@ -127,7 +129,7 @@
   (larumbe/custom-error-regexp-set-emacs vivado-error-regexp-emacs-alist-alist))
 
 
-;;;; Cadence Incisive (irun)
+;;;; IES
 ;; Fetched from verilog-mode (verilog-IES: Incisive Enterprise Simulator) and improved to fit Emacs
 (setq irun-error-regexp-emacs-alist-alist
       '(
@@ -139,6 +141,39 @@
   "Only takes Cadence IES regexps into account"
   (interactive)
   (larumbe/custom-error-regexp-set-emacs irun-error-regexp-emacs-alist-alist))
+
+
+
+;;;; Verilator
+;; Fetched from verilog-mode variable: `verilog-error-regexp-emacs-alist'
+(setq verilator-error-regexp-emacs-alist-alist
+      '((verilator-warning "%?\\(Error\\)\\(-[^:]+\\|\\):[\n ]*\\([^ \t:]+\\):\\([0-9]+\\):"    3 4 nil 2 nil (1 compilation-error-face) (2 compilation-line-face))
+        (verilator-error   "%?\\(Warning\\)\\(-[^:]+\\|\\):[\n ]*\\([^ \t:]+\\):\\([0-9]+\\):"  3 4 nil 1 nil (1 compilation-warning-face) (2 compilation-line-face)))
+      )
+
+(defun larumbe/verilator-error-regexp-set-emacs ()
+  "Takes Verilator regexps into account"
+  (interactive)
+  (larumbe/custom-error-regexp-set-emacs verilator-error-regexp-emacs-alist-alist))
+
+
+
+;;;; Iverilog
+(setq iverilog-error-regexp-emacs-alist-alist
+      '((iverilog-unsupported  "\\(?1:.*\\):\\(?2:[0-9]+\\):.*sorry:"            1 2 nil 1 nil (1 compilation-warning-face) (2 compilation-line-face))
+        (iverilog-warning      "\\(?1:.*\\):\\(?2:[0-9]+\\):.*warning:"          1 2 nil 1 nil (1 compilation-warning-face) (2 compilation-line-face))
+        (iverilog-warning2     "^\\(warning\\):"                                 nil nil nil 1 nil (1 compilation-warning-face))
+        (iverilog-error        "\\(?1:.*\\):\\(?2:[0-9]+\\):.*error:  "          1 2 nil 2 nil (1 compilation-error-face)   (2 compilation-line-face))
+        (vvp-warning           "^\\(?1:WARNING\\): \\(?2:.*\\):\\(?3:[0-9]+\\):" 2 3 nil 1 nil (1 compilation-warning-face) (2 compilation-warning-face) (3 compilation-line-face))
+        (vvp-error             "^\\(?1:ERROR\\): \\(?2:.*\\):\\(?3:[0-9]+\\):"   2 3 nil 2 nil (1 compilation-warning-face) (2 compilation-warning-face) (3 compilation-line-face))
+        (vvp-info              "^\\(?1:LXT2 info\\):"                            nil nil nil 0 nil (1 compilation-info-face))
+        ))
+
+(defun larumbe/iverilog-error-regexp-set-emacs ()
+  "Takes Iverilog regexps into account"
+  (interactive)
+  (larumbe/custom-error-regexp-set-emacs iverilog-error-regexp-emacs-alist-alist))
+
 
 
 ;;;; SCons
@@ -170,19 +205,6 @@
   "Takes Vivado, Irun, SCons and python regexps into account"
   (interactive)
   (larumbe/custom-error-regexp-set-emacs scons-error-regexp-emacs-alist-alist))
-
-
-;;;; Verilator
-;; Fetched from: /home/martigon/.elisp/verilog-mode.el:902
-(setq verilator-error-regexp-emacs-alist-alist
-      '((verilator-warning "%?\\(Error\\)\\(-[^:]+\\|\\):[\n ]*\\([^ \t:]+\\):\\([0-9]+\\):"    3 4 nil 2 nil (1 compilation-error-face) (2 compilation-line-face))
-        (verilator-error   "%?\\(Warning\\)\\(-[^:]+\\|\\):[\n ]*\\([^ \t:]+\\):\\([0-9]+\\):"  3 4 nil 1 nil (1 compilation-warning-face) (2 compilation-line-face)))
-      )
-
-(defun larumbe/verilator-error-regexp-set-emacs ()
-  "Takes Verilator regexps into account"
-  (interactive)
-  (larumbe/custom-error-regexp-set-emacs verilator-error-regexp-emacs-alist-alist))
 
 
 

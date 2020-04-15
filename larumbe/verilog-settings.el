@@ -125,90 +125,43 @@ Seems that all the libraries/incdirs are computed internally at verilog-mode"
   (verilog-preprocess))
 
 
-;; TODO: Adapt it to work with makefile structure
-;;;; Icarus Verilog + GtkWave
-(setq iverilog-compile-version "-g2012") ; Other options: -g2005-sv
-(setq iverilog-vpi-file "my_vpi.c")      ; VPI Icarus verilog C routines
-(setq iverilog-vpi-flags (concat "-m" (file-name-sans-extension (file-name-nondirectory (concat "./" iverilog-vpi-file)))))
-
-
-(defun iverilog-compile-command ()
-  "Custom function to get current Icarus Verilog compile command depending on file-title"
-  (concat "iverilog " iverilog-compile-version " -gassertions " iverilog-vpi-flags " -o iver/" (file-title) ".compiled -c " (file-title) "_files.txt" " -Wall "))
-
-(defun iverilog-vvp-command ()
-  "Custom function to get current Icarus Verilog simulation command depending on file-title"
-  (concat "vvp -M. iver/" (file-title) ".compiled -lxt2")) ;add -lxt2 for LXT
-
-(defun iverilog-compile-vpi ()
-  "Custom function to compile VPI routines at 'iverilog-vpi-file' variable. It should be at 'sim' folder, as well as testbench source code."
+;;;; Iverilog/verilator Makefile development
+(defun larumbe/verilog-makefile-create ()
+  "Creates Iverilog/verilator Yasnippet based Makefile only if in a projectile project
+and the Makefile does not already exist."
   (interactive)
-  (compile (concat "iverilog-vpi " iverilog-vpi-file)))
-
-(defun iverilog-compile ()
-  "Pass current verilog file (should be a testbench) to iverilog for compilation.
-   NOTE: Files included in testbench must be included in a <tb_top_module>_files.txt
-   NOTE2: Assumes this command is called at sim directory, with souces at ../src/<module>.v
-   NOTE3: Temp and sim files for iverilog are created at sim/iver/ directory"
-  (interactive)
-  (if (string-match "[s]?v[h]?$" (file-name-extension (buffer-file-name))) ; File must be Verilog/SystemVerilog
-      (if (string-match-p (regexp-quote "tb") (file-title))
+  (let (file)
+    (if (projectile-project-p)
+        (if (file-exists-p (setq file (concat (projectile-project-root) "Makefile")))
+            (error "File %s already exists!" file)
           (progn
-            (shell-command "mkdir -p iver")
-            (compile (iverilog-compile-command)))
-        (message "File must be a TestBench! <file>_tb.v / tb_<file>.sv"))
-    (message "File isn't .v/.sv!")))
+            (find-file file)
+            (larumbe/hydra-yasnippet "verilog")))
+      (error "Not in a projectile project!"))))
 
-(defun iverilog-run-vvp()
-  "Run Icarus Verilog simulator engine. Generate dumpfile <top_tb_module>.lxt2 from .compiled extension iverilog previous step file."
+
+(defun larumbe/verilog-makefile-compile-project ()
+  "Prompts to available previous Makefile targets and compiles then with various verilog regexps."
   (interactive)
-  (if (string-match "[s]?v[h]?$" (file-name-extension (buffer-file-name))) ; File must be Verilog/SystemVerilog
-      (if (string-match-p (regexp-quote "_tb") (file-title))
-          (progn
-            (compile (iverilog-vvp-command)))
-        (message "File must be a TestBench! <file>_tb.v"))
-    (message "File isn't .v!")))
-
-(defun iverilog-update-simulation ()
-  "Update simulation for GTKwave refreshing"
-  (interactive)
-  (if (string-match "[s]?v[h]?$" (file-name-extension (buffer-file-name))) ; File must be Verilog/SystemVerilog
-      (if (string-match-p (regexp-quote "_tb") (file-title))
-          (save-window-excursion
-            (progn
-              (shell-command "mkdir -p iver")
-              (shell-command (iverilog-compile-command))
-              (shell-command (iverilog-vvp-command))
-              (shell-command (concat "mv " (file-title) ".lx2 iver/")) ; move to iver/ temp folder
-              (message "Simulation updated.")))
-        (message "File must be a TestBench! <file>_tb.v"))
-    (message "File isn't .v!")))
-
-(defun gtkwave-view-current()
-  "Open GTKWAVE on the LXT2 file corresponding to current buffer, with matching save file (if available)."
-  (interactive)
-  (if (string-equal (file-name-extension (buffer-file-name)) "v")
-      (if (string-match-p (regexp-quote "_tb") (file-title))
-          (save-window-excursion
-            (progn
-              (shell-command "mkdir -p iver")
-              (shell-command (iverilog-compile-command))
-              (shell-command (iverilog-vvp-command))
-              (shell-command (concat "mv " (file-title) ".lx2 iver/")) ; move to iver/ temp folder
-              (start-process "GtkWave" "*GtkWave*" "gtkwave" (concat "iver/" (file-title) ".lx2") (concat "iver/" (file-title) ".sav"))))
-        (message "File must be a TestBench! <file>_tb.v"))
-    (message "File isn't .v!")))
-
-(defun iverilog-clean-files()
-  "Clean files under the iver/ directory with extensions .compiled and .lxt"
-  (interactive)
-  (if (string-equal (file-name-extension (buffer-file-name)) "v")
-      (if (string-match-p (regexp-quote "_tb") (file-title))
-          (shell-command "rm -v iver/*.compiled iver/*.lx2") ; Let .sav files live
-        (message "File must be a TestBench! <file>_tb.v"))
-    (message "File isn't .v! Open the .v file whose subfiles you wish to clean!")))
-
-
+  (let ((makefile (concat (projectile-project-root) "Makefile"))
+        target
+        cmd)
+    (unless (file-exists-p makefile)
+      (error "%s does not exist!" makefile))
+    (with-temp-buffer
+      (insert-file-contents makefile)
+      (makefile-pickup-targets)
+      (setq target (completing-read "Target: " makefile-target-table)))
+    ;; INFO: Tried with `projectile-compile-project' but without sucess.
+    ;; Plus, it was necessary to change `compilation-read-command' which is unsafe.
+    (setq cmd (concat "make " target))
+    (cd (projectile-project-root))
+    (compile cmd)
+    (larumbe/custom-error-regexp-set-emacs
+     (append iverilog-error-regexp-emacs-alist-alist
+             verilator-error-regexp-emacs-alist-alist
+             vivado-error-regexp-emacs-alist-alist))
+    (show-custom-compilation-buffers)))
 
 
 ;;; Own Verilog templates
@@ -1261,8 +1214,7 @@ in instance comments that might cause issues detecting the regexp.
 
 If inside a package, focuses on classes/methods highlighting with a custom tree build function.
 
-If TEST is passed as an universal argument, then build Imenu with method 2 just for testing purposes
-(in case it could be useful in the future...)
+If TEST is passed as an universal argument, then build Imenu with method 2 just for testing purposes (in case it could be useful in the future...)
 "
   (interactive "P")
   (let ((end-keywords '("endmodule" "endpackage" "endprogram"))
@@ -1894,4 +1846,3 @@ Prompt for a file of with the following format:
     (write-file file-path) ; Ensure ggtags working by writing hier file into projectile root
     (vhier-outline-mode)
     (setq buffer-read-only t)))
-
