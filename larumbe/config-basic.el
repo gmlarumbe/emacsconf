@@ -45,8 +45,7 @@
 (setq untabify-delete-trailing-whitespace t) ; Default initial value
 ;; Untabify on save-file (conditionally)
 (when untabify-delete-trailing-whitespace
-  (add-hook 'write-file-functions (lambda() (untabify (point-min) (point-max)) nil))
-  (add-hook 'write-file-functions (lambda() (delete-trailing-whitespace (point-min) (point-max)) nil)))
+  (add-hook 'write-file-functions 'larumbe/untabify-trailing-whitespace))
 
 
 ;;; Built-in modes config

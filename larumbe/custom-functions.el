@@ -686,9 +686,18 @@ It is assumed to be used after a `M-x' then e.g. `org-', then `C-g' and finally 
   (other-window 1))
 
 
+(defun larumbe/untabify-trailing-whitespace ()
+  "Untabify and delete trailing whitespace depending on MAJOR-MODE of current buffer.
+Meant to be used as a wrapper for write-file-functions hook."
+  (interactive)
+  (unless (string-match "makefile-" (format "%s" major-mode)) ; Do not untabify `makefile-mode'
+    (untabify (point-min) (point-max))
+    (delete-trailing-whitespace (point-min) (point-max))))
+
+
 
 (defun larumbe/untabify-trailing-whitespace-toggle ()
-  "Toggle untabify and trailing whitespace for some customized programming modes."
+  "GLOBALLY Toggle untabify and delete trailing whitespace for some customized programming modes."
   (interactive)
   (if untabify-delete-trailing-whitespace
       (progn ;; Disable
