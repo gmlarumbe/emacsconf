@@ -243,14 +243,20 @@
 
 (use-package auto-complete
   :diminish
-  :bind (:map ac-complete-mode-map
+  :bind (:map ac-completing-map
               ("C-n" . ac-next)
               ("C-p" . ac-previous)
               ("C-j" . ac-complete)
               ("RET" . ac-complete))
+
   :config
   (setq ac-delay 1.3)
   (setq ac-etags-requires 1)
+  ;; INFO: Auto-complete has 3 mode-maps
+  ;; https://emacs.stackexchange.com/questions/3958/remove-tab-trigger-from-auto-complete
+  (define-key ac-mode-map       (kbd "TAB") nil)
+  (define-key ac-completing-map (kbd "TAB") nil)
+  (define-key ac-completing-map [tab] nil)
 
   ;; Provides `ac-source-gtags'
   (use-package auto-complete-gtags
