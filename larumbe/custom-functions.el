@@ -395,7 +395,7 @@ statements to avoid indentation errors when testing"
 (defun larumbe/gtags-python-files-pwd-recursive ()
   "Generate gtags.files for current directory. Purpose is to be used with dired mode for small projects, to save the regexp"
   (interactive)
-  (larumbe/directory-files-recursively-to-file (list default-directory) "gtags.files" ".py$")
+  (larumbe/directory-files-recursively-to-file default-directory "gtags.files" ".py$")
   )
 
 (defun larumbe/ggtags-create-python-tags-recursive ()
@@ -621,14 +621,29 @@ If Universal Argument is provided, then do not preview file"
   (revert-buffer nil t t))
 
 
-(defun larumbe/directory-files-recursively-to-file (dirs file re)
-  "Retrieve every file matching `Regexp' of a specified `Dir' to output `file'"
-  (interactive)
-  (with-temp-buffer
-    (mapc
-     (lambda (dir) (insert (mapconcat 'identity (directory-files-recursively dir re) "\n")))
-     dirs)
-    (write-file file)))
+(defun larumbe/directory-files-recursively-to-file (base-dir file re &optional append exclude-re)
+  "Retrieve every file matching regexp RE of a specified BASE-DIR to output FILE.
+If optional APPEND is set to non-nil, append result to existing FILE.
+Otherwise, overwrite old existing FILE with new results.
+If optional EXCLUDE-RE is set, delete paths with that regexp from generated file."
+  (let (buf)
+    (save-window-excursion
+      (with-temp-buffer
+        (mapc
+         (lambda (dir) (insert (mapconcat 'identity (directory-files-recursively dir re) "\n")))
+         (list base-dir))
+        ;; Append to existing file
+        (when (and (file-exists-p (concat base-dir file))
+                   append)
+          (setq buf (current-buffer))
+          (find-file file)
+          (end-of-buffer)
+          (newline)
+          (insert-buffer-substring buf))
+        ;; Filter according to optional parameter
+        (when exclude-re
+          (flush-lines exclude-re (point-min) (point-max)))
+        (write-file file)))))
 
 
 (defun larumbe/current-buffer-to-file (out-file)

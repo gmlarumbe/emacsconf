@@ -4,13 +4,16 @@
 
 ;;; Variables
 (setq vhdl-clock-edge-condition (quote function))
-(setq vhdl-company-name "HPInc")
+(setq vhdl-company-name "")
 (setq vhdl-conditions-in-parenthesis t)
 (setq vhdl-default-library "xil_defaultlib")
 (setq vhdl-end-comment-column 120)
-(setq vhdl-platform-spec "Debian 9.1 VM")
+(setq vhdl-platform-spec "Debian 9.1")
 (setq vhdl-reset-kind (quote sync))
 (setq vhdl-speedbar-auto-open nil)
+(setq vhdl-standard '(08 nil))
+(setq vhdl-project "AXI Interface Converter")
+
 
 ;;; Hooks
 (defun my-vhdl-hook ()
@@ -52,8 +55,7 @@
 ;;; Gtags
 (defun larumbe/gtags-vhdl-files-pwd-recursive ()
   "Generate gtags.files for current directory. Purpose is to be used with dired mode for small projects, to save the regexp"
-  (interactive)
-  (larumbe/directory-files-recursively-to-file (list default-directory) "gtags.files" ".vhd[l]?$")
+  (larumbe/directory-files-recursively-to-file default-directory "gtags.files" ".vhd[l]?$")
   )
 
 
