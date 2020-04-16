@@ -11,7 +11,7 @@
 (add-hook 'prog-mode-hook 'outshine-mode)
 (add-hook 'prog-mode-hook 'yas-minor-mode)
 (add-hook 'prog-mode-hook 'fic-mode)
-(add-hook 'prog-mode-hook 'ggtags-mode)
+(add-hook 'prog-mode-hook 'larumbe/ggtags-mode-hook)
 (unless (string-equal (system-name) "vl159.plano.hpicorp.net")
   (add-hook 'prog-mode-hook 'auto-complete-mode)
   (add-hook 'prog-mode-hook 'projectile-mode))

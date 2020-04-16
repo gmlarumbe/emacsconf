@@ -36,6 +36,16 @@
   )
 
 
+;;; Custom ggtags-hook
+(defun larumbe/ggtags-mode-hook ()
+  "Enable `ggtags-mode' depending on programming MAJOR-MODE of current buffer.
+Initially written to be added to every programming mode but avoiding being loaded to emacs-lisp-mode"
+  (interactive)
+  (unless (string-match "emacs-lisp-mode" (format "%s" major-mode)) ; Do not use ggtags @ `emacs-lisp-mode'
+    (ggtags-mode)))
+
+
+
 ;;; Vivado
 ;; Projects list for the `larumbe/vivado-projects' and `larumbe/quartus-projects' variables:
 ;; Name of the project (+plus)
