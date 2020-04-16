@@ -2821,8 +2821,23 @@ find the errors."
   (eval-when-compile (verilog-regexp-words '("macromodule" "connectmodule" "module" "class" "program" "interface" "package" "primitive" "config"))))
 (defconst verilog-end-defun-re
   (eval-when-compile (verilog-regexp-words '("endconnectmodule" "endmodule" "endclass" "endprogram" "endinterface" "endpackage" "endprimitive" "endconfig"))))
+;; DANGER: Modify zero-indent words to exclude 'class' since they will normally be declared within packages.
+;; Commented
+;; (defconst verilog-zero-indent-re
+;;   (concat verilog-defun-re "\\|" verilog-end-defun-re))
+;; End of commented
+
+;; Own code (same as before but excluding 'class' and 'endclass')
+(defconst larumbe/verilog-zero-indent-defun-re
+  (eval-when-compile (verilog-regexp-words '("macromodule" "connectmodule" "module" "program" "interface" "package" "primitive" "config"))))
+
+(defconst larumbe/verilog-zero-indent-end-defun-re
+  (eval-when-compile (verilog-regexp-words '("endconnectmodule" "endmodule" "endprogram" "endinterface" "endpackage" "endprimitive" "endconfig"))))
+
 (defconst verilog-zero-indent-re
-  (concat verilog-defun-re "\\|" verilog-end-defun-re))
+  (concat larumbe/verilog-zero-indent-defun-re "\\|" larumbe/verilog-zero-indent-end-defun-re))
+;; End of DANGER
+
 (defconst verilog-inst-comment-re
   (eval-when-compile (verilog-regexp-words '("Outputs" "Inouts" "Inputs" "Interfaces" "Interfaced"))))
 

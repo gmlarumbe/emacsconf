@@ -14,6 +14,7 @@
               ("M-i"     . larumbe/verilog-imenu)
               ("M-f"     . verilog-forward-word)
               ("M-b"     . verilog-backward-word)
+              ("TAB"     . larumbe/electric-verilog-tab)
               ([delete]  . delete-forward-char)
               ("C-M-n"   . modi/verilog-jump-to-header-dwim-fwd)
               ("C-M-p"   . modi/verilog-jump-to-header-dwim)
@@ -76,7 +77,7 @@
 
   ;; Own advice to avoid indentation of outshine (overrides modi setup of `modi/outshine-allow-space-before-heading')
   (advice-add 'verilog-indent-line-relative :before-until #'larumbe/verilog-avoid-indenting-outshine-comments)
-  ;; Modi multi-line defines (and allegedly outshine) indentation advice
+  ;; Modi multi-line defines (and allegedly outshine) indentation advice: DANGER: Still issues with following lines after multiline defines!
   (advice-add 'verilog-indent-line-relative :before-until #'modi/verilog-selective-indent) ;; Advise the indentation behavior of `indent-region' done using `C-M-\'
   (advice-add 'verilog-indent-line :before-until #'modi/verilog-selective-indent)          ;; Advise the indentation done by hitting `TAB' (modi multi-line defines)
   )
@@ -93,15 +94,13 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
   (setq larumbe/verilog-open-dirs (larumbe/verilog-list-directories-of-open-buffers))
   (setq verilog-library-directories larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
   (setq flycheck-verilator-include-path larumbe/verilog-open-dirs)
-  (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching
+  (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
+  (key-chord-mode 1)
   (larumbe/verilog-find-semicolon-in-instance-comments)
   )
 
 ;; Verilog Hooks
 (add-hook 'verilog-mode-hook 'my-verilog-hook)
-(add-hook 'verilog-mode-hook '(lambda () (key-chord-mode 1))) ; Find where modules are instantiated in a project with ag
-(add-hook 'verilog-mode-hook 'verilog-set-compile-command) ; Makes f5 be the verilator linter command
-(add-hook 'verilog-mode-hook '(lambda () (setq compilation-error-regexp-alist (delete 'gnu compilation-error-regexp-alist))))
 (add-hook 'verilog-mode-hook #'modi/verilog-mode-customization) ; Modi: block comments to names
 
 
@@ -585,7 +584,7 @@ See also `verilog-header' for an alternative format."
 
 (defun larumbe/verilog-insert-instance-from-file (file)
   "DANGER: Assumes filename and module name are the same.
-TODO: In the future, a list that returns modules in a file could be retrieved and used as an input"
+INFO: In the future, a list that returns modules in a file could be retrieved and used as an input"
   (interactive "FSelect module from file:")
   (let* ((module-name (file-name-sans-extension (file-name-nondirectory file)))
          (instance-name (read-string "Instance-name: " (concat "I_" (upcase module-name))))
@@ -1056,7 +1055,7 @@ DANGER: If width introduced is 0, it will be assumed as a human mistake and widt
       (larumbe/verilog-task-add-port "input" in-read))
     (while (not(string-equal (setq out-read (read-string "Output signal: ")) ""))
       (larumbe/verilog-task-add-port "output" out-read))
-    ;; TODO: "inout" or "ref" could be added in the future via universal-arg
+    ;; INFO: "inout" or "ref" could be added in the future via universal-arg
     (insert ");") (electric-verilog-terminate-line)
     (save-excursion
       (electric-verilog-terminate-line)
@@ -1184,7 +1183,7 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ;;;;;;;;;
   ;; UVM ;;
   ;;;;;;;;;
-  ;; TODO:
+  ;; TODO: Check already existing templates
   ;; ("uc"  (larumbe/hydra-yasnippet "uvm-component"))
   ;; ("uo"  (larumbe/hydra-yasnippet "uvm-object"))
 
@@ -1460,22 +1459,40 @@ Adapted from `python-mode' imenu build-tree function."
 
 
 ;;; Custom Functions
-;; Make word navigation commands stop at underscores (withouth destroying verilog-mode syntax highlighting)
 ;; Fetched from: https://www.veripool.org/issues/724-Verilog-mode-How-to-make-word-navigation-commands-stop-at-underscores-
 (defun verilog-forward-word (&optional arg)
+  "Make verilog word navigation commands stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
   (interactive "p")
   (let ((table (make-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
     (with-syntax-table table
       (forward-word arg))))
 
-;; And analogously to previous function (created by Larumbe)
 (defun verilog-backward-word (&optional arg)
+  "Make verilog word navigation commands stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
   (interactive "p")
   (let ((table (make-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
     (with-syntax-table table
       (backward-word arg))))
+
+(defun larumbe/electric-verilog-tab ()
+  "Wrapper of the homonym verilog function to avoid indentation issues with compiler directives after setting custom hooks.."
+  (interactive)
+  (let ((table (make-syntax-table verilog-mode-syntax-table)))
+    (modify-syntax-entry ?` "w" table)
+    (with-syntax-table table
+      (electric-verilog-tab))))
+
+
+;; https://emacs.stackexchange.com/questions/8032/configure-indentation-logic-to-ignore-certain-lines/8033#8033
+(defun larumbe/verilog-avoid-indenting-outshine-comments (&rest args)
+  "Ignore outshine comments for indentation.
+Return t if the current line starts with '// *'."
+  (interactive)
+  (let ((match (looking-at "^[[:blank:]]*// \\*")))
+    (when match (delete-horizontal-space))
+    match))
 
 
 (defun larumbe/find-verilog-module-instance-fwd ()
@@ -1493,15 +1510,6 @@ Adapted from `python-mode' imenu build-tree function."
        (message "No more instances backwards")
     (message "%s" (match-string 1))))
 
-
-;; https://emacs.stackexchange.com/questions/8032/configure-indentation-logic-to-ignore-certain-lines/8033#8033
-(defun larumbe/verilog-avoid-indenting-outshine-comments (&rest args)
-  "Ignore outshine comments for indentation.
-Return t if the current line starts with '// *'."
-  (interactive)
-  (let ((match (looking-at "^[[:blank:]]*// \\*")))
-    (when match (delete-horizontal-space))
-    match))
 
 
 (defun larumbe/verilog-indent-current-module (&optional module)
@@ -1846,3 +1854,4 @@ Prompt for a file of with the following format:
     (write-file file-path) ; Ensure ggtags working by writing hier file into projectile root
     (vhier-outline-mode)
     (setq buffer-read-only t)))
+
