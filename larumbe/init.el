@@ -32,7 +32,6 @@
  '(outshine-level-6 ((t (:inherit outline-4))))
  '(outshine-level-7 ((t (:inherit outline-2))))
  '(outshine-level-8 ((t (:inherit outline-3))))
- '(verilog-font-lock-grouping-keywords-face ((t (:foreground "dark olive green" :weight bold))))
  '(which-func ((t (:foreground "green")))))
 
 

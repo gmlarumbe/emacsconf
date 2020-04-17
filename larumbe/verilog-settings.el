@@ -35,33 +35,39 @@
               )
   :demand ; INFO: Avoid deferring to properly load modi settings
   :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
+  (load "~/.elisp/larumbe/verilog-font-lock.el") ; Custom fontify schema for verilog-mode
+
   (setq larumbe/verilog-indent-level 4)
 
   (setq verilog-indent-level             larumbe/verilog-indent-level)
   (setq verilog-indent-level-module      larumbe/verilog-indent-level)
   (setq verilog-indent-level-declaration larumbe/verilog-indent-level)
   (setq verilog-indent-level-behavioral  larumbe/verilog-indent-level)
-  (setq verilog-case-indent              larumbe/verilog-indent-level)
   (setq verilog-indent-level-directive   larumbe/verilog-indent-level)
+  (setq verilog-case-indent              larumbe/verilog-indent-level)
   (setq verilog-cexp-indent              larumbe/verilog-indent-level)
 
   (setq verilog-auto-delete-trailing-whitespace t) ; ‘delete-trailing-whitespace’ in ‘verilog-auto’.
-  (setq verilog-highlight-grouping-keywords     t) ; begin/end
   (setq verilog-auto-indent-on-newline          t) ; Self-explaining
-  (setq verilog-tab-always-indent               t) ; Indent even though we are not at the beginning of line
-  (setq verilog-indent-begin-after-if           t)
+  (setq verilog-auto-lineup                   nil) ; other options are 'declarations or 'all
+  (setq verilog-auto-newline                  nil)
   (setq verilog-auto-endcomments                t)
+
+  (setq verilog-indent-lists                    t) ; If set to nil, indentation will not properly detect we are inside a parenthesized expression (instance or ports/parameters)
+  (setq verilog-indent-begin-after-if           t)
+  (setq verilog-tab-always-indent               t) ; Indent even though we are not at the beginning of line
+  (setq verilog-tab-to-comment                nil)
   (setq verilog-date-scientific-format          t)
-  (setq verilog-case-fold                       nil) ; Regexps should NOT ignore case
+  (setq verilog-case-fold                     nil) ; Regexps should NOT ignore case
+  (setq verilog-align-ifelse                  nil)
+  (setq verilog-minimum-comment-distance       10)
 
-  (setq verilog-indent-lists      t)   ; If set to nil, indentation will not properly detect we are inside a parenthesized expression (instance or ports/parameters)
-  (setq verilog-auto-lineup       nil) ; other options are 'declarations or 'all
-  (setq verilog-auto-newline      nil)
-  (setq verilog-align-ifelse      nil)
-  (setq verilog-tab-to-comment    nil)
-  (setq verilog-highlight-modules nil) ; Experimental for highlight-buffer. TODO: Test how this works (plus `verilog-highlight-includes')
-
-  (setq verilog-minimum-comment-distance 10)
+  (setq larumbe/verilog-use-own-custom-fontify  t)
+  ;; In case no custom schema is used, take following settings into account:
+  (unless larumbe/verilog-use-own-custom-fontify
+    (setq verilog-highlight-grouping-keywords     t)  ; begin/end DANGER: Overriden in verilog-font-lock.el (has no effect nowadays...)
+    (setq verilog-highlight-translate-off         t)  ; Background highlight expressions such as // synopsys translate_off ... // synopsys translate_on
+    (setq verilog-highlight-modules             nil)) ; Analogous to `verilog-highlight-includes', would highlight module while hovering mouse. However it's experimental/incomplete as the regexp is not consistent.
 
 
   :config
@@ -1280,16 +1286,18 @@ If TEST is passed as an universal argument, then build Imenu with method 2 just 
               "\\)*"
               "\\(?2:" larumbe/verilog-identifier-re "\\)" ;instance name (subgroup 2)
               ;; Added by Larumbe
-              "\\(\\[.*\\]\\)*"         ; SystemVerilog sometimes instantiates array of modules with brackets after instance name
+              "\\s-*\\(\\[.*\\]\\)*"         ; SystemVerilog sometimes instantiates array of modules with brackets after instance name
               larumbe/newline-or-space-optional
               "(" ; And finally .. the opening parenthesis `(' before port list
-              ;; Added by Larumbe (detect dot (port connection) after instance name parenthesis)
-              larumbe/newline-or-space-optional
-              ;; "[^;]+?"  ;followed by 'almost anything' before instance name -> This one requires content between brackets (instances only)
-              "[^;]*?"  ;followed by 'almost anything' before instance name -> This one does not require contents necessarily between brackets (instances+interfaces)
-              ")"
-              larumbe/newline-or-space-optional
-              ";"
+              ;; DANGER:
+              ;; ;; Added by Larumbe (detect dot (port connection) after instance name parenthesis)
+              ;; larumbe/newline-or-space-optional
+              ;; ;; "[^;]+?"  ;followed by 'almost anything' before instance name -> This one requires content between brackets (instances only)
+              ;; "[^;]*?"  ;followed by 'almost anything' before instance name -> This one does not require contents necessarily between brackets (instances+interfaces)
+              ;; ")"
+              ;; larumbe/newline-or-space-optional
+              ;; ";"
+              ;; End of DANGER
               ))
 
 
@@ -1369,11 +1377,12 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
 ;; Code still here for the coming future... One never knows...
 (defun larumbe/verilog-imenu-prev-index-position-function ()
   "Function to search backwards in the buffer for Imenu alist generation."
-  (verilog-beg-of-defun))
+  (larumbe/find-verilog-module-instance-bwd)
+  )
 
 (defun larumbe/verilog-imenu-extract-index-name ()
   "Function to extract the tag."
-  (verilog-forward-word)
+  ;; (verilog-forward-word)
   (verilog-forward-syntactic-ws)
   (thing-at-point 'symbol t))
 
@@ -1495,21 +1504,44 @@ Return t if the current line starts with '// *'."
     match))
 
 
-(defun larumbe/find-verilog-module-instance-fwd ()
-  "with-comments-hidden will make comments invisible, but that does not work with `search-forward'..."
+(defun larumbe/find-verilog-module-instance-fwd (&optional limit)
+  "Searches forward for a Verilog module/instance regexp.
+Since this regexp might collide with other Verilog constructs, it ignores the ones
+that contain Verilog keywords and continues until found.
+
+LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
   (interactive)
-  (if (not (re-search-forward larumbe/verilog-module-instance-re nil t))
-      (message "No more instances forward")
-    (message "%s" (match-string 1))))
+  (let ((found nil)
+        (pos))
+    (save-excursion
+      (while (and (not found)
+                  (re-search-forward larumbe/verilog-module-instance-re limit t))
+        (unless (or (string-match modi/verilog-keywords-re (match-string-no-properties 1))
+                    (string-match modi/verilog-keywords-re (match-string-no-properties 2)))
+          (setq found t)
+          (setq pos (point)))))
+    (when found
+      (goto-char pos))))
 
 
-(defun larumbe/find-verilog-module-instance-bwd ()
-  "with-comments-hidden will make comments invisible, but that does not work with `search-forward'..."
+(defun larumbe/find-verilog-module-instance-bwd (&optional limit)
+  "Searches backwards for a Verilog module/instance regexp.
+Since this regexp might collide with other Verilog constructs, it ignores the ones
+that contain Verilog keywords and continues until found.
+
+LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
   (interactive)
-  (if (not (re-search-backward larumbe/verilog-module-instance-re nil t))
-       (message "No more instances backwards")
-    (message "%s" (match-string 1))))
-
+  (let ((found nil)
+        (pos))
+    (save-excursion
+      (while (and (not found)
+                  (re-search-backward larumbe/verilog-module-instance-re limit t))
+        (unless (or (string-match modi/verilog-keywords-re (match-string-no-properties 1))
+                    (string-match modi/verilog-keywords-re (match-string-no-properties 2)))
+          (setq found t)
+          (setq pos (point)))))
+    (when found
+      (goto-char pos))))
 
 
 (defun larumbe/verilog-indent-current-module (&optional module)
@@ -1524,9 +1556,13 @@ therefore not detecting the proper module but the previous one."
       (setq current-module modi/verilog-which-func-xtra)) ; Find module header (modi/verilog-which-func-xtra)
     (save-excursion
       (re-search-backward (concat "\\_<" current-module "\\_>"))
+      ;; Mark region for the whole module
       (beginning-of-line) ; INFO: Needed to detect current instantiation and avoid the "No more instances forward" error message
       (set-mark (point))
       (larumbe/find-verilog-module-instance-fwd)
+      (backward-char)                            ; Point at instance opening parenthesis
+      (electric-verilog-forward-sexp)            ; Point at instance closing parenthesis
+      (end-of-line)
       (electric-verilog-tab))))
 
 
