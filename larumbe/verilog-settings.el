@@ -1519,7 +1519,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
         (unless (or (string-match modi/verilog-keywords-re (match-string-no-properties 1))
                     (string-match modi/verilog-keywords-re (match-string-no-properties 2)))
           (setq found t)
-          (setq pos (point)))))
+          (setq pos (match-beginning 1)))))
     (when found
       (goto-char pos))))
 
@@ -1539,7 +1539,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
         (unless (or (string-match modi/verilog-keywords-re (match-string-no-properties 1))
                     (string-match modi/verilog-keywords-re (match-string-no-properties 2)))
           (setq found t)
-          (setq pos (point)))))
+          (setq pos (match-beginning 1)))))
     (when found
       (goto-char pos))))
 
@@ -1557,9 +1557,9 @@ therefore not detecting the proper module but the previous one."
     (save-excursion
       (re-search-backward (concat "\\_<" current-module "\\_>"))
       ;; Mark region for the whole module
-      (beginning-of-line) ; INFO: Needed to detect current instantiation and avoid the "No more instances forward" error message
+      (beginning-of-line)
       (set-mark (point))
-      (larumbe/find-verilog-module-instance-fwd)
+      (re-search-forward larumbe/verilog-module-instance-re nil t)
       (backward-char)                            ; Point at instance opening parenthesis
       (electric-verilog-forward-sexp)            ; Point at instance closing parenthesis
       (end-of-line)
