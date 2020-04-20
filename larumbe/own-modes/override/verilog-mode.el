@@ -4676,9 +4676,12 @@ Uses `verilog-scan' cache."
                 (= (preceding-char) ?\;)
                 (progn
                   (verilog-backward-token)
-                  (looking-at verilog-ends-re)
-                  (looking-at "begin")  ; First instance within generate
-                  ))
+                  ;; INFO: Difference with respect to `verilog-beg-of-statement-1'
+                  (or
+                   (looking-at verilog-ends-re)
+                   (looking-at "begin")  ; First instance within generate
+                   ;; End of INFO
+                   )))
             (progn
               (goto-char pt)
               (throw 'done t)))))
