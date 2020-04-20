@@ -56,21 +56,21 @@
 
 
 ;;;; Faces
-(defvar larumbe/verilog-font-lock-punctuation-face 'larumbe/verilog-font-lock-punctuation-face " ")
+(defvar larumbe/verilog-font-lock-punctuation-face 'larumbe/verilog-font-lock-punctuation-face)
 (defface larumbe/verilog-font-lock-punctuation-face
   '((t (:foreground "burlywood")))
   "Face for punctuation symbols: !,;:?'=<>* "
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-punctuation-bold-face 'larumbe/verilog-font-lock-punctuation-bold-face " ")
+(defvar larumbe/verilog-font-lock-punctuation-bold-face 'larumbe/verilog-font-lock-punctuation-bold-face)
 (defface larumbe/verilog-font-lock-punctuation-bold-face
   '((t (:inherit larumbe/verilog-font-lock-punctuation-face :weight extra-bold)))
   "Face for bold punctuation symbols, such as &^~+-/|. "
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-port-connection-face 'larumbe/verilog-font-port-connection-face " ")
+(defvar larumbe/verilog-font-port-connection-face 'larumbe/verilog-font-port-connection-face)
 (defface larumbe/verilog-font-port-connection-face
   '((t (:foreground "bisque2")))
   "Face for instances port connections
@@ -82,7 +82,7 @@
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-dotted-interface-struct-regex 'larumbe/verilog-font-dotted-interface-struct-regex " ")
+(defvar larumbe/verilog-font-dotted-interface-struct-regex 'larumbe/verilog-font-dotted-interface-struct-regex)
 (defface larumbe/verilog-font-dotted-interface-struct-regex
   '((t (:foreground "gray70")))
   "Face for interfaces prefix (also applies to objects methods calling)
@@ -92,35 +92,35 @@ obj.method();
 "
   :group 'font-lock-highlighting-faces)
 
-(defvar larumbe/verilog-font-lock-braces-content-face 'larumbe/verilog-font-lock-braces-content-face " ")
+(defvar larumbe/verilog-font-lock-braces-content-face 'larumbe/verilog-font-lock-braces-content-face)
 (defface larumbe/verilog-font-lock-braces-content-face
   '((t (:foreground "yellow green")))
   "Face for content between braces: bit vector width and indexing "
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-braces-face 'larumbe/verilog-font-lock-braces-face " ")
+(defvar larumbe/verilog-font-lock-braces-face 'larumbe/verilog-font-lock-braces-face)
 (defface larumbe/verilog-font-lock-braces-face
   '((t (:foreground "goldenrod")))
   "Face for braces []"
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-brackets-face 'larumbe/verilog-font-lock-brackets-face " ")
+(defvar larumbe/verilog-font-lock-brackets-face 'larumbe/verilog-font-lock-brackets-face)
 (defface larumbe/verilog-font-lock-brackets-face
   '((t (:foreground "dark goldenrod")))
   "Face for brackets ()"
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-curly-brackets-face 'larumbe/verilog-font-lock-curly-brackets-face " ")
+(defvar larumbe/verilog-font-lock-curly-brackets-face 'larumbe/verilog-font-lock-curly-brackets-face)
 (defface larumbe/verilog-font-lock-curly-brackets-face
   '((t (:foreground "DarkGoldenrod2")))
   "Face for curly brackets {}"
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-width-num-face 'larumbe/verilog-font-lock-width-num-face " ")
+(defvar larumbe/verilog-font-lock-width-num-face 'larumbe/verilog-font-lock-width-num-face)
 (defface larumbe/verilog-font-lock-width-num-face
   '((t (:foreground "chartreuse2")))
   "Face for the bit width number expressions:
@@ -131,7 +131,7 @@ obj.method();
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-width-type-face 'larumbe/verilog-font-lock-width-type-face " ")
+(defvar larumbe/verilog-font-lock-width-type-face 'larumbe/verilog-font-lock-width-type-face)
 (defface larumbe/verilog-font-lock-width-type-face
   '((t (:foreground "sea green" :weight bold)))
   "Face for the bit width type expressions:
@@ -142,63 +142,63 @@ obj.method();
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-module-face 'larumbe/verilog-font-lock-module-face " ")
+(defvar larumbe/verilog-font-lock-module-face 'larumbe/verilog-font-lock-module-face)
 (defface larumbe/verilog-font-lock-module-face
   '((t (:foreground "green1")))
   "Face for module names."
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-instance-face 'larumbe/verilog-font-lock-instance-face " ")
+(defvar larumbe/verilog-font-lock-instance-face 'larumbe/verilog-font-lock-instance-face)
 (defface larumbe/verilog-font-lock-instance-face
   '((t (:foreground "medium spring green")))
   "Face for instance names."
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-time-event-regex-face 'larumbe/verilog-font-lock-time-event-regex-face " ")
+(defvar larumbe/verilog-font-lock-time-event-regex-face 'larumbe/verilog-font-lock-time-event-regex-face)
 (defface larumbe/verilog-font-lock-time-event-regex-face
   '((t (:foreground "deep sky blue" :weight bold)))
   "Face for time-events: @ and #"
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-time-unit-regex-face 'larumbe/verilog-font-lock-time-unit-regex-face " ")
+(defvar larumbe/verilog-font-lock-time-unit-regex-face 'larumbe/verilog-font-lock-time-unit-regex-face)
 (defface larumbe/verilog-font-lock-time-unit-regex-face
   '((t (:foreground "light steel blue")))
   "Face for time-units: ms, us, ns, ps, fs (used by delays and timescale/timeprecision)"
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-preprocessor-face 'larumbe/verilog-font-lock-preprocessor-face " ")
+(defvar larumbe/verilog-font-lock-preprocessor-face 'larumbe/verilog-font-lock-preprocessor-face)
 (defface larumbe/verilog-font-lock-preprocessor-face
   '((t (:foreground "pale goldenrod")))
   "Face for preprocessor compiler directives (`include, `define...)"
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-variable-type-face 'larumbe/verilog-font-lock-variable-type-face " ")
+(defvar larumbe/verilog-font-lock-variable-type-face 'larumbe/verilog-font-lock-variable-type-face)
 (defface larumbe/verilog-font-lock-variable-type-face
   '((t (:foreground "powder blue")))
   "Face for variables defined by `larumbe/verilog-variable-type-re-1', `larumbe/verilog-variable-type-re-2' and `larumbe/verilog-variable-type-re-3'"
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-xilinx-attributes-face 'larumbe/verilog-xilinx-attributes-face " ")
+(defvar larumbe/verilog-xilinx-attributes-face 'larumbe/verilog-xilinx-attributes-face)
 (defface larumbe/verilog-xilinx-attributes-face
   '((t (:foreground "orange1")))
   "Face for Xilinx Vivado RTL synthesis attributes."
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-grouping-keywords-face 'larumbe/verilog-font-lock-grouping-keywords-face " ")
+(defvar larumbe/verilog-font-lock-grouping-keywords-face 'larumbe/verilog-font-lock-grouping-keywords-face)
 (defface larumbe/verilog-font-lock-grouping-keywords-face
   '((t (:foreground "dark olive green")))
   "Face for overriding grouping keywords (begin/end)"
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-lock-translate-off-face 'larumbe/verilog-font-lock-translate-off-face " ")
+(defvar larumbe/verilog-font-lock-translate-off-face 'larumbe/verilog-font-lock-translate-off-face)
 (defface larumbe/verilog-font-lock-translate-off-face
   '((t (:background "gray20" :slant italic)))
   "Face for pragmas between comments: * translate_off / * translate_on"
@@ -445,13 +445,13 @@ obj.method();
                  ;; FUNCTION-Based search fontify
                  ;; *_translate off regions
                  '(verilog-match-translate-off
-                   (0 'verilog-font-lock-translate-off-face prepend)) ; 3rd parameter (prepend or t) overrides previous fontlocking
+                   (0 'larumbe/verilog-font-lock-translate-off-face prepend)) ; 3rd parameter (prepend or t) overrides previous fontlocking
 
                  ;; Modules/instances
                  '(larumbe/find-verilog-module-fontify
-                   (0 'larumbe/verilog-font-lock-module-face))
+                   (0 'larumbe/verilog-font-lock-module-face prepend))
                  '(larumbe/find-verilog-instance-fontify
-                   (0 'larumbe/verilog-font-lock-instance-face))
+                   (0 'larumbe/verilog-font-lock-instance-face prepend))
 
                  ;; Variables
                  '(larumbe/find-verilog-variable-type-fontify-1
