@@ -1274,6 +1274,20 @@ If TEST is passed as an universal argument, then build Imenu with method 2 just 
 
 
 ;;;; Imenu method 1: Generic tree Imenu (RTL)
+;; TODO: Rearrange all of this
+(defvar larumbe/verilog-token-re
+  (regexp-opt '("class"
+                "function"
+                "task"
+                "initial"
+                "property"
+                "sequence"
+                "always"
+                "always_ff"
+                "always_comb"
+                "generate"
+                ) 'symbols))
+
 ;; Same as modi's one
 (setq larumbe/verilog-identifier-re
       (concat "\\_<\\(?:"
@@ -1631,6 +1645,46 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
         (unless (or (string-match modi/verilog-keywords-re (match-string-no-properties 1))
                     (string-match modi/verilog-keywords-re (match-string-no-properties 2))
                     (equal (face-at-point) 'font-lock-comment-face)
+                    (equal (face-at-point) 'font-lock-string-face))
+          (setq found t)
+          (if (called-interactively-p)
+              (setq pos (match-beginning 1))
+            (setq pos (point))))))
+    (when found
+      (goto-char pos))))
+
+
+(defun larumbe/find-verilog-token-fwd ()
+  "Searches forward for a Verilog token regexp."
+  (interactive)
+  (let ((case-fold-search verilog-case-fold)
+        (found nil)
+        (pos))
+    (save-excursion
+      (forward-char)
+      (while (and (not found)
+                  (re-search-forward larumbe/verilog-token-re nil t))
+        (unless (or (equal (face-at-point) 'font-lock-comment-face)
+                    (equal (face-at-point) 'font-lock-string-face))
+          (setq found t)
+          (if (called-interactively-p)
+              (setq pos (match-beginning 1))
+            (setq pos (point))))))
+    (when found
+      (goto-char pos))))
+
+
+(defun larumbe/find-verilog-token-bwd ()
+  "Searches backwards for a Verilog token regexp."
+  (interactive)
+  (let ((case-fold-search verilog-case-fold)
+        (found nil)
+        (pos))
+    (save-excursion
+      (forward-char)
+      (while (and (not found)
+                  (re-search-backward larumbe/verilog-token-re nil t))
+        (unless (or (equal (face-at-point) 'font-lock-comment-face)
                     (equal (face-at-point) 'font-lock-string-face))
           (setq found t)
           (if (called-interactively-p)
