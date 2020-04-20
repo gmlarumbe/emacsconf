@@ -230,7 +230,8 @@ obj.method();
 (defun larumbe/find-verilog-variable-type-fwd (regex limit)
   "Generic search based fontification function of Verilog variable types."
   (let ((found nil)
-        (pos))
+        (pos)
+        (case-fold-search verilog-case-fold))
     (save-excursion
       (while (and (not found)
                   (re-search-forward regex limit t))

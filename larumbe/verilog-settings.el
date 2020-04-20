@@ -11,13 +11,17 @@
          ("\\.vinc\\'"        . verilog-mode)
          ("\\.vsrc\\'"        . verilog-mode)) ; Custom, for Gigatron vsrc files
   :bind (:map verilog-mode-map
-              ("M-i"     . larumbe/verilog-imenu)
-              ("M-f"     . verilog-forward-word)
-              ("M-b"     . verilog-backward-word)
+              ("C-s"     . larumbe/verilog-isearch-forward)
+              ("C-r"     . larumbe/verilog-isearch-backward)
+              ("M-s ."   . larumbe/verilog-isearch-forward-symbol-at-point)
+              ("M-s o"   . larumbe/verilog-helm-occur)
+              ("M-f"     . larumbe/verilog-forward-word)
+              ("M-b"     . larumbe/verilog-backward-word)
               ("TAB"     . larumbe/electric-verilog-tab)
               ([delete]  . delete-forward-char)
-              ("C-M-n"   . modi/verilog-jump-to-header-dwim-fwd)
-              ("C-M-p"   . modi/verilog-jump-to-header-dwim)
+              ("M-i"     . larumbe/verilog-imenu)
+              ("C-M-n"   . larumbe/find-verilog-token-fwd)
+              ("C-M-p"   . larumbe/find-verilog-token-bwd)
               ("C-M-u"   . larumbe/find-verilog-module-instance-bwd)
               ("C-M-d"   . larumbe/find-verilog-module-instance-fwd)
               ("C-M-h"   . xah-select-current-block)
@@ -62,6 +66,7 @@
   (setq verilog-align-ifelse                  nil)
   (setq verilog-minimum-comment-distance       10)
 
+  (setq larumbe/verilog-helm-occur-search-symbols t)
   (setq larumbe/verilog-use-own-custom-fontify  t)
   ;; In case no custom schema is used, take following settings into account:
   (unless larumbe/verilog-use-own-custom-fontify
@@ -555,7 +560,9 @@ See also `verilog-header' for an alternative format."
 
 (defun larumbe/verilog-autoinst-processing ()
   "Called from `larumbe/verilog-insert-instance-from-file' (refactoring purposes)"
-  (let (beg end)
+  (let ((case-fold-search verilog-case-fold)
+        (beg)
+        (end))
     (save-excursion ;; Remove comments
       (setq beg (point))
       (setq end (re-search-forward ")[[:blank:]]*;[[:blank:]]*// Templated"))
@@ -572,7 +579,9 @@ See also `verilog-header' for an alternative format."
 
 (defun larumbe/verilog-autoparam-processing ()
   "Called from `larumbe/verilog-insert-instance-from-file' (refactoring purposes)"
-  (let (beg end)
+  (let ((case-fold-search verilog-case-fold)
+        (beg)
+        (end))
     (save-excursion
       (setq beg (point))
       (setq end (re-search-forward "))"))
@@ -1053,7 +1062,8 @@ DANGER: If width introduced is 0, it will be assumed as a human mistake and widt
 (defun larumbe/verilog-task-custom ()
   "Insert a task definition."
   (interactive)
-  (let (in-read out-read)
+  (let ((case-fold-search verilog-case-fold)
+        (in-read out-read))
     (insert "task ")
     (insert (read-string "Task name: ") " (")
     (electric-verilog-terminate-line)
@@ -1222,7 +1232,8 @@ If inside a package, focuses on classes/methods highlighting with a custom tree 
 If TEST is passed as an universal argument, then build Imenu with method 2 just for testing purposes (in case it could be useful in the future...)
 "
   (interactive "P")
-  (let ((end-keywords '("endmodule" "endpackage" "endprogram"))
+  (let ((case-fold-search verilog-case-fold)
+        (end-keywords '("endmodule" "endpackage" "endprogram"))
         issue
         context)
     (save-excursion
@@ -1342,7 +1353,8 @@ If TEST is passed as an universal argument, then build Imenu with method 2 just 
 (defun larumbe/verilog-find-semicolon-in-instance-comments ()
   "Find semicolons in instance comments to avoid missing instantiation detections with `imenu' and `larumbe/find-verilog-module-instance-fwd' functions.
 Point to problematic regexp in case it is found."
-  (let ((problem-re ")[, ]*\\(//\\|/\\*\\).*;") ; DANGER: Does not detect semicolon if newline within /* comment */
+  (let ((case-fold-search verilog-case-fold)
+        (problem-re ")[, ]*\\(//\\|/\\*\\).*;") ; DANGER: Does not detect semicolon if newline within /* comment */
         (found))
     (save-excursion
       (beginning-of-buffer)
@@ -1382,7 +1394,7 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
 
 (defun larumbe/verilog-imenu-extract-index-name ()
   "Function to extract the tag."
-  ;; (verilog-forward-word)
+  ;; (larumbe/verilog-forward-word)
   (verilog-forward-syntactic-ws)
   (thing-at-point 'symbol t))
 
@@ -1467,9 +1479,9 @@ Adapted from `python-mode' imenu build-tree function."
 
 
 
-;;; Custom Functions
+;;; Syntax table override functions
 ;; Fetched from: https://www.veripool.org/issues/724-Verilog-mode-How-to-make-word-navigation-commands-stop-at-underscores-
-(defun verilog-forward-word (&optional arg)
+(defun larumbe/verilog-forward-word (&optional arg)
   "Make verilog word navigation commands stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
   (interactive "p")
   (let ((table (make-syntax-table)))
@@ -1477,13 +1489,40 @@ Adapted from `python-mode' imenu build-tree function."
     (with-syntax-table table
       (forward-word arg))))
 
-(defun verilog-backward-word (&optional arg)
+
+(defun larumbe/verilog-backward-word (&optional arg)
   "Make verilog word navigation commands stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
   (interactive "p")
   (let ((table (make-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
     (with-syntax-table table
       (backward-word arg))))
+
+
+(defun larumbe/verilog-isearch-forward ()
+  "Make verilog Isearch word navigation stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
+  (interactive)
+  (let ((table (make-syntax-table)))
+    (modify-syntax-entry ?_ "_" table)
+    (with-syntax-table table
+      (isearch-forward))))
+
+
+(defun larumbe/verilog-isearch-backward ()
+  "Make verilog Isearch word navigation stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
+  (interactive)
+  (let ((table (make-syntax-table)))
+    (modify-syntax-entry ?_ "_" table)
+    (with-syntax-table table
+      (isearch-backward))))
+
+
+(defun larumbe/verilog-isearch-forward-symbol-at-point ()
+  "Make verilog symbol Isearch case sensitive."
+  (interactive)
+  (let ((case-fold-search verilog-case-fold))
+    (isearch-forward-symbol-at-point)))
+
 
 (defun larumbe/electric-verilog-tab ()
   "Wrapper of the homonym verilog function to avoid indentation issues with compiler directives after setting custom hooks.."
@@ -1492,6 +1531,48 @@ Adapted from `python-mode' imenu build-tree function."
     (modify-syntax-entry ?` "w" table)
     (with-syntax-table table
       (electric-verilog-tab))))
+
+
+(defun larumbe/verilog-helm-occur ()
+  "Copied from `helm-occur' and slightly modified to allow searching symbols.
+
+Variable `larumbe/verilog-helm-occur-search-symbols' determines if searching for symbol or string."
+  (interactive)
+  ;; DANGER: Added to do a case-sensitive search
+  (let ((case-fold-search verilog-case-fold))
+    ;; End of DANGER
+    (setq helm-source-occur
+          (car (helm-occur-build-sources (list (current-buffer)) "Helm occur")))
+    (helm-set-local-variable 'helm-occur--buffer-list (list (current-buffer))
+                             'helm-occur--buffer-tick
+                             (list (buffer-chars-modified-tick (current-buffer))))
+    (save-restriction
+      (let (def pos)
+        (when (use-region-p)
+          ;; When user mark defun with `mark-defun' with intention of
+          ;; using helm-occur on this region, it is relevant to use the
+          ;; thing-at-point located at previous position which have been
+          ;; pushed to `mark-ring'.
+          (setq def (save-excursion
+                      (goto-char (setq pos (car mark-ring)))
+                      (helm-aif (thing-at-point 'symbol) (regexp-quote it))))
+          (narrow-to-region (region-beginning) (region-end)))
+        (unwind-protect
+            (helm :sources 'helm-source-occur
+                  :buffer "*helm occur*"
+                  :default (or def (helm-aif (thing-at-point 'symbol)
+                                       ;; DANGER: Modified at this point
+                                       (if larumbe/verilog-helm-occur-search-symbols
+                                           (concat "\\_<" (regexp-quote it) "\\_>")
+                                         (regexp-quote it))
+                                     ;; End of DANGER
+                                     ))
+                  :preselect (and (memq 'helm-source-occur
+                                        helm-sources-using-default-as-input)
+                                  (format "^%d:" (line-number-at-pos
+                                                  (or pos (point)))))
+                  :truncate-lines helm-occur-truncate-lines)
+          (deactivate-mark t))))))
 
 
 ;; https://emacs.stackexchange.com/questions/8032/configure-indentation-logic-to-ignore-certain-lines/8033#8033
@@ -1504,6 +1585,7 @@ Return t if the current line starts with '// *'."
     match))
 
 
+;;; Custom functions
 (defun larumbe/find-verilog-module-instance-fwd (&optional limit)
   "Searches forward for a Verilog module/instance regexp.
 Since this regexp might collide with other Verilog constructs, it ignores the ones
@@ -1511,15 +1593,22 @@ that contain Verilog keywords and continues until found.
 
 LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
   (interactive)
-  (let ((found nil)
+  (let ((case-fold-search verilog-case-fold)
+        (found nil)
         (pos))
     (save-excursion
+      (when (called-interactively-p) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
+        (forward-char))              ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
       (while (and (not found)
                   (re-search-forward larumbe/verilog-module-instance-re limit t))
         (unless (or (string-match modi/verilog-keywords-re (match-string-no-properties 1))
-                    (string-match modi/verilog-keywords-re (match-string-no-properties 2)))
+                    (string-match modi/verilog-keywords-re (match-string-no-properties 2))
+                    (equal (face-at-point) 'font-lock-comment-face)
+                    (equal (face-at-point) 'font-lock-string-face))
           (setq found t)
-          (setq pos (match-beginning 1)))))
+          (if (called-interactively-p)
+              (setq pos (match-beginning 1))
+            (setq pos (point))))))
     (when found
       (goto-char pos))))
 
@@ -1531,15 +1620,22 @@ that contain Verilog keywords and continues until found.
 
 LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
   (interactive)
-  (let ((found nil)
+  (let ((case-fold-search verilog-case-fold)
+        (found nil)
         (pos))
     (save-excursion
+      (when (called-interactively-p) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
+        (backward-char))             ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
       (while (and (not found)
                   (re-search-backward larumbe/verilog-module-instance-re limit t))
         (unless (or (string-match modi/verilog-keywords-re (match-string-no-properties 1))
-                    (string-match modi/verilog-keywords-re (match-string-no-properties 2)))
+                    (string-match modi/verilog-keywords-re (match-string-no-properties 2))
+                    (equal (face-at-point) 'font-lock-comment-face)
+                    (equal (face-at-point) 'font-lock-string-face))
           (setq found t)
-          (setq pos (match-beginning 1)))))
+          (if (called-interactively-p)
+              (setq pos (match-beginning 1))
+            (setq pos (point))))))
     (when found
       (goto-char pos))))
 
@@ -1550,7 +1646,8 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
 For use programatically, an argument needs to be specified as current-module is determined by `which-func' and that takes time,
 therefore not detecting the proper module but the previous one."
   (interactive)
-  (let (current-module)
+  (let ((case-fold-search verilog-case-fold)
+        (current-module))
     (if module
         (setq current-module module)
       (setq current-module modi/verilog-which-func-xtra)) ; Find module header (modi/verilog-which-func-xtra)
@@ -1573,7 +1670,11 @@ It will align parameters contained between module name and instance name.
 For use programatically, an argument needs to be specified as current-module is determined by `which-func' and that takes time,
 therefore not detecting the proper module but the previous one."
   (interactive)
-  (let (current-module current-instance beg end)
+  (let ((case-fold-search verilog-case-fold)
+        (current-module)
+        (current-instance)
+        (beg)
+        (end))
     (setq current-instance (substring-no-properties (modi/verilog-find-module-instance)))
     (if module
         (setq current-module module)
@@ -1591,7 +1692,10 @@ therefore not detecting the proper module but the previous one."
   "Align parenthesis PORTS of current module, the one pointed to by `modi/verilog-find-module-instance'
 It will only align ports, i.e., between instance name and end of instantiation."
   (interactive)
-  (let (current-instance beg end)
+  (let ((case-fold-search verilog-case-fold)
+        (current-instance)
+        (beg)
+        (end))
     (setq current-instance (substring-no-properties (modi/verilog-find-module-instance)))
     (save-excursion
       (re-search-backward (concat "\\_<" current-instance "\\_>"))
@@ -1620,7 +1724,8 @@ It will only align ports, i.e., between instance name and end of instantiation."
 If regexp detects that port is connected, then disconnect it. The other way round works the same.
 If called with universal arg, `force-connect' parameter will force connection of current port, no matter it is connected/disconnected"
   (interactive "P")
-  (let* ((port-regex larumbe/connect-disconnect-port-re)
+  (let* ((case-fold-search verilog-case-fold)
+         (port-regex larumbe/connect-disconnect-port-re)
          (conn-regex larumbe/connect-disconnect-conn-re)
          (line-regex (concat port-regex conn-regex))
          port conn sig
