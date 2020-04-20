@@ -69,6 +69,8 @@
           ;; Added by Larumbe
           "--ignore" "*~"
           "--stats"))
+  (setq ag-reuse-buffers t)
+  (setq ag-reuse-window t)
   )
 
 
