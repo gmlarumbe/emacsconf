@@ -74,7 +74,7 @@
 
 ;;; Compilation error regexp alist
 ;;;; Common
-(setq larumbe/custom-compilation-regexp-sets '("vivado" "irun" "verilator" "iverilog" "scons")) ; Used for custom recompile (edited by hand)
+(setq larumbe/custom-compilation-regexp-sets '("verilog-make" "vivado" "irun" "verilator" "iverilog" "scons")) ; Used for custom recompile (edited by hand)
 (setq larumbe/custom-compilation-regexp-active nil)                                  ; Current active compilation regexp
 
 ;; Recompiling with regexp (active profile needs to be modified manually once set... this should be changed somehow in the future)
@@ -90,6 +90,11 @@
     (larumbe/recompile-set-active-regexp-alist))
   (recompile)
   (pcase larumbe/custom-compilation-regexp-active
+    ("verilog-make"
+     (larumbe/custom-error-regexp-set-emacs
+      (append iverilog-error-regexp-emacs-alist-alist
+              verilator-error-regexp-emacs-alist-alist
+              vivado-error-regexp-emacs-alist-alist)))
     ("vivado"
      (larumbe/vivado-error-regexp-set-emacs))
     ("irun"

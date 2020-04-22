@@ -1285,13 +1285,16 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
     (format "%s (%s)" name short-type)))
 
 
-(defun larumbe/verilog-imenu-class-put-parent (type name pos tree)
-  "Add the parent with TYPE, NAME and POS to TREE."
+(defun larumbe/verilog-imenu-class-put-parent (type name pos tree &optional add)
+  "Create parent tag with TYPE and NAME.
+If optional ADD, add the parent with TYPE, NAME and POS to the TREE."
   (let* ((label      (funcall 'larumbe/verilog-imenu-format-class-item-label type name))
          (jump-label label))
     (if (not tree)
         (cons label pos)
-      (cons label (cons (cons jump-label pos) tree)))))
+      (if add
+          (cons label (cons (cons jump-label pos) tree))
+        (cons label tree)))))
 
 
 (defun larumbe/verilog-imenu-build-class-tree (&optional tree)
@@ -1316,7 +1319,7 @@ Adapted from `python-mode' imenu build-tree function."
       (cond ((not pos)
              nil)
             ((looking-at larumbe/verilog-class-re)
-             (larumbe/verilog-imenu-class-put-parent type name pos tree))
+             (larumbe/verilog-imenu-class-put-parent type name pos tree nil)) ; Do not want class imenu redundancy (tags+entries)
             (t
              (larumbe/verilog-imenu-build-class-tree
               (if (or (looking-at larumbe/verilog-task-re)
@@ -1331,7 +1334,7 @@ Adapted from `python-mode' imenu build-tree function."
 (defun larumbe/verilog-imenu-classes-index ()
   "Obtain entries of tasks/functions WITHIN classes.
 NOTE: Tasks/functions outside classes are obtained with a custom function search in the generic imenu-generic-function stage.
-INFO: Detection of nested classes is unsupported. "
+INFO: Detection of nested classes is unsupported and leads to bad detection of class tasks/functions."
   (save-excursion
     (goto-char (point-max))
     (let ((index)

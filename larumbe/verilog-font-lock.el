@@ -36,7 +36,7 @@
   "type_t asdf;")
 
 (defvar larumbe/verilog-variable-type-re-2
-  "\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\_<\\(?2:\\(\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\_>\\)\\s-*\\(\\[.*\\]\\)?[, ]\\s-*\\)+;"
+  "\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\_<\\(?2:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\(.*\\)?;"
   "type_t asdf1, asdf2 , asdf4, asdf6[], asdf7 [25], asdf8 ;")
 
 (defvar larumbe/verilog-variable-type-re-3
@@ -70,8 +70,8 @@
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-port-connection-face 'larumbe/verilog-font-port-connection-face)
-(defface larumbe/verilog-font-port-connection-face
+(defvar larumbe/verilog-font-lock-port-connection-face 'larumbe/verilog-font-lock-port-connection-face)
+(defface larumbe/verilog-font-lock-port-connection-face
   '((t (:foreground "bisque2")))
   "Face for instances port connections
 ...
@@ -82,8 +82,8 @@
   :group 'font-lock-highlighting-faces)
 
 
-(defvar larumbe/verilog-font-dotted-interface-struct-regex 'larumbe/verilog-font-dotted-interface-struct-regex)
-(defface larumbe/verilog-font-dotted-interface-struct-regex
+(defvar larumbe/verilog-font-lock-dotted-interface-struct-face 'larumbe/verilog-font-lock-dotted-interface-struct-face)
+(defface larumbe/verilog-font-lock-dotted-interface-struct-face
   '((t (:foreground "gray70")))
   "Face for interfaces prefix (also applies to objects methods calling)
 ...
@@ -228,7 +228,9 @@ obj.method();
 
 
 (defun larumbe/find-verilog-variable-type-fwd (regex limit)
-  "Generic search based fontification function of Verilog variable types."
+  "Generic search based fontification function of Verilog variable types.
+INFO: It is not necessary to check that variable is not within string/comment since
+these both have precedence over custom fontify."
   (let ((found nil)
         (pos)
         (case-fold-search verilog-case-fold))
@@ -427,8 +429,8 @@ obj.method();
                 (list
                  (list larumbe/time-unit-regex               2 larumbe/verilog-font-lock-time-unit-regex-face)
                  (list larumbe/time-event-regex              0 larumbe/verilog-font-lock-time-event-regex-face)
-                 (list larumbe/port-connection-regex         1 larumbe/verilog-font-port-connection-face)
-                 (list larumbe/dotted-interface-struct-regex 1 larumbe/verilog-font-dotted-interface-struct-regex)
+                 (list larumbe/port-connection-regex         1 larumbe/verilog-font-lock-port-connection-face)
+                 (list larumbe/dotted-interface-struct-regex 1 larumbe/verilog-font-lock-dotted-interface-struct-face)
                  (list larumbe/braces-content-regex          1 larumbe/verilog-font-lock-braces-content-face)   ; Bit-range
                  (list larumbe/punctuation-regex             0 larumbe/verilog-font-lock-punctuation-face)      ; Overrides bracket range
                  (list larumbe/punctuation-bold-regex        0 larumbe/verilog-font-lock-punctuation-bold-face) ; Overrides bracket range

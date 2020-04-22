@@ -289,3 +289,6 @@ while inde_x_ed          _p_rint
 ;;;; RDL
 (use-package rdl-mode
   :load-path "~/.elisp/download/")
+
+;;;; MAKEFILE
+(require 'make-mode)
