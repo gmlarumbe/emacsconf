@@ -77,6 +77,7 @@
 (use-package imenu-list
   :config
   (setq imenu-list-size 0.15)
+  (setq imenu-auto-rescan t)
   )
 
 
