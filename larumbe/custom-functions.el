@@ -628,6 +628,11 @@ If Universal Argument is provided, then do not preview file"
     (setq list (cdr list))))
 
 
+;; https://stackoverflow.com/questions/17325713/looking-for-a-replace-in-string-function-in-elisp
+(defun replace-in-string (what with in)
+  (replace-regexp-in-string (regexp-quote what) with in nil 'literal))
+
+
 ;;;; Larumbe's generic functions
 (defun file-title ()
   "Return file title; eg returns asdf for /otp/asdf.txt ."

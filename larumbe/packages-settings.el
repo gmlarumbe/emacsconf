@@ -203,6 +203,7 @@
   (setq sml/theme 'dark) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
   (sml/setup)            ; Enable smart-mode-line
   (which-function-mode)
+  (set-face-attribute 'which-func nil :foreground "green")
   )
 
 
@@ -438,8 +439,8 @@ function to return a regular expression, or
                                ((pred functionp) (funcall regexp))
                                ((pred stringp) regexp)
                                ((pred null) (concat "^\\("
-                                                    (mapconcat (lambda (s)
-                                                                 (s-trim (car s)))
+                                                    (mapconcat (lambda (s)                                     ;; DANGER: Modified to fix issue with // * headings,
+                                                               (replace-in-string "*" "\\*" (s-trim (car s)))) ;; asterisk is wrongly inserted into the regexp
                                                                outshine-promotion-headings
                                                                "\\|")
                                                     "\\)"
@@ -487,7 +488,8 @@ function to return a regular expression, or
 
 (use-package outshine
   :config
-  (setq outshine-imenu-show-headlines-p nil)) ; Do not include outshine tags at imenu
+  (setq outshine-imenu-show-headlines-p nil) ; Do not include outshine tags at imenu
+  )
 
 
 ;;; Own modes

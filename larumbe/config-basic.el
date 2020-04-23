@@ -4,6 +4,7 @@
 ;;; Basic settings
 ;;;; Basics
 (server-start)                           ; Server start for emacsclient support
+(load-theme 'deeper-blue t)              ; Load theme
 (desktop-save-mode 1)                    ; Autosave Desktop
 (setq confirm-kill-emacs 'y-or-n-p)      ; Avoid closing Emacs unexpectedly (helm prefix C-x c)
 (setq inhibit-startup-screen t)          ; Inhibit startup screen
@@ -22,13 +23,14 @@
         (aggressive-indent-mode)                     ; Verilog Modi-setup
         ))
 
-
+;; Emacs customizations
+(setq custom-file "~/.elisp/larumbe/custom-file.el")
+(load custom-file)
 
 ;;;; Window/Frame Display
 (menu-bar-mode -1)   ; Disable Menu bar
 (tool-bar-mode -1)   ; Disable Tool bar
 (scroll-bar-mode -1) ; Disable Scroll-bar (watch out percentage)
-;; (fringe-mode 1)      ; Shrink fringes to 1 pixel
 
 (setq display-time-default-load-average nil) ; Display time on the status bar
 (display-time-mode t)
@@ -38,7 +40,6 @@
 (add-to-list 'load-path (expand-file-name "~/.elisp"))
 (add-to-list 'load-path (expand-file-name "~/.elisp/download"))
 (add-to-list 'load-path (expand-file-name "~/.elisp/larumbe/own-modes/override/"))
-
 
 
 ;;;; Untabify/delete trailing (conditionally and globally added to hooks)
