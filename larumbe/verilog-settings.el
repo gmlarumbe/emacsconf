@@ -1254,6 +1254,7 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
 (defvar larumbe/verilog-imenu-localparam-re "^\\s-*localparam\\(?1:\\s-+\\(logic\\|bit\\|int\\|integer\\)\\s-*\\(\\[.*\\]\\)?\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
 (defvar larumbe/verilog-imenu-define-re     "^\\s-*`define\\s-+\\([a-zA-Z0-9_.:]+\\)")
 (defvar larumbe/verilog-imenu-assign-re     "^\\s-*assign\\s-+\\([a-zA-Z0-9_.:]+\\)")
+(defvar larumbe/verilog-imenu-generate-re   "^\\s-*generate[ \t\n]*\\(?1:.*\\)")
 (defvar larumbe/verilog-imenu-always-re     "^\\s-*always\\(_ff\\|_comb\\|_latch\\)?\\s-*\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
 (defvar larumbe/verilog-imenu-initial-re    "^\\s-*initial\\s-+\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
 ;; Search by function: Used for functions that will be passed as an argument of `larumbe/verilog-imenu-generic-expression'
@@ -1267,6 +1268,7 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
         ("*Localparams*"    ,larumbe/verilog-imenu-localparam-re 2)
         ("*Defines*"        ,larumbe/verilog-imenu-define-re 1)
         ("*Assigns*"        ,larumbe/verilog-imenu-assign-re 1)
+        ("*Generates*"      ,larumbe/verilog-imenu-generate-re 1)
         ("*Always blocks*"  ,larumbe/verilog-imenu-always-re 4)
         ("*Initial blocks*" ,larumbe/verilog-imenu-initial-re 3)
         ("*Task/Func*"      larumbe/find-verilog-task-function-outside-class-bwd 2)

@@ -130,6 +130,16 @@
   (move-beginning-of-line 1)
   )
 
+(defun larumbe/copy-region-or-symbol-at-point ()
+  (interactive)
+  (let ((symbol (thing-at-point 'symbol t)))
+    (if (use-region-p)
+        (call-interactively 'kill-ring-save)
+      (progn
+        (kill-new symbol)
+        (message symbol)))))
+
+
 (defun larumbe/kill-current-buffer ()
   "Kill current buffer without confirmation.(buffer-name) defaults to current-buffer name"
   (interactive)
@@ -755,7 +765,7 @@ It is assumed to be used after a `M-x' then e.g. `org-', then `C-g' and finally 
   (delete-other-windows)
   (split-window-right)
   (other-window 1)
-  ;; (shrink-window 30) ;; TODO: Does not seem to work
+  (shrink-window 40 t)
   (switch-to-buffer "*helm M-x*")
   (other-window 1))
 
@@ -786,16 +796,14 @@ Meant to be used as a wrapper for write-file-functions hook."
       (message "Untabify set to: %s" untabify-delete-trailing-whitespace))))
 
 
-;; TODO: Still does not seem to work...
-(defun larumbe/init-emacs-function-hp ()
-  "Initial steps to be performed after hp config has been loaded.
-Load TODO.org and see agenda for today..."
+(defun larumbe/show-todos-agenda ()
+  "Show org-mode TODOs and agenda."
   (interactive)
-  (let ((buf "TODO.org")
-        (file "/home/martigon/TODO.org"))
+  (let* ((buf  "TODO.org")
+         (file (concat "~/" buf)))
     (when (not (get-buffer buf))
       (find-file file))
-    (switch-to-buffer "TODO.org")
+    (switch-to-buffer buf)
     (call-interactively 'org-agenda-list)))
 
 
@@ -870,7 +878,7 @@ It is the same as solution 1 but using delete instead of delq, and printing the 
 
 
 ;;;;;; Interactive functions
-;; TODO: Needs to be tested after erasing `repohome.el'
+;; INFO: Needs to be tested after erasing `repohome.el'
 ;; Ediff/Merge 2 branches manually by doing checkouts
 ;; This is based on old .repohome sync example. Fill with current development repo branches
 ;;;;;;; Variables to check which repos must get synced

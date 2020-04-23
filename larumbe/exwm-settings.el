@@ -112,6 +112,7 @@
 (global-set-key (kbd "C-M-<down>") 'move-lines-down)
 (global-set-key (kbd "C-x d") 'duplicate-line) ; Replaces Dired (C-x C-j works better)
 (global-set-key (kbd "C-w") 'whole-line-or-region-kill-region)
+(global-set-key (kbd "M-w") 'larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
 (global-set-key [remap dabbrev-expand] 'hippie-expand)
 ;;;;; Helm/IDO
 (global-set-key (kbd "M-x") #'helm-M-x)
@@ -148,6 +149,7 @@
 (global-set-key (kbd "<S-return>") 'auto-complete)
 (global-set-key (kbd "<C-M-return>") 'yas-expand)          ; Outline-minor mode replaces this yas keybinding
 (global-set-key (kbd "C-c / y") 'helm-youtube)             ; Analogous to google-this mode keybindings
+(global-set-key (kbd "C-x l") 'larumbe/show-todos-agenda)
 ;;;;;; Dired
 (global-set-key (kbd "C-x C-j") 'dired-jump)
 ;;;;;; Compilation

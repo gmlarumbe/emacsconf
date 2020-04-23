@@ -36,21 +36,14 @@
 ;;;; ELISP
 ;;;;; Hooks
 (defun my-elisp-hook ()
-  (set 'ac-sources
-             '(
-               ac-source-gtags
-               ac-source-symbols
-               )
-             )
+  (set 'ac-sources '(ac-source-gtags
+                     ac-source-symbols))
   (local-set-key (kbd "C-x C-.") 'larumbe/load-file-current-buffer) ; Own function useful to debug elisp (rudimentary)
   (local-set-key (kbd "C-c .") 'ffap)
   (local-set-key (kbd "C-c C-e") 'edebug-defun)
   (local-set-key (kbd "C-M-z") 'eval-region)
   )
 (add-hook 'emacs-lisp-mode-hook 'my-elisp-hook)
-(add-hook 'emacs-lisp-mode-hook '(lambda ()           ; TODO: Order in hooks cannot be ensured, so this might not work
-                                   (interactive)      ; To avoid loading ggtags, just remove GTAGS, GGTAGS and GPATH generated files from (projectile-project-root)
-                                   (ggtags-mode -1))) ; Better to use xref-find-definitions (since ggtags is generally enabled for prog-mode)
 
 
 
@@ -98,13 +91,8 @@
   (local-set-key (kbd "C-c C-k") 'sh-send-line-or-region-and-step)
   (local-set-key (kbd "C-c C-p") 'larumbe/sh-send-line-or-region-and-step-ansi)
   (local-set-key (kbd "C-c C-t") 'hydra-sh-template/body)
-  (set 'ac-sources
-             '(
-               ac-source-gtags
-               ac-source-symbols
-               )
-             )
-  )
+  (set 'ac-sources '(ac-source-gtags
+                     ac-source-symbols)))
 (add-hook 'sh-mode-hook 'my-sh-mode-hook)
 
 
@@ -153,13 +141,8 @@ while inde_x_ed          _p_rint
   (local-set-key (kbd "C-c f") 'semantic-ia-show-summary)
   (local-set-key (kbd "C-c <return>") 'semantic-analyze-possible-completions)
 
-  (set 'ac-sources
-             '(
-               ac-source-semantic-raw
-               ac-source-gtags
-               )
-             )
-  )
+  (set 'ac-sources '(ac-source-semantic-raw
+                     ac-source-gtags)))
 
 (add-hook 'c-mode-common-hook 'my-cc-mode-hook)
 (add-to-list 'auto-mode-alist '("\\.ino\\'" . c++-mode)) ;; Arduino Files in C-mode
@@ -190,10 +173,8 @@ while inde_x_ed          _p_rint
   (local-set-key (kbd "C-c C-k") 'larumbe/docbook-to-pdf-current-buffer-no-preview)
   (local-set-key (kbd "C-c C-t") 'hydra-nxml-docbook-template/body)
 
-  (set 'ac-sources
-             '(ac-source-gtags
-               ac-source-symbols))
-  )
+  (set 'ac-sources '(ac-source-gtags
+                     ac-source-symbols)))
 
 (add-hook 'nxml-mode-hook 'my-xml-mode-hook)
 ;; INFO: Since it is not a childe of prog-mode, requires common configuration settings
@@ -220,10 +201,8 @@ while inde_x_ed          _p_rint
   :hook ((vivado-mode . my-vivado-mode-hook))
   :config
   (defun my-vivado-mode-hook ()
-    (set 'ac-sources
-         '(ac-source-gtags
-           ac-source-symbols)))
-  )
+    (set 'ac-sources '(ac-source-gtags
+                       ac-source-symbols))))
 
 
 ;;;; HTML
@@ -235,29 +214,22 @@ while inde_x_ed          _p_rint
   (setq sgml-basic-offset 4) ; Indentation of parent mode
   (defun my-mhtml-mode-hook ()
     (set 'ac-sources
-         '(
-           ac-source-gtags
-           ac-source-symbols
-           )
-         )
-    )
-  (add-hook 'mhtml-mode-hook 'my-mhtml-mode-hook)
-  )
+         '(ac-source-gtags
+           ac-source-symbols)))
+  (add-hook 'mhtml-mode-hook 'my-mhtml-mode-hook))
 
 
 ;;;; MARKDOWN
 (use-package markdown-mode
   :config
-  (setq markdown-command "/usr/bin/pandoc -s")
-  )
+  (setq markdown-command "/usr/bin/pandoc -s"))
 
 
 ;;;; CONF
 (use-package conf-mode
   :mode (("\\.service\\'" . conf-mode)
          ("\\rc\\'"       . conf-mode)
-         ("\\.sby\\'"     . conf-mode)
-         )
+         ("\\.sby\\'"     . conf-mode))
   :config
   ;; INFO: Since it is not a childe of prog-mode, requires common configuration settings
   (add-hook 'conf-mode-hook 'show-paren-mode)
