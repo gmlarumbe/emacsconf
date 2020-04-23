@@ -391,6 +391,60 @@ statements to avoid indentation errors when testing"
     (message "Bypassing indentation...")))
 
 
+
+(defun larumbe/python-fix-hs-special-modes-alist ()
+  "BUG: Issue with `hs-minor-mode' and MELPA `python-mode' (it didn't apply to bundled Emacs installation python-mode).
+
+It seems there are two ways of using HideShow with python-mode:
+
+1. The generic one that makes use of `hs-special-modes-alist':
+This includes setting the `hs-block-start-regexp', comment delimiter and `hs-forward-sexp-func'.
+- Done in `python-mode': /home/martigon/.emacs.d/elpa/python-mode-20200417.648/python-mode.el:23524
+
+2. The custom functions used by MELPA python-mode (`py-hide-base' and `py-show-all' based functions).
+These ones seem to work well for hiding but not for toggling, as there were some issues with overlay detecting in the buffer.
+
+Since I decided to follow with the first method, there was a bug in line 23524 when adding python hideshow to
+`hs-special-modes-alist'. The `hs-forward-sexp-func' was a lambda and took incorrect number of arguments.
+Declaring it as a quoted symbol fixed the issue.
+
+Furthermore, this was necessary because setting these variables manually (via use-package config/init or with a hook)
+didn't work as expected either (only worked with a hook and not at Emacs startup).
+  - /home/martigon/.emacs.d/elpa/python-mode-20200417.648/python-mode.el:22918
+  ;; (setq hs-block-start-regexp py-extended-block-or-clause-re)
+  ;; (setq hs-forward-sexp-func 'py-forward-block-or-clause)
+"
+  ;; Pushes list with HideShow config to `hs-special-modes-alist', taking precedence over variables
+  (let ((python-entry (assoc 'python-mode hs-special-modes-alist)))
+    (when python-entry
+      (setq hs-special-modes-alist (remove python-entry hs-special-modes-alist)))
+    (push (list
+           'python-mode
+           ;; start regex
+           py-extended-block-or-clause-re
+           ;; end regex
+           nil
+           ;; comment-start regex
+           "#"
+           ;; forward-sexp function
+           'py-forward-block-or-clause
+           nil) hs-special-modes-alist)))
+
+
+
+(defun larumbe/python-hs-hide-all (&optional hideall)
+  "If called normally hide only defs at file (not classes)
+If called witih prefix argument, execute `hs-hide-all' (including classes)"
+  (interactive "P")
+  (if (not hideall)
+      (progn
+        (save-excursion
+          (beginning-of-buffer)
+          (while (re-search-forward py-def-re nil t)
+            (hs-hide-block))))
+    (hs-hide-all)))
+
+
 ;; Global Tags functions (copied from the ones of verilog)
 (defun larumbe/gtags-python-files-pwd-recursive ()
   "Generate gtags.files for current directory. Purpose is to be used with dired mode for small projects, to save the regexp"

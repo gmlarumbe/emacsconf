@@ -56,40 +56,40 @@
 
 ;;;; PYTHON
 (use-package python-mode
-  :mode (("\\SConstruct\\'" . python-mode))
+  :mode (("\\SConstruct\\'"      . python-mode)
+         ("\\SConstruct.repo\\'" . python-mode))
+
+  :bind (:map python-mode-map
+              ("C-c C-p"     . python-send-line-or-region-and-step) ; Overrides `run-python'
+              ("C-c C-c"     . run-python)                          ; Overrides `python-shell-send-buffer'
+              ("C-M-n"       . forward-same-indent)
+              ("C-M-p"       . backward-same-indent)
+              ("C-c RET"     . ac-complete-jedi-direct)
+              ;; Send text to an *ansi-term* running a Python interpreter (that may run in a remote machine)
+              ("C-c C-k"     . larumbe/python-send-line-or-region-and-step-remote-from-host)
+              ;; Ignore indentation and send to an *ansi-term* running a Python interpretera Python term individual statements (that may run in a remote machine).
+              ("C-c C-l"     . larumbe/python-send-line-and-step-ansi-no-indent) ; Overrides `python-shell-send-file'
+              )
+  :bind (:map jedi-mode-map ("<C-tab>" . nil)) ; Let C-tab to HideShow
+
   :config
   (setq py-number-face           font-lock-doc-face)
-  (setq py-object-reference-face verilog-font-lock-grouping-keywords-face)
+  (setq py-object-reference-face larumbe/verilog-font-lock-grouping-keywords-face)
   (setq py-pseudo-keyword-face   font-lock-constant-face) ; True/False/None
   (setq py-try-if-face           font-lock-doc-face)
   (setq py-variable-name-face    font-lock-variable-name-face)
   (setq py-use-font-lock-doc-face-p t)
+  (define-key hs-minor-mode-map "\C-c@\C-\M-h" 'larumbe/python-hs-hide-all) ; Overrides `hs-hide-all' (Error if declaring with use-package :bind - Key sequence C-c @  starts with non-prefix key C-c @
+  (larumbe/python-fix-hs-special-modes-alist) ; BUG Fix (check function docstring for more info)
   )
 
 ;;;;; Variables
 (setq python-check-command "pylint")
 
 ;;;;; Hooks
-(defun my-python-hook ()
-  (local-set-key (kbd "C-c C-p") 'python-send-line-or-region-and-step) ; Overrides `run-python'
-  (local-set-key (kbd "C-c C-c") 'run-python)                          ; Overrides `python-shell-send-buffer'
-  (local-set-key (kbd "C-M-n") 'forward-same-indent)
-  (local-set-key (kbd "C-M-p") 'backward-same-indent)
-  (local-set-key (kbd "C-c RET") 'ac-complete-jedi-direct)
-
-  ;; Send text to an *ansi-term* running a Python interpreter (that may run in a remote machine)
-  (local-set-key (kbd "C-c C-k") 'larumbe/python-send-line-or-region-and-step-remote-from-host)
-  ;; Ignore indentation and send to an *ansi-term* running a Python interpretera Python term individual statements (that may run in a remote machine).
-  (local-set-key (kbd "C-c C-l") 'larumbe/python-send-line-and-step-ansi-no-indent) ; Overrides `python-shell-send-file'
-  ;; Allow for jedi-core pop not to be override
-  ;; (define-key semantic-mode-map (kbd "C-c ,") nil)
-  )
-
-(add-hook 'python-mode-hook 'my-python-hook)
 (unless (string-equal (system-name) "vl159.plano.hpicorp.net")
   (use-package jedi-core)
   (add-hook 'python-mode-hook 'jedi:setup))
-
 
 
 ;;;; SHELL-SCRIPT

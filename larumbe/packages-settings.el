@@ -345,7 +345,7 @@
 
 
 
-;;; HELM
+;;; HELM + Ido
 ;;;; Helm Support
 (use-package helm-org)
 
@@ -381,6 +381,7 @@
           ))
   (helm-mode 1)
   (helm-autoresize-mode 1)
+  (ido-mode 1) ; Enable, so that commands like `ido-kill-buffer-at-head' can be performed
   )
 
 
