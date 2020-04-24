@@ -40,7 +40,6 @@
               )
   :demand ; INFO: Avoid deferring to properly load modi settings
   :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
-  (load "~/.elisp/larumbe/verilog-font-lock.el") ; Custom fontify schema for verilog-mode
 
   (setq larumbe/verilog-indent-level 4)
 
@@ -68,6 +67,7 @@
   (setq verilog-minimum-comment-distance       10)
 
   (setq larumbe/verilog-helm-occur-search-symbols t)
+  ;; Fontify
   (setq larumbe/verilog-use-own-custom-fontify  t)
   ;; In case no custom schema is used, take following settings into account:
   (unless larumbe/verilog-use-own-custom-fontify
@@ -75,13 +75,12 @@
     (setq verilog-highlight-translate-off         t)  ; Background highlight expressions such as // synopsys translate_off ... // synopsys translate_on
     (setq verilog-highlight-modules             nil)) ; Analogous to `verilog-highlight-includes', would highlight module while hovering mouse. However it's experimental/incomplete as the regexp is not consistent.
 
-
   :config
   ;; Many thanks to Kaushal Modi (https://scripter.co/)
   (load "~/.elisp/larumbe/verilog-modi-setup.el")
 
   ;; Bind chords
-  (bind-chord "\\\\" #'modi/verilog-jump-to-module-at-point verilog-mode-map) ;"\\"
+  (bind-chord "\\\\" #'modi/verilog-jump-to-module-at-point verilog-mode-map)
   (when (executable-find "ag")
     (bind-chord "\|\|" #'modi/verilog-find-parent-module verilog-mode-map))
 
@@ -1542,7 +1541,7 @@ Return t if the current line starts with '// *'."
               "(" ; And finally .. the opening parenthesis `(' before port list
               ))
 
-(defvar larumbe/verilog-module-instance-full-re
+(defvar larumbe/verilog-module-instance-full-re ; INFO: Not used for the time being even though it worked for a while... regex too complex
       (concat larumbe/verilog-module-instance-re
               ;; Includes content inside parenthesis of instance. Currently not being used
               larumbe/newline-or-space-optional
@@ -1552,6 +1551,23 @@ Return t if the current line starts with '// *'."
               larumbe/newline-or-space-optional
               ";"
               ))
+
+(defvar larumbe/verilog-token-re
+  (regexp-opt '("module"
+                "program"
+                "package"
+                "class"
+                "function"
+                "task"
+                "initial"
+                "always"
+                "always_ff"
+                "always_comb"
+                "generate"
+                "property"
+                "sequence"
+                ) 'symbols))
+
 
 
 (defun larumbe/verilog-find-semicolon-in-instance-comments ()
@@ -1623,22 +1639,6 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
     (when found
       (goto-char pos))))
 
-
-(defvar larumbe/verilog-token-re
-  (regexp-opt '("module"
-                "program"
-                "package"
-                "class"
-                "function"
-                "task"
-                "initial"
-                "always"
-                "always_ff"
-                "always_comb"
-                "generate"
-                "property"
-                "sequence"
-                ) 'symbols))
 
 (defun larumbe/find-verilog-token-fwd ()
   "Searches forward for a Verilog token regexp."

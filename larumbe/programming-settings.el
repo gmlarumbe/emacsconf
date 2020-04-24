@@ -31,6 +31,8 @@
 (load "~/.elisp/larumbe/verilog-settings.el")
 ;;;; VHDL
 (load "~/.elisp/larumbe/vhdl-settings.el")
+;;;; Font-lock for HDLs
+(load "~/.elisp/larumbe/hdl-font-lock.el")
 
 
 ;;;; ELISP

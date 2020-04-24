@@ -4078,9 +4078,8 @@ Key bindings specific to `verilog-mode-map' are:
   ;;           'verilog-beg-of-defun)))
 
   ;; Own Code
-  (defvar larumbe/verilog-use-own-custom-fontify t
-    "Use custom fontification schema from verilog-settings.el")
-       ;; Fontify according to custom variable
+  ;; Fontify according to custom variable
+  ;; `larumbe/verilog-use-own-custom-fontify' must be explicitly defined at verilog-settings use-package :init section
   (when larumbe/verilog-use-own-custom-fontify
     (set (make-local-variable 'font-lock-defaults)
          `((larumbe/verilog-font-lock-keywords

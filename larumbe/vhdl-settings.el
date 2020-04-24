@@ -6,11 +6,19 @@
 (use-package vhdl-mode
   :load-path "~/.elisp/larumbe/own-modes/override"
   :bind (:map vhdl-mode-map
-              ("<f5>" . vhdl-compile)
-              ("<C-iso-lefttab>" . 'insert-tab-vhdl)
-              ("C-M-<tab>" . remove-tab-vhdl)
+              ("C-M-d"           . larumbe/find-vhdl-module-instance-fwd)
+              ("C-M-u"           . larumbe/find-vhdl-module-instance-bwd)
+              ("<f5>"            . vhdl-compile)
+              ("<C-iso-lefttab>" . insert-tab-vhdl)
+              ("C-M-<tab>"       . remove-tab-vhdl)
               )
   :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
+  (fset 'insert-tab-vhdl (kbd "C-u 4 SPC")) ; Custom 4 spaces TAB key
+  (fset 'remove-tab-vhdl (kbd "C-u 4 DEL")) ; Custom remove 4 spaces TAB key
+  ;; Fontify
+  (setq larumbe/vhdl-use-own-custom-fontify t) ; To refresh font-lock call `larumbe/vhdl-font-lock-init'
+
+  :config
   (setq vhdl-clock-edge-condition (quote function))
   (setq vhdl-company-name "")
   (setq vhdl-conditions-in-parenthesis t)
@@ -22,10 +30,6 @@
   (setq vhdl-standard '(08 nil))
   (setq vhdl-project "AXI Interface Converter")
 
-  (fset 'insert-tab-vhdl (kbd "C-u 4 SPC")) ; Custom 4 spaces TAB key
-  (fset 'remove-tab-vhdl (kbd "C-u 4 DEL")) ; Custom remove 4 spaces TAB key
-
-  :config
   (setq vhdl-basic-offset 4)
   (setq tab-width 4)                    ; TAB Width for indentation
   (setq indent-tabs-mode nil)           ; Replace TAB with Spaces when indenting
@@ -68,5 +72,56 @@
 
 
 
-;;; Functions redefinition
-;; ...
+;;; Custom functions
+(defvar larumbe/vhdl-blank-opt-re "[[:blank:]\n]*")
+(defvar larumbe/vhdl-blank-mand-re "[[:blank:]\n]+")
+(defvar larumbe/vhdl-identifier-re "[a-zA-Z_][a-zA-Z0-9_-]*")
+(defvar larumbe/vhdl-instance-re
+  (concat "^\\s-*\\(?1:" larumbe/vhdl-identifier-re "\\)\\s-*:" larumbe/vhdl-blank-opt-re ; Instance TAG
+          "\\(?2:\\(?3:component\\s-+\\|configuration\\s-+\\|\\(?4:entity\\s-+\\(?5:" larumbe/vhdl-identifier-re "\\)\.\\)\\)\\)?"
+          "\\(?6:" larumbe/vhdl-identifier-re "\\)" larumbe/vhdl-blank-opt-re ; Module name
+          "\\(--[^\n]*" larumbe/vhdl-blank-mand-re "\\)*\\(generic\\|port\\)\\s-+map\\>"))
+
+
+(defun larumbe/find-vhdl-module-instance-fwd (&optional limit)
+  "Searches forward for a VHDL module/instance regexp.
+
+LIMIT argument is included to allow the function to be used to fontify VHDL buffers."
+  (interactive)
+  (let ((found nil)
+        (pos))
+    (save-excursion
+      (when (called-interactively-p) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
+        (forward-char))              ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
+      (while (and (not found)
+                  (re-search-forward larumbe/vhdl-instance-re limit t))
+        (unless (or (equal (face-at-point) 'font-lock-comment-face)
+                    (equal (face-at-point) 'font-lock-string-face))
+          (setq found t)
+          (if (called-interactively-p)
+              (setq pos (match-beginning 6))
+            (setq pos (point))))))
+    (when found
+      (goto-char pos))))
+
+
+(defun larumbe/find-vhdl-module-instance-bwd (&optional limit)
+  "Searches backwards for a VHDL module/instance regexp.
+
+LIMIT argument is included to allow the function to be used to fontify VHDL buffers."
+  (interactive)
+  (let ((found nil)
+        (pos))
+    (save-excursion
+      (when (called-interactively-p) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
+        (backward-char))             ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
+      (while (and (not found)
+                  (re-search-backward larumbe/vhdl-instance-re limit t))
+        (unless (or (equal (face-at-point) 'font-lock-comment-face)
+                    (equal (face-at-point) 'font-lock-string-face))
+          (setq found t)
+          (if (called-interactively-p)
+              (setq pos (match-beginning 6))
+            (setq pos (point))))))
+    (when found
+      (goto-char pos))))

@@ -446,49 +446,49 @@ updating.
 NOTE: Activate new error and file message regexps and reflect the new setting
       in the choice list of option `vhdl-compiler' by restarting Emacs."
   :type '(repeat
-	  (list :tag "Compiler" :indent 2
-		(string :tag "Compiler name      ")
-		(string :tag "Compile command    ")
-		(string :tag "Compile options    " "-work \\1")
-		(string :tag "Make command       " "make")
-		(string :tag "Make options       " "-f \\1")
-		(choice :tag "Generate Makefile  "
-			(const :tag "Built-in function" nil)
-			(string :tag "Command" "vmake \\2 > \\1"))
-		(string :tag "Library command    " "mkdir \\1")
-		(directory :tag "Compile directory  "
-			   :validate vhdl-widget-directory-validate "./")
-		(directory :tag "Library directory  "
-			   :validate vhdl-widget-directory-validate "work/")
-		(file :tag "Makefile name      " "Makefile")
-		(string :tag "ID string          ")
-		(list :tag "Error message" :indent 4
-		      (regexp  :tag "Regexp           ")
-		      (choice  :tag "File subexp      "
-			      (integer :tag "Index")
-			      (const :tag "No file name" nil))
-		      (integer :tag "Line subexp index")
-		      (choice  :tag "Column subexp    "
-			      (integer :tag "Index")
-			      (const :tag "No column number" nil)))
-		(list :tag "File message" :indent 4
-		      (regexp  :tag "Regexp           ")
-		      (integer :tag "File subexp index"))
-		(choice :tag "Unit-to-file name mapping"
-			:format "%t: %[Value Menu%] %v\n"
-			(const :tag "Not defined" nil)
-			(list :tag "To string" :indent 4
-			      (string :tag "Entity           " "\\1.vhd")
-			      (string :tag "Architecture     " "\\2_\\1.vhd")
-			      (string :tag "Configuration    " "\\1.vhd")
-			      (string :tag "Package          " "\\1.vhd")
-			      (string :tag "Package Body     " "\\1_body.vhd")
-			      (choice :tag "Case adjustment  "
-				      (const :tag "None" identity)
-				      (const :tag "Upcase" upcase)
-				      (const :tag "Downcase" downcase))))))
+          (list :tag "Compiler" :indent 2
+                (string :tag "Compiler name      ")
+                (string :tag "Compile command    ")
+                (string :tag "Compile options    " "-work \\1")
+                (string :tag "Make command       " "make")
+                (string :tag "Make options       " "-f \\1")
+                (choice :tag "Generate Makefile  "
+                        (const :tag "Built-in function" nil)
+                        (string :tag "Command" "vmake \\2 > \\1"))
+                (string :tag "Library command    " "mkdir \\1")
+                (directory :tag "Compile directory  "
+                           :validate vhdl-widget-directory-validate "./")
+                (directory :tag "Library directory  "
+                           :validate vhdl-widget-directory-validate "work/")
+                (file :tag "Makefile name      " "Makefile")
+                (string :tag "ID string          ")
+                (list :tag "Error message" :indent 4
+                      (regexp  :tag "Regexp           ")
+                      (choice  :tag "File subexp      "
+                              (integer :tag "Index")
+                              (const :tag "No file name" nil))
+                      (integer :tag "Line subexp index")
+                      (choice  :tag "Column subexp    "
+                              (integer :tag "Index")
+                              (const :tag "No column number" nil)))
+                (list :tag "File message" :indent 4
+                      (regexp  :tag "Regexp           ")
+                      (integer :tag "File subexp index"))
+                (choice :tag "Unit-to-file name mapping"
+                        :format "%t: %[Value Menu%] %v\n"
+                        (const :tag "Not defined" nil)
+                        (list :tag "To string" :indent 4
+                              (string :tag "Entity           " "\\1.vhd")
+                              (string :tag "Architecture     " "\\2_\\1.vhd")
+                              (string :tag "Configuration    " "\\1.vhd")
+                              (string :tag "Package          " "\\1.vhd")
+                              (string :tag "Package Body     " "\\1_body.vhd")
+                              (choice :tag "Case adjustment  "
+                                      (const :tag "None" identity)
+                                      (const :tag "Upcase" upcase)
+                                      (const :tag "Downcase" downcase))))))
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value 'vhdl-update-mode-menu))
+         (vhdl-custom-set variable value 'vhdl-update-mode-menu))
   :version "24.4"
   :group 'vhdl-compile)
 
@@ -496,10 +496,10 @@ NOTE: Activate new error and file message regexps and reflect the new setting
   "Specifies the VHDL compiler to be used for syntax analysis.
 Select a compiler name from the ones defined in option `vhdl-compiler-alist'."
   :type (let ((alist vhdl-compiler-alist) list)
-	  (while alist
-	    (push (list 'const (caar alist)) list)
-	    (setq alist (cdr alist)))
-	  (append '(choice) (nreverse list)))
+          (while alist
+            (push (list 'const (caar alist)) list)
+            (setq alist (cdr alist)))
+          (append '(choice) (nreverse list)))
   :group 'vhdl-compile)
 
 (defcustom vhdl-compile-use-local-error-regexp nil
@@ -511,7 +511,7 @@ active all the time.  Note that by doing that, the predefined global regexps
 might result in erroneous parsing of error messages for some VHDL compilers.
 
 NOTE: Activate the new setting by restarting Emacs."
-  :version "25.1"			; t -> nil
+  :version "25.1"                       ; t -> nil
   :type 'boolean
   :group 'vhdl-compile)
 
@@ -522,8 +522,8 @@ the entire design, clean the entire design and to create the design library.
 This option allows you to change the names of these targets to avoid conflicts
 with other user Makefiles."
   :type '(list (string :tag "Compile entire design")
-	       (string :tag "Clean entire design  ")
-	       (string :tag "Create design library"))
+               (string :tag "Clean entire design  ")
+               (string :tag "Create design library"))
   :version "24.3"
   :group 'vhdl-compile)
 
@@ -629,45 +629,45 @@ default options (e.g. \"-file\") in project- or file-specific options (e.g.
 NOTE: Reflect the new setting in the choice list of option `vhdl-project'
       by restarting Emacs."
   :type `(repeat
-	  (list :tag "Project" :indent 2
-		(string :tag "Name             ")
-		(string :tag "Title            ")
-		(directory :tag "Default directory"
-			   :validate vhdl-widget-directory-validate
-			   ,(abbreviate-file-name default-directory))
-		(repeat :tag "Sources          " :indent 4
-			(directory :format "     %v" "./"))
-		(regexp :tag "Exclude regexp   ")
-		(repeat
-		 :tag "Compile options  " :indent 4
-		 (list :tag "Compiler" :indent 6
-		       ,(let ((alist vhdl-compiler-alist) list)
-			  (while alist
-			    (push (list 'const (caar alist)) list)
-			    (setq alist (cdr alist)))
-			  (append '(choice :tag "Compiler name")
-				  (nreverse list)))
-		       (string :tag "Compile options" "\\2")
-		       (string :tag "Make options   " "\\2")
-		       (repeat
-			:tag "Exceptions   " :indent 8
-			(cons :format "%v"
-			      (regexp :tag "File name regexp    ")
-			      (choice :format "%[Value Menu%] %v"
-				      (string :tag "Options" "\\3")
-				      (const :tag "Do not compile" nil))))))
-		(directory :tag "Compile directory"
-			   :validate vhdl-widget-directory-validate "./")
-		(string :tag "Library name     " "work")
-		(directory :tag "Library directory"
-			   :validate vhdl-widget-directory-validate "work/")
-		(file :tag "Makefile name    " "Makefile")
-		(string :tag "Description: (type `C-j' for newline)"
-			:format "%t\n%v\n")))
+          (list :tag "Project" :indent 2
+                (string :tag "Name             ")
+                (string :tag "Title            ")
+                (directory :tag "Default directory"
+                           :validate vhdl-widget-directory-validate
+                           ,(abbreviate-file-name default-directory))
+                (repeat :tag "Sources          " :indent 4
+                        (directory :format "     %v" "./"))
+                (regexp :tag "Exclude regexp   ")
+                (repeat
+                 :tag "Compile options  " :indent 4
+                 (list :tag "Compiler" :indent 6
+                       ,(let ((alist vhdl-compiler-alist) list)
+                          (while alist
+                            (push (list 'const (caar alist)) list)
+                            (setq alist (cdr alist)))
+                          (append '(choice :tag "Compiler name")
+                                  (nreverse list)))
+                       (string :tag "Compile options" "\\2")
+                       (string :tag "Make options   " "\\2")
+                       (repeat
+                        :tag "Exceptions   " :indent 8
+                        (cons :format "%v"
+                              (regexp :tag "File name regexp    ")
+                              (choice :format "%[Value Menu%] %v"
+                                      (string :tag "Options" "\\3")
+                                      (const :tag "Do not compile" nil))))))
+                (directory :tag "Compile directory"
+                           :validate vhdl-widget-directory-validate "./")
+                (string :tag "Library name     " "work")
+                (directory :tag "Library directory"
+                           :validate vhdl-widget-directory-validate "work/")
+                (file :tag "Makefile name    " "Makefile")
+                (string :tag "Description: (type `C-j' for newline)"
+                        :format "%t\n%v\n")))
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value
-			  'vhdl-update-mode-menu
-			  'vhdl-speedbar-refresh))
+         (vhdl-custom-set variable value
+                          'vhdl-update-mode-menu
+                          'vhdl-speedbar-refresh))
   :group 'vhdl-project)
 
 (defcustom vhdl-project nil
@@ -677,11 +677,11 @@ Is used to determine the project title and description to be inserted in file
 headers and the source files/directories to be scanned in the hierarchy
 browser.  The current project can also be changed temporarily in the menu."
   :type (let ((alist vhdl-project-alist) list)
-	  (while alist
-	    (push (list 'const (caar alist)) list)
-	    (setq alist (cdr alist)))
-	  (append '(choice (const :tag "None" nil) (const :tag "--"))
-		  (nreverse list)))
+          (while alist
+            (push (list 'const (caar alist)) list)
+            (setq alist (cdr alist)))
+          (append '(choice (const :tag "None" nil) (const :tag "--"))
+                  (nreverse list)))
   :group 'vhdl-project)
 
 (defcustom vhdl-project-file-name '("\\1.prj")
@@ -737,20 +737,20 @@ Additional standards:
 NOTE: Activate the new setting in a VHDL buffer by using the menu entry
       \"Activate Options\"."
   :type '(list (choice :tag "Basic standard"
-		       (const :tag "VHDL'87" 87)
-		       (const :tag "VHDL'93/02" 93)
-		       (const :tag "VHDL'08" 08))
-	       (set :tag "Additional standards" :indent 2
-		    (const :tag "VHDL-AMS" ams)
-		    (const :tag "Math packages" math)))
+                       (const :tag "VHDL'87" 87)
+                       (const :tag "VHDL'93/02" 93)
+                       (const :tag "VHDL'08" 08))
+               (set :tag "Additional standards" :indent 2
+                    (const :tag "VHDL-AMS" ams)
+                    (const :tag "Math packages" math)))
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value
-			  'vhdl-template-map-init
-			  'vhdl-mode-abbrev-table-init
-			  'vhdl-template-construct-alist-init
-			  'vhdl-template-package-alist-init
-			  'vhdl-update-mode-menu
-			  'vhdl-words-init 'vhdl-font-lock-init))
+         (vhdl-custom-set variable value
+                          'vhdl-template-map-init
+                          'vhdl-mode-abbrev-table-init
+                          'vhdl-template-construct-alist-init
+                          'vhdl-template-package-alist-init
+                          'vhdl-update-mode-menu
+                          'vhdl-words-init 'vhdl-font-lock-init))
   :group 'vhdl-style)
 
 (defcustom vhdl-basic-offset 2
@@ -764,7 +764,7 @@ This value is used by + and - symbols in `vhdl-offsets-alist'."
 This is done when typed or expanded or by the fix case functions."
   :type 'boolean
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value 'vhdl-abbrev-list-init))
+         (vhdl-custom-set variable value 'vhdl-abbrev-list-init))
   :group 'vhdl-style)
 
 (defcustom vhdl-upper-case-types nil
@@ -772,7 +772,7 @@ This is done when typed or expanded or by the fix case functions."
 This is done when expanded or by the fix case functions."
   :type 'boolean
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value 'vhdl-abbrev-list-init))
+         (vhdl-custom-set variable value 'vhdl-abbrev-list-init))
   :group 'vhdl-style)
 
 (defcustom vhdl-upper-case-attributes nil
@@ -780,7 +780,7 @@ This is done when expanded or by the fix case functions."
 This is done when expanded or by the fix case functions."
   :type 'boolean
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value 'vhdl-abbrev-list-init))
+         (vhdl-custom-set variable value 'vhdl-abbrev-list-init))
   :group 'vhdl-style)
 
 (defcustom vhdl-upper-case-enum-values nil
@@ -788,7 +788,7 @@ This is done when expanded or by the fix case functions."
 This is done when expanded or by the fix case functions."
   :type 'boolean
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value 'vhdl-abbrev-list-init))
+         (vhdl-custom-set variable value 'vhdl-abbrev-list-init))
   :group 'vhdl-style)
 
 (defcustom vhdl-upper-case-constants t
@@ -796,7 +796,7 @@ This is done when expanded or by the fix case functions."
 This is done when expanded."
   :type 'boolean
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value 'vhdl-abbrev-list-init))
+         (vhdl-custom-set variable value 'vhdl-abbrev-list-init))
   :group 'vhdl-style)
 
 (defcustom vhdl-use-direct-instantiation 'standard
@@ -805,8 +805,8 @@ This is done when expanded."
   Standard: only in VHDL standards that allow it (VHDL'93 and higher)
   Always  : always"
   :type '(choice (const :tag "Never" never)
-		 (const :tag "Standard" standard)
-		 (const :tag "Always" always))
+                 (const :tag "Standard" standard)
+                 (const :tag "Always" always))
   :group 'vhdl-style)
 
 (defcustom vhdl-array-index-record-field-in-sensitivity-list t
@@ -831,7 +831,7 @@ attaching or stripping off a substring).  The file extension is automatically
 taken from the file name of the current buffer."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-naming
   :group 'vhdl-compose)
 
@@ -846,7 +846,7 @@ of the entity and the architecture name separated by a space.  This gives
 access to both names (see default setting as example)."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-naming
   :group 'vhdl-compose)
 
@@ -858,7 +858,7 @@ name (e.g. attaching or stripping off a substring).  The file extension is
 automatically taken from the file name of the current buffer."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-naming
   :group 'vhdl-compose)
 
@@ -872,7 +872,7 @@ in a different directory by prepending a relative or absolute path to the
 file name."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-naming
   :group 'vhdl-compose)
 
@@ -885,9 +885,9 @@ follows:
   Upper Case: whole name is changed to upper case
   Capitalize: first letter of each word in name is capitalized"
   :type '(choice (const :tag "As Is" identity)
-		 (const :tag "Lower Case" downcase)
-		 (const :tag "Upper Case" upcase)
-		 (const :tag "Capitalize" capitalize))
+                 (const :tag "Lower Case" downcase)
+                 (const :tag "Upper Case" upcase)
+                 (const :tag "Capitalize" capitalize))
   :group 'vhdl-naming
   :group 'vhdl-compose)
 
@@ -901,9 +901,9 @@ follows:
   VHDL keywords: invoke built-in templates
   User keywords: invoke user models (see option `vhdl-model-alist')"
   :type '(set (const :tag "VHDL keywords" vhdl)
-	      (const :tag "User model keywords" user))
+              (const :tag "User model keywords" user))
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value 'vhdl-mode-abbrev-table-init))
+         (vhdl-custom-set variable value 'vhdl-mode-abbrev-table-init))
   :group 'vhdl-template)
 
 (defcustom vhdl-optional-labels 'process
@@ -913,8 +913,8 @@ Template generators prompt for optional labels for:
   Processes only: processes only (also procedurals in VHDL-AMS)
   All constructs: all constructs with optional labels and keyword END"
   :type '(choice (const :tag "None" none)
-		 (const :tag "Processes only" process)
-		 (const :tag "All constructs" all))
+                 (const :tag "Processes only" process)
+                 (const :tag "All constructs" all))
   :group 'vhdl-template)
 
 (defcustom vhdl-insert-empty-lines 'unit
@@ -926,8 +926,8 @@ This improves readability of code.  Empty lines are inserted in:
 
 Replaces option `vhdl-additional-empty-lines'."
   :type '(choice (const :tag "None" none)
-		 (const :tag "Design units only" unit)
-		 (const :tag "All constructs" all))
+                 (const :tag "Design units only" unit)
+                 (const :tag "All constructs" all))
   :group 'vhdl-template
   :group 'vhdl-port
   :group 'vhdl-compose)
@@ -1097,9 +1097,9 @@ NOTE: Activate the new setting in a VHDL buffer by using the menu entry
 (defcustom vhdl-reset-kind 'async
   "Specifies which kind of reset to use in sequential processes."
   :type '(choice (const :tag "None" none)
-		 (const :tag "Synchronous" sync)
-		 (const :tag "Asynchronous" async)
-		 (const :tag "Query" query))
+                 (const :tag "Synchronous" sync)
+                 (const :tag "Asynchronous" async)
+                 (const :tag "Query" query))
   :group 'vhdl-sequential-process)
 
 (defcustom vhdl-reset-active-high nil
@@ -1119,7 +1119,7 @@ Otherwise, falling edge triggers."
   Standard: \"clk\\='event and clk = \\='1\\='\"
   Function: \"rising_edge(clk)\""
   :type '(choice (const :tag "Standard" standard)
-		 (const :tag "Function" function))
+                 (const :tag "Function" function))
   :group 'vhdl-sequential-process)
 
 (defcustom vhdl-clock-name ""
@@ -1179,17 +1179,17 @@ Type `C-j' for newlines.
 NOTE: Activate the new setting in a VHDL buffer by using the menu entry
       \"Activate Options\"."
   :type '(repeat (list :tag "Model" :indent 2
-		       (string :tag "Name       ")
-		       (string :tag "String     : (type `C-j' for newline)"
-			       :format "%t\n%v")
-		       (sexp   :tag "Key binding" x)
-		       (string :tag "Keyword    " :format "%t: %v\n")))
+                       (string :tag "Name       ")
+                       (string :tag "String     : (type `C-j' for newline)"
+                               :format "%t\n%v")
+                       (sexp   :tag "Key binding" x)
+                       (string :tag "Keyword    " :format "%t: %v\n")))
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value
-			  'vhdl-model-map-init
-			  'vhdl-model-defun
-			  'vhdl-mode-abbrev-table-init
-			  'vhdl-update-mode-menu))
+         (vhdl-custom-set variable value
+                          'vhdl-model-map-init
+                          'vhdl-model-defun
+                          'vhdl-mode-abbrev-table-init
+                          'vhdl-update-mode-menu))
   :group 'vhdl-model)
 
 
@@ -1205,7 +1205,7 @@ The component architecture name can be obtained by modifying the entity name
 If TO STRING is empty, the architecture name is queried."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-compose)
 
 (defcustom vhdl-compose-configuration-name
@@ -1219,7 +1219,7 @@ architecture name separated by a space.  This gives access to both names (see
 default setting as example)."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-compose)
 
 (defcustom vhdl-components-package-name
@@ -1232,9 +1232,9 @@ the current design.  Its name can be obtained by modifying the project name
 DIRECTORY entry is chosen."
    vhdl-name-doc-string)
   :type '(cons (cons :tag "Project" :indent 2
-		     (regexp :tag "From regexp")
-		     (string :tag "To string  "))
-	       (string :tag "Directory:\n  String     "))
+                     (regexp :tag "From regexp")
+                     (string :tag "To string  "))
+               (string :tag "Directory:\n  String     "))
   :group 'vhdl-compose)
 
 (defcustom vhdl-use-components-package nil
@@ -1258,8 +1258,8 @@ The component's entity and architecture are inserted:
 The file names are obtained from variables `vhdl-entity-file-name' and
 `vhdl-architecture-file-name'."
   :type '(choice (const :tag "None" none)
-		 (const :tag "Single file" single)
-		 (const :tag "Separate files" separate))
+                 (const :tag "Single file" single)
+                 (const :tag "Separate files" separate))
   :group 'vhdl-compose)
 
 (defcustom vhdl-compose-configuration-create-file nil
@@ -1313,8 +1313,8 @@ The comments and empty lines between groups of ports are pasted:
   Declarations: in entity/component/constant/signal declarations only
   Always      : also in generic/port maps"
   :type '(choice (const :tag "Never" never)
-		 (const :tag "Declarations" decl)
-		 (const :tag "Always" always))
+                 (const :tag "Declarations" decl)
+                 (const :tag "Always" always))
   :group 'vhdl-port)
 
 (defcustom vhdl-actual-generic-name '(".*" . "\\&")
@@ -1325,7 +1325,7 @@ obtained by modifying the formal generic name (e.g. attaching or stripping
 off a substring)."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-port
   :version "24.4")
 
@@ -1336,7 +1336,7 @@ In a component instantiation, an actual port name can be obtained by
 modifying the formal port name (e.g. attaching or stripping off a substring)."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-port)
 
 (defcustom vhdl-instance-name '(".*" . "\\&_%d")
@@ -1348,7 +1348,7 @@ by a unique number (starting with 1).
 If TO STRING is empty, the instance name is queried."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-port)
 
 
@@ -1363,7 +1363,7 @@ The entity name of a testbench can be obtained by modifying the name of
 the component to be tested (e.g. attaching or stripping off a substring)."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-testbench)
 
 (defcustom vhdl-testbench-architecture-name '(".*" . "")
@@ -1374,7 +1374,7 @@ the component to be tested (e.g. attaching or stripping off a substring).
 If TO STRING is empty, the architecture name is queried."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-testbench)
 
 (defcustom vhdl-testbench-configuration-name vhdl-compose-configuration-name
@@ -1387,7 +1387,7 @@ and the architecture name separated by a space.  This gives access to both
 names (see default setting as example)."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-testbench)
 
 (defcustom vhdl-testbench-dut-name '(".*" . "DUT")
@@ -1398,7 +1398,7 @@ testbench) can be obtained by modifying the component name (e.g. attaching
 or stripping off a substring)."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-testbench)
 
 (defcustom vhdl-testbench-include-header t
@@ -1462,8 +1462,8 @@ testbench entity and architecture are inserted:
 The file names are obtained from variables `vhdl-testbench-entity-file-name'
 and `vhdl-testbench-architecture-file-name'."
   :type '(choice (const :tag "None" none)
-		 (const :tag "Single file" single)
-		 (const :tag "Separate files" separate))
+                 (const :tag "Single file" single)
+                 (const :tag "Separate files" separate))
   :group 'vhdl-testbench)
 
 (defcustom vhdl-testbench-entity-file-name vhdl-entity-file-name
@@ -1476,7 +1476,7 @@ files can be created in a different directory by prepending a relative or
 absolute path to the file name."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-testbench)
 
 (defcustom vhdl-testbench-architecture-file-name vhdl-architecture-file-name
@@ -1491,7 +1491,7 @@ a different directory by prepending a relative or absolute path to the file
 name."
    vhdl-name-doc-string)
   :type '(cons (regexp :tag "From regexp")
-	       (string :tag "To string  "))
+               (string :tag "To string  "))
   :group 'vhdl-testbench)
 
 
@@ -1567,10 +1567,10 @@ Option `vhdl-align-groups' still applies within these blocks."
   "List of options for beautifying code.
 Allows you to disable individual features of code beautification."
   :type '(list (boolean :tag "Whitespace cleanup       ")
-	       (boolean :tag "Single statement per line")
-	       (boolean :tag "Indentation              ")
-	       (boolean :tag "Alignment                ")
-	       (boolean :tag "Case fixing              "))
+               (boolean :tag "Single statement per line")
+               (boolean :tag "Indentation              ")
+               (boolean :tag "Alignment                ")
+               (boolean :tag "Case fixing              "))
   :group 'vhdl-beautify
   :version "24.4")
 
@@ -1592,7 +1592,7 @@ NOTE: Activate the new setting in a VHDL buffer by re-fontifying it (menu
       entry \"Fontify Buffer\")."
   :type 'boolean
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value 'vhdl-font-lock-init))
+         (vhdl-custom-set variable value 'vhdl-font-lock-init))
   :group 'vhdl-highlight)
 
 (defcustom vhdl-highlight-names t
@@ -1609,7 +1609,7 @@ NOTE: Activate the new setting in a VHDL buffer by re-fontifying it (menu
       entry \"Fontify Buffer\")."
   :type 'boolean
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value 'vhdl-font-lock-init))
+         (vhdl-custom-set variable value 'vhdl-font-lock-init))
   :group 'vhdl-highlight)
 
 (defcustom vhdl-highlight-special-words nil
@@ -1622,7 +1622,7 @@ NOTE: Activate the new setting in a VHDL buffer by re-fontifying it (menu
       entry \"Fontify Buffer\")."
   :type 'boolean
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value 'vhdl-font-lock-init))
+         (vhdl-custom-set variable value 'vhdl-font-lock-init))
   :group 'vhdl-highlight)
 
 (defcustom vhdl-highlight-forbidden-words nil
@@ -1636,8 +1636,8 @@ NOTE: Activate the new setting in a VHDL buffer by re-fontifying it (menu
       entry \"Fontify Buffer\")."
   :type 'boolean
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value
-			  'vhdl-words-init 'vhdl-font-lock-init))
+         (vhdl-custom-set variable value
+                          'vhdl-words-init 'vhdl-font-lock-init))
   :group 'vhdl-highlight)
 
 (defcustom vhdl-highlight-verilog-keywords nil
@@ -1649,8 +1649,8 @@ NOTE: Activate the new setting in a VHDL buffer by re-fontifying it (menu
       entry \"Fontify Buffer\")."
   :type 'boolean
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value
-			  'vhdl-words-init 'vhdl-font-lock-init))
+         (vhdl-custom-set variable value
+                          'vhdl-words-init 'vhdl-font-lock-init))
   :group 'vhdl-highlight)
 
 (defcustom vhdl-highlight-translate-off nil
@@ -1664,7 +1664,7 @@ NOTE: Activate the new setting in a VHDL buffer by re-fontifying it (menu
       entry \"Fontify Buffer\")."
   :type 'boolean
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value 'vhdl-font-lock-init))
+         (vhdl-custom-set variable value 'vhdl-font-lock-init))
   :group 'vhdl-highlight)
 
 (defcustom vhdl-highlight-case-sensitive nil
@@ -1712,13 +1712,13 @@ For each entry, a new face is generated with the specified colors and name
 NOTE: Activate a changed regexp in a VHDL buffer by re-fontifying it (menu
       entry `Fontify Buffer').  All other changes require restarting Emacs."
   :type '(repeat (list :tag "Face" :indent 2
-		       (string :tag "Name         ")
-		       (regexp :tag "Regexp       " "\\w+_")
-		       (string :tag "Color (light)")
-		       (string :tag "Color (dark) ")
-		       (boolean :tag "In comments  ")))
+                       (string :tag "Name         ")
+                       (regexp :tag "Regexp       " "\\w+_")
+                       (string :tag "Color (light)")
+                       (string :tag "Color (dark) ")
+                       (boolean :tag "In comments  ")))
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value 'vhdl-font-lock-init))
+         (vhdl-custom-set variable value 'vhdl-font-lock-init))
   :group 'vhdl-highlight)
 
 (defcustom vhdl-forbidden-words '()
@@ -1730,8 +1730,8 @@ NOTE: Activate the new setting in a VHDL buffer by re-fontifying it (menu
       entry \"Fontify Buffer\")."
   :type '(repeat (string :format "%v"))
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value
-			  'vhdl-words-init 'vhdl-font-lock-init))
+         (vhdl-custom-set variable value
+                          'vhdl-words-init 'vhdl-font-lock-init))
   :group 'vhdl-highlight)
 
 (defcustom vhdl-forbidden-syntax ""
@@ -1745,8 +1745,8 @@ NOTE: Activate the new setting in a VHDL buffer by re-fontifying it (menu
       entry \"Fontify Buffer\")."
   :type 'regexp
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value
-			  'vhdl-words-init 'vhdl-font-lock-init))
+         (vhdl-custom-set variable value
+                          'vhdl-words-init 'vhdl-font-lock-init))
   :group 'vhdl-highlight)
 
 (defcustom vhdl-directive-keywords '("psl" "pragma" "synopsys")
@@ -1756,8 +1756,8 @@ NOTE: Activate the new setting in a VHDL buffer by re-fontifying it (menu
       entry \"Fontify Buffer\")."
   :type '(repeat (string :format "%v"))
   :set (lambda (variable value)
-	 (vhdl-custom-set variable value
-			  'vhdl-words-init 'vhdl-font-lock-init))
+         (vhdl-custom-set variable value
+                          'vhdl-words-init 'vhdl-font-lock-init))
   :group 'vhdl-highlight)
 
 
@@ -1776,8 +1776,8 @@ Alternatively, the speedbar can be opened from the VHDL menu."
 Alternatively, the displaying mode can be selected from the speedbar menu or
 by typing `f' (files), `h' (directory hierarchy) or `H' (project hierarchy)."
   :type '(choice (const :tag "Files" files)
-		 (const :tag "Directory hierarchy" directory)
-		 (const :tag "Project hierarchy" project))
+                 (const :tag "Directory hierarchy" directory)
+                 (const :tag "Project hierarchy" project))
   :group 'vhdl-speedbar)
 
 (defcustom vhdl-speedbar-scan-limit '(10000000 (1000000 50))
@@ -1794,17 +1794,17 @@ Background: scanning for instances is considerably slower than scanning for
 design units, especially when there are many instances.  These limits should
 prevent the scanning of large netlists."
   :type '(list (choice :tag "Design units"
-		       :format "%t        : %[Value Menu%] %v"
-		       (const :tag "None" nil)
-		       (integer :tag "File size"))
-	       (list :tag "Hierarchy" :indent 2
-		     (choice :tag "File size"
-			     :format "%t         : %[Value Menu%] %v"
-			     (const :tag "None" nil)
-			     (integer :tag "Size     "))
-		     (choice :tag "Instances per arch"
-			     (const :tag "None" nil)
-			     (integer :tag "Number   "))))
+                       :format "%t        : %[Value Menu%] %v"
+                       (const :tag "None" nil)
+                       (integer :tag "File size"))
+               (list :tag "Hierarchy" :indent 2
+                     (choice :tag "File size"
+                             :format "%t         : %[Value Menu%] %v"
+                             (const :tag "None" nil)
+                             (integer :tag "Size     "))
+                     (choice :tag "Instances per arch"
+                             (const :tag "None" nil)
+                             (integer :tag "Number   "))))
   :group 'vhdl-speedbar)
 
 (defcustom vhdl-speedbar-jump-to-unit t
@@ -1823,7 +1823,7 @@ The buffer cursor position is left unchanged otherwise."
   Hierarchy: design hierarchy information
   Display:   displaying information (which design units to expand)"
   :type '(set (const :tag "Hierarchy" hierarchy)
-	      (const :tag "Display"   display))
+              (const :tag "Display"   display))
   :group 'vhdl-speedbar)
 
 (defcustom vhdl-speedbar-cache-file-name ".emacs-vhdl-cache-\\1-\\2"
@@ -2002,27 +2002,27 @@ reported and the syntactic symbol is ignored.")
   "If non-nil, syntactic info is echoed when the line is indented.")
 
 (defconst vhdl-offsets-alist-default
-  '((string		   . -1000)
-    (cpp-macro		   . -1000)
-    (block-open		   . 0)
-    (block-close	   . 0)
-    (statement		   . 0)
-    (statement-cont	   . vhdl-lineup-statement-cont)
+  '((string                . -1000)
+    (cpp-macro             . -1000)
+    (block-open            . 0)
+    (block-close           . 0)
+    (statement             . 0)
+    (statement-cont        . vhdl-lineup-statement-cont)
     (statement-block-intro . +)
     (statement-case-intro  . +)
-    (case-alternative	   . +)
-    (comment		   . vhdl-lineup-comment)
-    (arglist-intro	   . +)
-    (arglist-cont	   . 0)
+    (case-alternative      . +)
+    (comment               . vhdl-lineup-comment)
+    (arglist-intro         . +)
+    (arglist-cont          . 0)
     (arglist-cont-nonempty . vhdl-lineup-arglist)
-    (arglist-close	   . vhdl-lineup-arglist)
-    (entity		   . 0)
-    (configuration	   . 0)
-    (package		   . 0)
-    (architecture	   . 0)
-    (package-body	   . 0)
-    (context		   . 0)
-    (directive		   . 0)
+    (arglist-close         . vhdl-lineup-arglist)
+    (entity                . 0)
+    (configuration         . 0)
+    (package               . 0)
+    (architecture          . 0)
+    (package-body          . 0)
+    (context               . 0)
+    (directive             . 0)
     )
   "Default settings for offsets of syntactic elements.
 Do not change this constant!  See the variable `vhdl-offsets-alist' for
@@ -2130,17 +2130,17 @@ your style, only those that are different from the default.")
 ;; dynamically append the default value of most variables
 (or (assoc "Default" vhdl-style-alist)
     (let* ((varlist '(vhdl-inhibit-startup-warnings-p
-		      vhdl-strict-syntax-p
-		      vhdl-echo-syntactic-information-p
-		      vhdl-basic-offset
-		      vhdl-offsets-alist
-		      vhdl-comment-only-line-offset))
-	   (default (cons "Default"
-			  (mapcar
-			   (function
-			    (lambda (var)
-			      (cons var (symbol-value var))))
-			   varlist))))
+                      vhdl-strict-syntax-p
+                      vhdl-echo-syntactic-information-p
+                      vhdl-basic-offset
+                      vhdl-offsets-alist
+                      vhdl-comment-only-line-offset))
+           (default (cons "Default"
+                          (mapcar
+                           (function
+                            (lambda (var)
+                              (cons var (symbol-value var))))
+                           varlist))))
       (push default vhdl-style-alist)))
 
 (defvar vhdl-mode-hook nil
@@ -2152,7 +2152,7 @@ your style, only those that are different from the default.")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; mandatory
-(require 'compile)			; XEmacs
+(require 'compile)                      ; XEmacs
 (require 'easymenu)
 (require 'hippie-exp)
 
@@ -2161,7 +2161,7 @@ your style, only those that are different from the default.")
 (eval-when-compile
   (require 'font-lock)
   (require 'ps-print)
-    (require 'speedbar)))		; for speedbar-with-writable
+    (require 'speedbar)))               ; for speedbar-with-writable
 
 (defun vhdl-aput (alist-symbol key &optional value)
   "Insert a key-value pair into an alist.
@@ -2171,9 +2171,9 @@ found in the alist, the value of KEY will be set to VALUE.  If the
 key-value pair cannot be found in the alist, it will be inserted into
 the head of the alist."
   (let* ((alist (symbol-value alist-symbol))
-	 (elem (assoc key alist)))
+         (elem (assoc key alist)))
     (if elem
-	(setcdr elem value)
+        (setcdr elem value)
       (set alist-symbol (cons (cons key value) alist)))))
 
 (defun vhdl-adelete (alist-symbol key)
@@ -2186,8 +2186,8 @@ is pair matching KEY."
       (set alist-symbol alist))
     (while (setq alist-cdr (cdr alist))
       (if (equal key (caar alist-cdr))
-	  (setcdr alist (cdr alist-cdr))
-	(setq alist alist-cdr)))))
+          (setcdr alist (cdr alist-cdr))
+        (setq alist alist-cdr)))))
 
 (defun vhdl-aget (alist key)
   "Return the value in ALIST that is associated with KEY.  If KEY is
@@ -2213,16 +2213,16 @@ Ignore byte-compiler warnings you might see."
   (defun wildcard-to-regexp (wildcard)
     "Simplified version of `wildcard-to-regexp' from Emacs's `files.el'."
     (let* ((i (string-match "[*?]" wildcard))
-	   (result (substring wildcard 0 i))
-	   (len (length wildcard)))
+           (result (substring wildcard 0 i))
+           (len (length wildcard)))
       (when i
-	(while (< i len)
-	  (let ((ch (aref wildcard i)))
-	    (setq result (concat result
-				 (cond ((eq ch ?*)  "[^\000]*")
-				       ((eq ch ??)  "[^\000]")
-				       (t (char-to-string ch)))))
-	    (setq i (1+ i)))))
+        (while (< i len)
+          (let ((ch (aref wildcard i)))
+            (setq result (concat result
+                                 (cond ((eq ch ?*)  "[^\000]*")
+                                       ((eq ch ??)  "[^\000]")
+                                       (t (char-to-string ch)))))
+            (setq i (1+ i)))))
       (concat "\\`" result "\\'"))))
 
 ;; `regexp-opt' undefined (`xemacs-devel' not installed)
@@ -2241,15 +2241,15 @@ Ignore byte-compiler warnings you might see."
 (unless (fboundp 'subst-char-in-string)
   (defun subst-char-in-string (fromchar tochar string &optional inplace)
     (let ((i (length string))
-	  (newstr (if inplace string (copy-sequence string))))
+          (newstr (if inplace string (copy-sequence string))))
       (while (> i 0)
-	(setq i (1- i))
-	(if (eq (aref newstr i) fromchar) (aset newstr i tochar)))
+        (setq i (1- i))
+        (if (eq (aref newstr i) fromchar) (aset newstr i tochar)))
       newstr)))
 
 ;; `itimer.el': idle timer bug fix in version 1.09 (XEmacs 21.1.9)
 (when (and (featurep 'xemacs) (string< itimer-version "1.09")
-	   (not noninteractive))
+           (not noninteractive))
   (load "itimer")
   (when (string< itimer-version "1.09")
     (message "WARNING:  Install included `itimer.el' patch first (see INSTALL file)")
@@ -2260,31 +2260,31 @@ Ignore byte-compiler warnings you might see."
   (defun file-expand-wildcards (pattern &optional full)
     "Taken from Emacs's `files.el'."
     (let* ((nondir (file-name-nondirectory pattern))
-    	   (dirpart (file-name-directory pattern))
-    	   (dirs (if (and dirpart (string-match "[[*?]" dirpart))
-		     (mapcar 'file-name-as-directory
-			     (file-expand-wildcards (directory-file-name dirpart)))
-		   (list dirpart)))
-	   contents)
+           (dirpart (file-name-directory pattern))
+           (dirs (if (and dirpart (string-match "[[*?]" dirpart))
+                     (mapcar 'file-name-as-directory
+                             (file-expand-wildcards (directory-file-name dirpart)))
+                   (list dirpart)))
+           contents)
       (while dirs
-	(when (or (null (car dirs))	; Possible if DIRPART is not wild.
-		  (file-directory-p (directory-file-name (car dirs))))
-	  (let ((this-dir-contents
-		 (delq nil
-		       (mapcar #'(lambda (name)
-				   (unless (string-match "\\`\\.\\.?\\'"
-							 (file-name-nondirectory name))
-				     name))
-			       (directory-files (or (car dirs) ".") full
-						(wildcard-to-regexp nondir))))))
-	    (setq contents
-		  (nconc
-		   (if (and (car dirs) (not full))
-		       (mapcar (function (lambda (name) (concat (car dirs) name)))
-			       this-dir-contents)
-		     this-dir-contents)
-		   contents))))
-	(setq dirs (cdr dirs)))
+        (when (or (null (car dirs))     ; Possible if DIRPART is not wild.
+                  (file-directory-p (directory-file-name (car dirs))))
+          (let ((this-dir-contents
+                 (delq nil
+                       (mapcar #'(lambda (name)
+                                   (unless (string-match "\\`\\.\\.?\\'"
+                                                         (file-name-nondirectory name))
+                                     name))
+                               (directory-files (or (car dirs) ".") full
+                                                (wildcard-to-regexp nondir))))))
+            (setq contents
+                  (nconc
+                   (if (and (car dirs) (not full))
+                       (mapcar (function (lambda (name) (concat (car dirs) name)))
+                               this-dir-contents)
+                     this-dir-contents)
+                   contents))))
+        (setq dirs (cdr dirs)))
       contents)))
 
 ;; `member-ignore-case' undefined (XEmacs)
@@ -2354,7 +2354,7 @@ Ignore byte-compiler warnings you might see."
 ;; option `vhdl-model-alist' changed format
 (when (= (length (car vhdl-model-alist)) 3)
   (let ((old-alist vhdl-model-alist)
-	new-alist)
+        new-alist)
     (while old-alist
       (push (append (car old-alist) '("")) new-alist)
       (setq old-alist (cdr old-alist)))
@@ -2364,7 +2364,7 @@ Ignore byte-compiler warnings you might see."
 ;; option `vhdl-project-alist' changed format
 (when (= (length (car vhdl-project-alist)) 3)
   (let ((old-alist vhdl-project-alist)
-	new-alist)
+        new-alist)
     (while old-alist
       (push (append (car old-alist) '("")) new-alist)
       (setq old-alist (cdr old-alist)))
@@ -2374,13 +2374,13 @@ Ignore byte-compiler warnings you might see."
 ;; option `vhdl-project-alist' changed format (3.31.1)
 (when (= (length (car vhdl-project-alist)) 4)
   (let ((old-alist vhdl-project-alist)
-	new-alist elem)
+        new-alist elem)
     (while old-alist
       (setq elem (car old-alist))
       (setq new-alist
-	    (cons (list (nth 0 elem) (nth 1 elem) "" (nth 2 elem)
-			nil "./" "work" "work/" "Makefile" (nth 3 elem))
-		  new-alist))
+            (cons (list (nth 0 elem) (nth 1 elem) "" (nth 2 elem)
+                        nil "./" "work" "work/" "Makefile" (nth 3 elem))
+                  new-alist))
       (setq old-alist (cdr old-alist)))
     (setq vhdl-project-alist (nreverse new-alist)))
   (vhdl-warning-when-idle "Option `vhdl-project-alist' changed format; please re-customize"))
@@ -2390,22 +2390,22 @@ Ignore byte-compiler warnings you might see."
   (let ((tmp-alist vhdl-project-alist))
     (while tmp-alist
       (setcdr (nthcdr 3 (car tmp-alist))
-	      (cons "" (nthcdr 4 (car tmp-alist))))
+              (cons "" (nthcdr 4 (car tmp-alist))))
       (setq tmp-alist (cdr tmp-alist))))
   (customize-save-variable 'vhdl-project-alist vhdl-project-alist))
 
 ;; option `vhdl-compiler-alist' changed format (3.31.1)
 (when (= (length (car vhdl-compiler-alist)) 7)
   (let ((old-alist vhdl-compiler-alist)
-	new-alist elem)
+        new-alist elem)
     (while old-alist
       (setq elem (car old-alist))
       (setq new-alist
-	    (cons (list (nth 0 elem) (nth 1 elem) "" "make -f \\1"
-			(if (equal (nth 3 elem) "") nil (nth 3 elem))
-			(nth 4 elem) "work/" "Makefile" (downcase (nth 0 elem))
-			(nth 5 elem) (nth 6 elem) nil)
-		  new-alist))
+            (cons (list (nth 0 elem) (nth 1 elem) "" "make -f \\1"
+                        (if (equal (nth 3 elem) "") nil (nth 3 elem))
+                        (nth 4 elem) "work/" "Makefile" (downcase (nth 0 elem))
+                        (nth 5 elem) (nth 6 elem) nil)
+                  new-alist))
       (setq old-alist (cdr old-alist)))
     (setq vhdl-compiler-alist (nreverse new-alist)))
   (vhdl-warning-when-idle "Option `vhdl-compiler-alist' changed; please reset and re-customize"))
@@ -2415,7 +2415,7 @@ Ignore byte-compiler warnings you might see."
   (let ((tmp-alist vhdl-compiler-alist))
     (while tmp-alist
       (setcdr (nthcdr 4 (car tmp-alist))
-	      (cons "mkdir \\1" (nthcdr 5 (car tmp-alist))))
+              (cons "mkdir \\1" (nthcdr 5 (car tmp-alist))))
       (setq tmp-alist (cdr tmp-alist))))
   (customize-save-variable 'vhdl-compiler-alist vhdl-compiler-alist))
 
@@ -2424,7 +2424,7 @@ Ignore byte-compiler warnings you might see."
   (let ((tmp-alist vhdl-compiler-alist))
     (while tmp-alist
       (setcdr (nthcdr 3 (car tmp-alist))
-	      (cons "" (nthcdr 4 (car tmp-alist))))
+              (cons "" (nthcdr 4 (car tmp-alist))))
       (setq tmp-alist (cdr tmp-alist))))
   (customize-save-variable 'vhdl-compiler-alist vhdl-compiler-alist))
 
@@ -2433,7 +2433,7 @@ Ignore byte-compiler warnings you might see."
   (let ((tmp-alist vhdl-compiler-alist))
     (while tmp-alist
       (setcdr (nthcdr 2 (nth 11 (car tmp-alist)))
-	      '(0 . nil))
+              '(0 . nil))
       (setq tmp-alist (cdr tmp-alist))))
   (customize-save-variable 'vhdl-compiler-alist vhdl-compiler-alist))
 
@@ -2476,8 +2476,8 @@ specified."
   "Resolve environment variables in STRING."
   (while (string-match "\\(.*\\)${?\\(\\(\\w\\|_\\)+\\)}?\\(.*\\)" string)
     (setq string (concat (match-string 1 string)
-			 (getenv (match-string 2 string))
-			 (match-string 4 string))))
+                         (getenv (match-string 2 string))
+                         (match-string 4 string))))
   string)
 
 (defun vhdl-default-directory ()
@@ -2485,14 +2485,14 @@ specified."
 current buffer if no project is defined."
   (if (vhdl-project-p)
       (expand-file-name (vhdl-resolve-env-variable
-			 (nth 1 (vhdl-aget vhdl-project-alist vhdl-project))))
+                         (nth 1 (vhdl-aget vhdl-project-alist vhdl-project))))
     default-directory))
 
 (defmacro vhdl-prepare-search-1 (&rest body)
   "Enable case insensitive search and switch to syntax table that includes `_',
 then execute BODY, and finally restore the old environment.  Used for
 consistent searching."
-  `(let ((case-fold-search t))		; case insensitive search
+  `(let ((case-fold-search t))          ; case insensitive search
      ;; use extended syntax table
      (with-syntax-table vhdl-mode-ext-syntax-table
        ,@body)))
@@ -2501,8 +2501,8 @@ consistent searching."
   "Enable case insensitive search, switch to syntax table that includes `_',
 arrange to ignore `intangible' overlays, then execute BODY, and finally restore
 the old environment.  Used for consistent searching."
-  `(let ((case-fold-search t)		; case insensitive search
-	 (current-syntax-table (syntax-table))
+  `(let ((case-fold-search t)           ; case insensitive search
+         (current-syntax-table (syntax-table))
          (inhibit-point-motion-hooks t))
      ;; use extended syntax table
      (set-syntax-table vhdl-mode-ext-syntax-table)
@@ -2518,45 +2518,45 @@ the old environment.  Used for consistent searching."
        (progn ,@body)
      (unless (file-directory-p ,file-name)
        (let ((source-buffer (current-buffer))
-	     (visiting-buffer (find-buffer-visiting ,file-name))
-	     file-opened)
-	 (when (or (and visiting-buffer (set-buffer visiting-buffer))
-		   (condition-case ()
-		       (progn (set-buffer (create-file-buffer ,file-name))
-			      (setq file-opened t)
-			      (vhdl-insert-file-contents ,file-name)
+             (visiting-buffer (find-buffer-visiting ,file-name))
+             file-opened)
+         (when (or (and visiting-buffer (set-buffer visiting-buffer))
+                   (condition-case ()
+                       (progn (set-buffer (create-file-buffer ,file-name))
+                              (setq file-opened t)
+                              (vhdl-insert-file-contents ,file-name)
                               ;; FIXME: This modifies a global syntax-table!
-			      (modify-syntax-entry ?\- ". 12" (syntax-table))
-			      (modify-syntax-entry ?\n ">" (syntax-table))
-			      (modify-syntax-entry ?\^M ">" (syntax-table))
-			      (modify-syntax-entry ?_ "w" (syntax-table))
-			      t)
-		     (error
-		      (if ,issue-error
-			  (progn
-			    (when file-opened (kill-buffer (current-buffer)))
-			    (set-buffer source-buffer)
-			    (error "ERROR:  File cannot be opened: \"%s\"" ,file-name))
-			(vhdl-warning (format "File cannot be opened: \"%s\"" ,file-name) t)
-			nil))))
-	   (condition-case info
-	       (progn ,@body)
-	     (error
-	      (if ,issue-error
-		  (progn
-		    (when file-opened (kill-buffer (current-buffer)))
-		    (set-buffer source-buffer)
-		    (error (cadr info)))
-		(vhdl-warning (cadr info))))))
-	 (when file-opened (kill-buffer (current-buffer)))
-	 (set-buffer source-buffer)))))
+                              (modify-syntax-entry ?\- ". 12" (syntax-table))
+                              (modify-syntax-entry ?\n ">" (syntax-table))
+                              (modify-syntax-entry ?\^M ">" (syntax-table))
+                              (modify-syntax-entry ?_ "w" (syntax-table))
+                              t)
+                     (error
+                      (if ,issue-error
+                          (progn
+                            (when file-opened (kill-buffer (current-buffer)))
+                            (set-buffer source-buffer)
+                            (error "ERROR:  File cannot be opened: \"%s\"" ,file-name))
+                        (vhdl-warning (format "File cannot be opened: \"%s\"" ,file-name) t)
+                        nil))))
+           (condition-case info
+               (progn ,@body)
+             (error
+              (if ,issue-error
+                  (progn
+                    (when file-opened (kill-buffer (current-buffer)))
+                    (set-buffer source-buffer)
+                    (error (cadr info)))
+                (vhdl-warning (cadr info))))))
+         (when file-opened (kill-buffer (current-buffer)))
+         (set-buffer source-buffer)))))
 
 (defun vhdl-insert-file-contents (filename)
   "Nicked from `insert-file-contents-literally', but allow coding system
 conversion."
   (let ((format-alist nil)
-	(after-insert-file-functions nil)
-	(jka-compr-compression-info-list nil))
+        (after-insert-file-functions nil)
+        (jka-compr-compression-info-list nil))
     (insert-file-contents filename t)))
 
 (defun vhdl-sort-alist (alist)
@@ -2566,11 +2566,11 @@ conversion."
 (defun vhdl-get-subdirs (directory)
   "Recursively get subdirectories of DIRECTORY."
   (let ((dir-list (list (file-name-as-directory directory)))
-	file-list)
+        file-list)
     (setq file-list (vhdl-directory-files directory t "\\w.*"))
     (while file-list
       (when (file-directory-p (car file-list))
-	(setq dir-list (append dir-list (vhdl-get-subdirs (car file-list)))))
+        (setq dir-list (append dir-list (vhdl-get-subdirs (car file-list)))))
       (setq file-list (cdr file-list)))
     dir-list))
 
@@ -2596,21 +2596,21 @@ conversion."
 (defun vhdl-speedbar-refresh (&optional key)
   "Refresh directory or project with name KEY."
   (when (and (boundp 'speedbar-frame)
-	     (frame-live-p speedbar-frame))
+             (frame-live-p speedbar-frame))
     (let ((pos (point))
-	  (last-frame (selected-frame)))
+          (last-frame (selected-frame)))
       (if (null key)
-	  (speedbar-refresh)
-	(select-frame speedbar-frame)
-	(when (save-excursion
-		(goto-char (point-min))
-		(re-search-forward (concat "^\\([0-9]+:\\s-*<\\)->\\s-+" key "$") nil t))
-	  (goto-char (match-end 1))
-	  (speedbar-do-function-pointer)
-	  (backward-char 2)
-	  (speedbar-do-function-pointer)
-	  (message "Refreshing speedbar...done"))
-	(select-frame last-frame)))))
+          (speedbar-refresh)
+        (select-frame speedbar-frame)
+        (when (save-excursion
+                (goto-char (point-min))
+                (re-search-forward (concat "^\\([0-9]+:\\s-*<\\)->\\s-+" key "$") nil t))
+          (goto-char (match-end 1))
+          (speedbar-do-function-pointer)
+          (backward-char 2)
+          (speedbar-do-function-pointer)
+          (message "Refreshing speedbar...done"))
+        (select-frame last-frame)))))
 
 (defun vhdl-show-messages ()
   "Get *Messages* buffer to show recent messages."
@@ -2621,7 +2621,7 @@ conversion."
   "Return whether direct instantiation is used."
   (or (eq vhdl-use-direct-instantiation 'always)
       (and (eq vhdl-use-direct-instantiation 'standard)
-	   (not (vhdl-standard-p '87)))))
+           (not (vhdl-standard-p '87)))))
 
 (defun vhdl-max-marker (marker1 marker2)
   "Return larger marker."
@@ -2638,25 +2638,25 @@ conversion."
 elements > `vhdl-menu-max-size'."
   (if (> (length list) vhdl-menu-max-size)
       (let ((remain list)
-	    (result '())
-	    (sublist '())
-	    (menuno 1)
-	    (i 0))
-	(while remain
-	  (push (car remain) sublist)
-	  (setq remain (cdr remain))
-	  (setq i (+ i 1))
-	  (if (= i vhdl-menu-max-size)
-	      (progn
-		(push (cons (format "%s %s" title menuno)
-			    (nreverse sublist)) result)
-		(setq i 0)
-		(setq menuno (+ menuno 1))
-		(setq sublist '()))))
-	(and sublist
-	     (push (cons (format "%s %s" title menuno)
-			 (nreverse sublist)) result))
-	(nreverse result))
+            (result '())
+            (sublist '())
+            (menuno 1)
+            (i 0))
+        (while remain
+          (push (car remain) sublist)
+          (setq remain (cdr remain))
+          (setq i (+ i 1))
+          (if (= i vhdl-menu-max-size)
+              (progn
+                (push (cons (format "%s %s" title menuno)
+                            (nreverse sublist)) result)
+                (setq i 0)
+                (setq menuno (+ menuno 1))
+                (setq sublist '()))))
+        (and sublist
+             (push (cons (format "%s %s" title menuno)
+                         (nreverse sublist)) result))
+        (nreverse result))
     list))
 
 
@@ -2674,66 +2674,66 @@ elements > `vhdl-menu-max-size'."
   "Initialize `vhdl-template-map'."
   (setq vhdl-template-map (make-sparse-keymap))
   ;; key bindings for VHDL templates
-  (define-key vhdl-template-map "al"	'vhdl-template-alias)
-  (define-key vhdl-template-map "ar"	'vhdl-template-architecture)
-  (define-key vhdl-template-map "at"	'vhdl-template-assert)
-  (define-key vhdl-template-map "ad"	'vhdl-template-attribute-decl)
-  (define-key vhdl-template-map "as"	'vhdl-template-attribute-spec)
-  (define-key vhdl-template-map "bl"	'vhdl-template-block)
-  (define-key vhdl-template-map "ca"	'vhdl-template-case-is)
-  (define-key vhdl-template-map "cd"	'vhdl-template-component-decl)
-  (define-key vhdl-template-map "ci"	'vhdl-template-component-inst)
-  (define-key vhdl-template-map "cs"	'vhdl-template-conditional-signal-asst)
-  (define-key vhdl-template-map "Cb"	'vhdl-template-block-configuration)
-  (define-key vhdl-template-map "Cc"	'vhdl-template-component-conf)
-  (define-key vhdl-template-map "Cd"	'vhdl-template-configuration-decl)
-  (define-key vhdl-template-map "Cs"	'vhdl-template-configuration-spec)
-  (define-key vhdl-template-map "co"	'vhdl-template-constant)
-  (define-key vhdl-template-map "ct"	'vhdl-template-context)
-  (define-key vhdl-template-map "di"	'vhdl-template-disconnect)
-  (define-key vhdl-template-map "el"	'vhdl-template-else)
-  (define-key vhdl-template-map "ei"	'vhdl-template-elsif)
-  (define-key vhdl-template-map "en"	'vhdl-template-entity)
-  (define-key vhdl-template-map "ex"	'vhdl-template-exit)
-  (define-key vhdl-template-map "fi"	'vhdl-template-file)
-  (define-key vhdl-template-map "fg"	'vhdl-template-for-generate)
-  (define-key vhdl-template-map "fl"	'vhdl-template-for-loop)
-  (define-key vhdl-template-map "\C-f"	'vhdl-template-footer)
-  (define-key vhdl-template-map "fb"	'vhdl-template-function-body)
-  (define-key vhdl-template-map "fd"	'vhdl-template-function-decl)
-  (define-key vhdl-template-map "ge"	'vhdl-template-generic)
-  (define-key vhdl-template-map "gd"	'vhdl-template-group-decl)
-  (define-key vhdl-template-map "gt"	'vhdl-template-group-template)
-  (define-key vhdl-template-map "\C-h"	'vhdl-template-header)
-  (define-key vhdl-template-map "ig"	'vhdl-template-if-generate)
-  (define-key vhdl-template-map "it"	'vhdl-template-if-then)
-  (define-key vhdl-template-map "li"	'vhdl-template-library)
-  (define-key vhdl-template-map "lo"	'vhdl-template-bare-loop)
-  (define-key vhdl-template-map "\C-m"	'vhdl-template-modify)
-  (define-key vhdl-template-map "\C-t"	'vhdl-template-insert-date)
-  (define-key vhdl-template-map "ma"	'vhdl-template-map)
-  (define-key vhdl-template-map "ne"	'vhdl-template-next)
-  (define-key vhdl-template-map "ot"	'vhdl-template-others)
-  (define-key vhdl-template-map "Pd"	'vhdl-template-package-decl)
-  (define-key vhdl-template-map "Pb"	'vhdl-template-package-body)
+  (define-key vhdl-template-map "al"    'vhdl-template-alias)
+  (define-key vhdl-template-map "ar"    'vhdl-template-architecture)
+  (define-key vhdl-template-map "at"    'vhdl-template-assert)
+  (define-key vhdl-template-map "ad"    'vhdl-template-attribute-decl)
+  (define-key vhdl-template-map "as"    'vhdl-template-attribute-spec)
+  (define-key vhdl-template-map "bl"    'vhdl-template-block)
+  (define-key vhdl-template-map "ca"    'vhdl-template-case-is)
+  (define-key vhdl-template-map "cd"    'vhdl-template-component-decl)
+  (define-key vhdl-template-map "ci"    'vhdl-template-component-inst)
+  (define-key vhdl-template-map "cs"    'vhdl-template-conditional-signal-asst)
+  (define-key vhdl-template-map "Cb"    'vhdl-template-block-configuration)
+  (define-key vhdl-template-map "Cc"    'vhdl-template-component-conf)
+  (define-key vhdl-template-map "Cd"    'vhdl-template-configuration-decl)
+  (define-key vhdl-template-map "Cs"    'vhdl-template-configuration-spec)
+  (define-key vhdl-template-map "co"    'vhdl-template-constant)
+  (define-key vhdl-template-map "ct"    'vhdl-template-context)
+  (define-key vhdl-template-map "di"    'vhdl-template-disconnect)
+  (define-key vhdl-template-map "el"    'vhdl-template-else)
+  (define-key vhdl-template-map "ei"    'vhdl-template-elsif)
+  (define-key vhdl-template-map "en"    'vhdl-template-entity)
+  (define-key vhdl-template-map "ex"    'vhdl-template-exit)
+  (define-key vhdl-template-map "fi"    'vhdl-template-file)
+  (define-key vhdl-template-map "fg"    'vhdl-template-for-generate)
+  (define-key vhdl-template-map "fl"    'vhdl-template-for-loop)
+  (define-key vhdl-template-map "\C-f"  'vhdl-template-footer)
+  (define-key vhdl-template-map "fb"    'vhdl-template-function-body)
+  (define-key vhdl-template-map "fd"    'vhdl-template-function-decl)
+  (define-key vhdl-template-map "ge"    'vhdl-template-generic)
+  (define-key vhdl-template-map "gd"    'vhdl-template-group-decl)
+  (define-key vhdl-template-map "gt"    'vhdl-template-group-template)
+  (define-key vhdl-template-map "\C-h"  'vhdl-template-header)
+  (define-key vhdl-template-map "ig"    'vhdl-template-if-generate)
+  (define-key vhdl-template-map "it"    'vhdl-template-if-then)
+  (define-key vhdl-template-map "li"    'vhdl-template-library)
+  (define-key vhdl-template-map "lo"    'vhdl-template-bare-loop)
+  (define-key vhdl-template-map "\C-m"  'vhdl-template-modify)
+  (define-key vhdl-template-map "\C-t"  'vhdl-template-insert-date)
+  (define-key vhdl-template-map "ma"    'vhdl-template-map)
+  (define-key vhdl-template-map "ne"    'vhdl-template-next)
+  (define-key vhdl-template-map "ot"    'vhdl-template-others)
+  (define-key vhdl-template-map "Pd"    'vhdl-template-package-decl)
+  (define-key vhdl-template-map "Pb"    'vhdl-template-package-body)
   (define-key vhdl-template-map "("     'vhdl-template-paired-parens)
-  (define-key vhdl-template-map "po"	'vhdl-template-port)
-  (define-key vhdl-template-map "pb"	'vhdl-template-procedure-body)
-  (define-key vhdl-template-map "pd"	'vhdl-template-procedure-decl)
-  (define-key vhdl-template-map "pc"	'vhdl-template-process-comb)
-  (define-key vhdl-template-map "ps"	'vhdl-template-process-seq)
-  (define-key vhdl-template-map "rp"	'vhdl-template-report)
-  (define-key vhdl-template-map "rt"	'vhdl-template-return)
-  (define-key vhdl-template-map "ss"	'vhdl-template-selected-signal-asst)
-  (define-key vhdl-template-map "si"	'vhdl-template-signal)
-  (define-key vhdl-template-map "su"	'vhdl-template-subtype)
-  (define-key vhdl-template-map "ty"	'vhdl-template-type)
-  (define-key vhdl-template-map "us"	'vhdl-template-use)
-  (define-key vhdl-template-map "va"	'vhdl-template-variable)
-  (define-key vhdl-template-map "wa"	'vhdl-template-wait)
-  (define-key vhdl-template-map "wl"	'vhdl-template-while-loop)
-  (define-key vhdl-template-map "wi"	'vhdl-template-with)
-  (define-key vhdl-template-map "wc"	'vhdl-template-clocked-wait)
+  (define-key vhdl-template-map "po"    'vhdl-template-port)
+  (define-key vhdl-template-map "pb"    'vhdl-template-procedure-body)
+  (define-key vhdl-template-map "pd"    'vhdl-template-procedure-decl)
+  (define-key vhdl-template-map "pc"    'vhdl-template-process-comb)
+  (define-key vhdl-template-map "ps"    'vhdl-template-process-seq)
+  (define-key vhdl-template-map "rp"    'vhdl-template-report)
+  (define-key vhdl-template-map "rt"    'vhdl-template-return)
+  (define-key vhdl-template-map "ss"    'vhdl-template-selected-signal-asst)
+  (define-key vhdl-template-map "si"    'vhdl-template-signal)
+  (define-key vhdl-template-map "su"    'vhdl-template-subtype)
+  (define-key vhdl-template-map "ty"    'vhdl-template-type)
+  (define-key vhdl-template-map "us"    'vhdl-template-use)
+  (define-key vhdl-template-map "va"    'vhdl-template-variable)
+  (define-key vhdl-template-map "wa"    'vhdl-template-wait)
+  (define-key vhdl-template-map "wl"    'vhdl-template-while-loop)
+  (define-key vhdl-template-map "wi"    'vhdl-template-with)
+  (define-key vhdl-template-map "wc"    'vhdl-template-clocked-wait)
   (define-key vhdl-template-map "\C-pb" 'vhdl-template-package-numeric-bit)
   (define-key vhdl-template-map "\C-pn" 'vhdl-template-package-numeric-std)
   (define-key vhdl-template-map "\C-ps" 'vhdl-template-package-std-logic-1164)
@@ -2749,17 +2749,17 @@ elements > `vhdl-menu-max-size'."
   (define-key vhdl-template-map "\C-dF" 'vhdl-template-directive-synthesis-off)
   (define-key vhdl-template-map "\C-q"  'vhdl-template-search-prompt)
   (when (vhdl-standard-p 'ams)
-    (define-key vhdl-template-map "br"	'vhdl-template-break)
-    (define-key vhdl-template-map "cu"	'vhdl-template-case-use)
-    (define-key vhdl-template-map "iu"	'vhdl-template-if-use)
-    (define-key vhdl-template-map "lm"	'vhdl-template-limit)
-    (define-key vhdl-template-map "na"	'vhdl-template-nature)
-    (define-key vhdl-template-map "pa"	'vhdl-template-procedural)
-    (define-key vhdl-template-map "qf"	'vhdl-template-quantity-free)
-    (define-key vhdl-template-map "qb"	'vhdl-template-quantity-branch)
-    (define-key vhdl-template-map "qs"	'vhdl-template-quantity-source)
-    (define-key vhdl-template-map "sn"	'vhdl-template-subnature)
-    (define-key vhdl-template-map "te"	'vhdl-template-terminal)
+    (define-key vhdl-template-map "br"  'vhdl-template-break)
+    (define-key vhdl-template-map "cu"  'vhdl-template-case-use)
+    (define-key vhdl-template-map "iu"  'vhdl-template-if-use)
+    (define-key vhdl-template-map "lm"  'vhdl-template-limit)
+    (define-key vhdl-template-map "na"  'vhdl-template-nature)
+    (define-key vhdl-template-map "pa"  'vhdl-template-procedural)
+    (define-key vhdl-template-map "qf"  'vhdl-template-quantity-free)
+    (define-key vhdl-template-map "qb"  'vhdl-template-quantity-branch)
+    (define-key vhdl-template-map "qs"  'vhdl-template-quantity-source)
+    (define-key vhdl-template-map "sn"  'vhdl-template-subnature)
+    (define-key vhdl-template-map "te"  'vhdl-template-terminal)
     )
   (when (vhdl-standard-p 'math)
     (define-key vhdl-template-map "\C-pc" 'vhdl-template-package-math-complex)
@@ -2776,7 +2776,7 @@ STRING are replaced by `-' and substrings are converted to lower case."
   (let ((name prefix))
     (while (string-match "\\(\\w+\\)\\s-*\\(.*\\)" string)
       (setq name
-	    (concat name "-" (downcase (substring string 0 (match-end 1)))))
+            (concat name "-" (downcase (substring string 0 (match-end 1)))))
       (setq string (substring string (match-beginning 2))))
     (when postfix (setq name (concat name "-" postfix)))
     (intern name)))
@@ -2792,7 +2792,7 @@ STRING are replaced by `-' and substrings are converted to lower case."
     (while model-alist
       (setq model (car model-alist))
       (define-key vhdl-model-map (nth 2 model)
-	(vhdl-function-name "vhdl-model" (nth 0 model)))
+        (vhdl-function-name "vhdl-model" (nth 0 model)))
       (setq model-alist (cdr model-alist)))))
 
 ;; initialize user model map for VHDL Mode
@@ -2805,21 +2805,21 @@ STRING are replaced by `-' and substrings are converted to lower case."
   "Initialize `vhdl-mode-map'."
   (setq vhdl-mode-map (make-sparse-keymap))
   ;; template key bindings
-  (define-key vhdl-mode-map "\C-c\C-t"	   vhdl-template-map)
+  (define-key vhdl-mode-map "\C-c\C-t"     vhdl-template-map)
   ;; model key bindings
-  (define-key vhdl-mode-map "\C-c\C-m"	   vhdl-model-map)
+  (define-key vhdl-mode-map "\C-c\C-m"     vhdl-model-map)
   ;; standard key bindings
-  (define-key vhdl-mode-map "\M-a"	   'vhdl-beginning-of-statement)
-  (define-key vhdl-mode-map "\M-e"	   'vhdl-end-of-statement)
-  (define-key vhdl-mode-map "\M-\C-f"	   'vhdl-forward-sexp)
-  (define-key vhdl-mode-map "\M-\C-b"	   'vhdl-backward-sexp)
-  (define-key vhdl-mode-map "\M-\C-u"	   'vhdl-backward-up-list)
-  (define-key vhdl-mode-map "\M-\C-a"	   'vhdl-backward-same-indent)
-  (define-key vhdl-mode-map "\M-\C-e"	   'vhdl-forward-same-indent)
+  (define-key vhdl-mode-map "\M-a"         'vhdl-beginning-of-statement)
+  (define-key vhdl-mode-map "\M-e"         'vhdl-end-of-statement)
+  (define-key vhdl-mode-map "\M-\C-f"      'vhdl-forward-sexp)
+  (define-key vhdl-mode-map "\M-\C-b"      'vhdl-backward-sexp)
+  (define-key vhdl-mode-map "\M-\C-u"      'vhdl-backward-up-list)
+  (define-key vhdl-mode-map "\M-\C-a"      'vhdl-backward-same-indent)
+  (define-key vhdl-mode-map "\M-\C-e"      'vhdl-forward-same-indent)
   (unless (featurep 'xemacs) ; would override `M-backspace' in XEmacs
-    (define-key vhdl-mode-map "\M-\C-h"	   'vhdl-mark-defun))
-  (define-key vhdl-mode-map "\M-\C-q"	   'vhdl-indent-sexp)
-  (define-key vhdl-mode-map "\M-^"	   'vhdl-delete-indentation)
+    (define-key vhdl-mode-map "\M-\C-h"    'vhdl-mark-defun))
+  (define-key vhdl-mode-map "\M-\C-q"      'vhdl-indent-sexp)
+  (define-key vhdl-mode-map "\M-^"         'vhdl-delete-indentation)
   ;; mode specific key bindings
   (define-key vhdl-mode-map "\C-c\C-m\C-e" 'vhdl-electric-mode)
   (define-key vhdl-mode-map "\C-c\C-m\C-s" 'vhdl-stutter-mode)
@@ -2828,9 +2828,9 @@ STRING are replaced by `-' and substrings are converted to lower case."
   (define-key vhdl-mode-map "\C-c\C-p\C-m" 'vhdl-import-project)
   (define-key vhdl-mode-map "\C-c\C-p\C-x" 'vhdl-export-project)
   (define-key vhdl-mode-map "\C-c\C-s\C-k" 'vhdl-set-compiler)
-  (define-key vhdl-mode-map "\C-c\C-k"	   'vhdl-compile)
+  (define-key vhdl-mode-map "\C-c\C-k"     'vhdl-compile)
   (define-key vhdl-mode-map "\C-c\M-\C-k"  'vhdl-make)
-  (define-key vhdl-mode-map "\C-c\M-k"	   'vhdl-generate-makefile)
+  (define-key vhdl-mode-map "\C-c\M-k"     'vhdl-generate-makefile)
   (define-key vhdl-mode-map "\C-c\C-p\C-w" 'vhdl-port-copy)
   (define-key vhdl-mode-map "\C-c\C-p\M-w" 'vhdl-port-copy)
   (define-key vhdl-mode-map "\C-c\C-p\C-e" 'vhdl-port-paste-entity)
@@ -2856,12 +2856,12 @@ STRING are replaced by `-' and substrings are converted to lower case."
   (define-key vhdl-mode-map "\C-c\C-m\C-w" 'vhdl-compose-wire-components)
   (define-key vhdl-mode-map "\C-c\C-m\C-f" 'vhdl-compose-configuration)
   (define-key vhdl-mode-map "\C-c\C-m\C-k" 'vhdl-compose-components-package)
-  (define-key vhdl-mode-map "\C-c\C-c"	   'vhdl-comment-uncomment-region)
-  (define-key vhdl-mode-map "\C-c-"	   'vhdl-comment-append-inline)
-  (define-key vhdl-mode-map "\C-c\M--"	   'vhdl-comment-display-line)
+  (define-key vhdl-mode-map "\C-c\C-c"     'vhdl-comment-uncomment-region)
+  (define-key vhdl-mode-map "\C-c-"        'vhdl-comment-append-inline)
+  (define-key vhdl-mode-map "\C-c\M--"     'vhdl-comment-display-line)
   (define-key vhdl-mode-map "\C-c\C-i\C-l" 'indent-according-to-mode)
   (define-key vhdl-mode-map "\C-c\C-i\C-g" 'vhdl-indent-group)
-  (define-key vhdl-mode-map "\M-\C-\\"	   'vhdl-indent-region)
+  (define-key vhdl-mode-map "\M-\C-\\"     'vhdl-indent-region)
   (define-key vhdl-mode-map "\C-c\C-i\C-b" 'vhdl-indent-buffer)
   (define-key vhdl-mode-map "\C-c\C-a\C-g" 'vhdl-align-group)
   (define-key vhdl-mode-map "\C-c\C-a\C-a" 'vhdl-align-group)
@@ -2893,35 +2893,35 @@ STRING are replaced by `-' and substrings are converted to lower case."
   (define-key vhdl-mode-map "\C-c\C-x\C-c" 'vhdl-fix-case-buffer)
   (define-key vhdl-mode-map "\C-c\C-x\M-w" 'vhdl-fixup-whitespace-region)
   (define-key vhdl-mode-map "\C-c\C-x\C-w" 'vhdl-fixup-whitespace-buffer)
-  (define-key vhdl-mode-map "\C-c\M-b"	   'vhdl-beautify-region)
-  (define-key vhdl-mode-map "\C-c\C-b"	   'vhdl-beautify-buffer)
+  (define-key vhdl-mode-map "\C-c\M-b"     'vhdl-beautify-region)
+  (define-key vhdl-mode-map "\C-c\C-b"     'vhdl-beautify-buffer)
   (define-key vhdl-mode-map "\C-c\C-u\C-s" 'vhdl-update-sensitivity-list-process)
   (define-key vhdl-mode-map "\C-c\C-u\M-s" 'vhdl-update-sensitivity-list-buffer)
   (define-key vhdl-mode-map "\C-c\C-i\C-f" 'vhdl-fontify-buffer)
   (define-key vhdl-mode-map "\C-c\C-i\C-s" 'vhdl-statistics-buffer)
-  (define-key vhdl-mode-map "\C-c\M-m"	   'vhdl-show-messages)
-  (define-key vhdl-mode-map "\C-c\C-h"	   'vhdl-doc-mode)
-  (define-key vhdl-mode-map "\C-c\C-v"	   'vhdl-version)
-  (define-key vhdl-mode-map "\M-\t"	   'insert-tab)
+  (define-key vhdl-mode-map "\C-c\M-m"     'vhdl-show-messages)
+  (define-key vhdl-mode-map "\C-c\C-h"     'vhdl-doc-mode)
+  (define-key vhdl-mode-map "\C-c\C-v"     'vhdl-version)
+  (define-key vhdl-mode-map "\M-\t"        'insert-tab)
   ;; insert commands bindings
   (define-key vhdl-mode-map "\C-c\C-i\C-t" 'vhdl-template-insert-construct)
   (define-key vhdl-mode-map "\C-c\C-i\C-p" 'vhdl-template-insert-package)
   (define-key vhdl-mode-map "\C-c\C-i\C-d" 'vhdl-template-insert-directive)
   (define-key vhdl-mode-map "\C-c\C-i\C-m" 'vhdl-model-insert)
   ;; electric key bindings
-  (define-key vhdl-mode-map " "		   'vhdl-electric-space)
+  (define-key vhdl-mode-map " "            'vhdl-electric-space)
   (when vhdl-intelligent-tab
-    (define-key vhdl-mode-map "\t"	   'vhdl-electric-tab))
-  (define-key vhdl-mode-map "\r"	   'vhdl-electric-return)
-  (define-key vhdl-mode-map "-"		   'vhdl-electric-dash)
-  (define-key vhdl-mode-map "["		   'vhdl-electric-open-bracket)
-  (define-key vhdl-mode-map "]"		   'vhdl-electric-close-bracket)
-  (define-key vhdl-mode-map "'"		   'vhdl-electric-quote)
-  (define-key vhdl-mode-map ";"		   'vhdl-electric-semicolon)
-  (define-key vhdl-mode-map ","		   'vhdl-electric-comma)
-  (define-key vhdl-mode-map "."		   'vhdl-electric-period)
+    (define-key vhdl-mode-map "\t"         'vhdl-electric-tab))
+  (define-key vhdl-mode-map "\r"           'vhdl-electric-return)
+  (define-key vhdl-mode-map "-"            'vhdl-electric-dash)
+  (define-key vhdl-mode-map "["            'vhdl-electric-open-bracket)
+  (define-key vhdl-mode-map "]"            'vhdl-electric-close-bracket)
+  (define-key vhdl-mode-map "'"            'vhdl-electric-quote)
+  (define-key vhdl-mode-map ";"            'vhdl-electric-semicolon)
+  (define-key vhdl-mode-map ","            'vhdl-electric-comma)
+  (define-key vhdl-mode-map "."            'vhdl-electric-period)
   (when (vhdl-standard-p 'ams)
-    (define-key vhdl-mode-map "="	   'vhdl-electric-equal)))
+    (define-key vhdl-mode-map "="          'vhdl-electric-equal)))
 
 ;; initialize mode map for VHDL Mode
 (vhdl-mode-map-init)
@@ -2941,8 +2941,8 @@ STRING are replaced by `-' and substrings are converted to lower case."
 (mapc
  (function
   (lambda (sym)
-    (put sym 'delete-selection t)	; for `delete-selection-mode' (Emacs)
-    (put sym 'pending-delete t)))	; for `pending-delete-mode' (XEmacs)
+    (put sym 'delete-selection t)       ; for `delete-selection-mode' (Emacs)
+    (put sym 'pending-delete t)))       ; for `pending-delete-mode' (XEmacs)
  '(vhdl-electric-space
    vhdl-electric-tab
    vhdl-electric-return
@@ -3022,127 +3022,127 @@ STRING are replaced by `-' and substrings are converted to lower case."
      (when (memq 'vhdl vhdl-electric-keywords)
        ;; VHDL'02 keywords
        (mapcar (if (featurep 'xemacs)
- 		   (lambda (x) (list (car x) "" (cdr x) 0))
-		 (lambda (x) (list (car x) "" (cdr x) 0 'system)))
+                   (lambda (x) (list (car x) "" (cdr x) 0))
+                 (lambda (x) (list (car x) "" (cdr x) 0 'system)))
                '(
-                 ("--"		  . vhdl-template-display-comment-hook)
-                 ("abs"		  . vhdl-template-default-hook)
-                 ("access"	  . vhdl-template-default-hook)
-                 ("after"	  . vhdl-template-default-hook)
-                 ("alias"	  . vhdl-template-alias-hook)
-                 ("all"		  . vhdl-template-default-hook)
-                 ("and"		  . vhdl-template-default-hook)
-                 ("arch"	  . vhdl-template-architecture-hook)
+                 ("--"            . vhdl-template-display-comment-hook)
+                 ("abs"           . vhdl-template-default-hook)
+                 ("access"        . vhdl-template-default-hook)
+                 ("after"         . vhdl-template-default-hook)
+                 ("alias"         . vhdl-template-alias-hook)
+                 ("all"           . vhdl-template-default-hook)
+                 ("and"           . vhdl-template-default-hook)
+                 ("arch"          . vhdl-template-architecture-hook)
                  ("architecture"  . vhdl-template-architecture-hook)
-                 ("array"	  . vhdl-template-default-hook)
-                 ("assert"	  . vhdl-template-assert-hook)
-                 ("attr"	  . vhdl-template-attribute-hook)
-                 ("attribute"	  . vhdl-template-attribute-hook)
-                 ("begin"	  . vhdl-template-default-indent-hook)
-                 ("block"	  . vhdl-template-block-hook)
-                 ("body"	  . vhdl-template-default-hook)
-                 ("buffer"	  . vhdl-template-default-hook)
-                 ("bus"		  . vhdl-template-default-hook)
-                 ("case"	  . vhdl-template-case-hook)
-                 ("comp"	  . vhdl-template-component-hook)
-                 ("component"	  . vhdl-template-component-hook)
-                 ("cond"	  . vhdl-template-conditional-signal-asst-hook)
-                 ("conditional"	  . vhdl-template-conditional-signal-asst-hook)
-                 ("conf"	  . vhdl-template-configuration-hook)
+                 ("array"         . vhdl-template-default-hook)
+                 ("assert"        . vhdl-template-assert-hook)
+                 ("attr"          . vhdl-template-attribute-hook)
+                 ("attribute"     . vhdl-template-attribute-hook)
+                 ("begin"         . vhdl-template-default-indent-hook)
+                 ("block"         . vhdl-template-block-hook)
+                 ("body"          . vhdl-template-default-hook)
+                 ("buffer"        . vhdl-template-default-hook)
+                 ("bus"           . vhdl-template-default-hook)
+                 ("case"          . vhdl-template-case-hook)
+                 ("comp"          . vhdl-template-component-hook)
+                 ("component"     . vhdl-template-component-hook)
+                 ("cond"          . vhdl-template-conditional-signal-asst-hook)
+                 ("conditional"   . vhdl-template-conditional-signal-asst-hook)
+                 ("conf"          . vhdl-template-configuration-hook)
                  ("configuration" . vhdl-template-configuration-hook)
-                 ("cons"	  . vhdl-template-constant-hook)
-                 ("constant"	  . vhdl-template-constant-hook)
-                 ("context"	  . vhdl-template-context-hook)
-                 ("disconnect"	  . vhdl-template-disconnect-hook)
-                 ("downto"	  . vhdl-template-default-hook)
-                 ("else"	  . vhdl-template-else-hook)
-                 ("elseif"	  . vhdl-template-elsif-hook)
-                 ("elsif"	  . vhdl-template-elsif-hook)
-                 ("end"		  . vhdl-template-default-indent-hook)
-                 ("entity"	  . vhdl-template-entity-hook)
-                 ("exit"	  . vhdl-template-exit-hook)
-                 ("file"	  . vhdl-template-file-hook)
-                 ("for"		  . vhdl-template-for-hook)
-                 ("func"	  . vhdl-template-function-hook)
-                 ("function"	  . vhdl-template-function-hook)
-                 ("generic"	  . vhdl-template-generic-hook)
-                 ("group"	  . vhdl-template-group-hook)
-                 ("guarded"	  . vhdl-template-default-hook)
-                 ("if"		  . vhdl-template-if-hook)
-                 ("impure"	  . vhdl-template-default-hook)
-                 ("in"		  . vhdl-template-default-hook)
-                 ("inertial"	  . vhdl-template-default-hook)
-                 ("inout"	  . vhdl-template-default-hook)
-                 ("inst"	  . vhdl-template-instance-hook)
-                 ("instance"	  . vhdl-template-instance-hook)
-                 ("is"		  . vhdl-template-default-hook)
-                 ("label"	  . vhdl-template-default-hook)
-                 ("library"	  . vhdl-template-library-hook)
-                 ("linkage"	  . vhdl-template-default-hook)
-                 ("literal"	  . vhdl-template-default-hook)
-                 ("loop"	  . vhdl-template-bare-loop-hook)
-                 ("map"		  . vhdl-template-map-hook)
-                 ("mod"		  . vhdl-template-default-hook)
-                 ("nand"	  . vhdl-template-default-hook)
-                 ("new"		  . vhdl-template-default-hook)
-                 ("next"	  . vhdl-template-next-hook)
-                 ("nor"		  . vhdl-template-default-hook)
-                 ("not"		  . vhdl-template-default-hook)
-                 ("null"	  . vhdl-template-default-hook)
-                 ("of"		  . vhdl-template-default-hook)
-                 ("on"		  . vhdl-template-default-hook)
-                 ("open"	  . vhdl-template-default-hook)
-                 ("or"		  . vhdl-template-default-hook)
-                 ("others"	  . vhdl-template-others-hook)
-                 ("out"		  . vhdl-template-default-hook)
-                 ("pack"	  . vhdl-template-package-hook)
-                 ("package"	  . vhdl-template-package-hook)
-                 ("port"	  . vhdl-template-port-hook)
-                 ("postponed"	  . vhdl-template-default-hook)
-                 ("procedure"	  . vhdl-template-procedure-hook)
-                 ("process"	  . vhdl-template-process-hook)
-                 ("pure"	  . vhdl-template-default-hook)
-                 ("range"	  . vhdl-template-default-hook)
-                 ("record"	  . vhdl-template-default-hook)
-                 ("register"	  . vhdl-template-default-hook)
-                 ("reject"	  . vhdl-template-default-hook)
-                 ("rem"		  . vhdl-template-default-hook)
-                 ("report"	  . vhdl-template-report-hook)
-                 ("return"	  . vhdl-template-return-hook)
-                 ("rol"		  . vhdl-template-default-hook)
-                 ("ror"		  . vhdl-template-default-hook)
-                 ("select"	  . vhdl-template-selected-signal-asst-hook)
-                 ("severity"	  . vhdl-template-default-hook)
-                 ("shared"	  . vhdl-template-default-hook)
-                 ("sig"		  . vhdl-template-signal-hook)
-                 ("signal"	  . vhdl-template-signal-hook)
-                 ("sla"		  . vhdl-template-default-hook)
-                 ("sll"		  . vhdl-template-default-hook)
-                 ("sra"		  . vhdl-template-default-hook)
-                 ("srl"		  . vhdl-template-default-hook)
-                 ("subtype"	  . vhdl-template-subtype-hook)
-                 ("then"	  . vhdl-template-default-hook)
-                 ("to"		  . vhdl-template-default-hook)
-                 ("transport"	  . vhdl-template-default-hook)
-                 ("type"	  . vhdl-template-type-hook)
-                 ("unaffected"	  . vhdl-template-default-hook)
-                 ("units"	  . vhdl-template-default-hook)
-                 ("until"	  . vhdl-template-default-hook)
-                 ("use"		  . vhdl-template-use-hook)
-                 ("var"		  . vhdl-template-variable-hook)
-                 ("variable"	  . vhdl-template-variable-hook)
-                 ("wait"	  . vhdl-template-wait-hook)
-                 ("when"	  . vhdl-template-when-hook)
-                 ("while"	  . vhdl-template-while-loop-hook)
-                 ("with"	  . vhdl-template-with-hook)
-                 ("xnor"	  . vhdl-template-default-hook)
-                 ("xor"		  . vhdl-template-default-hook)
+                 ("cons"          . vhdl-template-constant-hook)
+                 ("constant"      . vhdl-template-constant-hook)
+                 ("context"       . vhdl-template-context-hook)
+                 ("disconnect"    . vhdl-template-disconnect-hook)
+                 ("downto"        . vhdl-template-default-hook)
+                 ("else"          . vhdl-template-else-hook)
+                 ("elseif"        . vhdl-template-elsif-hook)
+                 ("elsif"         . vhdl-template-elsif-hook)
+                 ("end"           . vhdl-template-default-indent-hook)
+                 ("entity"        . vhdl-template-entity-hook)
+                 ("exit"          . vhdl-template-exit-hook)
+                 ("file"          . vhdl-template-file-hook)
+                 ("for"           . vhdl-template-for-hook)
+                 ("func"          . vhdl-template-function-hook)
+                 ("function"      . vhdl-template-function-hook)
+                 ("generic"       . vhdl-template-generic-hook)
+                 ("group"         . vhdl-template-group-hook)
+                 ("guarded"       . vhdl-template-default-hook)
+                 ("if"            . vhdl-template-if-hook)
+                 ("impure"        . vhdl-template-default-hook)
+                 ("in"            . vhdl-template-default-hook)
+                 ("inertial"      . vhdl-template-default-hook)
+                 ("inout"         . vhdl-template-default-hook)
+                 ("inst"          . vhdl-template-instance-hook)
+                 ("instance"      . vhdl-template-instance-hook)
+                 ("is"            . vhdl-template-default-hook)
+                 ("label"         . vhdl-template-default-hook)
+                 ("library"       . vhdl-template-library-hook)
+                 ("linkage"       . vhdl-template-default-hook)
+                 ("literal"       . vhdl-template-default-hook)
+                 ("loop"          . vhdl-template-bare-loop-hook)
+                 ("map"           . vhdl-template-map-hook)
+                 ("mod"           . vhdl-template-default-hook)
+                 ("nand"          . vhdl-template-default-hook)
+                 ("new"           . vhdl-template-default-hook)
+                 ("next"          . vhdl-template-next-hook)
+                 ("nor"           . vhdl-template-default-hook)
+                 ("not"           . vhdl-template-default-hook)
+                 ("null"          . vhdl-template-default-hook)
+                 ("of"            . vhdl-template-default-hook)
+                 ("on"            . vhdl-template-default-hook)
+                 ("open"          . vhdl-template-default-hook)
+                 ("or"            . vhdl-template-default-hook)
+                 ("others"        . vhdl-template-others-hook)
+                 ("out"           . vhdl-template-default-hook)
+                 ("pack"          . vhdl-template-package-hook)
+                 ("package"       . vhdl-template-package-hook)
+                 ("port"          . vhdl-template-port-hook)
+                 ("postponed"     . vhdl-template-default-hook)
+                 ("procedure"     . vhdl-template-procedure-hook)
+                 ("process"       . vhdl-template-process-hook)
+                 ("pure"          . vhdl-template-default-hook)
+                 ("range"         . vhdl-template-default-hook)
+                 ("record"        . vhdl-template-default-hook)
+                 ("register"      . vhdl-template-default-hook)
+                 ("reject"        . vhdl-template-default-hook)
+                 ("rem"           . vhdl-template-default-hook)
+                 ("report"        . vhdl-template-report-hook)
+                 ("return"        . vhdl-template-return-hook)
+                 ("rol"           . vhdl-template-default-hook)
+                 ("ror"           . vhdl-template-default-hook)
+                 ("select"        . vhdl-template-selected-signal-asst-hook)
+                 ("severity"      . vhdl-template-default-hook)
+                 ("shared"        . vhdl-template-default-hook)
+                 ("sig"           . vhdl-template-signal-hook)
+                 ("signal"        . vhdl-template-signal-hook)
+                 ("sla"           . vhdl-template-default-hook)
+                 ("sll"           . vhdl-template-default-hook)
+                 ("sra"           . vhdl-template-default-hook)
+                 ("srl"           . vhdl-template-default-hook)
+                 ("subtype"       . vhdl-template-subtype-hook)
+                 ("then"          . vhdl-template-default-hook)
+                 ("to"            . vhdl-template-default-hook)
+                 ("transport"     . vhdl-template-default-hook)
+                 ("type"          . vhdl-template-type-hook)
+                 ("unaffected"    . vhdl-template-default-hook)
+                 ("units"         . vhdl-template-default-hook)
+                 ("until"         . vhdl-template-default-hook)
+                 ("use"           . vhdl-template-use-hook)
+                 ("var"           . vhdl-template-variable-hook)
+                 ("variable"      . vhdl-template-variable-hook)
+                 ("wait"          . vhdl-template-wait-hook)
+                 ("when"          . vhdl-template-when-hook)
+                 ("while"         . vhdl-template-while-loop-hook)
+                 ("with"          . vhdl-template-with-hook)
+                 ("xnor"          . vhdl-template-default-hook)
+                 ("xor"           . vhdl-template-default-hook)
                  )))
      ;; VHDL-AMS keywords
      (when (and (memq 'vhdl vhdl-electric-keywords) (vhdl-standard-p 'ams))
        (mapcar (if (featurep 'xemacs)
-		   (lambda (x) (list (car x) "" (cdr x) 0))
-		 (lambda (x) (list (car x) "" (cdr x) 0 'system)))
+                   (lambda (x) (list (car x) "" (cdr x) 0))
+                 (lambda (x) (list (car x) "" (cdr x) 0 'system)))
                '(
                  ("across"     . vhdl-template-default-hook)
                  ("break"      . vhdl-template-break-hook)
@@ -3162,13 +3162,13 @@ STRING are replaced by `-' and substrings are converted to lower case."
      (when (memq 'user vhdl-electric-keywords)
        (let (abbrev-list keyword)
          (dolist (elem vhdl-model-alist)
-	   (setq keyword (nth 3 elem))
-	   (unless (equal keyword "")
+           (setq keyword (nth 3 elem))
+           (unless (equal keyword "")
              (push (list keyword ""
                          (vhdl-function-name
                           "vhdl-model" (nth 0 elem) "hook") 0 'system)
                    abbrev-list)))
-	 abbrev-list)))))
+         abbrev-list)))))
 
 ;; initialize abbrev table for VHDL Mode
 (vhdl-mode-abbrev-table-init)
@@ -3185,62 +3185,62 @@ STRING are replaced by `-' and substrings are converted to lower case."
    vhdl-template-construct-alist
    (append
     '(
-      ("alias declaration"		   vhdl-template-alias)
-      ("architecture body"		   vhdl-template-architecture)
-      ("assertion"			   vhdl-template-assert)
-      ("attribute declaration"		   vhdl-template-attribute-decl)
-      ("attribute specification"	   vhdl-template-attribute-spec)
-      ("block configuration"		   vhdl-template-block-configuration)
-      ("block statement"		   vhdl-template-block)
-      ("case statement"			   vhdl-template-case-is)
-      ("component configuration"	   vhdl-template-component-conf)
-      ("component declaration"		   vhdl-template-component-decl)
+      ("alias declaration"                 vhdl-template-alias)
+      ("architecture body"                 vhdl-template-architecture)
+      ("assertion"                         vhdl-template-assert)
+      ("attribute declaration"             vhdl-template-attribute-decl)
+      ("attribute specification"           vhdl-template-attribute-spec)
+      ("block configuration"               vhdl-template-block-configuration)
+      ("block statement"                   vhdl-template-block)
+      ("case statement"                    vhdl-template-case-is)
+      ("component configuration"           vhdl-template-component-conf)
+      ("component declaration"             vhdl-template-component-decl)
       ("component instantiation statement" vhdl-template-component-inst)
-      ("conditional signal assignment"	   vhdl-template-conditional-signal-asst)
-      ("configuration declaration"	   vhdl-template-configuration-decl)
-      ("configuration specification" 	   vhdl-template-configuration-spec)
-      ("constant declaration"		   vhdl-template-constant)
-      ("context declaration"		   vhdl-template-context)
-      ("disconnection specification"	   vhdl-template-disconnect)
-      ("entity declaration"		   vhdl-template-entity)
-      ("exit statement"			   vhdl-template-exit)
-      ("file declaration"		   vhdl-template-file)
-      ("generate statement"		   vhdl-template-generate)
-      ("generic clause"			   vhdl-template-generic)
-      ("group declaration"		   vhdl-template-group-decl)
-      ("group template declaration" 	   vhdl-template-group-template)
-      ("if statement"			   vhdl-template-if-then)
-      ("library clause"			   vhdl-template-library)
-      ("loop statement"			   vhdl-template-loop)
-      ("next statement"			   vhdl-template-next)
-      ("package declaration"		   vhdl-template-package-decl)
-      ("package body"			   vhdl-template-package-body)
-      ("port clause"			   vhdl-template-port)
-      ("process statement"	 	   vhdl-template-process)
-      ("report statement"		   vhdl-template-report)
-      ("return statement"		   vhdl-template-return)
-      ("selected signal assignment"	   vhdl-template-selected-signal-asst)
-      ("signal declaration"		   vhdl-template-signal)
-      ("subprogram declaration"		   vhdl-template-subprogram-decl)
-      ("subprogram body"		   vhdl-template-subprogram-body)
-      ("subtype declaration"		   vhdl-template-subtype)
-      ("type declaration"		   vhdl-template-type)
-      ("use clause"			   vhdl-template-use)
-      ("variable declaration"	 	   vhdl-template-variable)
-      ("wait statement"			   vhdl-template-wait)
+      ("conditional signal assignment"     vhdl-template-conditional-signal-asst)
+      ("configuration declaration"         vhdl-template-configuration-decl)
+      ("configuration specification"       vhdl-template-configuration-spec)
+      ("constant declaration"              vhdl-template-constant)
+      ("context declaration"               vhdl-template-context)
+      ("disconnection specification"       vhdl-template-disconnect)
+      ("entity declaration"                vhdl-template-entity)
+      ("exit statement"                    vhdl-template-exit)
+      ("file declaration"                  vhdl-template-file)
+      ("generate statement"                vhdl-template-generate)
+      ("generic clause"                    vhdl-template-generic)
+      ("group declaration"                 vhdl-template-group-decl)
+      ("group template declaration"        vhdl-template-group-template)
+      ("if statement"                      vhdl-template-if-then)
+      ("library clause"                    vhdl-template-library)
+      ("loop statement"                    vhdl-template-loop)
+      ("next statement"                    vhdl-template-next)
+      ("package declaration"               vhdl-template-package-decl)
+      ("package body"                      vhdl-template-package-body)
+      ("port clause"                       vhdl-template-port)
+      ("process statement"                 vhdl-template-process)
+      ("report statement"                  vhdl-template-report)
+      ("return statement"                  vhdl-template-return)
+      ("selected signal assignment"        vhdl-template-selected-signal-asst)
+      ("signal declaration"                vhdl-template-signal)
+      ("subprogram declaration"            vhdl-template-subprogram-decl)
+      ("subprogram body"                   vhdl-template-subprogram-body)
+      ("subtype declaration"               vhdl-template-subtype)
+      ("type declaration"                  vhdl-template-type)
+      ("use clause"                        vhdl-template-use)
+      ("variable declaration"              vhdl-template-variable)
+      ("wait statement"                    vhdl-template-wait)
       )
     (when (vhdl-standard-p 'ams)
       '(
-	("break statement"		     vhdl-template-break)
-	("nature declaration"		     vhdl-template-nature)
-	("quantity declaration"		     vhdl-template-quantity)
-	("simultaneous case statement"	     vhdl-template-case-use)
-	("simultaneous if statement"	     vhdl-template-if-use)
-	("simultaneous procedural statement" vhdl-template-procedural)
-	("step limit specification"	     vhdl-template-limit)
-	("subnature declaration"	     vhdl-template-subnature)
-	("terminal declaration"		     vhdl-template-terminal)
-	)))))
+        ("break statement"                   vhdl-template-break)
+        ("nature declaration"                vhdl-template-nature)
+        ("quantity declaration"              vhdl-template-quantity)
+        ("simultaneous case statement"       vhdl-template-case-use)
+        ("simultaneous if statement"         vhdl-template-if-use)
+        ("simultaneous procedural statement" vhdl-template-procedural)
+        ("step limit specification"          vhdl-template-limit)
+        ("subnature declaration"             vhdl-template-subnature)
+        ("terminal declaration"              vhdl-template-terminal)
+        )))))
 
 ;; initialize for VHDL Mode
 (vhdl-template-construct-alist-init)
@@ -3254,31 +3254,31 @@ STRING are replaced by `-' and substrings are converted to lower case."
    vhdl-template-package-alist
    (append
     '(
-      ("numeric_bit"	    vhdl-template-package-numeric-bit)
-      ("numeric_std"	    vhdl-template-package-numeric-std)
-      ("std_logic_1164"	    vhdl-template-package-std-logic-1164)
+      ("numeric_bit"        vhdl-template-package-numeric-bit)
+      ("numeric_std"        vhdl-template-package-numeric-std)
+      ("std_logic_1164"     vhdl-template-package-std-logic-1164)
       ("std_logic_arith"    vhdl-template-package-std-logic-arith)
       ("std_logic_misc"     vhdl-template-package-std-logic-misc)
       ("std_logic_signed"   vhdl-template-package-std-logic-signed)
       ("std_logic_textio"   vhdl-template-package-std-logic-textio)
       ("std_logic_unsigned" vhdl-template-package-std-logic-unsigned)
-      ("textio"		    vhdl-template-package-textio)
+      ("textio"             vhdl-template-package-textio)
       )
     (when (vhdl-standard-p 'math)
       '(
-	("math_complex"	vhdl-template-package-math-complex)
-	("math_real"	vhdl-template-package-math-real)
-	)))))
+        ("math_complex" vhdl-template-package-math-complex)
+        ("math_real"    vhdl-template-package-math-real)
+        )))))
 
 ;; initialize for VHDL Mode
 (vhdl-template-package-alist-init)
 
 (defvar vhdl-template-directive-alist
   '(
-    ("translate_on"	vhdl-template-directive-translate-on)
-    ("translate_off"	vhdl-template-directive-translate-off)
-    ("synthesis_on"	vhdl-template-directive-synthesis-on)
-    ("synthesis_off"	vhdl-template-directive-synthesis-off)
+    ("translate_on"     vhdl-template-directive-translate-on)
+    ("translate_off"    vhdl-template-directive-translate-off)
+    ("synthesis_on"     vhdl-template-directive-synthesis-on)
+    ("synthesis_off"    vhdl-template-directive-synthesis-off)
     )
   "List of built-in directive templates.")
 
@@ -3300,381 +3300,381 @@ STRING are replaced by `-' and substrings are converted to lower case."
   `("VHDL"
     ,(append
       '("Project"
-	["None"			(vhdl-set-project "")
-				:style radio :selected (null vhdl-project)]
-	"--")
+        ["None"                 (vhdl-set-project "")
+                                :style radio :selected (null vhdl-project)]
+        "--")
       ;; add menu entries for defined projects
       (let ((project-alist vhdl-project-alist) menu-list name)
-	(while project-alist
-	  (setq name (caar project-alist))
-	  (setq menu-list
-		(cons `[,name (vhdl-set-project ,name)
-			:style radio :selected (equal ,name vhdl-project)]
-		      menu-list))
-	  (setq project-alist (cdr project-alist)))
-	(setq menu-list
-	      (if vhdl-project-sort
-		  (sort menu-list
-			(function (lambda (a b) (string< (elt a 0) (elt b 0)))))
-		(nreverse menu-list)))
-	(vhdl-menu-split menu-list "Project"))
+        (while project-alist
+          (setq name (caar project-alist))
+          (setq menu-list
+                (cons `[,name (vhdl-set-project ,name)
+                        :style radio :selected (equal ,name vhdl-project)]
+                      menu-list))
+          (setq project-alist (cdr project-alist)))
+        (setq menu-list
+              (if vhdl-project-sort
+                  (sort menu-list
+                        (function (lambda (a b) (string< (elt a 0) (elt b 0)))))
+                (nreverse menu-list)))
+        (vhdl-menu-split menu-list "Project"))
       '("--" "--"
-	["Select Project..."	vhdl-set-project t]
-	["Set As Default Project" vhdl-set-default-project t]
-	"--"
-	["Duplicate Project"	vhdl-duplicate-project vhdl-project]
-	["Import Project..."	vhdl-import-project
-				:keys "C-c C-p C-m" :active t]
-	["Export Project"	vhdl-export-project vhdl-project]
-	"--"
-	["Customize Project..." (customize-option 'vhdl-project-alist) t]))
+        ["Select Project..."    vhdl-set-project t]
+        ["Set As Default Project" vhdl-set-default-project t]
+        "--"
+        ["Duplicate Project"    vhdl-duplicate-project vhdl-project]
+        ["Import Project..."    vhdl-import-project
+                                :keys "C-c C-p C-m" :active t]
+        ["Export Project"       vhdl-export-project vhdl-project]
+        "--"
+        ["Customize Project..." (customize-option 'vhdl-project-alist) t]))
     "--"
     ("Compile"
-     ["Compile Buffer"		vhdl-compile t]
-     ["Stop Compilation"	kill-compilation t]
+     ["Compile Buffer"          vhdl-compile t]
+     ["Stop Compilation"        kill-compilation t]
      "--"
-     ["Make"			vhdl-make t]
-     ["Generate Makefile"	vhdl-generate-makefile t]
+     ["Make"                    vhdl-make t]
+     ["Generate Makefile"       vhdl-generate-makefile t]
      "--"
-     ["Next Error"		next-error t]
-     ["Previous Error"		previous-error t]
-     ["First Error"		first-error t]
+     ["Next Error"              next-error t]
+     ["Previous Error"          previous-error t]
+     ["First Error"             first-error t]
      "--"
      ,(append
        '("Compiler")
        ;; add menu entries for defined compilers
        (let ((comp-alist vhdl-compiler-alist) menu-list name)
-	 (while comp-alist
-	   (setq name (caar comp-alist))
-	   (setq menu-list
-		 (cons `[,name (setq vhdl-compiler ,name)
-			 :style radio :selected (equal ,name vhdl-compiler)]
-		       menu-list))
-	   (setq comp-alist (cdr comp-alist)))
-	 (setq menu-list (nreverse menu-list))
-	 (vhdl-menu-split menu-list "Compiler"))
+         (while comp-alist
+           (setq name (caar comp-alist))
+           (setq menu-list
+                 (cons `[,name (setq vhdl-compiler ,name)
+                         :style radio :selected (equal ,name vhdl-compiler)]
+                       menu-list))
+           (setq comp-alist (cdr comp-alist)))
+         (setq menu-list (nreverse menu-list))
+         (vhdl-menu-split menu-list "Compiler"))
        '("--" "--"
-	 ["Select Compiler..."	vhdl-set-compiler t]
-	 "--"
-	 ["Customize Compiler..."
-	  (customize-option 'vhdl-compiler-alist) t])))
+         ["Select Compiler..."  vhdl-set-compiler t]
+         "--"
+         ["Customize Compiler..."
+          (customize-option 'vhdl-compiler-alist) t])))
     "--"
     ,(append
       '("Template"
-	("VHDL Construct 1"
-	 ["Alias"		vhdl-template-alias t]
-	 ["Architecture"	vhdl-template-architecture t]
-	 ["Assert"		vhdl-template-assert t]
-	 ["Attribute (Decl)"	vhdl-template-attribute-decl t]
-	 ["Attribute (Spec)"	vhdl-template-attribute-spec t]
-	 ["Block"		vhdl-template-block t]
-	 ["Case"		vhdl-template-case-is t]
-	 ["Component (Decl)"	vhdl-template-component-decl t]
-	 ["(Component) Instance"	vhdl-template-component-inst t]
-	 ["Conditional (Signal Asst)"	vhdl-template-conditional-signal-asst t]
-	 ["Configuration (Block)"	vhdl-template-block-configuration t]
-	 ["Configuration (Comp)"	vhdl-template-component-conf t]
-	 ["Configuration (Decl)"	vhdl-template-configuration-decl t]
-	 ["Configuration (Spec)"	vhdl-template-configuration-spec t]
-	 ["Constant"		vhdl-template-constant t]
-	 ["Context"		vhdl-template-context t]
-	 ["Disconnect"		vhdl-template-disconnect t]
-	 ["Else"		vhdl-template-else t]
-	 ["Elsif"		vhdl-template-elsif t]
-	 ["Entity"		vhdl-template-entity t]
-	 ["Exit"		vhdl-template-exit t]
-	 ["File"		vhdl-template-file t]
-	 ["For (Generate)"	vhdl-template-for-generate t]
-	 ["For (Loop)"		vhdl-template-for-loop t]
-	 ["Function (Body)"	vhdl-template-function-body t]
-	 ["Function (Decl)"	vhdl-template-function-decl t]
-	 ["Generic"		vhdl-template-generic t]
-	 ["Group (Decl)"	vhdl-template-group-decl t]
-	 ["Group (Template)"	vhdl-template-group-template t])
-	("VHDL Construct 2"
-	 ["If (Generate)"	vhdl-template-if-generate t]
-	 ["If (Then)"		vhdl-template-if-then t]
-	 ["Library"		vhdl-template-library t]
-	 ["Loop"		vhdl-template-bare-loop t]
-	 ["Map"			vhdl-template-map t]
-	 ["Next"		vhdl-template-next t]
-	 ["Others (Aggregate)"	vhdl-template-others t]
-	 ["Package (Decl)"	vhdl-template-package-decl t]
-	 ["Package (Body)"	vhdl-template-package-body t]
-	 ["Port"		vhdl-template-port t]
-	 ["Procedure (Body)"	vhdl-template-procedure-body t]
-	 ["Procedure (Decl)"	vhdl-template-procedure-decl t]
-	 ["Process (Comb)"	vhdl-template-process-comb t]
-	 ["Process (Seq)"	vhdl-template-process-seq t]
-	 ["Report"		vhdl-template-report t]
-	 ["Return"		vhdl-template-return t]
-	 ["Select"		vhdl-template-selected-signal-asst t]
-	 ["Signal"		vhdl-template-signal t]
-	 ["Subtype"		vhdl-template-subtype t]
-	 ["Type"		vhdl-template-type t]
-	 ["Use"			vhdl-template-use t]
-	 ["Variable"		vhdl-template-variable t]
-	 ["Wait"		vhdl-template-wait t]
-	 ["(Clocked Wait)"	vhdl-template-clocked-wait t]
-	 ["When"		vhdl-template-when t]
-	 ["While (Loop)"	vhdl-template-while-loop t]
-	 ["With"		vhdl-template-with t]))
+        ("VHDL Construct 1"
+         ["Alias"               vhdl-template-alias t]
+         ["Architecture"        vhdl-template-architecture t]
+         ["Assert"              vhdl-template-assert t]
+         ["Attribute (Decl)"    vhdl-template-attribute-decl t]
+         ["Attribute (Spec)"    vhdl-template-attribute-spec t]
+         ["Block"               vhdl-template-block t]
+         ["Case"                vhdl-template-case-is t]
+         ["Component (Decl)"    vhdl-template-component-decl t]
+         ["(Component) Instance"        vhdl-template-component-inst t]
+         ["Conditional (Signal Asst)"   vhdl-template-conditional-signal-asst t]
+         ["Configuration (Block)"       vhdl-template-block-configuration t]
+         ["Configuration (Comp)"        vhdl-template-component-conf t]
+         ["Configuration (Decl)"        vhdl-template-configuration-decl t]
+         ["Configuration (Spec)"        vhdl-template-configuration-spec t]
+         ["Constant"            vhdl-template-constant t]
+         ["Context"             vhdl-template-context t]
+         ["Disconnect"          vhdl-template-disconnect t]
+         ["Else"                vhdl-template-else t]
+         ["Elsif"               vhdl-template-elsif t]
+         ["Entity"              vhdl-template-entity t]
+         ["Exit"                vhdl-template-exit t]
+         ["File"                vhdl-template-file t]
+         ["For (Generate)"      vhdl-template-for-generate t]
+         ["For (Loop)"          vhdl-template-for-loop t]
+         ["Function (Body)"     vhdl-template-function-body t]
+         ["Function (Decl)"     vhdl-template-function-decl t]
+         ["Generic"             vhdl-template-generic t]
+         ["Group (Decl)"        vhdl-template-group-decl t]
+         ["Group (Template)"    vhdl-template-group-template t])
+        ("VHDL Construct 2"
+         ["If (Generate)"       vhdl-template-if-generate t]
+         ["If (Then)"           vhdl-template-if-then t]
+         ["Library"             vhdl-template-library t]
+         ["Loop"                vhdl-template-bare-loop t]
+         ["Map"                 vhdl-template-map t]
+         ["Next"                vhdl-template-next t]
+         ["Others (Aggregate)"  vhdl-template-others t]
+         ["Package (Decl)"      vhdl-template-package-decl t]
+         ["Package (Body)"      vhdl-template-package-body t]
+         ["Port"                vhdl-template-port t]
+         ["Procedure (Body)"    vhdl-template-procedure-body t]
+         ["Procedure (Decl)"    vhdl-template-procedure-decl t]
+         ["Process (Comb)"      vhdl-template-process-comb t]
+         ["Process (Seq)"       vhdl-template-process-seq t]
+         ["Report"              vhdl-template-report t]
+         ["Return"              vhdl-template-return t]
+         ["Select"              vhdl-template-selected-signal-asst t]
+         ["Signal"              vhdl-template-signal t]
+         ["Subtype"             vhdl-template-subtype t]
+         ["Type"                vhdl-template-type t]
+         ["Use"                 vhdl-template-use t]
+         ["Variable"            vhdl-template-variable t]
+         ["Wait"                vhdl-template-wait t]
+         ["(Clocked Wait)"      vhdl-template-clocked-wait t]
+         ["When"                vhdl-template-when t]
+         ["While (Loop)"        vhdl-template-while-loop t]
+         ["With"                vhdl-template-with t]))
       (when (vhdl-standard-p 'ams)
-	'(("VHDL-AMS Construct"
-	   ["Break"		vhdl-template-break t]
-	   ["Case (Use)"	vhdl-template-case-use t]
-	   ["If (Use)"		vhdl-template-if-use t]
-	   ["Limit"		vhdl-template-limit t]
-	   ["Nature"		vhdl-template-nature t]
-	   ["Procedural"	vhdl-template-procedural t]
-	   ["Quantity (Free)"	vhdl-template-quantity-free t]
-	   ["Quantity (Branch)"	vhdl-template-quantity-branch t]
-	   ["Quantity (Source)"	vhdl-template-quantity-source t]
-	   ["Subnature"		vhdl-template-subnature t]
-	   ["Terminal"		vhdl-template-terminal t])))
-      '(["Insert Construct..."	vhdl-template-insert-construct
-				:keys "C-c C-i C-t"]
-	"--")
+        '(("VHDL-AMS Construct"
+           ["Break"             vhdl-template-break t]
+           ["Case (Use)"        vhdl-template-case-use t]
+           ["If (Use)"          vhdl-template-if-use t]
+           ["Limit"             vhdl-template-limit t]
+           ["Nature"            vhdl-template-nature t]
+           ["Procedural"        vhdl-template-procedural t]
+           ["Quantity (Free)"   vhdl-template-quantity-free t]
+           ["Quantity (Branch)" vhdl-template-quantity-branch t]
+           ["Quantity (Source)" vhdl-template-quantity-source t]
+           ["Subnature"         vhdl-template-subnature t]
+           ["Terminal"          vhdl-template-terminal t])))
+      '(["Insert Construct..."  vhdl-template-insert-construct
+                                :keys "C-c C-i C-t"]
+        "--")
       (list
        (append
-	'("Package")
-	'(["numeric_bit"	vhdl-template-package-numeric-bit t]
-	  ["numeric_std"	vhdl-template-package-numeric-std t]
-	  ["std_logic_1164"	vhdl-template-package-std-logic-1164 t]
-	  ["textio"		vhdl-template-package-textio t]
-	  "--"
-	  ["std_logic_arith"	vhdl-template-package-std-logic-arith t]
-	  ["std_logic_signed"	vhdl-template-package-std-logic-signed t]
-	  ["std_logic_unsigned"	vhdl-template-package-std-logic-unsigned t]
-	  ["std_logic_misc"	vhdl-template-package-std-logic-misc t]
-	  ["std_logic_textio"	vhdl-template-package-std-logic-textio t]
-	  "--")
-	(when (vhdl-standard-p 'ams)
-	  '(["fundamental_constants" vhdl-template-package-fundamental-constants t]
-	    ["material_constants" vhdl-template-package-material-constants t]
-	    ["energy_systems"	vhdl-template-package-energy-systems t]
-	    ["electrical_systems" vhdl-template-package-electrical-systems t]
-	    ["mechanical_systems" vhdl-template-package-mechanical-systems t]
-	    ["radiant_systems"	vhdl-template-package-radiant-systems t]
-	    ["thermal_systems"	vhdl-template-package-thermal-systems t]
-	    ["fluidic_systems"	vhdl-template-package-fluidic-systems t]
-	    "--"))
-	(when (vhdl-standard-p 'math)
-	  '(["math_complex"	vhdl-template-package-math-complex t]
-	    ["math_real"	vhdl-template-package-math-real t]
-	    "--"))
-	'(["Insert Package..."	vhdl-template-insert-package
-				:keys "C-c C-i C-p"])))
+        '("Package")
+        '(["numeric_bit"        vhdl-template-package-numeric-bit t]
+          ["numeric_std"        vhdl-template-package-numeric-std t]
+          ["std_logic_1164"     vhdl-template-package-std-logic-1164 t]
+          ["textio"             vhdl-template-package-textio t]
+          "--"
+          ["std_logic_arith"    vhdl-template-package-std-logic-arith t]
+          ["std_logic_signed"   vhdl-template-package-std-logic-signed t]
+          ["std_logic_unsigned" vhdl-template-package-std-logic-unsigned t]
+          ["std_logic_misc"     vhdl-template-package-std-logic-misc t]
+          ["std_logic_textio"   vhdl-template-package-std-logic-textio t]
+          "--")
+        (when (vhdl-standard-p 'ams)
+          '(["fundamental_constants" vhdl-template-package-fundamental-constants t]
+            ["material_constants" vhdl-template-package-material-constants t]
+            ["energy_systems"   vhdl-template-package-energy-systems t]
+            ["electrical_systems" vhdl-template-package-electrical-systems t]
+            ["mechanical_systems" vhdl-template-package-mechanical-systems t]
+            ["radiant_systems"  vhdl-template-package-radiant-systems t]
+            ["thermal_systems"  vhdl-template-package-thermal-systems t]
+            ["fluidic_systems"  vhdl-template-package-fluidic-systems t]
+            "--"))
+        (when (vhdl-standard-p 'math)
+          '(["math_complex"     vhdl-template-package-math-complex t]
+            ["math_real"        vhdl-template-package-math-real t]
+            "--"))
+        '(["Insert Package..."  vhdl-template-insert-package
+                                :keys "C-c C-i C-p"])))
       '(("Directive"
-	 ["translate_on"	vhdl-template-directive-translate-on t]
-	 ["translate_off"	vhdl-template-directive-translate-off t]
-	 ["synthesis_on"	vhdl-template-directive-synthesis-on t]
-	 ["synthesis_off"	vhdl-template-directive-synthesis-off t]
-	 "--"
-	 ["Insert Directive..."	vhdl-template-insert-directive
-				:keys "C-c C-i C-d"])
-	"--"
-	["Insert Header"	vhdl-template-header :keys "C-c C-t C-h"]
-	["Insert Footer"	vhdl-template-footer t]
-	["Insert Date"		vhdl-template-insert-date t]
-	["Modify Date"		vhdl-template-modify :keys "C-c C-t C-m"]
-	"--"
-	["Query Next Prompt"	vhdl-template-search-prompt t]))
+         ["translate_on"        vhdl-template-directive-translate-on t]
+         ["translate_off"       vhdl-template-directive-translate-off t]
+         ["synthesis_on"        vhdl-template-directive-synthesis-on t]
+         ["synthesis_off"       vhdl-template-directive-synthesis-off t]
+         "--"
+         ["Insert Directive..." vhdl-template-insert-directive
+                                :keys "C-c C-i C-d"])
+        "--"
+        ["Insert Header"        vhdl-template-header :keys "C-c C-t C-h"]
+        ["Insert Footer"        vhdl-template-footer t]
+        ["Insert Date"          vhdl-template-insert-date t]
+        ["Modify Date"          vhdl-template-modify :keys "C-c C-t C-m"]
+        "--"
+        ["Query Next Prompt"    vhdl-template-search-prompt t]))
     ,(append
       '("Model")
       ;; add menu entries for defined models
       (let ((model-alist vhdl-model-alist) menu-list model)
-	(while model-alist
-	  (setq model (car model-alist))
-	  (setq menu-list
-		(cons
-		 (vector
-		  (nth 0 model)
-		  (vhdl-function-name "vhdl-model" (nth 0 model))
-		  :keys (concat "C-c C-m " (key-description (nth 2 model))))
-		 menu-list))
-	  (setq model-alist (cdr model-alist)))
-	(setq menu-list (nreverse menu-list))
-	(vhdl-menu-split menu-list "Model"))
+        (while model-alist
+          (setq model (car model-alist))
+          (setq menu-list
+                (cons
+                 (vector
+                  (nth 0 model)
+                  (vhdl-function-name "vhdl-model" (nth 0 model))
+                  :keys (concat "C-c C-m " (key-description (nth 2 model))))
+                 menu-list))
+          (setq model-alist (cdr model-alist)))
+        (setq menu-list (nreverse menu-list))
+        (vhdl-menu-split menu-list "Model"))
       '("--" "--"
-	["Insert Model..."	vhdl-model-insert :keys "C-c C-i C-m"]
-	["Customize Model..."	(customize-option 'vhdl-model-alist) t]))
+        ["Insert Model..."      vhdl-model-insert :keys "C-c C-i C-m"]
+        ["Customize Model..."   (customize-option 'vhdl-model-alist) t]))
     ("Port"
-     ["Copy"			vhdl-port-copy t]
+     ["Copy"                    vhdl-port-copy t]
      "--"
-     ["Paste As Entity"		vhdl-port-paste-entity vhdl-port-list]
-     ["Paste As Component"	vhdl-port-paste-component vhdl-port-list]
-     ["Paste As Instance"	vhdl-port-paste-instance
-				:keys "C-c C-p C-i" :active vhdl-port-list]
-     ["Paste As Signals"	vhdl-port-paste-signals vhdl-port-list]
-     ["Paste As Constants"	vhdl-port-paste-constants vhdl-port-list]
-     ["Paste As Generic Map"	vhdl-port-paste-generic-map vhdl-port-list]
+     ["Paste As Entity"         vhdl-port-paste-entity vhdl-port-list]
+     ["Paste As Component"      vhdl-port-paste-component vhdl-port-list]
+     ["Paste As Instance"       vhdl-port-paste-instance
+                                :keys "C-c C-p C-i" :active vhdl-port-list]
+     ["Paste As Signals"        vhdl-port-paste-signals vhdl-port-list]
+     ["Paste As Constants"      vhdl-port-paste-constants vhdl-port-list]
+     ["Paste As Generic Map"    vhdl-port-paste-generic-map vhdl-port-list]
      ["Paste As Initializations" vhdl-port-paste-initializations vhdl-port-list]
      "--"
-     ["Paste As Testbench"	vhdl-port-paste-testbench vhdl-port-list]
+     ["Paste As Testbench"      vhdl-port-paste-testbench vhdl-port-list]
      "--"
-     ["Flatten"			vhdl-port-flatten
+     ["Flatten"                 vhdl-port-flatten
       :style toggle :selected vhdl-port-flattened :active vhdl-port-list]
-     ["Reverse Direction"	vhdl-port-reverse-direction
+     ["Reverse Direction"       vhdl-port-reverse-direction
       :style toggle :selected vhdl-port-reversed-direction :active vhdl-port-list])
     ("Compose"
-     ["New Component"		vhdl-compose-new-component t]
-     ["Copy Component"		vhdl-port-copy t]
-     ["Place Component"		vhdl-compose-place-component vhdl-port-list]
-     ["Wire Components"		vhdl-compose-wire-components t]
+     ["New Component"           vhdl-compose-new-component t]
+     ["Copy Component"          vhdl-port-copy t]
+     ["Place Component"         vhdl-compose-place-component vhdl-port-list]
+     ["Wire Components"         vhdl-compose-wire-components t]
      "--"
-     ["Generate Configuration"	vhdl-compose-configuration t]
-     ["Generate Components Package"	vhdl-compose-components-package t])
+     ["Generate Configuration"  vhdl-compose-configuration t]
+     ["Generate Components Package"     vhdl-compose-components-package t])
     ("Subprogram"
-     ["Copy"			vhdl-subprog-copy t]
+     ["Copy"                    vhdl-subprog-copy t]
      "--"
-     ["Paste As Declaration"	vhdl-subprog-paste-declaration vhdl-subprog-list]
-     ["Paste As Body"		vhdl-subprog-paste-body vhdl-subprog-list]
-     ["Paste As Call"		vhdl-subprog-paste-call vhdl-subprog-list]
+     ["Paste As Declaration"    vhdl-subprog-paste-declaration vhdl-subprog-list]
+     ["Paste As Body"           vhdl-subprog-paste-body vhdl-subprog-list]
+     ["Paste As Call"           vhdl-subprog-paste-call vhdl-subprog-list]
      "--"
-     ["Flatten"			vhdl-subprog-flatten
+     ["Flatten"                 vhdl-subprog-flatten
       :style toggle :selected vhdl-subprog-flattened :active vhdl-subprog-list])
     "--"
     ("Comment"
-     ["(Un)Comment Out Region"	vhdl-comment-uncomment-region (mark)]
+     ["(Un)Comment Out Region"  vhdl-comment-uncomment-region (mark)]
      "--"
-     ["Insert Inline Comment"	vhdl-comment-append-inline t]
-     ["Insert Horizontal Line"	vhdl-comment-display-line t]
-     ["Insert Display Comment"	vhdl-comment-display t]
+     ["Insert Inline Comment"   vhdl-comment-append-inline t]
+     ["Insert Horizontal Line"  vhdl-comment-display-line t]
+     ["Insert Display Comment"  vhdl-comment-display t]
      "--"
-     ["Fill Comment"		fill-paragraph t]
-     ["Fill Comment Region"	fill-region (mark)]
-     ["Kill Comment Region"	vhdl-comment-kill-region (mark)]
+     ["Fill Comment"            fill-paragraph t]
+     ["Fill Comment Region"     fill-region (mark)]
+     ["Kill Comment Region"     vhdl-comment-kill-region (mark)]
      ["Kill Inline Comment Region" vhdl-comment-kill-inline-region (mark)])
     ("Line"
-     ["Kill"			vhdl-line-kill t]
-     ["Copy"			vhdl-line-copy t]
-     ["Yank"			vhdl-line-yank t]
-     ["Expand"			vhdl-line-expand t]
+     ["Kill"                    vhdl-line-kill t]
+     ["Copy"                    vhdl-line-copy t]
+     ["Yank"                    vhdl-line-yank t]
+     ["Expand"                  vhdl-line-expand t]
      "--"
-     ["Transpose Next"		vhdl-line-transpose-next t]
-     ["Transpose Prev"		vhdl-line-transpose-previous t]
-     ["Open"			vhdl-line-open t]
-     ["Join"			vhdl-delete-indentation t]
+     ["Transpose Next"          vhdl-line-transpose-next t]
+     ["Transpose Prev"          vhdl-line-transpose-previous t]
+     ["Open"                    vhdl-line-open t]
+     ["Join"                    vhdl-delete-indentation t]
      "--"
-     ["Goto"			goto-line t]
-     ["(Un)Comment Out"		vhdl-comment-uncomment-line t])
+     ["Goto"                    goto-line t]
+     ["(Un)Comment Out"         vhdl-comment-uncomment-line t])
     ("Move"
-     ["Forward Statement"	vhdl-end-of-statement t]
-     ["Backward Statement"	vhdl-beginning-of-statement t]
-     ["Forward Expression"	vhdl-forward-sexp t]
-     ["Backward Expression"	vhdl-backward-sexp t]
-     ["Forward Same Indent"	vhdl-forward-same-indent t]
-     ["Backward Same Indent"	vhdl-backward-same-indent t]
-     ["Forward Function"	vhdl-end-of-defun t]
-     ["Backward Function"	vhdl-beginning-of-defun t]
-     ["Mark Function"		vhdl-mark-defun t])
+     ["Forward Statement"       vhdl-end-of-statement t]
+     ["Backward Statement"      vhdl-beginning-of-statement t]
+     ["Forward Expression"      vhdl-forward-sexp t]
+     ["Backward Expression"     vhdl-backward-sexp t]
+     ["Forward Same Indent"     vhdl-forward-same-indent t]
+     ["Backward Same Indent"    vhdl-backward-same-indent t]
+     ["Forward Function"        vhdl-end-of-defun t]
+     ["Backward Function"       vhdl-beginning-of-defun t]
+     ["Mark Function"           vhdl-mark-defun t])
     "--"
     ("Indent"
-     ["Line"			indent-according-to-mode :keys "C-c C-i C-l"]
-     ["Group"			vhdl-indent-group :keys "C-c C-i C-g"]
-     ["Region"			vhdl-indent-region (mark)]
-     ["Buffer"			vhdl-indent-buffer :keys "C-c C-i C-b"])
+     ["Line"                    indent-according-to-mode :keys "C-c C-i C-l"]
+     ["Group"                   vhdl-indent-group :keys "C-c C-i C-g"]
+     ["Region"                  vhdl-indent-region (mark)]
+     ["Buffer"                  vhdl-indent-buffer :keys "C-c C-i C-b"])
     ("Align"
-     ["Group"			vhdl-align-group t]
-     ["Same Indent"		vhdl-align-same-indent :keys "C-c C-a C-i"]
-     ["List"			vhdl-align-list t]
-     ["Declarations"		vhdl-align-declarations t]
-     ["Region"			vhdl-align-region (mark)]
-     ["Buffer"			vhdl-align-buffer t]
+     ["Group"                   vhdl-align-group t]
+     ["Same Indent"             vhdl-align-same-indent :keys "C-c C-a C-i"]
+     ["List"                    vhdl-align-list t]
+     ["Declarations"            vhdl-align-declarations t]
+     ["Region"                  vhdl-align-region (mark)]
+     ["Buffer"                  vhdl-align-buffer t]
      "--"
-     ["Inline Comment Group"	vhdl-align-inline-comment-group t]
-     ["Inline Comment Region"	vhdl-align-inline-comment-region (mark)]
-     ["Inline Comment Buffer"	vhdl-align-inline-comment-buffer t])
+     ["Inline Comment Group"    vhdl-align-inline-comment-group t]
+     ["Inline Comment Region"   vhdl-align-inline-comment-region (mark)]
+     ["Inline Comment Buffer"   vhdl-align-inline-comment-buffer t])
     ("Fill"
-     ["List"			vhdl-fill-list t]
-     ["Group"			vhdl-fill-group t]
-     ["Same Indent"		vhdl-fill-same-indent :keys "C-c C-f C-i"]
-     ["Region"			vhdl-fill-region (mark)])
+     ["List"                    vhdl-fill-list t]
+     ["Group"                   vhdl-fill-group t]
+     ["Same Indent"             vhdl-fill-same-indent :keys "C-c C-f C-i"]
+     ["Region"                  vhdl-fill-region (mark)])
     ("Beautify"
-     ["Region"			vhdl-beautify-region (mark)]
-     ["Buffer"			vhdl-beautify-buffer t])
+     ["Region"                  vhdl-beautify-region (mark)]
+     ["Buffer"                  vhdl-beautify-buffer t])
     ("Fix"
-     ["Generic/Port Clause"	vhdl-fix-clause t]
+     ["Generic/Port Clause"     vhdl-fix-clause t]
      ["Generic/Port Clause Buffer" vhdl-fix-clause t]
      "--"
-     ["Case Region"		vhdl-fix-case-region (mark)]
-     ["Case Buffer"		vhdl-fix-case-buffer t]
+     ["Case Region"             vhdl-fix-case-region (mark)]
+     ["Case Buffer"             vhdl-fix-case-buffer t]
      "--"
-     ["Whitespace Region"	vhdl-fixup-whitespace-region (mark)]
-     ["Whitespace Buffer"	vhdl-fixup-whitespace-buffer t]
+     ["Whitespace Region"       vhdl-fixup-whitespace-region (mark)]
+     ["Whitespace Buffer"       vhdl-fixup-whitespace-buffer t]
      "--"
-     ["Statement Region"	vhdl-fix-statement-region (mark)]
-     ["Statement Buffer"	vhdl-fix-statement-buffer t]
+     ["Statement Region"        vhdl-fix-statement-region (mark)]
+     ["Statement Buffer"        vhdl-fix-statement-buffer t]
      "--"
-     ["Trailing Spaces Buffer"	vhdl-remove-trailing-spaces t])
+     ["Trailing Spaces Buffer"  vhdl-remove-trailing-spaces t])
     ("Update"
-     ["Sensitivity List"	vhdl-update-sensitivity-list-process t]
-     ["Sensitivity List Buffer"	vhdl-update-sensitivity-list-buffer t])
+     ["Sensitivity List"        vhdl-update-sensitivity-list-process t]
+     ["Sensitivity List Buffer" vhdl-update-sensitivity-list-buffer t])
     "--"
-    ["Fontify Buffer"		vhdl-fontify-buffer t]
-    ["Statistics Buffer"	vhdl-statistics-buffer t]
-    ["Show Messages"		vhdl-show-messages t]
-    ["Syntactic Info"		vhdl-show-syntactic-information t]
+    ["Fontify Buffer"           vhdl-fontify-buffer t]
+    ["Statistics Buffer"        vhdl-statistics-buffer t]
+    ["Show Messages"            vhdl-show-messages t]
+    ["Syntactic Info"           vhdl-show-syntactic-information t]
     "--"
-    ["Speedbar"			vhdl-speedbar t]
-    ["Hide/Show"		vhdl-hs-minor-mode t]
+    ["Speedbar"                 vhdl-speedbar t]
+    ["Hide/Show"                vhdl-hs-minor-mode t]
     "--"
     ("Documentation"
-     ["VHDL Mode"		vhdl-doc-mode :keys "C-c C-h"]
-     ["Release Notes"		(vhdl-doc-variable 'vhdl-doc-release-notes) t]
-     ["Reserved Words"		(vhdl-doc-variable 'vhdl-doc-keywords) t]
-     ["Coding Style"		(vhdl-doc-variable 'vhdl-doc-coding-style) t])
-    ["Version"			vhdl-version t]
-    ["Bug Report..."		vhdl-submit-bug-report t]
+     ["VHDL Mode"               vhdl-doc-mode :keys "C-c C-h"]
+     ["Release Notes"           (vhdl-doc-variable 'vhdl-doc-release-notes) t]
+     ["Reserved Words"          (vhdl-doc-variable 'vhdl-doc-keywords) t]
+     ["Coding Style"            (vhdl-doc-variable 'vhdl-doc-coding-style) t])
+    ["Version"                  vhdl-version t]
+    ["Bug Report..."            vhdl-submit-bug-report t]
     "--"
     ("Options"
      ("Mode"
       ["Electric Mode"
        (progn (customize-set-variable 'vhdl-electric-mode
-				      (not vhdl-electric-mode))
-	      (vhdl-mode-line-update))
+                                      (not vhdl-electric-mode))
+              (vhdl-mode-line-update))
        :style toggle :selected vhdl-electric-mode :keys "C-c C-m C-e"]
       ["Stutter Mode"
        (progn (customize-set-variable 'vhdl-stutter-mode
-				      (not vhdl-stutter-mode))
-	      (vhdl-mode-line-update))
+                                      (not vhdl-stutter-mode))
+              (vhdl-mode-line-update))
        :style toggle :selected vhdl-stutter-mode :keys "C-c C-m C-s"]
       ["Indent Tabs Mode"
        (progn (customize-set-variable 'vhdl-indent-tabs-mode
-				      (not vhdl-indent-tabs-mode))
-	      (setq indent-tabs-mode vhdl-indent-tabs-mode))
+                                      (not vhdl-indent-tabs-mode))
+              (setq indent-tabs-mode vhdl-indent-tabs-mode))
        :style toggle :selected vhdl-indent-tabs-mode]
       "--"
       ["Customize Group..." (customize-group 'vhdl-mode) t])
      ("Project"
       ["Project Setup..." (customize-option 'vhdl-project-alist) t]
       ,(append
-	'("Selected Project at Startup"
-	  ["None" (progn (customize-set-variable 'vhdl-project nil)
-			 (vhdl-set-project ""))
-	   :style radio :selected (null vhdl-project)]
-	  "--")
-	;; add menu entries for defined projects
-	(let ((project-alist vhdl-project-alist) menu-list name)
-	  (while project-alist
-	    (setq name (caar project-alist))
-	    (setq menu-list
-		  (cons `[,name (progn (customize-set-variable
-					'vhdl-project ,name)
-				       (vhdl-set-project ,name))
-			  :style radio :selected (equal ,name vhdl-project)]
-			menu-list))
-	    (setq project-alist (cdr project-alist)))
-	  (setq menu-list (nreverse menu-list))
-	  (vhdl-menu-split menu-list "Project")))
+        '("Selected Project at Startup"
+          ["None" (progn (customize-set-variable 'vhdl-project nil)
+                         (vhdl-set-project ""))
+           :style radio :selected (null vhdl-project)]
+          "--")
+        ;; add menu entries for defined projects
+        (let ((project-alist vhdl-project-alist) menu-list name)
+          (while project-alist
+            (setq name (caar project-alist))
+            (setq menu-list
+                  (cons `[,name (progn (customize-set-variable
+                                        'vhdl-project ,name)
+                                       (vhdl-set-project ,name))
+                          :style radio :selected (equal ,name vhdl-project)]
+                        menu-list))
+            (setq project-alist (cdr project-alist)))
+          (setq menu-list (nreverse menu-list))
+          (vhdl-menu-split menu-list "Project")))
       ["Setup File Name..." (customize-option 'vhdl-project-file-name) t]
       ("Auto Load Setup File"
        ["At Startup"
-	(customize-set-variable 'vhdl-project-auto-load
-				(if (memq 'startup vhdl-project-auto-load)
-				   (delq 'startup vhdl-project-auto-load)
-				 (cons 'startup vhdl-project-auto-load)))
+        (customize-set-variable 'vhdl-project-auto-load
+                                (if (memq 'startup vhdl-project-auto-load)
+                                   (delq 'startup vhdl-project-auto-load)
+                                 (cons 'startup vhdl-project-auto-load)))
        :style toggle :selected (memq 'startup vhdl-project-auto-load)])
       ["Sort Projects"
        (customize-set-variable 'vhdl-project-sort (not vhdl-project-sort))
@@ -3684,21 +3684,21 @@ STRING are replaced by `-' and substrings are converted to lower case."
      ("Compiler"
       ["Compiler Setup..." (customize-option 'vhdl-compiler-alist) t]
       ,(append
-	'("Selected Compiler at Startup")
-	;; add menu entries for defined compilers
-	(let ((comp-alist vhdl-compiler-alist) menu-list name)
-	  (while comp-alist
-	    (setq name (caar comp-alist))
-	    (setq menu-list
-		  (cons `[,name (customize-set-variable 'vhdl-compiler ,name)
-			  :style radio :selected (equal ,name vhdl-compiler)]
-			menu-list))
-	    (setq comp-alist (cdr comp-alist)))
-	  (setq menu-list (nreverse menu-list))
-	  (vhdl-menu-split menu-list "Compiler")))
+        '("Selected Compiler at Startup")
+        ;; add menu entries for defined compilers
+        (let ((comp-alist vhdl-compiler-alist) menu-list name)
+          (while comp-alist
+            (setq name (caar comp-alist))
+            (setq menu-list
+                  (cons `[,name (customize-set-variable 'vhdl-compiler ,name)
+                          :style radio :selected (equal ,name vhdl-compiler)]
+                        menu-list))
+            (setq comp-alist (cdr comp-alist)))
+          (setq menu-list (nreverse menu-list))
+          (vhdl-menu-split menu-list "Compiler")))
       ["Use Local Error Regexp"
        (customize-set-variable 'vhdl-compile-use-local-error-regexp
-			       (not vhdl-compile-use-local-error-regexp))
+                               (not vhdl-compile-use-local-error-regexp))
        :style toggle :selected vhdl-compile-use-local-error-regexp]
       ["Makefile Default Targets..."
        (customize-option 'vhdl-makefile-default-targets) t]
@@ -3710,71 +3710,71 @@ STRING are replaced by `-' and substrings are converted to lower case."
      ("Style"
       ("VHDL Standard"
        ["VHDL'87"
-	(progn (customize-set-variable 'vhdl-standard
-				       (list '87 (cadr vhdl-standard)))
-	       (vhdl-activate-customizations))
-	:style radio :selected (eq '87 (car vhdl-standard))]
+        (progn (customize-set-variable 'vhdl-standard
+                                       (list '87 (cadr vhdl-standard)))
+               (vhdl-activate-customizations))
+        :style radio :selected (eq '87 (car vhdl-standard))]
        ["VHDL'93/02"
-	(progn (customize-set-variable 'vhdl-standard
-				       (list '93 (cadr vhdl-standard)))
-	       (vhdl-activate-customizations))
-	:style radio :selected (eq '93 (car vhdl-standard))]
+        (progn (customize-set-variable 'vhdl-standard
+                                       (list '93 (cadr vhdl-standard)))
+               (vhdl-activate-customizations))
+        :style radio :selected (eq '93 (car vhdl-standard))]
        ["VHDL'08"
-	(progn (customize-set-variable 'vhdl-standard
-				       (list '08 (cadr vhdl-standard)))
-	       (vhdl-activate-customizations))
-	:style radio :selected (eq '08 (car vhdl-standard))]
+        (progn (customize-set-variable 'vhdl-standard
+                                       (list '08 (cadr vhdl-standard)))
+               (vhdl-activate-customizations))
+        :style radio :selected (eq '08 (car vhdl-standard))]
        "--"
        ["VHDL-AMS"
-	(progn (customize-set-variable
-		'vhdl-standard (list (car vhdl-standard)
-				     (if (memq 'ams (cadr vhdl-standard))
-					 (delq 'ams (cadr vhdl-standard))
-				       (cons 'ams (cadr vhdl-standard)))))
-	       (vhdl-activate-customizations))
-	:style toggle :selected (memq 'ams (cadr vhdl-standard))]
+        (progn (customize-set-variable
+                'vhdl-standard (list (car vhdl-standard)
+                                     (if (memq 'ams (cadr vhdl-standard))
+                                         (delq 'ams (cadr vhdl-standard))
+                                       (cons 'ams (cadr vhdl-standard)))))
+               (vhdl-activate-customizations))
+        :style toggle :selected (memq 'ams (cadr vhdl-standard))]
        ["Math Packages"
-	(progn (customize-set-variable
-		'vhdl-standard (list (car vhdl-standard)
-				     (if (memq 'math (cadr vhdl-standard))
-					 (delq 'math (cadr vhdl-standard))
-				       (cons 'math (cadr vhdl-standard)))))
-	       (vhdl-activate-customizations))
-	:style toggle :selected (memq 'math (cadr vhdl-standard))])
+        (progn (customize-set-variable
+                'vhdl-standard (list (car vhdl-standard)
+                                     (if (memq 'math (cadr vhdl-standard))
+                                         (delq 'math (cadr vhdl-standard))
+                                       (cons 'math (cadr vhdl-standard)))))
+               (vhdl-activate-customizations))
+        :style toggle :selected (memq 'math (cadr vhdl-standard))])
       ["Indentation Offset..." (customize-option 'vhdl-basic-offset) t]
       ["Upper Case Keywords"
        (customize-set-variable 'vhdl-upper-case-keywords
-			       (not vhdl-upper-case-keywords))
+                               (not vhdl-upper-case-keywords))
        :style toggle :selected vhdl-upper-case-keywords]
       ["Upper Case Types"
        (customize-set-variable 'vhdl-upper-case-types
-			       (not vhdl-upper-case-types))
+                               (not vhdl-upper-case-types))
        :style toggle :selected vhdl-upper-case-types]
       ["Upper Case Attributes"
        (customize-set-variable 'vhdl-upper-case-attributes
-			       (not vhdl-upper-case-attributes))
+                               (not vhdl-upper-case-attributes))
        :style toggle :selected vhdl-upper-case-attributes]
       ["Upper Case Enumeration Values"
        (customize-set-variable 'vhdl-upper-case-enum-values
-			       (not vhdl-upper-case-enum-values))
+                               (not vhdl-upper-case-enum-values))
        :style toggle :selected vhdl-upper-case-enum-values]
       ["Upper Case Constants"
        (customize-set-variable 'vhdl-upper-case-constants
-			       (not vhdl-upper-case-constants))
+                               (not vhdl-upper-case-constants))
        :style toggle :selected vhdl-upper-case-constants]
       ("Use Direct Instantiation"
        ["Never"
-	(customize-set-variable 'vhdl-use-direct-instantiation 'never)
-	:style radio :selected (eq 'never vhdl-use-direct-instantiation)]
+        (customize-set-variable 'vhdl-use-direct-instantiation 'never)
+        :style radio :selected (eq 'never vhdl-use-direct-instantiation)]
        ["Standard"
-	(customize-set-variable 'vhdl-use-direct-instantiation 'standard)
-	:style radio :selected (eq 'standard vhdl-use-direct-instantiation)]
+        (customize-set-variable 'vhdl-use-direct-instantiation 'standard)
+        :style radio :selected (eq 'standard vhdl-use-direct-instantiation)]
        ["Always"
-	(customize-set-variable 'vhdl-use-direct-instantiation 'always)
-	:style radio :selected (eq 'always vhdl-use-direct-instantiation)])
+        (customize-set-variable 'vhdl-use-direct-instantiation 'always)
+        :style radio :selected (eq 'always vhdl-use-direct-instantiation)])
       ["Include Array Index and Record Field in Sensitivity List"
        (customize-set-variable 'vhdl-array-index-record-field-in-sensitivity-list
-			       (not vhdl-array-index-record-field-in-sensitivity-list))
+                               (not vhdl-array-index-record-field-in-sensitivity-list))
        :style toggle :selected vhdl-array-index-record-field-in-sensitivity-list]
       "--"
       ["Customize Group..." (customize-group 'vhdl-style) t])
@@ -3787,68 +3787,68 @@ STRING are replaced by `-' and substrings are converted to lower case."
       ["Package File Name..." (customize-option 'vhdl-package-file-name) t]
       ("File Name Case"
        ["As Is"
-	(customize-set-variable 'vhdl-file-name-case 'identity)
-	:style radio :selected (eq 'identity vhdl-file-name-case)]
+        (customize-set-variable 'vhdl-file-name-case 'identity)
+        :style radio :selected (eq 'identity vhdl-file-name-case)]
        ["Lower Case"
-	(customize-set-variable 'vhdl-file-name-case 'downcase)
-	:style radio :selected (eq 'downcase vhdl-file-name-case)]
+        (customize-set-variable 'vhdl-file-name-case 'downcase)
+        :style radio :selected (eq 'downcase vhdl-file-name-case)]
        ["Upper Case"
-	(customize-set-variable 'vhdl-file-name-case 'upcase)
-	:style radio :selected (eq 'upcase vhdl-file-name-case)]
+        (customize-set-variable 'vhdl-file-name-case 'upcase)
+        :style radio :selected (eq 'upcase vhdl-file-name-case)]
        ["Capitalize"
-	(customize-set-variable 'vhdl-file-name-case 'capitalize)
-	:style radio :selected (eq 'capitalize vhdl-file-name-case)])
+        (customize-set-variable 'vhdl-file-name-case 'capitalize)
+        :style radio :selected (eq 'capitalize vhdl-file-name-case)])
       "--"
       ["Customize Group..." (customize-group 'vhdl-naming) t])
      ("Template"
       ("Electric Keywords"
        ["VHDL Keywords"
-	(customize-set-variable 'vhdl-electric-keywords
-				(if (memq 'vhdl vhdl-electric-keywords)
-				    (delq 'vhdl vhdl-electric-keywords)
-				  (cons 'vhdl vhdl-electric-keywords)))
-	:style toggle :selected (memq 'vhdl vhdl-electric-keywords)]
+        (customize-set-variable 'vhdl-electric-keywords
+                                (if (memq 'vhdl vhdl-electric-keywords)
+                                    (delq 'vhdl vhdl-electric-keywords)
+                                  (cons 'vhdl vhdl-electric-keywords)))
+        :style toggle :selected (memq 'vhdl vhdl-electric-keywords)]
        ["User Model Keywords"
-	(customize-set-variable 'vhdl-electric-keywords
-				(if (memq 'user vhdl-electric-keywords)
-				     (delq 'user vhdl-electric-keywords)
-				   (cons 'user vhdl-electric-keywords)))
-	:style toggle :selected (memq 'user vhdl-electric-keywords)])
+        (customize-set-variable 'vhdl-electric-keywords
+                                (if (memq 'user vhdl-electric-keywords)
+                                     (delq 'user vhdl-electric-keywords)
+                                   (cons 'user vhdl-electric-keywords)))
+        :style toggle :selected (memq 'user vhdl-electric-keywords)])
       ("Insert Optional Labels"
        ["None"
-	(customize-set-variable 'vhdl-optional-labels 'none)
-	:style radio :selected (eq 'none vhdl-optional-labels)]
+        (customize-set-variable 'vhdl-optional-labels 'none)
+        :style radio :selected (eq 'none vhdl-optional-labels)]
        ["Processes Only"
-	(customize-set-variable 'vhdl-optional-labels 'process)
-	:style radio :selected (eq 'process vhdl-optional-labels)]
+        (customize-set-variable 'vhdl-optional-labels 'process)
+        :style radio :selected (eq 'process vhdl-optional-labels)]
        ["All Constructs"
-	(customize-set-variable 'vhdl-optional-labels 'all)
-	:style radio :selected (eq 'all vhdl-optional-labels)])
+        (customize-set-variable 'vhdl-optional-labels 'all)
+        :style radio :selected (eq 'all vhdl-optional-labels)])
       ("Insert Empty Lines"
        ["None"
-	(customize-set-variable 'vhdl-insert-empty-lines 'none)
-	:style radio :selected (eq 'none vhdl-insert-empty-lines)]
+        (customize-set-variable 'vhdl-insert-empty-lines 'none)
+        :style radio :selected (eq 'none vhdl-insert-empty-lines)]
        ["Design Units Only"
-	(customize-set-variable 'vhdl-insert-empty-lines 'unit)
-	:style radio :selected (eq 'unit vhdl-insert-empty-lines)]
+        (customize-set-variable 'vhdl-insert-empty-lines 'unit)
+        :style radio :selected (eq 'unit vhdl-insert-empty-lines)]
        ["All Constructs"
-	(customize-set-variable 'vhdl-insert-empty-lines 'all)
-	:style radio :selected (eq 'all vhdl-insert-empty-lines)])
+        (customize-set-variable 'vhdl-insert-empty-lines 'all)
+        :style radio :selected (eq 'all vhdl-insert-empty-lines)])
       ["Argument List Indent"
        (customize-set-variable 'vhdl-argument-list-indent
-			       (not vhdl-argument-list-indent))
+                               (not vhdl-argument-list-indent))
        :style toggle :selected vhdl-argument-list-indent]
       ["Association List with Formals"
        (customize-set-variable 'vhdl-association-list-with-formals
-			       (not vhdl-association-list-with-formals))
+                               (not vhdl-association-list-with-formals))
        :style toggle :selected vhdl-association-list-with-formals]
       ["Conditions in Parenthesis"
        (customize-set-variable 'vhdl-conditions-in-parenthesis
-			       (not vhdl-conditions-in-parenthesis))
+                               (not vhdl-conditions-in-parenthesis))
        :style toggle :selected vhdl-conditions-in-parenthesis]
       ["Sensitivity List uses 'all'"
        (customize-set-variable 'vhdl-sensitivity-list-all
-			       (not vhdl-sensitivity-list-all))
+                               (not vhdl-sensitivity-list-all))
        :style toggle :selected vhdl-sensitivity-list-all]
       ["Zero String..." (customize-option 'vhdl-zero-string) t]
       ["One String..." (customize-option 'vhdl-one-string) t]
@@ -3860,41 +3860,41 @@ STRING are replaced by `-' and substrings are converted to lower case."
        ["Platform Specification..." (customize-option 'vhdl-platform-spec) t]
        ["Date Format..." (customize-option 'vhdl-date-format) t]
        ["Modify Date Prefix String..."
-	(customize-option 'vhdl-modify-date-prefix-string) t]
+        (customize-option 'vhdl-modify-date-prefix-string) t]
        ["Modify Date on Saving"
-	(progn (customize-set-variable 'vhdl-modify-date-on-saving
-				       (not vhdl-modify-date-on-saving))
-	       (vhdl-activate-customizations))
-	:style toggle :selected vhdl-modify-date-on-saving])
+        (progn (customize-set-variable 'vhdl-modify-date-on-saving
+                                       (not vhdl-modify-date-on-saving))
+               (vhdl-activate-customizations))
+        :style toggle :selected vhdl-modify-date-on-saving])
       ("Sequential Process"
        ("Kind of Reset"
-	["None"
-	 (customize-set-variable 'vhdl-reset-kind 'none)
-	 :style radio :selected (eq 'none vhdl-reset-kind)]
-	["Synchronous"
-	 (customize-set-variable 'vhdl-reset-kind 'sync)
-	 :style radio :selected (eq 'sync vhdl-reset-kind)]
-	["Asynchronous"
-	 (customize-set-variable 'vhdl-reset-kind 'async)
-	 :style radio :selected (eq 'async vhdl-reset-kind)]
-	["Query"
-	 (customize-set-variable 'vhdl-reset-kind 'query)
-	 :style radio :selected (eq 'query vhdl-reset-kind)])
+        ["None"
+         (customize-set-variable 'vhdl-reset-kind 'none)
+         :style radio :selected (eq 'none vhdl-reset-kind)]
+        ["Synchronous"
+         (customize-set-variable 'vhdl-reset-kind 'sync)
+         :style radio :selected (eq 'sync vhdl-reset-kind)]
+        ["Asynchronous"
+         (customize-set-variable 'vhdl-reset-kind 'async)
+         :style radio :selected (eq 'async vhdl-reset-kind)]
+        ["Query"
+         (customize-set-variable 'vhdl-reset-kind 'query)
+         :style radio :selected (eq 'query vhdl-reset-kind)])
        ["Reset is Active High"
-	(customize-set-variable 'vhdl-reset-active-high
-				(not vhdl-reset-active-high))
-	:style toggle :selected vhdl-reset-active-high]
+        (customize-set-variable 'vhdl-reset-active-high
+                                (not vhdl-reset-active-high))
+        :style toggle :selected vhdl-reset-active-high]
        ["Use Rising Clock Edge"
-	(customize-set-variable 'vhdl-clock-rising-edge
-				(not vhdl-clock-rising-edge))
-	:style toggle :selected vhdl-clock-rising-edge]
+        (customize-set-variable 'vhdl-clock-rising-edge
+                                (not vhdl-clock-rising-edge))
+        :style toggle :selected vhdl-clock-rising-edge]
        ("Clock Edge Condition"
-	["Standard"
-	 (customize-set-variable 'vhdl-clock-edge-condition 'standard)
-	 :style radio :selected (eq 'standard vhdl-clock-edge-condition)]
-	["Function \"rising_edge\""
-	 (customize-set-variable 'vhdl-clock-edge-condition 'function)
-	 :style radio :selected (eq 'function vhdl-clock-edge-condition)])
+        ["Standard"
+         (customize-set-variable 'vhdl-clock-edge-condition 'standard)
+         :style radio :selected (eq 'standard vhdl-clock-edge-condition)]
+        ["Function \"rising_edge\""
+         (customize-set-variable 'vhdl-clock-edge-condition 'function)
+         :style radio :selected (eq 'function vhdl-clock-edge-condition)])
        ["Clock Name..." (customize-option 'vhdl-clock-name) t]
        ["Reset Name..." (customize-option 'vhdl-reset-name) t])
       "--"
@@ -3904,68 +3904,68 @@ STRING are replaced by `-' and substrings are converted to lower case."
      ("Port"
       ["Include Port Comments"
        (customize-set-variable 'vhdl-include-port-comments
-			       (not vhdl-include-port-comments))
+                               (not vhdl-include-port-comments))
        :style toggle :selected vhdl-include-port-comments]
       ["Include Direction Comments"
        (customize-set-variable 'vhdl-include-direction-comments
-			       (not vhdl-include-direction-comments))
+                               (not vhdl-include-direction-comments))
        :style toggle :selected vhdl-include-direction-comments]
       ["Include Type Comments"
        (customize-set-variable 'vhdl-include-type-comments
-			       (not vhdl-include-type-comments))
+                               (not vhdl-include-type-comments))
        :style toggle :selected vhdl-include-type-comments]
       ("Include Group Comments"
        ["Never"
-	(customize-set-variable 'vhdl-include-group-comments 'never)
-	:style radio :selected (eq 'never vhdl-include-group-comments)]
+        (customize-set-variable 'vhdl-include-group-comments 'never)
+        :style radio :selected (eq 'never vhdl-include-group-comments)]
        ["Declarations"
-	(customize-set-variable 'vhdl-include-group-comments 'decl)
-	:style radio :selected (eq 'decl vhdl-include-group-comments)]
+        (customize-set-variable 'vhdl-include-group-comments 'decl)
+        :style radio :selected (eq 'decl vhdl-include-group-comments)]
        ["Always"
-	(customize-set-variable 'vhdl-include-group-comments 'always)
-	:style radio :selected (eq 'always vhdl-include-group-comments)])
+        (customize-set-variable 'vhdl-include-group-comments 'always)
+        :style radio :selected (eq 'always vhdl-include-group-comments)])
       ["Actual Generic Name..." (customize-option 'vhdl-actual-generic-name) t]
       ["Actual Port Name..." (customize-option 'vhdl-actual-port-name) t]
       ["Instance Name..." (customize-option 'vhdl-instance-name) t]
       ("Testbench"
        ["Entity Name..." (customize-option 'vhdl-testbench-entity-name) t]
        ["Architecture Name..."
-	(customize-option 'vhdl-testbench-architecture-name) t]
+        (customize-option 'vhdl-testbench-architecture-name) t]
        ["Configuration Name..."
-	(customize-option 'vhdl-testbench-configuration-name) t]
+        (customize-option 'vhdl-testbench-configuration-name) t]
        ["DUT Name..." (customize-option 'vhdl-testbench-dut-name) t]
        ["Include Header"
-	(customize-set-variable 'vhdl-testbench-include-header
-				(not vhdl-testbench-include-header))
-	:style toggle :selected vhdl-testbench-include-header]
+        (customize-set-variable 'vhdl-testbench-include-header
+                                (not vhdl-testbench-include-header))
+        :style toggle :selected vhdl-testbench-include-header]
        ["Declarations..." (customize-option 'vhdl-testbench-declarations) t]
        ["Statements..." (customize-option 'vhdl-testbench-statements) t]
        ["Initialize Signals"
-	(customize-set-variable 'vhdl-testbench-initialize-signals
-				(not vhdl-testbench-initialize-signals))
-	:style toggle :selected vhdl-testbench-initialize-signals]
+        (customize-set-variable 'vhdl-testbench-initialize-signals
+                                (not vhdl-testbench-initialize-signals))
+        :style toggle :selected vhdl-testbench-initialize-signals]
        ["Include Library Clause"
-	(customize-set-variable 'vhdl-testbench-include-library
-				(not vhdl-testbench-include-library))
-	:style toggle :selected vhdl-testbench-include-library]
+        (customize-set-variable 'vhdl-testbench-include-library
+                                (not vhdl-testbench-include-library))
+        :style toggle :selected vhdl-testbench-include-library]
        ["Include Configuration"
-	(customize-set-variable 'vhdl-testbench-include-configuration
-				(not vhdl-testbench-include-configuration))
-	:style toggle :selected vhdl-testbench-include-configuration]
+        (customize-set-variable 'vhdl-testbench-include-configuration
+                                (not vhdl-testbench-include-configuration))
+        :style toggle :selected vhdl-testbench-include-configuration]
        ("Create Files"
-	["None"
-	 (customize-set-variable 'vhdl-testbench-create-files 'none)
-	 :style radio :selected (eq 'none vhdl-testbench-create-files)]
-	["Single"
-	 (customize-set-variable 'vhdl-testbench-create-files 'single)
-	 :style radio :selected (eq 'single vhdl-testbench-create-files)]
-	["Separate"
-	 (customize-set-variable 'vhdl-testbench-create-files 'separate)
-	 :style radio :selected (eq 'separate vhdl-testbench-create-files)])
+        ["None"
+         (customize-set-variable 'vhdl-testbench-create-files 'none)
+         :style radio :selected (eq 'none vhdl-testbench-create-files)]
+        ["Single"
+         (customize-set-variable 'vhdl-testbench-create-files 'single)
+         :style radio :selected (eq 'single vhdl-testbench-create-files)]
+        ["Separate"
+         (customize-set-variable 'vhdl-testbench-create-files 'separate)
+         :style radio :selected (eq 'separate vhdl-testbench-create-files)])
        ["Testbench Entity File Name..."
-	(customize-option 'vhdl-testbench-entity-file-name) t]
+        (customize-option 'vhdl-testbench-entity-file-name) t]
        ["Testbench Architecture File Name..."
-	(customize-option 'vhdl-testbench-architecture-file-name) t])
+        (customize-option 'vhdl-testbench-architecture-file-name) t])
       "--"
       ["Customize Group..." (customize-group 'vhdl-port) t])
      ("Compose"
@@ -3977,44 +3977,44 @@ STRING are replaced by `-' and substrings are converted to lower case."
        (customize-option 'vhdl-components-package-name) t]
       ["Use Components Package"
        (customize-set-variable 'vhdl-use-components-package
-			       (not vhdl-use-components-package))
+                               (not vhdl-use-components-package))
        :style toggle :selected vhdl-use-components-package]
       ["Include Header"
        (customize-set-variable 'vhdl-compose-include-header
-			       (not vhdl-compose-include-header))
+                               (not vhdl-compose-include-header))
        :style toggle :selected vhdl-compose-include-header]
       ("Create Entity/Architecture Files"
        ["None"
-	(customize-set-variable 'vhdl-compose-create-files 'none)
-	:style radio :selected (eq 'none vhdl-compose-create-files)]
+        (customize-set-variable 'vhdl-compose-create-files 'none)
+        :style radio :selected (eq 'none vhdl-compose-create-files)]
        ["Single"
-	(customize-set-variable 'vhdl-compose-create-files 'single)
-	:style radio :selected (eq 'single vhdl-compose-create-files)]
+        (customize-set-variable 'vhdl-compose-create-files 'single)
+        :style radio :selected (eq 'single vhdl-compose-create-files)]
        ["Separate"
-	(customize-set-variable 'vhdl-compose-create-files 'separate)
-	:style radio :selected (eq 'separate vhdl-compose-create-files)])
+        (customize-set-variable 'vhdl-compose-create-files 'separate)
+        :style radio :selected (eq 'separate vhdl-compose-create-files)])
       ["Create Configuration File"
        (customize-set-variable 'vhdl-compose-configuration-create-file
-			       (not vhdl-compose-configuration-create-file))
+                               (not vhdl-compose-configuration-create-file))
        :style toggle :selected vhdl-compose-configuration-create-file]
       ["Hierarchical Configuration"
        (customize-set-variable 'vhdl-compose-configuration-hierarchical
-			       (not vhdl-compose-configuration-hierarchical))
+                               (not vhdl-compose-configuration-hierarchical))
        :style toggle :selected vhdl-compose-configuration-hierarchical]
       ["Use Subconfiguration"
        (customize-set-variable 'vhdl-compose-configuration-use-subconfiguration
-			       (not vhdl-compose-configuration-use-subconfiguration))
+                               (not vhdl-compose-configuration-use-subconfiguration))
        :style toggle :selected vhdl-compose-configuration-use-subconfiguration]
       "--"
       ["Customize Group..." (customize-group 'vhdl-compose) t])
      ("Comment"
       ["Self Insert Comments"
        (customize-set-variable 'vhdl-self-insert-comments
-			       (not vhdl-self-insert-comments))
+                               (not vhdl-self-insert-comments))
        :style toggle :selected vhdl-self-insert-comments]
       ["Prompt for Comments"
        (customize-set-variable 'vhdl-prompt-for-comments
-			       (not vhdl-prompt-for-comments))
+                               (not vhdl-prompt-for-comments))
        :style toggle :selected vhdl-prompt-for-comments]
       ["Inline Comment Column..."
        (customize-option 'vhdl-inline-comment-column) t]
@@ -4032,7 +4032,7 @@ STRING are replaced by `-' and substrings are converted to lower case."
        (customize-option 'vhdl-align-group-separate) t]
       ["Align Lines with Same Indent"
        (customize-set-variable 'vhdl-align-same-indent
-			       (not vhdl-align-same-indent))
+                               (not vhdl-align-same-indent))
        :style toggle :selected vhdl-align-same-indent]
       ["Beautify Options..." (customize-option 'vhdl-beautify-options) t]
       "--"
@@ -4040,42 +4040,42 @@ STRING are replaced by `-' and substrings are converted to lower case."
      ("Highlight"
       ["Highlighting On/Off..."
        (customize-option
-	(if (fboundp 'global-font-lock-mode)
-	    'global-font-lock-mode 'font-lock-auto-fontify)) t]
+        (if (fboundp 'global-font-lock-mode)
+            'global-font-lock-mode 'font-lock-auto-fontify)) t]
       ["Highlight Keywords"
        (progn (customize-set-variable 'vhdl-highlight-keywords
-				      (not vhdl-highlight-keywords))
-	      (vhdl-fontify-buffer))
+                                      (not vhdl-highlight-keywords))
+              (vhdl-fontify-buffer))
        :style toggle :selected vhdl-highlight-keywords]
       ["Highlight Names"
        (progn (customize-set-variable 'vhdl-highlight-names
-				      (not vhdl-highlight-names))
-	      (vhdl-fontify-buffer))
+                                      (not vhdl-highlight-names))
+              (vhdl-fontify-buffer))
        :style toggle :selected vhdl-highlight-names]
       ["Highlight Special Words"
        (progn (customize-set-variable 'vhdl-highlight-special-words
-				      (not vhdl-highlight-special-words))
-	      (vhdl-fontify-buffer))
+                                      (not vhdl-highlight-special-words))
+              (vhdl-fontify-buffer))
        :style toggle :selected vhdl-highlight-special-words]
       ["Highlight Forbidden Words"
        (progn (customize-set-variable 'vhdl-highlight-forbidden-words
-				      (not vhdl-highlight-forbidden-words))
-	      (vhdl-fontify-buffer))
+                                      (not vhdl-highlight-forbidden-words))
+              (vhdl-fontify-buffer))
        :style toggle :selected vhdl-highlight-forbidden-words]
       ["Highlight Verilog Keywords"
        (progn (customize-set-variable 'vhdl-highlight-verilog-keywords
-				      (not vhdl-highlight-verilog-keywords))
-	      (vhdl-fontify-buffer))
+                                      (not vhdl-highlight-verilog-keywords))
+              (vhdl-fontify-buffer))
        :style toggle :selected vhdl-highlight-verilog-keywords]
       ["Highlight \"translate_off\""
        (progn (customize-set-variable 'vhdl-highlight-translate-off
-				      (not vhdl-highlight-translate-off))
-	      (vhdl-fontify-buffer))
+                                      (not vhdl-highlight-translate-off))
+              (vhdl-fontify-buffer))
        :style toggle :selected vhdl-highlight-translate-off]
       ["Case Sensitive Highlighting"
        (progn (customize-set-variable 'vhdl-highlight-case-sensitive
-				      (not vhdl-highlight-case-sensitive))
-	      (vhdl-fontify-buffer))
+                                      (not vhdl-highlight-case-sensitive))
+              (vhdl-fontify-buffer))
        :style toggle :selected vhdl-highlight-case-sensitive]
       ["Special Syntax Definition..."
        (customize-option 'vhdl-special-syntax-alist) t]
@@ -4088,42 +4088,42 @@ STRING are replaced by `-' and substrings are converted to lower case."
      ("Speedbar"
       ["Auto Open at Startup"
        (customize-set-variable 'vhdl-speedbar-auto-open
-			       (not vhdl-speedbar-auto-open))
+                               (not vhdl-speedbar-auto-open))
        :style toggle :selected vhdl-speedbar-auto-open]
       ("Default Displaying Mode"
        ["Files"
-	(customize-set-variable 'vhdl-speedbar-display-mode 'files)
-	:style radio :selected (eq 'files vhdl-speedbar-display-mode)]
+        (customize-set-variable 'vhdl-speedbar-display-mode 'files)
+        :style radio :selected (eq 'files vhdl-speedbar-display-mode)]
        ["Directory Hierarchy"
-	(customize-set-variable 'vhdl-speedbar-display-mode 'directory)
-	:style radio :selected (eq 'directory vhdl-speedbar-display-mode)]
+        (customize-set-variable 'vhdl-speedbar-display-mode 'directory)
+        :style radio :selected (eq 'directory vhdl-speedbar-display-mode)]
        ["Project Hierarchy"
-	(customize-set-variable 'vhdl-speedbar-display-mode 'project)
-	:style radio :selected (eq 'project vhdl-speedbar-display-mode)])
+        (customize-set-variable 'vhdl-speedbar-display-mode 'project)
+        :style radio :selected (eq 'project vhdl-speedbar-display-mode)])
       ["Indentation Offset..."
        (customize-option 'speedbar-indentation-width) t]
       ["Scan Size Limits..." (customize-option 'vhdl-speedbar-scan-limit) t]
       ["Jump to Unit when Opening"
        (customize-set-variable 'vhdl-speedbar-jump-to-unit
-			       (not vhdl-speedbar-jump-to-unit))
+                               (not vhdl-speedbar-jump-to-unit))
        :style toggle :selected vhdl-speedbar-jump-to-unit]
       ["Update Hierarchy on File Saving"
        (customize-set-variable 'vhdl-speedbar-update-on-saving
-			       (not vhdl-speedbar-update-on-saving))
+                               (not vhdl-speedbar-update-on-saving))
        :style toggle :selected vhdl-speedbar-update-on-saving]
       ("Save in Cache File"
        ["Hierarchy Information"
-	(customize-set-variable 'vhdl-speedbar-save-cache
-				(if (memq 'hierarchy vhdl-speedbar-save-cache)
-				    (delq 'hierarchy vhdl-speedbar-save-cache)
-				  (cons 'hierarchy vhdl-speedbar-save-cache)))
-	:style toggle :selected (memq 'hierarchy vhdl-speedbar-save-cache)]
+        (customize-set-variable 'vhdl-speedbar-save-cache
+                                (if (memq 'hierarchy vhdl-speedbar-save-cache)
+                                    (delq 'hierarchy vhdl-speedbar-save-cache)
+                                  (cons 'hierarchy vhdl-speedbar-save-cache)))
+        :style toggle :selected (memq 'hierarchy vhdl-speedbar-save-cache)]
        ["Displaying Status"
-	(customize-set-variable 'vhdl-speedbar-save-cache
-				(if (memq 'display vhdl-speedbar-save-cache)
-				    (delq 'display vhdl-speedbar-save-cache)
-				  (cons 'display vhdl-speedbar-save-cache)))
-	:style toggle :selected (memq 'display vhdl-speedbar-save-cache)])
+        (customize-set-variable 'vhdl-speedbar-save-cache
+                                (if (memq 'display vhdl-speedbar-save-cache)
+                                    (delq 'display vhdl-speedbar-save-cache)
+                                  (cons 'display vhdl-speedbar-save-cache)))
+        :style toggle :selected (memq 'display vhdl-speedbar-save-cache)])
       ["Cache File Name..."
        (customize-option 'vhdl-speedbar-cache-file-name) t]
       "--"
@@ -4131,17 +4131,17 @@ STRING are replaced by `-' and substrings are converted to lower case."
      ("Menu"
       ["Add Index Menu when Loading File"
        (progn (customize-set-variable 'vhdl-index-menu (not vhdl-index-menu))
-	      (vhdl-index-menu-init))
+              (vhdl-index-menu-init))
        :style toggle :selected vhdl-index-menu]
       ["Add Source File Menu when Loading File"
        (progn (customize-set-variable 'vhdl-source-file-menu
-				      (not vhdl-source-file-menu))
-	      (vhdl-add-source-files-menu))
+                                      (not vhdl-source-file-menu))
+              (vhdl-add-source-files-menu))
        :style toggle :selected vhdl-source-file-menu]
       ["Add Hideshow Menu at Startup"
        (progn (customize-set-variable 'vhdl-hideshow-menu
-				      (not vhdl-hideshow-menu))
-	      (vhdl-activate-customizations))
+                                      (not vhdl-hideshow-menu))
+              (vhdl-activate-customizations))
        :style toggle :selected vhdl-hideshow-menu]
       ["Hide Everything Initially"
        (customize-set-variable 'vhdl-hide-all-init (not vhdl-hide-all-init))
@@ -4151,43 +4151,43 @@ STRING are replaced by `-' and substrings are converted to lower case."
      ("Print"
       ["In Two Column Format"
        (progn (customize-set-variable 'vhdl-print-two-column
-				      (not vhdl-print-two-column))
-	      (message "Activate new setting by saving options and restarting Emacs"))
+                                      (not vhdl-print-two-column))
+              (message "Activate new setting by saving options and restarting Emacs"))
        :style toggle :selected vhdl-print-two-column]
       ["Use Customized Faces"
        (progn (customize-set-variable 'vhdl-print-customize-faces
-				      (not vhdl-print-customize-faces))
-	      (message "Activate new setting by saving options and restarting Emacs"))
+                                      (not vhdl-print-customize-faces))
+              (message "Activate new setting by saving options and restarting Emacs"))
        :style toggle :selected vhdl-print-customize-faces]
       "--"
       ["Customize Group..." (customize-group 'vhdl-print) t])
      ("Miscellaneous"
       ["Use Intelligent Tab"
        (progn (customize-set-variable 'vhdl-intelligent-tab
-				      (not vhdl-intelligent-tab))
-	      (vhdl-activate-customizations))
+                                      (not vhdl-intelligent-tab))
+              (vhdl-activate-customizations))
        :style toggle :selected vhdl-intelligent-tab]
       ["Indent Syntax-Based"
        (customize-set-variable 'vhdl-indent-syntax-based
-			       (not vhdl-indent-syntax-based))
+                               (not vhdl-indent-syntax-based))
        :style toggle :selected vhdl-indent-syntax-based]
       ["Indent Comments Like Next Code Line"
        (customize-set-variable 'vhdl-indent-comment-like-next-code-line
-			       (not vhdl-indent-comment-like-next-code-line))
+                               (not vhdl-indent-comment-like-next-code-line))
        :style toggle :selected vhdl-indent-comment-like-next-code-line]
       ["Word Completion is Case Sensitive"
        (customize-set-variable 'vhdl-word-completion-case-sensitive
-			       (not vhdl-word-completion-case-sensitive))
+                               (not vhdl-word-completion-case-sensitive))
        :style toggle :selected vhdl-word-completion-case-sensitive]
       ["Word Completion in Minibuffer"
        (progn (customize-set-variable 'vhdl-word-completion-in-minibuffer
-				      (not vhdl-word-completion-in-minibuffer))
-	      (message "Activate new setting by saving options and restarting Emacs"))
+                                      (not vhdl-word-completion-in-minibuffer))
+              (message "Activate new setting by saving options and restarting Emacs"))
        :style toggle :selected vhdl-word-completion-in-minibuffer]
       ["Underscore is Part of Word"
        (progn (customize-set-variable 'vhdl-underscore-is-part-of-word
-				      (not vhdl-underscore-is-part-of-word))
-	      (vhdl-activate-customizations))
+                                      (not vhdl-underscore-is-part-of-word))
+              (vhdl-activate-customizations))
        :style toggle :selected vhdl-underscore-is-part-of-word]
       "--"
       ["Customize Group..." (customize-group 'vhdl-misc) t])
@@ -4205,9 +4205,9 @@ STRING are replaced by `-' and substrings are converted to lower case."
   (interactive)
   (easy-menu-remove vhdl-mode-menu-list) ; for XEmacs
   (setq vhdl-mode-menu-list (vhdl-create-mode-menu))
-  (easy-menu-add vhdl-mode-menu-list)	; for XEmacs
+  (easy-menu-add vhdl-mode-menu-list)   ; for XEmacs
   (easy-menu-define vhdl-mode-menu vhdl-mode-map
-		    "Menu keymap for VHDL Mode." vhdl-mode-menu-list))
+                    "Menu keymap for VHDL Mode." vhdl-mode-menu-list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Index menu (using `imenu.el'), also used for speedbar (using `speedbar.el')
@@ -4276,17 +4276,17 @@ message."
 (defun vhdl-get-source-files (&optional full directory)
   "Get list of VHDL source files in DIRECTORY or current directory."
   (let ((mode-alist auto-mode-alist)
-	filename-regexp)
+        filename-regexp)
     ;; create regular expressions for matching file names
     (setq filename-regexp "\\`[^.].*\\(")
     (while mode-alist
       (when (eq (cdar mode-alist) 'vhdl-mode)
-	(setq filename-regexp
-	      (concat filename-regexp (caar mode-alist) "\\|")))
+        (setq filename-regexp
+              (concat filename-regexp (caar mode-alist) "\\|")))
       (setq mode-alist (cdr mode-alist)))
     (setq filename-regexp
-	  (concat (substring filename-regexp 0
-			     (string-match "\\\\|$" filename-regexp)) "\\)"))
+          (concat (substring filename-regexp 0
+                             (string-match "\\\\|$" filename-regexp)) "\\)"))
     ;; find files
     (vhdl-directory-files
      (or directory default-directory) full filename-regexp)))
@@ -4297,14 +4297,14 @@ The directory of the current source file is scanned."
   (interactive)
   (message "Scanning directory for source files ...")
   (let ((newmap (current-local-map))
-	(file-list (vhdl-get-source-files))
-	menu-list found)
+        (file-list (vhdl-get-source-files))
+        menu-list found)
     ;; Create list for menu
     (setq found nil)
     (while file-list
       (setq found t)
       (push (vector (car file-list) (list 'find-file (car file-list)) t)
-	    menu-list)
+            menu-list)
       (setq file-list (cdr file-list)))
     (setq menu-list (vhdl-menu-split menu-list "Sources"))
     (when found (push "--" menu-list))
@@ -4313,7 +4313,7 @@ The directory of the current source file is scanned."
     ;; Create menu
     (easy-menu-add menu-list)
     (easy-menu-define vhdl-sources-menu newmap
-		      "VHDL source files menu" menu-list))
+                      "VHDL source files menu" menu-list))
   (message ""))
 
 
@@ -4898,8 +4898,8 @@ Key bindings:
   ;; initialize font locking
   (set (make-local-variable 'font-lock-defaults)
        (list
-	'(nil vhdl-font-lock-keywords) nil
-	(not vhdl-highlight-case-sensitive) '((?\_ . "w")) 'beginning-of-line))
+        '(nil vhdl-font-lock-keywords) nil
+        (not vhdl-highlight-case-sensitive) '((?\_ . "w")) 'beginning-of-line))
   (if (eval-when-compile (fboundp 'syntax-propertize-rules))
       (set (make-local-variable 'syntax-propertize-function)
            (syntax-propertize-rules
@@ -4919,14 +4919,17 @@ Key bindings:
     (set (make-local-variable 'compilation-error-regexp-alist) nil)
     (set (make-local-variable 'compilation-file-regexp-alist) nil))
 
+  ;; DANGER: Custom Imenu
   ;; add index menu
-  (vhdl-index-menu-init)
+  ;; (vhdl-index-menu-init)
+  (larumbe/vhdl-index-menu-init)
+  ;; End of DANGER
   ;; add source file menu
   (if vhdl-source-file-menu (vhdl-add-source-files-menu))
   ;; add VHDL menu
-  (easy-menu-add vhdl-mode-menu-list)	; for XEmacs
+  (easy-menu-add vhdl-mode-menu-list)   ; for XEmacs
   (easy-menu-define vhdl-mode-menu vhdl-mode-map
-		    "Menu keymap for VHDL Mode." vhdl-mode-menu-list)
+                    "Menu keymap for VHDL Mode." vhdl-mode-menu-list)
   ;; initialize hideshow and add menu
   (vhdl-hideshow-init)
   (run-hooks 'menu-bar-update-hook)
@@ -4935,7 +4938,7 @@ Key bindings:
   (vhdl-ps-print-init)
   (vhdl-write-file-hooks-init)
   (message "VHDL Mode %s.%s" vhdl-version
-	   (if noninteractive "" "  See menu for documentation and release notes.")))
+           (if noninteractive "" "  See menu for documentation and release notes.")))
 
 (defun vhdl-activate-customizations ()
   "Activate all customizations on local variables."
@@ -4973,8 +4976,8 @@ Key bindings:
 ;; make Emacs process VHDL Mode options
 (setq command-switch-alist
       (append command-switch-alist
-	      '(("-compiler" . vhdl-process-command-line-option)
-		("-project" . vhdl-process-command-line-option))))
+              '(("-compiler" . vhdl-process-command-line-option)
+                ("-project" . vhdl-process-command-line-option))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -5342,81 +5345,81 @@ Key bindings:
   (when condition
     (let ((tmp-list list))
       (while tmp-list
-	(setcar tmp-list (upcase (car tmp-list)))
-	(setq tmp-list (cdr tmp-list)))))
+        (setcar tmp-list (upcase (car tmp-list)))
+        (setq tmp-list (cdr tmp-list)))))
   list)
 
 (defun vhdl-words-init ()
   "Initialize reserved words."
   (setq vhdl-keywords
-	(vhdl-upcase-list
-	 (and vhdl-highlight-case-sensitive vhdl-upper-case-keywords)
-	 (append vhdl-02-keywords
-		 (when (vhdl-standard-p '08) vhdl-08-keywords)
-		 (when (vhdl-standard-p 'ams) vhdl-ams-keywords))))
+        (vhdl-upcase-list
+         (and vhdl-highlight-case-sensitive vhdl-upper-case-keywords)
+         (append vhdl-02-keywords
+                 (when (vhdl-standard-p '08) vhdl-08-keywords)
+                 (when (vhdl-standard-p 'ams) vhdl-ams-keywords))))
   (setq vhdl-types
-	(vhdl-upcase-list
-	 (and vhdl-highlight-case-sensitive vhdl-upper-case-types)
-	 (append vhdl-02-types
-		 (when (vhdl-standard-p '08) vhdl-08-types)
-		 (when (vhdl-standard-p 'ams) vhdl-ams-types)
-		 (when (vhdl-standard-p 'math) vhdl-math-types))))
+        (vhdl-upcase-list
+         (and vhdl-highlight-case-sensitive vhdl-upper-case-types)
+         (append vhdl-02-types
+                 (when (vhdl-standard-p '08) vhdl-08-types)
+                 (when (vhdl-standard-p 'ams) vhdl-ams-types)
+                 (when (vhdl-standard-p 'math) vhdl-math-types))))
   (setq vhdl-attributes
-	(vhdl-upcase-list
-	 (and vhdl-highlight-case-sensitive vhdl-upper-case-attributes)
-	 (append vhdl-02-attributes
-		 (when (vhdl-standard-p '08) vhdl-08-attributes)
-		 (when (vhdl-standard-p 'ams) vhdl-ams-attributes))))
+        (vhdl-upcase-list
+         (and vhdl-highlight-case-sensitive vhdl-upper-case-attributes)
+         (append vhdl-02-attributes
+                 (when (vhdl-standard-p '08) vhdl-08-attributes)
+                 (when (vhdl-standard-p 'ams) vhdl-ams-attributes))))
   (setq vhdl-enum-values
-	(vhdl-upcase-list
-	 (and vhdl-highlight-case-sensitive vhdl-upper-case-enum-values)
-	 (append vhdl-02-enum-values
-		 (when (vhdl-standard-p 'ams) vhdl-ams-enum-values))))
+        (vhdl-upcase-list
+         (and vhdl-highlight-case-sensitive vhdl-upper-case-enum-values)
+         (append vhdl-02-enum-values
+                 (when (vhdl-standard-p 'ams) vhdl-ams-enum-values))))
   (setq vhdl-constants
-	(vhdl-upcase-list
-	 (and vhdl-highlight-case-sensitive vhdl-upper-case-constants)
-	 (append (when (vhdl-standard-p 'ams) vhdl-ams-constants)
-		 (when (vhdl-standard-p 'math) vhdl-math-constants)
-		 '(""))))
+        (vhdl-upcase-list
+         (and vhdl-highlight-case-sensitive vhdl-upper-case-constants)
+         (append (when (vhdl-standard-p 'ams) vhdl-ams-constants)
+                 (when (vhdl-standard-p 'math) vhdl-math-constants)
+                 '(""))))
   (setq vhdl-functions
-	(append vhdl-02-functions
-		(when (vhdl-standard-p '08) vhdl-08-functions)
-		(when (vhdl-standard-p 'ams) vhdl-ams-functions)
-		(when (vhdl-standard-p 'math) vhdl-math-functions)))
+        (append vhdl-02-functions
+                (when (vhdl-standard-p '08) vhdl-08-functions)
+                (when (vhdl-standard-p 'ams) vhdl-ams-functions)
+                (when (vhdl-standard-p 'math) vhdl-math-functions)))
   (setq vhdl-packages
-	(append vhdl-02-packages
-		(when (vhdl-standard-p '08) vhdl-08-packages)
-		(when (vhdl-standard-p 'ams) vhdl-ams-packages)
-		(when (vhdl-standard-p 'math) vhdl-math-packages)))
+        (append vhdl-02-packages
+                (when (vhdl-standard-p '08) vhdl-08-packages)
+                (when (vhdl-standard-p 'ams) vhdl-ams-packages)
+                (when (vhdl-standard-p 'math) vhdl-math-packages)))
   (setq vhdl-directives
-	(append (when (vhdl-standard-p '08) vhdl-08-directives)))
+        (append (when (vhdl-standard-p '08) vhdl-08-directives)))
   (setq vhdl-reserved-words
-	(append (when vhdl-highlight-forbidden-words vhdl-forbidden-words)
-		(when vhdl-highlight-verilog-keywords vhdl-verilog-keywords)
-		'("")))
+        (append (when vhdl-highlight-forbidden-words vhdl-forbidden-words)
+                (when vhdl-highlight-verilog-keywords vhdl-verilog-keywords)
+                '("")))
   (setq vhdl-keywords-regexp
-	(concat "\\<\\(" (regexp-opt vhdl-keywords) "\\)\\>"))
+        (concat "\\<\\(" (regexp-opt vhdl-keywords) "\\)\\>"))
   (setq vhdl-types-regexp
-	(concat "\\<\\(" (regexp-opt vhdl-types) "\\)\\>"))
+        (concat "\\<\\(" (regexp-opt vhdl-types) "\\)\\>"))
   (setq vhdl-attributes-regexp
-	(concat "\\<\\(" (regexp-opt vhdl-attributes) "\\)\\>"))
+        (concat "\\<\\(" (regexp-opt vhdl-attributes) "\\)\\>"))
   (setq vhdl-enum-values-regexp
-	(concat "\\<\\(" (regexp-opt vhdl-enum-values) "\\)\\>"))
+        (concat "\\<\\(" (regexp-opt vhdl-enum-values) "\\)\\>"))
   (setq vhdl-constants-regexp
-	(concat "\\<\\(" (regexp-opt vhdl-constants) "\\)\\>"))
+        (concat "\\<\\(" (regexp-opt vhdl-constants) "\\)\\>"))
   (setq vhdl-functions-regexp
-	(concat "\\<\\(" (regexp-opt vhdl-functions) "\\)\\>"))
+        (concat "\\<\\(" (regexp-opt vhdl-functions) "\\)\\>"))
   (setq vhdl-packages-regexp
-	(concat "\\<\\(" (regexp-opt vhdl-packages) "\\)\\>"))
+        (concat "\\<\\(" (regexp-opt vhdl-packages) "\\)\\>"))
   (setq vhdl-reserved-words-regexp
-	(concat "\\<\\("
-		(unless (equal vhdl-forbidden-syntax "")
-		  (concat vhdl-forbidden-syntax "\\|"))
-		(regexp-opt vhdl-reserved-words)
-		"\\)\\>"))
+        (concat "\\<\\("
+                (unless (equal vhdl-forbidden-syntax "")
+                  (concat vhdl-forbidden-syntax "\\|"))
+                (regexp-opt vhdl-reserved-words)
+                "\\)\\>"))
   (setq vhdl-directive-keywords-regexp
-	(concat "\\<\\(" (mapconcat 'regexp-quote
-				    vhdl-directive-keywords "\\|") "\\)\\>"))
+        (concat "\\<\\(" (mapconcat 'regexp-quote
+                                    vhdl-directive-keywords "\\|") "\\)\\>"))
   (vhdl-abbrev-list-init))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -5427,15 +5430,15 @@ Key bindings:
 
 (defun vhdl-abbrev-list-init ()
   (setq vhdl-abbrev-list
-	(append
-	 (list vhdl-upper-case-keywords) vhdl-keywords
-	 (list vhdl-upper-case-types) vhdl-types
-	 (list vhdl-upper-case-attributes) vhdl-attributes
-	 (list vhdl-upper-case-enum-values) vhdl-enum-values
-	 (list vhdl-upper-case-constants) vhdl-constants
-	 (list nil) vhdl-functions
-	 (list nil) vhdl-packages
-	 (list nil) vhdl-directives)))
+        (append
+         (list vhdl-upper-case-keywords) vhdl-keywords
+         (list vhdl-upper-case-types) vhdl-types
+         (list vhdl-upper-case-attributes) vhdl-attributes
+         (list vhdl-upper-case-enum-values) vhdl-enum-values
+         (list vhdl-upper-case-constants) vhdl-constants
+         (list nil) vhdl-functions
+         (list nil) vhdl-packages
+         (list nil) vhdl-directives)))
 
 ;; initialize reserved words for VHDL Mode
 (vhdl-words-init)
@@ -5481,29 +5484,29 @@ bopl -- beginning of previous line
 
 This function does not modify point or mark."
   (or (and (eq 'quote (car-safe position))
-	   (null (cddr position)))
+           (null (cddr position)))
       (error "ERROR:  Bad buffer position requested: %s" position))
   (setq position (nth 1 position))
   `(let ((here (point)))
      ,@(cond
-	((eq position 'bol)  '((beginning-of-line)))
-	((eq position 'eol)  '((end-of-line)))
-	((eq position 'bod)  '((save-match-data
-				 (vhdl-beginning-of-defun))))
-	((eq position 'boi)  '((back-to-indentation)))
-	((eq position 'eoi)  '((end-of-line) (skip-chars-backward " \t")))
-	((eq position 'bonl) '((forward-line 1)))
-	((eq position 'bopl) '((forward-line -1)))
-	((eq position 'iopl)
-	 '((forward-line -1)
-	   (back-to-indentation)))
-	((eq position 'ionl)
-	 '((forward-line 1)
-	   (back-to-indentation)))
-	(t (error "ERROR:  Unknown buffer position requested: %s" position))
-	)
+        ((eq position 'bol)  '((beginning-of-line)))
+        ((eq position 'eol)  '((end-of-line)))
+        ((eq position 'bod)  '((save-match-data
+                                 (vhdl-beginning-of-defun))))
+        ((eq position 'boi)  '((back-to-indentation)))
+        ((eq position 'eoi)  '((end-of-line) (skip-chars-backward " \t")))
+        ((eq position 'bonl) '((forward-line 1)))
+        ((eq position 'bopl) '((forward-line -1)))
+        ((eq position 'iopl)
+         '((forward-line -1)
+           (back-to-indentation)))
+        ((eq position 'ionl)
+         '((forward-line 1)
+           (back-to-indentation)))
+        (t (error "ERROR:  Unknown buffer position requested: %s" position))
+        )
      (prog1
-	 (point)
+         (point)
        (goto-char here))
      ;; workaround for an Emacs18 bug -- blech! Well, at least it
      ;; doesn't hurt for v19
@@ -5520,7 +5523,7 @@ This function does not modify point or mark."
   "A simple macro to append the syntax in SYMBOL to the syntax list.
 Try to increase performance by using this macro."
   `(setq vhdl-syntactic-context
-	 (cons (cons ,symbol ,relpos) vhdl-syntactic-context)))
+         (cons (cons ,symbol ,relpos) vhdl-syntactic-context)))
 
 (defmacro vhdl-has-syntax (symbol)
   "A simple macro to return check the syntax list.
@@ -5533,25 +5536,25 @@ Try to increase performance by using this macro."
   "Read new offset value for LANGELEM from minibuffer.
 Return a valid value only."
   (let ((oldoff (format "%s" (cdr-safe (assq langelem vhdl-offsets-alist))))
-	(errmsg "Offset must be int, func, var, or one of +, -, ++, --: ")
-	(prompt "Offset: ")
-	offset input interned)
+        (errmsg "Offset must be int, func, var, or one of +, -, ++, --: ")
+        (prompt "Offset: ")
+        offset input interned)
     (while (not offset)
       (setq input (read-string prompt oldoff)
-	    offset (cond ((string-equal "+" input) '+)
-			 ((string-equal "-" input) '-)
-			 ((string-equal "++" input) '++)
-			 ((string-equal "--" input) '--)
-			 ((string-match "^-?[0-9]+$" input)
-			  (string-to-number input))
-			 ((fboundp (setq interned (intern input)))
-			  interned)
-			 ((boundp interned) interned)
-			 ;; error, but don't signal one, keep trying
-			 ;; to read an input value
-			 (t (ding)
-			    (setq prompt errmsg)
-			    nil))))
+            offset (cond ((string-equal "+" input) '+)
+                         ((string-equal "-" input) '-)
+                         ((string-equal "++" input) '++)
+                         ((string-equal "--" input) '--)
+                         ((string-match "^-?[0-9]+$" input)
+                          (string-to-number input))
+                         ((fboundp (setq interned (intern input)))
+                          interned)
+                         ((boundp interned) interned)
+                         ;; error, but don't signal one, keep trying
+                         ;; to read an input value
+                         (t (ding)
+                            (setq prompt errmsg)
+                            nil))))
     offset))
 
 (defun vhdl-set-offset (symbol offset &optional add-p)
@@ -5561,25 +5564,25 @@ offset for that syntactic element.  Optional ADD-P says to add SYMBOL to
 `vhdl-offsets-alist' if it doesn't already appear there."
   (interactive
    (let* ((langelem
-	   (intern (completing-read
-		    (concat "Syntactic symbol to change"
-			    (if current-prefix-arg " or add" "")
-			    ": ")
-		    (mapcar
-		     (function
-		      (lambda (langelem)
-			(cons (format "%s" (car langelem)) nil)))
-		     vhdl-offsets-alist)
-		    nil (not current-prefix-arg)
-		    ;; initial contents tries to be the last element
-		    ;; on the syntactic analysis list for the current
-		    ;; line
-		    (let* ((syntax (vhdl-get-syntactic-context))
-			   (len (length syntax))
-			   (ic (format "%s" (car (nth (1- len) syntax)))))
-		      ic)
-		    )))
-	  (offset (vhdl-read-offset langelem)))
+           (intern (completing-read
+                    (concat "Syntactic symbol to change"
+                            (if current-prefix-arg " or add" "")
+                            ": ")
+                    (mapcar
+                     (function
+                      (lambda (langelem)
+                        (cons (format "%s" (car langelem)) nil)))
+                     vhdl-offsets-alist)
+                    nil (not current-prefix-arg)
+                    ;; initial contents tries to be the last element
+                    ;; on the syntactic analysis list for the current
+                    ;; line
+                    (let* ((syntax (vhdl-get-syntactic-context))
+                           (len (length syntax))
+                           (ic (format "%s" (car (nth (1- len) syntax)))))
+                      ic)
+                    )))
+          (offset (vhdl-read-offset langelem)))
      (list langelem offset current-prefix-arg)))
   ;; sanity check offset
   (or (eq offset '+)
@@ -5590,14 +5593,14 @@ offset for that syntactic element.  Optional ADD-P says to add SYMBOL to
       (fboundp offset)
       (boundp offset)
       (error "ERROR:  Offset must be int, func, var, or one of +, -, ++, --: %s"
-	     offset))
+             offset))
   (let ((entry (assq symbol vhdl-offsets-alist)))
     (if entry
-	(setcdr entry offset)
+        (setcdr entry offset)
       (if add-p
-	  (setq vhdl-offsets-alist
-		(cons (cons symbol offset) vhdl-offsets-alist))
-	(error "ERROR:  %s is not a valid syntactic symbol" symbol))))
+          (setq vhdl-offsets-alist
+                (cons (cons symbol offset) vhdl-offsets-alist))
+        (error "ERROR:  %s is not a valid syntactic symbol" symbol))))
   (vhdl-keep-region-active))
 
 (defun vhdl-set-style (style &optional local)
@@ -5608,33 +5611,33 @@ changed buffer local, instead of the default, which is to set the
 global variables.  Interactively, the flag comes from the prefix
 argument.  The styles are chosen from the `vhdl-style-alist' variable."
   (interactive (list (completing-read "Use which VHDL indentation style? "
-				      vhdl-style-alist nil t)
-		     current-prefix-arg))
+                                      vhdl-style-alist nil t)
+                     current-prefix-arg))
   (let ((vars (cdr (assoc style vhdl-style-alist))))
     (or vars
-	(error "ERROR:  Invalid VHDL indentation style `%s'" style))
+        (error "ERROR:  Invalid VHDL indentation style `%s'" style))
     ;; set all the variables
     (mapc
      (function
       (lambda (varentry)
-	(let ((var (car varentry))
-	      (val (cdr varentry)))
-	  ;; special case for vhdl-offsets-alist
-	  (if (not (eq var 'vhdl-offsets-alist))
-	      (set (if local (make-local-variable var) var) val)
-	    ;; reset vhdl-offsets-alist to the default value first
-	    (set (if local (make-local-variable var) var)
+        (let ((var (car varentry))
+              (val (cdr varentry)))
+          ;; special case for vhdl-offsets-alist
+          (if (not (eq var 'vhdl-offsets-alist))
+              (set (if local (make-local-variable var) var) val)
+            ;; reset vhdl-offsets-alist to the default value first
+            (set (if local (make-local-variable var) var)
                  (copy-alist vhdl-offsets-alist-default))
-	    ;; now set the langelems that are different
-	    (mapcar
-	     (function
-	      (lambda (langentry)
-		(let ((langelem (car langentry))
-		      (offset (cdr langentry)))
-		  (vhdl-set-offset langelem offset)
-		  )))
-	     val))
-	  )))
+            ;; now set the langelems that are different
+            (mapcar
+             (function
+              (lambda (langentry)
+                (let ((langelem (car langentry))
+                      (offset (cdr langentry)))
+                  (vhdl-set-offset langelem offset)
+                  )))
+             val))
+          )))
      vars))
   (vhdl-keep-region-active))
 
@@ -5645,33 +5648,33 @@ vhdl-offsets-alist and the offset found there is either returned,
 or added to the indentation at RELPOS.  If RELPOS is nil, then
 the offset is simply returned."
   (let* ((symbol (car langelem))
-	 (relpos (cdr langelem))
-	 (match  (assq symbol vhdl-offsets-alist))
-	 (offset (cdr-safe match)))
+         (relpos (cdr langelem))
+         (match  (assq symbol vhdl-offsets-alist))
+         (offset (cdr-safe match)))
     ;; offset can be a number, a function, a variable, or one of the
     ;; symbols + or -
     (cond
      ((not match)
       (if vhdl-strict-syntax-p
-	  (error "ERROR:  Don't know how to indent a %s" symbol)
-	(setq offset 0
-	      relpos 0)))
+          (error "ERROR:  Don't know how to indent a %s" symbol)
+        (setq offset 0
+              relpos 0)))
      ((eq offset '+)  (setq offset vhdl-basic-offset))
      ((eq offset '-)  (setq offset (- vhdl-basic-offset)))
      ((eq offset '++) (setq offset (* 2 vhdl-basic-offset)))
      ((eq offset '--) (setq offset (* 2 (- vhdl-basic-offset))))
      ((and (not (numberp offset))
-	   (fboundp offset))
+           (fboundp offset))
       (setq offset (funcall offset langelem)))
      ((not (numberp offset))
       (setq offset (eval offset)))
      )
     (+ (if (and relpos
-		(< relpos (vhdl-point 'bol)))
-	   (save-excursion
-	     (goto-char relpos)
-	     (current-column))
-	 0)
+                (< relpos (vhdl-point 'bol)))
+           (save-excursion
+             (goto-char relpos)
+             (current-column))
+         0)
        offset)))
 
 ;; Syntactic support functions:
@@ -5679,21 +5682,21 @@ the offset is simply returned."
 (defun vhdl-in-comment-p (&optional pos)
   "Check if point is in a comment (include multi-line comments)."
   (let ((parse (lambda (p)
-		 (let ((c (char-after p)))
-		   (or (and c (eq (char-syntax c) ?<))
-		       (nth 4 (parse-partial-sexp
-			       (save-excursion
-				 (beginning-of-defun)
-				 (point)) p)))))))
+                 (let ((c (char-after p)))
+                   (or (and c (eq (char-syntax c) ?<))
+                       (nth 4 (parse-partial-sexp
+                               (save-excursion
+                                 (beginning-of-defun)
+                                 (point)) p)))))))
     (save-excursion
       (goto-char (or pos (point)))
       (or (funcall parse (point))
-	  ;; `parse-partial-sexp's notion of comments doesn't span lines
-	  (progn
-	    (back-to-indentation)
-	    (unless (eolp)
-	      (forward-char)
-	      (funcall parse (point))))))))
+          ;; `parse-partial-sexp's notion of comments doesn't span lines
+          (progn
+            (back-to-indentation)
+            (unless (eolp)
+              (forward-char)
+              (funcall parse (point))))))))
 
 (defun vhdl-in-string-p ()
   "Check if point is in a string."
@@ -5702,13 +5705,13 @@ the offset is simply returned."
 (defun vhdl-in-quote-p ()
   "Check if point is in a quote ('x')."
   (or (and (> (point) (point-min))
-	   (< (1+ (point)) (point-max))
-	   (= (char-before (point)) ?\')
-	   (= (char-after (1+ (point))) ?\'))
+           (< (1+ (point)) (point-max))
+           (= (char-before (point)) ?\')
+           (= (char-after (1+ (point))) ?\'))
       (and (> (1- (point)) (point-min))
-	   (< (point) (point-max))
-	   (= (char-before (1- (point))) ?\')
-	   (= (char-after (point)) ?\'))))
+           (< (point) (point-max))
+           (= (char-before (1- (point))) ?\')
+           (= (char-after (point)) ?\'))))
 
 (defun vhdl-in-literal ()
   "Determine if point is in a VHDL literal."
@@ -5727,7 +5730,7 @@ the offset is simply returned."
   "Determine if point is inside extended identifier (delimited by `\\')."
   (save-match-data
     (and (save-excursion (re-search-backward "\\\\" (vhdl-point 'bol) t))
-	 (save-excursion (re-search-forward "\\\\" (vhdl-point 'eol) t)))))
+         (save-excursion (re-search-forward "\\\\" (vhdl-point 'eol) t)))))
 
 (defun vhdl-forward-comment (&optional direction)
   "Skip all comments (including whitespace).  Skip backwards if DIRECTION is
@@ -5736,10 +5739,10 @@ negative, skip forward otherwise."
   (if (and direction (< direction 0))
       ;; skip backwards
       (progn
-	(skip-chars-backward " \t\n\r\f")
-	(while (re-search-backward "^[^\"-]*\\(\\(-?\"[^\"]*\"\\|-[^\"-]\\)[^\"-]*\\)*\\(--\\)" (vhdl-point 'bol) t)
-	  (goto-char (match-beginning 3))
-	  (skip-chars-backward " \t\n\r\f")))
+        (skip-chars-backward " \t\n\r\f")
+        (while (re-search-backward "^[^\"-]*\\(\\(-?\"[^\"]*\"\\|-[^\"-]\\)[^\"-]*\\)*\\(--\\)" (vhdl-point 'bol) t)
+          (goto-char (match-beginning 3))
+          (skip-chars-backward " \t\n\r\f")))
     ;; skip forwards
     (skip-chars-forward " \t\n\r\f")
     (while (looking-at "--.*")
@@ -5765,50 +5768,50 @@ negative, skip forward otherwise."
   "Determine if point is in a VHDL literal."
   (save-excursion
     (let* ((here (point))
-	   (state nil)
-	   (match nil)
-	   (lim  (or lim (vhdl-point 'bod))))
+           (state nil)
+           (match nil)
+           (lim  (or lim (vhdl-point 'bod))))
       (goto-char lim )
       (while (< (point) here)
-	(setq match
-	      (and (re-search-forward "--\\|[\"']\\|`"
-				      here 'move)
-		   (buffer-substring (match-beginning 0) (match-end 0))))
-	(setq state
-	      (cond
-	       ;; no match
-	       ((null match) nil)
-	       ;; looking at the opening of a VHDL style comment
-	       ((string= "--" match)
-		(if (<= here (progn (end-of-line) (point))) 'comment))
-	       ;; looking at a directive
-	       ((string= "`" match)
-		(if (<= here (progn (end-of-line) (point))) 'directive))
-	       ;; looking at the opening of a double quote string
-	       ((string= "\"" match)
-		(if (not (save-restriction
-			   ;; this seems to be necessary since the
-			   ;; re-search-forward will not work without it
-			   (narrow-to-region (point) here)
-			   (re-search-forward
-			    ;; this regexp matches a double quote
-			    ;; which is preceded by an even number
-			    ;; of backslashes, including zero
-			    "\\([^\\]\\|^\\)\\(\\\\\\\\\\)*\"" here 'move)))
-		    'string))
-	       ;; looking at the opening of a single quote string
-	       ((string= "'" match)
-		(if (not (save-restriction
-			   ;; see comments from above
-			   (narrow-to-region (point) here)
-			   (re-search-forward
-			    ;; this matches a single quote which is
-			    ;; preceded by zero or two backslashes.
-			    "\\([^\\]\\|^\\)\\(\\\\\\\\\\)?'"
-			    here 'move)))
-		    'string))
-	       (t nil)))
-	) ; end-while
+        (setq match
+              (and (re-search-forward "--\\|[\"']\\|`"
+                                      here 'move)
+                   (buffer-substring (match-beginning 0) (match-end 0))))
+        (setq state
+              (cond
+               ;; no match
+               ((null match) nil)
+               ;; looking at the opening of a VHDL style comment
+               ((string= "--" match)
+                (if (<= here (progn (end-of-line) (point))) 'comment))
+               ;; looking at a directive
+               ((string= "`" match)
+                (if (<= here (progn (end-of-line) (point))) 'directive))
+               ;; looking at the opening of a double quote string
+               ((string= "\"" match)
+                (if (not (save-restriction
+                           ;; this seems to be necessary since the
+                           ;; re-search-forward will not work without it
+                           (narrow-to-region (point) here)
+                           (re-search-forward
+                            ;; this regexp matches a double quote
+                            ;; which is preceded by an even number
+                            ;; of backslashes, including zero
+                            "\\([^\\]\\|^\\)\\(\\\\\\\\\\)*\"" here 'move)))
+                    'string))
+               ;; looking at the opening of a single quote string
+               ((string= "'" match)
+                (if (not (save-restriction
+                           ;; see comments from above
+                           (narrow-to-region (point) here)
+                           (re-search-forward
+                            ;; this matches a single quote which is
+                            ;; preceded by zero or two backslashes.
+                            "\\([^\\]\\|^\\)\\(\\\\\\\\\\)?'"
+                            here 'move)))
+                    'string))
+               (t nil)))
+        ) ; end-while
       state)))
 
 (and (string-match "Win-Emacs" emacs-version)
@@ -5823,16 +5826,16 @@ negative, skip forward otherwise."
 (defun vhdl-forward-syntactic-ws (&optional lim)
   "Forward skip of syntactic whitespace."
   (let* ((here (point-max))
-	 (hugenum (point-max)))
+         (hugenum (point-max)))
     (while (/= here (point))
       (setq here (point))
       (vhdl-forward-comment hugenum)
       ;; skip preprocessor directives
       (when (and (or (eq (char-after) ?#) (eq (char-after) ?`))
-		 (= (vhdl-point 'boi) (point)))
-	(while (and (eq (char-before (vhdl-point 'eol)) ?\\)
-		    (= (forward-line 1) 0)))
-	(end-of-line)))
+                 (= (vhdl-point 'boi) (point)))
+        (while (and (eq (char-before (vhdl-point 'eol)) ?\\)
+                    (= (forward-line 1) 0)))
+        (end-of-line)))
     (if lim (goto-char (min (point) lim)))))
 
 
@@ -5840,7 +5843,7 @@ negative, skip forward otherwise."
 (defun vhdl-win-fsws (&optional lim)
   "Forward skip syntactic whitespace for Win-Emacs."
   (let ((lim (or lim (point-max)))
-	stop)
+        stop)
     (while (not stop)
       (skip-chars-forward " \t\n\r\f" lim)
       (cond
@@ -5860,8 +5863,8 @@ negative, skip forward otherwise."
       (forward-line -1))
     (back-to-indentation)
     (if (and (<= (point) here)
-	     (eq (char-after) ?#))
-	t
+             (eq (char-after) ?#))
+        t
       (goto-char here)
       nil)))
 
@@ -5873,15 +5876,15 @@ negative, skip forward otherwise."
       (forward-line -1))
     (back-to-indentation)
     (if (and (<= (point) here)
-	     (eq (char-after) ?`))
-	t
+             (eq (char-after) ?`))
+        t
       (goto-char here)
       nil)))
 
 (defun vhdl-backward-syntactic-ws (&optional lim)
   "Backward skip over syntactic whitespace."
   (let* ((here (point-min))
-	 (hugenum (- (point-max))))
+         (hugenum (- (point-max))))
     (while (/= here (point))
       (setq here (point))
       (vhdl-forward-comment hugenum)
@@ -5892,19 +5895,19 @@ negative, skip forward otherwise."
 (defun vhdl-win-bsws (&optional lim)
   "Backward skip syntactic whitespace for Win-Emacs."
   (let ((lim (or lim (vhdl-point 'bod)))
-	stop)
+        stop)
     (while (not stop)
       (skip-chars-backward " \t\n\r\f" lim)
       (cond
        ;; vhdl comment
        ((eq (vhdl-in-literal) 'comment)
-	(skip-chars-backward "^-" lim)
-	(skip-chars-backward "-" lim)
-	(while (not (or (and (= (following-char) ?-)
-			     (= (char-after (1+ (point))) ?-))
-			(<= (point) lim)))
-	  (skip-chars-backward "^-" lim)
-	  (skip-chars-backward "-" lim)))
+        (skip-chars-backward "^-" lim)
+        (skip-chars-backward "-" lim)
+        (while (not (or (and (= (following-char) ?-)
+                             (= (char-after (1+ (point))) ?-))
+                        (<= (point) lim)))
+          (skip-chars-backward "^-" lim)
+          (skip-chars-backward "-" lim)))
        ;; none of the above
        (t (setq stop t))))))
 
@@ -5918,18 +5921,18 @@ negative, skip forward otherwise."
 that point, else nil."
   (save-excursion
     (and (goto-char point)
-	 (eq (point) (vhdl-point 'boi))
-	 (current-column))))
+         (eq (point) (vhdl-point 'boi))
+         (current-column))))
 
 (defun vhdl-last-word (point)
   "If the keyword at POINT is at eoi, then return (current-column) at
 that point, else nil."
   (save-excursion
     (and (goto-char point)
-	 (save-excursion (or (eq (progn (forward-sexp) (point))
-				 (vhdl-point 'eoi))
-			     (looking-at "\\s-*\\(--\\)?")))
-	 (current-column))))
+         (save-excursion (or (eq (progn (forward-sexp) (point))
+                                 (vhdl-point 'eoi))
+                             (looking-at "\\s-*\\(--\\)?")))
+         (current-column))))
 
 ;; Core syntactic evaluation functions:
 
@@ -5945,10 +5948,10 @@ that point, else nil."
    (save-excursion
      (backward-sexp)
      (and (not (looking-at "use\\b[^_]"))
-	  (progn
-	    (forward-sexp)
-	    (vhdl-forward-syntactic-ws)
-	    (/= (following-char) ?:))))
+          (progn
+            (forward-sexp)
+            (vhdl-forward-syntactic-ws)
+            (/= (following-char) ?:))))
    ))
 
 (defconst vhdl-defun-re
@@ -5957,10 +5960,10 @@ that point, else nil."
 (defun vhdl-defun-p ()
   (save-excursion
     (if (looking-at "block\\|process\\|procedural")
-	;; "block", "process", "procedural":
-	(save-excursion
-	  (backward-sexp)
-	  (not (looking-at "end\\s-+\\w")))
+        ;; "block", "process", "procedural":
+        (save-excursion
+          (backward-sexp)
+          (not (looking-at "end\\s-+\\w")))
       ;; "architecture", "configuration", "context", "entity",
       ;; "package", "procedure", "function":
       t)))
@@ -5971,13 +5974,13 @@ keyword, then return a string that can be used to find the
 corresponding \"begin\" keyword, else return nil."
   (save-excursion
     (and (looking-at vhdl-defun-re)
-	 (vhdl-defun-p)
-	 (if (looking-at "block\\|process\\|procedural")
-	     ;; "block", "process". "procedural:
-	     (buffer-substring (match-beginning 0) (match-end 0))
-	   ;; "architecture", "configuration", "context", "entity", "package",
-	   ;; "procedure", "function":
-	   "is"))))
+         (vhdl-defun-p)
+         (if (looking-at "block\\|process\\|procedural")
+             ;; "block", "process". "procedural:
+             (buffer-substring (match-beginning 0) (match-end 0))
+           ;; "architecture", "configuration", "context", "entity", "package",
+           ;; "procedure", "function":
+           "is"))))
 
 (defconst vhdl-begin-fwd-re
   "\\b\\(is\\|begin\\|block\\|component\\|generate\\|then\\|else\\|loop\\|process\\|procedural\\(\\s-+body\\)?\\|units\\|use\\|record\\|protected\\(\\s-+body\\)?\\|for\\)\\b\\([^_]\\|\\'\\)"
@@ -5999,61 +6002,61 @@ keyword."
    ;; "[architecture|case|configuration|context|entity|package|
    ;;   procedure|function] ... is":
    ((and (looking-at "i")
-	 (save-excursion
-	   ;; Skip backward over first sexp (needed to skip over a
-	   ;; procedure interface list, and is harmless in other
-	   ;; situations).  Note that we need "return" in the
-	   ;; following search list so that we don't run into
-	   ;; semicolons in the function interface list.
-	   (backward-sexp)
-	   (skip-chars-forward "(")
-	   (let (foundp)
-	     (while (and (not foundp)
-			 (re-search-backward
-			  ";\\|\\b\\(architecture\\|case\\|configuration\\|context\\|entity\\|package\\|procedure\\|return\\|is\\|begin\\|process\\|procedural\\|block\\)\\b[^_]"
-			  lim 'move))
-	       (if (or (= (preceding-char) ?_)
-		       (vhdl-in-literal))
-		   (backward-char)
-		 (setq foundp t))))
-	   (and (/= (following-char) ?\;)
-		(not (looking-at "is\\|begin\\|process\\|procedural\\|block")))))
+         (save-excursion
+           ;; Skip backward over first sexp (needed to skip over a
+           ;; procedure interface list, and is harmless in other
+           ;; situations).  Note that we need "return" in the
+           ;; following search list so that we don't run into
+           ;; semicolons in the function interface list.
+           (backward-sexp)
+           (skip-chars-forward "(")
+           (let (foundp)
+             (while (and (not foundp)
+                         (re-search-backward
+                          ";\\|\\b\\(architecture\\|case\\|configuration\\|context\\|entity\\|package\\|procedure\\|return\\|is\\|begin\\|process\\|procedural\\|block\\)\\b[^_]"
+                          lim 'move))
+               (if (or (= (preceding-char) ?_)
+                       (vhdl-in-literal))
+                   (backward-char)
+                 (setq foundp t))))
+           (and (/= (following-char) ?\;)
+                (not (looking-at "is\\|begin\\|process\\|procedural\\|block")))))
     t)
    ;; "begin", "then", "use":
    ((looking-at "be\\|t\\|use")
     t)
    ;; "else":
    ((and (looking-at "e")
-	 ;; make sure that the "else" isn't inside a
-	 ;; conditional signal assignment.
-	 (save-excursion
-	   (vhdl-re-search-backward ";\\|\\bwhen\\b[^_]" lim 'move)
-	   (or (eq (following-char) ?\;)
-	       (eq (point) lim))))
+         ;; make sure that the "else" isn't inside a
+         ;; conditional signal assignment.
+         (save-excursion
+           (vhdl-re-search-backward ";\\|\\bwhen\\b[^_]" lim 'move)
+           (or (eq (following-char) ?\;)
+               (eq (point) lim))))
     t)
    ;; "block", "generate", "loop", "process", "procedural",
    ;; "units", "record", "protected body":
    ((and (looking-at "block\\|generate\\|loop\\|process\\|procedural\\|protected\\(\\s-+body\\)?\\|units\\|record")
-	 (save-excursion
-	   (backward-sexp)
-	   (not (looking-at "end\\s-+\\w"))))
+         (save-excursion
+           (backward-sexp)
+           (not (looking-at "end\\s-+\\w"))))
     t)
    ;; "component":
    ((and (looking-at "c")
-	 (save-excursion
-	   (backward-sexp)
-	   (not (looking-at "end\\s-+\\w")))
-	 ;; look out for the dreaded entity class in an attribute
-	 (save-excursion
-	   (vhdl-backward-syntactic-ws lim)
-	   (/= (preceding-char) ?:)))
+         (save-excursion
+           (backward-sexp)
+           (not (looking-at "end\\s-+\\w")))
+         ;; look out for the dreaded entity class in an attribute
+         (save-excursion
+           (vhdl-backward-syntactic-ws lim)
+           (/= (preceding-char) ?:)))
     t)
    ;; "for" (inside configuration declaration):
    ((and (looking-at "f")
-	 (save-excursion
-	   (backward-sexp)
-	   (not (looking-at "end\\s-+\\w")))
-	 (vhdl-has-syntax 'configuration))
+         (save-excursion
+           (backward-sexp)
+           (not (looking-at "end\\s-+\\w")))
+         (vhdl-has-syntax 'configuration))
     t)
    ))
 
@@ -6076,53 +6079,53 @@ Assumes that the caller will make sure that we are not in the middle
 of an identifier that just happens to contain a \"begin\" keyword."
   (save-excursion
     (and (looking-at vhdl-begin-fwd-re)
-	 (or (not (looking-at "\\<use\\>"))
-	     (save-excursion (back-to-indentation)
-			     (looking-at "\\(\\w+\\s-*:\\s-*\\)?\\<\\(case\\|elsif\\|if\\)\\>")))
-	 (/= (preceding-char) ?_)
-	 (not (vhdl-in-literal))
-	 (vhdl-begin-p lim)
-	 (cond
-	  ;; "is", "generate", "loop":
-	  ((looking-at "[igl]")
-	   (vector "end"
-		   (and (vhdl-last-word (point))
-			(or (vhdl-first-word (point))
-			    (save-excursion
-			      (vhdl-beginning-of-statement-1 lim)
-			      (vhdl-backward-skip-label lim)
-			      (vhdl-first-word (point)))))))
-	  ;; "begin", "else", "for":
-	  ((looking-at "be\\|[ef]")
-	   (vector "end"
-		   (and (vhdl-last-word (point))
-			(or (vhdl-first-word (point))
-			    (save-excursion
-			      (vhdl-beginning-of-statement-1 lim)
-			      (vhdl-backward-skip-label lim)
-			      (vhdl-first-word (point)))))))
-	  ;; "component", "units", "record", "protected body":
-	  ((looking-at "component\\|units\\|protected\\(\\s-+body\\)?\\|record")
-	   ;; The first end found will close the block
-	   (vector "end" nil))
-	  ;; "block", "process", "procedural":
-	  ((looking-at "bl\\|p")
-	   (vector "end"
-		   (or (vhdl-first-word (point))
-		       (save-excursion
-			 (vhdl-beginning-of-statement-1 lim)
-			 (vhdl-backward-skip-label lim)
-			 (vhdl-first-word (point))))))
-	  ;; "then":
-	  ((looking-at "t\\|use")
-	   (vector "elsif\\|else\\|end\\s-+\\(if\\|use\\)"
-		   (and (vhdl-last-word (point))
-			(or (vhdl-first-word (point))
-			    (save-excursion
-			      (vhdl-beginning-of-statement-1 lim)
-			      (vhdl-backward-skip-label lim)
-			      (vhdl-first-word (point)))))))
-	  ))))
+         (or (not (looking-at "\\<use\\>"))
+             (save-excursion (back-to-indentation)
+                             (looking-at "\\(\\w+\\s-*:\\s-*\\)?\\<\\(case\\|elsif\\|if\\)\\>")))
+         (/= (preceding-char) ?_)
+         (not (vhdl-in-literal))
+         (vhdl-begin-p lim)
+         (cond
+          ;; "is", "generate", "loop":
+          ((looking-at "[igl]")
+           (vector "end"
+                   (and (vhdl-last-word (point))
+                        (or (vhdl-first-word (point))
+                            (save-excursion
+                              (vhdl-beginning-of-statement-1 lim)
+                              (vhdl-backward-skip-label lim)
+                              (vhdl-first-word (point)))))))
+          ;; "begin", "else", "for":
+          ((looking-at "be\\|[ef]")
+           (vector "end"
+                   (and (vhdl-last-word (point))
+                        (or (vhdl-first-word (point))
+                            (save-excursion
+                              (vhdl-beginning-of-statement-1 lim)
+                              (vhdl-backward-skip-label lim)
+                              (vhdl-first-word (point)))))))
+          ;; "component", "units", "record", "protected body":
+          ((looking-at "component\\|units\\|protected\\(\\s-+body\\)?\\|record")
+           ;; The first end found will close the block
+           (vector "end" nil))
+          ;; "block", "process", "procedural":
+          ((looking-at "bl\\|p")
+           (vector "end"
+                   (or (vhdl-first-word (point))
+                       (save-excursion
+                         (vhdl-beginning-of-statement-1 lim)
+                         (vhdl-backward-skip-label lim)
+                         (vhdl-first-word (point))))))
+          ;; "then":
+          ((looking-at "t\\|use")
+           (vector "elsif\\|else\\|end\\s-+\\(if\\|use\\)"
+                   (and (vhdl-last-word (point))
+                        (or (vhdl-first-word (point))
+                            (save-excursion
+                              (vhdl-beginning-of-statement-1 lim)
+                              (vhdl-backward-skip-label lim)
+                              (vhdl-first-word (point)))))))
+          ))))
 
 (defconst vhdl-end-fwd-re "\\b\\(end\\|else\\|elsif\\)\\b\\([^_]\\|\\'\\)")
 
@@ -6138,10 +6141,10 @@ keyword."
       ;; make sure that the "else" isn't inside a conditional signal
       ;; assignment.
       (save-excursion
-	(re-search-backward ";\\|\\bwhen\\b[^_]" lim 'move)
-	(or (eq (following-char) ?\;)
-	    (eq (point) lim)
-	    (vhdl-in-literal)))))
+        (re-search-backward ";\\|\\bwhen\\b[^_]" lim 'move)
+        (or (eq (following-char) ?\;)
+            (eq (point) lim)
+            (vhdl-in-literal)))))
 
 (defun vhdl-corresponding-begin (&optional lim)
   "If the word at the current position corresponds to an \"end\"
@@ -6157,77 +6160,77 @@ of an identifier that just happens to contain an \"end\" keyword."
   (save-excursion
     (let (pos)
       (if (and (looking-at vhdl-end-fwd-re)
-	       (not (vhdl-in-literal))
-	       (vhdl-end-p lim))
-	  (if (looking-at "el")
-	      ;; "else", "elsif":
-	      (vector "if\\|elsif" (vhdl-first-word (point)) "then\\|use" nil)
-	    ;; "end ...":
-	    (setq pos (point))
-	    (forward-sexp)
-	    (skip-chars-forward " \t\n\r\f")
-	    (cond
-	     ;; "end if":
-	     ((looking-at "if\\b[^_]")
-	      (vector "else\\|elsif\\|if"
-		      (vhdl-first-word pos)
-		      "else\\|then\\|use" nil))
-	     ;; "end component":
-	     ((looking-at "component\\b[^_]")
-	      (vector (buffer-substring (match-beginning 1)
-					(match-end 1))
-		      (vhdl-first-word pos)
-		      nil nil))
-	     ;; "end units", "end record", "end protected":
-	     ((looking-at "\\(units\\|record\\|protected\\(\\s-+body\\)?\\)\\b[^_]")
-	      (vector (buffer-substring (match-beginning 1)
-					(match-end 1))
-		      (vhdl-first-word pos)
-		      nil t))
-	     ;; "end block", "end process", "end procedural":
-	     ((looking-at "\\(block\\|process\\|procedural\\)\\b[^_]")
-	      (vector "begin" (vhdl-first-word pos) nil nil))
-	     ;; "end case":
-	     ((looking-at "case\\b[^_]")
-	      (vector "case" (vhdl-first-word pos) "is" nil))
-	     ;; "end generate":
-	     ((looking-at "generate\\b[^_]")
-	      (vector "generate\\|for\\|if"
-		      (vhdl-first-word pos)
-		      "generate" nil))
-	     ;; "end loop":
-	     ((looking-at "loop\\b[^_]")
-	      (vector "loop\\|while\\|for"
-		      (vhdl-first-word pos)
-		      "loop" nil))
-	     ;; "end for" (inside configuration declaration):
-	     ((looking-at "for\\b[^_]")
-	      (vector "for" (vhdl-first-word pos) nil nil))
-	     ;; "end [id]":
-	     (t
-	      (vector "begin\\|architecture\\|configuration\\|context\\|entity\\|package\\|procedure\\|function"
-		      (vhdl-first-word pos)
-		      ;; return an alist of (statement . keyword) mappings
-		      '(
-			;; "begin ... end [id]":
-			("begin"	  . nil)
-			;; "architecture ... is ... begin ... end [id]":
-			("architecture"	  . "is")
-			;; "configuration ... is ... end [id]":
-			("configuration"  . "is")
-			;; "context ... is ... end [id]":
-			("context"	  . "is")
-			;; "entity ... is ... end [id]":
-			("entity"	  . "is")
-			;; "package ... is ... end [id]":
-			("package"	  . "is")
-			;; "procedure ... is ... begin ... end [id]":
-			("procedure"      . "is")
-			;; "function ... is ... begin ... end [id]":
-			("function"       . "is")
-			)
-		      nil))
-	     ))) ; "end ..."
+               (not (vhdl-in-literal))
+               (vhdl-end-p lim))
+          (if (looking-at "el")
+              ;; "else", "elsif":
+              (vector "if\\|elsif" (vhdl-first-word (point)) "then\\|use" nil)
+            ;; "end ...":
+            (setq pos (point))
+            (forward-sexp)
+            (skip-chars-forward " \t\n\r\f")
+            (cond
+             ;; "end if":
+             ((looking-at "if\\b[^_]")
+              (vector "else\\|elsif\\|if"
+                      (vhdl-first-word pos)
+                      "else\\|then\\|use" nil))
+             ;; "end component":
+             ((looking-at "component\\b[^_]")
+              (vector (buffer-substring (match-beginning 1)
+                                        (match-end 1))
+                      (vhdl-first-word pos)
+                      nil nil))
+             ;; "end units", "end record", "end protected":
+             ((looking-at "\\(units\\|record\\|protected\\(\\s-+body\\)?\\)\\b[^_]")
+              (vector (buffer-substring (match-beginning 1)
+                                        (match-end 1))
+                      (vhdl-first-word pos)
+                      nil t))
+             ;; "end block", "end process", "end procedural":
+             ((looking-at "\\(block\\|process\\|procedural\\)\\b[^_]")
+              (vector "begin" (vhdl-first-word pos) nil nil))
+             ;; "end case":
+             ((looking-at "case\\b[^_]")
+              (vector "case" (vhdl-first-word pos) "is" nil))
+             ;; "end generate":
+             ((looking-at "generate\\b[^_]")
+              (vector "generate\\|for\\|if"
+                      (vhdl-first-word pos)
+                      "generate" nil))
+             ;; "end loop":
+             ((looking-at "loop\\b[^_]")
+              (vector "loop\\|while\\|for"
+                      (vhdl-first-word pos)
+                      "loop" nil))
+             ;; "end for" (inside configuration declaration):
+             ((looking-at "for\\b[^_]")
+              (vector "for" (vhdl-first-word pos) nil nil))
+             ;; "end [id]":
+             (t
+              (vector "begin\\|architecture\\|configuration\\|context\\|entity\\|package\\|procedure\\|function"
+                      (vhdl-first-word pos)
+                      ;; return an alist of (statement . keyword) mappings
+                      '(
+                        ;; "begin ... end [id]":
+                        ("begin"          . nil)
+                        ;; "architecture ... is ... begin ... end [id]":
+                        ("architecture"   . "is")
+                        ;; "configuration ... is ... end [id]":
+                        ("configuration"  . "is")
+                        ;; "context ... is ... end [id]":
+                        ("context"        . "is")
+                        ;; "entity ... is ... end [id]":
+                        ("entity"         . "is")
+                        ;; "package ... is ... end [id]":
+                        ("package"        . "is")
+                        ;; "procedure ... is ... begin ... end [id]":
+                        ("procedure"      . "is")
+                        ;; "function ... is ... begin ... end [id]":
+                        ("function"       . "is")
+                        )
+                      nil))
+             ))) ; "end ..."
       )))
 
 (defconst vhdl-leader-re
@@ -6236,29 +6239,29 @@ of an identifier that just happens to contain an \"end\" keyword."
 (defun vhdl-end-of-leader ()
   (save-excursion
     (cond ((looking-at "block\\|process\\|procedural")
-	   (if (save-excursion
-		 (forward-sexp)
-		 (skip-chars-forward " \t\n\r\f")
-		 (= (following-char) ?\())
-	       (forward-sexp 2)
-	     (forward-sexp))
-	   (when (looking-at "[ \t\n\r\f]*is")
-	     (goto-char (match-end 0)))
-	   (point))
-	  ((looking-at "component")
-	   (forward-sexp 2)
-	   (when (looking-at "[ \t\n\r\f]*is")
-	     (goto-char (match-end 0)))
-	   (point))
-	  ((looking-at "for")
-	   (forward-sexp 2)
-	   (skip-chars-forward " \t\n\r\f")
-	   (while (looking-at "[,:(]")
-	     (forward-sexp)
-	     (skip-chars-forward " \t\n\r\f"))
-	   (point))
-	  (t nil)
-	  )))
+           (if (save-excursion
+                 (forward-sexp)
+                 (skip-chars-forward " \t\n\r\f")
+                 (= (following-char) ?\())
+               (forward-sexp 2)
+             (forward-sexp))
+           (when (looking-at "[ \t\n\r\f]*is")
+             (goto-char (match-end 0)))
+           (point))
+          ((looking-at "component")
+           (forward-sexp 2)
+           (when (looking-at "[ \t\n\r\f]*is")
+             (goto-char (match-end 0)))
+           (point))
+          ((looking-at "for")
+           (forward-sexp 2)
+           (skip-chars-forward " \t\n\r\f")
+           (while (looking-at "[,:(]")
+             (forward-sexp)
+             (skip-chars-forward " \t\n\r\f"))
+           (point))
+          (t nil)
+          )))
 
 (defconst vhdl-trailer-re
   "\\b\\(is\\|then\\|generate\\|loop\\|record\\|protected\\(\\s-+body\\)?\\|use\\)\\b[^_]")
@@ -6282,22 +6285,22 @@ in the middle of an identifier that just happens to contain a
   (cond
    ;; "for" ... "generate":
    ((and (looking-at "f")
-	 ;; Make sure it's the start of a parameter specification.
-	 (save-excursion
-	   (forward-sexp 2)
-	   (skip-chars-forward " \t\n\r\f")
-	   (looking-at "in\\b[^_]"))
-	 ;; Make sure it's not an "end for".
-	 (save-excursion
-	   (backward-sexp)
-	   (not (looking-at "end\\s-+\\w"))))
+         ;; Make sure it's the start of a parameter specification.
+         (save-excursion
+           (forward-sexp 2)
+           (skip-chars-forward " \t\n\r\f")
+           (looking-at "in\\b[^_]"))
+         ;; Make sure it's not an "end for".
+         (save-excursion
+           (backward-sexp)
+           (not (looking-at "end\\s-+\\w"))))
     t)
    ;; "if" ... "then", "if" ... "generate", "if" ... "loop":
    ((and (looking-at "i")
-	 ;; Make sure it's not an "end if".
-	 (save-excursion
-	   (backward-sexp)
-	   (not (looking-at "end\\s-+\\w"))))
+         ;; Make sure it's not an "end if".
+         (save-excursion
+           (backward-sexp)
+           (not (looking-at "end\\s-+\\w"))))
     t)
    ;; "while" ... "loop":
    ((looking-at "w")
@@ -6316,13 +6319,13 @@ contain a \"when\" keyword."
   (save-excursion
     (let (foundp)
       (while (and (not foundp)
-		  (re-search-backward ";\\|<=" lim 'move))
-	(if (or (= (preceding-char) ?_)
-		(vhdl-in-literal))
-	    (backward-char)
-	  (setq foundp t)))
+                  (re-search-backward ";\\|<=" lim 'move))
+        (if (or (= (preceding-char) ?_)
+                (vhdl-in-literal))
+            (backward-char)
+          (setq foundp t)))
       (or (eq (following-char) ?\;)
-	  (eq (point) lim)))
+          (eq (point) lim)))
     ))
 
 ;; Core syntactic movement functions:
@@ -6334,25 +6337,25 @@ contain a \"when\" keyword."
   "Move backward to the previous \"begin\" or \"end\" keyword."
   (let (foundp)
     (while (and (not foundp)
-		(re-search-backward vhdl-b-t-b-re lim 'move))
+                (re-search-backward vhdl-b-t-b-re lim 'move))
       (if (or (= (preceding-char) ?_)
-	      (vhdl-in-literal))
-	  (backward-char)
-	(cond
-	 ;; "begin" keyword:
-	 ((and (looking-at vhdl-begin-fwd-re)
-	       (or (not (looking-at "\\<use\\>"))
-		   (save-excursion (back-to-indentation)
-				   (looking-at "\\(\\w+\\s-*:\\s-*\\)?\\<\\(case\\|elsif\\|if\\)\\>")))
-	       (/= (preceding-char) ?_)
-	       (vhdl-begin-p lim))
-	  (setq foundp 'begin))
-	 ;; "end" keyword:
-	 ((and (looking-at vhdl-end-fwd-re)
-	       (/= (preceding-char) ?_)
-	       (vhdl-end-p lim))
-	  (setq foundp 'end))
-	 ))
+              (vhdl-in-literal))
+          (backward-char)
+        (cond
+         ;; "begin" keyword:
+         ((and (looking-at vhdl-begin-fwd-re)
+               (or (not (looking-at "\\<use\\>"))
+                   (save-excursion (back-to-indentation)
+                                   (looking-at "\\(\\w+\\s-*:\\s-*\\)?\\<\\(case\\|elsif\\|if\\)\\>")))
+               (/= (preceding-char) ?_)
+               (vhdl-begin-p lim))
+          (setq foundp 'begin))
+         ;; "end" keyword:
+         ((and (looking-at vhdl-end-fwd-re)
+               (/= (preceding-char) ?_)
+               (vhdl-end-p lim))
+          (setq foundp 'end))
+         ))
       )
     foundp
     ))
@@ -6362,64 +6365,64 @@ contain a \"when\" keyword."
 With COUNT, do it that many times."
   (interactive "p")
   (let ((count (or count 1))
-	(case-fold-search t)
-	end-vec target)
+        (case-fold-search t)
+        end-vec target)
     (save-excursion
       (while (> count 0)
-	;; skip whitespace
-	(skip-chars-forward " \t\n\r\f")
-	;; Check for an unbalanced "end" keyword
-	(if (and (looking-at vhdl-end-fwd-re)
-		 (/= (preceding-char) ?_)
-		 (not (vhdl-in-literal))
-		 (vhdl-end-p lim)
-		 (not (looking-at "else")))
-	    (error
-	     "ERROR:  Containing expression ends prematurely in vhdl-forward-sexp"))
-	;; If the current keyword is a "begin" keyword, then find the
-	;; corresponding "end" keyword.
-	(if (setq end-vec (vhdl-corresponding-end lim))
-	    (let (
-		  ;; end-re is the statement keyword to search for
-		  (end-re
-		   (concat "\\b\\(" (aref end-vec 0) "\\)\\b\\([^_]\\|\\'\\)"))
-		  ;; column is either the statement keyword target column
-		  ;; or nil
-		  (column (aref end-vec 1))
-		  (eol (vhdl-point 'eol))
-		  foundp literal placeholder)
-	      ;; Look for the statement keyword.
-	      (while (and (not foundp)
-			  (re-search-forward end-re nil t)
-			  (setq placeholder (match-end 1))
-			  (goto-char (match-beginning 0)))
-		;; If we are in a literal, or not in the right target
-		;; column and not on the same line as the begin, then
-		;; try again.
-		(if (or (and column
-			     (/= (current-indentation) column)
-			     (> (point) eol))
-			(= (preceding-char) ?_)
-			(setq literal (vhdl-in-literal)))
-		    (if (eq literal 'comment)
-			(end-of-line)
-		      (forward-char))
-		  ;; An "else" keyword corresponds to both the opening brace
-		  ;; of the following sexp and the closing brace of the
-		  ;; previous sexp.
-		  (if (not (looking-at "else"))
-		      (goto-char placeholder))
-		  (setq foundp t))
-		)
-	      (if (not foundp)
-		  (error "ERROR:  Unbalanced keywords in vhdl-forward-sexp"))
-	      )
-	  ;; If the current keyword is not a "begin" keyword, then just
-	  ;; perform the normal forward-sexp.
-	  (forward-sexp)
-	  )
-	(setq count (1- count))
-	)
+        ;; skip whitespace
+        (skip-chars-forward " \t\n\r\f")
+        ;; Check for an unbalanced "end" keyword
+        (if (and (looking-at vhdl-end-fwd-re)
+                 (/= (preceding-char) ?_)
+                 (not (vhdl-in-literal))
+                 (vhdl-end-p lim)
+                 (not (looking-at "else")))
+            (error
+             "ERROR:  Containing expression ends prematurely in vhdl-forward-sexp"))
+        ;; If the current keyword is a "begin" keyword, then find the
+        ;; corresponding "end" keyword.
+        (if (setq end-vec (vhdl-corresponding-end lim))
+            (let (
+                  ;; end-re is the statement keyword to search for
+                  (end-re
+                   (concat "\\b\\(" (aref end-vec 0) "\\)\\b\\([^_]\\|\\'\\)"))
+                  ;; column is either the statement keyword target column
+                  ;; or nil
+                  (column (aref end-vec 1))
+                  (eol (vhdl-point 'eol))
+                  foundp literal placeholder)
+              ;; Look for the statement keyword.
+              (while (and (not foundp)
+                          (re-search-forward end-re nil t)
+                          (setq placeholder (match-end 1))
+                          (goto-char (match-beginning 0)))
+                ;; If we are in a literal, or not in the right target
+                ;; column and not on the same line as the begin, then
+                ;; try again.
+                (if (or (and column
+                             (/= (current-indentation) column)
+                             (> (point) eol))
+                        (= (preceding-char) ?_)
+                        (setq literal (vhdl-in-literal)))
+                    (if (eq literal 'comment)
+                        (end-of-line)
+                      (forward-char))
+                  ;; An "else" keyword corresponds to both the opening brace
+                  ;; of the following sexp and the closing brace of the
+                  ;; previous sexp.
+                  (if (not (looking-at "else"))
+                      (goto-char placeholder))
+                  (setq foundp t))
+                )
+              (if (not foundp)
+                  (error "ERROR:  Unbalanced keywords in vhdl-forward-sexp"))
+              )
+          ;; If the current keyword is not a "begin" keyword, then just
+          ;; perform the normal forward-sexp.
+          (forward-sexp)
+          )
+        (setq count (1- count))
+        )
       (setq target (point)))
     (goto-char target)
     nil))
@@ -6430,109 +6433,109 @@ With COUNT, do it that many times.  LIM bounds any required backward
 searches."
   (interactive "p")
   (let ((count (or count 1))
-	(case-fold-search t)
-	begin-vec target)
+        (case-fold-search t)
+        begin-vec target)
     (save-excursion
       (while (> count 0)
-	;; Perform the normal backward-sexp, unless we are looking at
-	;; "else" - an "else" keyword corresponds to both the opening brace
-	;; of the following sexp and the closing brace of the previous sexp.
-	(if (and (looking-at "else\\b\\([^_]\\|\\'\\)")
-		 (/= (preceding-char) ?_)
-		 (not (vhdl-in-literal)))
-	    nil
-	  (backward-sexp)
-	  (if (and (looking-at vhdl-begin-fwd-re)
-		   (or (not (looking-at "\\<use\\>"))
-		       (save-excursion
-			 (back-to-indentation)
-			 (looking-at "\\(\\w+\\s-*:\\s-*\\)?\\<\\(case\\|elsif\\|if\\)\\>")))
-		   (/= (preceding-char) ?_)
-		   (not (vhdl-in-literal))
-		   (vhdl-begin-p lim))
-	      (error "ERROR:  Containing expression ends prematurely in vhdl-backward-sexp")))
-	;; If the current keyword is an "end" keyword, then find the
-	;; corresponding "begin" keyword.
-	(if (and (setq begin-vec (vhdl-corresponding-begin lim))
-		 (/= (preceding-char) ?_))
-	    (let (
-		  ;; begin-re is the statement keyword to search for
-		  (begin-re
-		   (concat "\\b\\(" (aref begin-vec 0) "\\)\\b[^_]"))
-		  ;; column is either the statement keyword target column
-		  ;; or nil
-		  (column (aref begin-vec 1))
-		  ;; internal-p controls where the statement keyword can
-		  ;; be found.
-		  (internal-p (aref begin-vec 3))
-		  (last-backward (point)) last-forward
-		  foundp literal keyword)
-	      ;; Look for the statement keyword.
-	      (while (and (not foundp)
-			  (re-search-backward begin-re lim t)
-			  (setq keyword
-				(buffer-substring (match-beginning 1)
-						  (match-end 1))))
-		;; If we are in a literal or in the wrong column,
-		;; then try again.
-		(if (or (and column
-			     (and (/= (current-indentation) column)
-				  ;; possibly accept current-column as
-				  ;; well as current-indentation.
-				  (or (not internal-p)
-				      (/= (current-column) column))))
-			(= (preceding-char) ?_)
-			(vhdl-in-literal))
-		    (backward-char)
-		  ;; If there is a supplementary keyword, then
-		  ;; search forward for it.
-		  (if (and (setq begin-re (aref begin-vec 2))
-			   (or (not (listp begin-re))
-			       ;; If begin-re is an alist, then find the
-			       ;; element corresponding to the actual
-			       ;; keyword that we found.
-			       (progn
-				 (setq begin-re
-				       (assoc keyword begin-re))
-				 (and begin-re
-				      (setq begin-re (cdr begin-re))))))
-		      (and
-		       (setq begin-re
-			     (concat "\\b\\(" begin-re "\\)\\b[^_]"))
-		       (save-excursion
-			 (setq last-forward (point))
-			 ;; Look for the supplementary keyword
-			 ;; (bounded by the backward search start
-			 ;; point).
-			 (while (and (not foundp)
-				     (re-search-forward begin-re
-							last-backward t)
-				     (goto-char (match-beginning 1)))
-			   ;; If we are in a literal, then try again.
-			   (if (or (= (preceding-char) ?_)
-				   (setq literal
-					 (vhdl-in-literal)))
-			       (if (eq literal 'comment)
-				   (goto-char
-				    (min (vhdl-point 'eol) last-backward))
-				 (forward-char))
-			     ;; We have found the supplementary keyword.
-			     ;; Save the position of the keyword in foundp.
-			     (setq foundp (point)))
-			   )
-			 foundp)
-		       ;; If the supplementary keyword was found, then
-		       ;; move point to the supplementary keyword.
-		       (goto-char foundp))
-		    ;; If there was no supplementary keyword, then
-		    ;; point is already at the statement keyword.
-		    (setq foundp t)))
-		) ; end of the search for the statement keyword
-	      (if (not foundp)
-		  (error "ERROR:  Unbalanced keywords in vhdl-backward-sexp"))
-	      ))
-	(setq count (1- count))
-	)
+        ;; Perform the normal backward-sexp, unless we are looking at
+        ;; "else" - an "else" keyword corresponds to both the opening brace
+        ;; of the following sexp and the closing brace of the previous sexp.
+        (if (and (looking-at "else\\b\\([^_]\\|\\'\\)")
+                 (/= (preceding-char) ?_)
+                 (not (vhdl-in-literal)))
+            nil
+          (backward-sexp)
+          (if (and (looking-at vhdl-begin-fwd-re)
+                   (or (not (looking-at "\\<use\\>"))
+                       (save-excursion
+                         (back-to-indentation)
+                         (looking-at "\\(\\w+\\s-*:\\s-*\\)?\\<\\(case\\|elsif\\|if\\)\\>")))
+                   (/= (preceding-char) ?_)
+                   (not (vhdl-in-literal))
+                   (vhdl-begin-p lim))
+              (error "ERROR:  Containing expression ends prematurely in vhdl-backward-sexp")))
+        ;; If the current keyword is an "end" keyword, then find the
+        ;; corresponding "begin" keyword.
+        (if (and (setq begin-vec (vhdl-corresponding-begin lim))
+                 (/= (preceding-char) ?_))
+            (let (
+                  ;; begin-re is the statement keyword to search for
+                  (begin-re
+                   (concat "\\b\\(" (aref begin-vec 0) "\\)\\b[^_]"))
+                  ;; column is either the statement keyword target column
+                  ;; or nil
+                  (column (aref begin-vec 1))
+                  ;; internal-p controls where the statement keyword can
+                  ;; be found.
+                  (internal-p (aref begin-vec 3))
+                  (last-backward (point)) last-forward
+                  foundp literal keyword)
+              ;; Look for the statement keyword.
+              (while (and (not foundp)
+                          (re-search-backward begin-re lim t)
+                          (setq keyword
+                                (buffer-substring (match-beginning 1)
+                                                  (match-end 1))))
+                ;; If we are in a literal or in the wrong column,
+                ;; then try again.
+                (if (or (and column
+                             (and (/= (current-indentation) column)
+                                  ;; possibly accept current-column as
+                                  ;; well as current-indentation.
+                                  (or (not internal-p)
+                                      (/= (current-column) column))))
+                        (= (preceding-char) ?_)
+                        (vhdl-in-literal))
+                    (backward-char)
+                  ;; If there is a supplementary keyword, then
+                  ;; search forward for it.
+                  (if (and (setq begin-re (aref begin-vec 2))
+                           (or (not (listp begin-re))
+                               ;; If begin-re is an alist, then find the
+                               ;; element corresponding to the actual
+                               ;; keyword that we found.
+                               (progn
+                                 (setq begin-re
+                                       (assoc keyword begin-re))
+                                 (and begin-re
+                                      (setq begin-re (cdr begin-re))))))
+                      (and
+                       (setq begin-re
+                             (concat "\\b\\(" begin-re "\\)\\b[^_]"))
+                       (save-excursion
+                         (setq last-forward (point))
+                         ;; Look for the supplementary keyword
+                         ;; (bounded by the backward search start
+                         ;; point).
+                         (while (and (not foundp)
+                                     (re-search-forward begin-re
+                                                        last-backward t)
+                                     (goto-char (match-beginning 1)))
+                           ;; If we are in a literal, then try again.
+                           (if (or (= (preceding-char) ?_)
+                                   (setq literal
+                                         (vhdl-in-literal)))
+                               (if (eq literal 'comment)
+                                   (goto-char
+                                    (min (vhdl-point 'eol) last-backward))
+                                 (forward-char))
+                             ;; We have found the supplementary keyword.
+                             ;; Save the position of the keyword in foundp.
+                             (setq foundp (point)))
+                           )
+                         foundp)
+                       ;; If the supplementary keyword was found, then
+                       ;; move point to the supplementary keyword.
+                       (goto-char foundp))
+                    ;; If there was no supplementary keyword, then
+                    ;; point is already at the statement keyword.
+                    (setq foundp t)))
+                ) ; end of the search for the statement keyword
+              (if (not foundp)
+                  (error "ERROR:  Unbalanced keywords in vhdl-backward-sexp"))
+              ))
+        (setq count (1- count))
+        )
       (setq target (point)))
     (goto-char target)
     nil))
@@ -6542,13 +6545,13 @@ searches."
 With argument, do this that many times."
   (interactive "p")
   (let ((count (or count 1))
-	target)
+        target)
     (save-excursion
       (while (> count 0)
-	(if (looking-at vhdl-defun-re)
-	    (error "ERROR:  Unbalanced blocks"))
-	(vhdl-backward-to-block limit)
-	(setq count (1- count)))
+        (if (looking-at vhdl-defun-re)
+            (error "ERROR:  Unbalanced blocks"))
+        (vhdl-backward-to-block limit)
+        (setq count (1- count)))
       (setq target (point)))
     (goto-char target)))
 
@@ -6558,7 +6561,7 @@ With argument, do this that many times."
   (let ((case-fold-search t))
     (vhdl-beginning-of-defun)
     (if (not (looking-at "block\\|process\\|procedural"))
-	(re-search-forward "\\bis\\b"))
+        (re-search-forward "\\bis\\b"))
     (vhdl-forward-sexp)))
 
 (defun vhdl-mark-defun ()
@@ -6569,7 +6572,7 @@ With argument, do this that many times."
     (vhdl-beginning-of-defun)
     (push-mark)
     (if (not (looking-at "block\\|process\\|procedural"))
-	(re-search-forward "\\bis\\b"))
+        (re-search-forward "\\bis\\b"))
     (vhdl-forward-sexp)
     (exchange-point-and-mark)))
 
@@ -6583,37 +6586,37 @@ recognized, and the search will continue backwards.  If point is
 at the \"begin\" keyword, then the defun will be recognized.  The
 returned point is at the first character of the \"libunit\" keyword."
   (let ((last-forward (point))
-	(last-backward
-	 ;; Just in case we are actually sitting on the "begin"
-	 ;; keyword, allow for the keyword and an extra character,
-	 ;; as this will be used when looking forward for the
-	 ;; "begin" keyword.
-	 (save-excursion (forward-word-strictly 1) (1+ (point))))
-	foundp literal placeholder)
+        (last-backward
+         ;; Just in case we are actually sitting on the "begin"
+         ;; keyword, allow for the keyword and an extra character,
+         ;; as this will be used when looking forward for the
+         ;; "begin" keyword.
+         (save-excursion (forward-word-strictly 1) (1+ (point))))
+        foundp literal placeholder)
     ;; Find the "libunit" keyword.
     (while (and (not foundp)
-		(re-search-backward vhdl-libunit-re nil 'move))
+                (re-search-backward vhdl-libunit-re nil 'move))
       ;; If we are in a literal, or not at a real libunit, then try again.
       (if (or (= (preceding-char) ?_)
-	      (vhdl-in-literal)
-	      (not (vhdl-libunit-p)))
-	  (backward-char)
-	;; Find the corresponding "begin" keyword.
-	(setq last-forward (point))
-	(while (and (not foundp)
-		    (re-search-forward "\\bis\\b[^_]" last-backward t)
-		    (setq placeholder (match-beginning 0)))
-	  (if (or (= (preceding-char) ?_)
-		  (setq literal (vhdl-in-literal)))
-	      ;; It wasn't a real keyword, so keep searching.
-	      (if (eq literal 'comment)
-		  (goto-char
-		   (min (vhdl-point 'eol) last-backward))
-		(forward-char))
-	    ;; We have found the begin keyword, loop will exit.
-	    (setq foundp placeholder)))
-	;; Go back to the libunit keyword
-	(goto-char last-forward)))
+              (vhdl-in-literal)
+              (not (vhdl-libunit-p)))
+          (backward-char)
+        ;; Find the corresponding "begin" keyword.
+        (setq last-forward (point))
+        (while (and (not foundp)
+                    (re-search-forward "\\bis\\b[^_]" last-backward t)
+                    (setq placeholder (match-beginning 0)))
+          (if (or (= (preceding-char) ?_)
+                  (setq literal (vhdl-in-literal)))
+              ;; It wasn't a real keyword, so keep searching.
+              (if (eq literal 'comment)
+                  (goto-char
+                   (min (vhdl-point 'eol) last-backward))
+                (forward-char))
+            ;; We have found the begin keyword, loop will exit.
+            (setq foundp placeholder)))
+        ;; Go back to the libunit keyword
+        (goto-char last-forward)))
     foundp))
 
 (defun vhdl-beginning-of-defun (&optional count)
@@ -6628,50 +6631,50 @@ stops due to beginning or end of buffer."
   ;; returned point is at the first character of the "defun" keyword.
   (interactive "p")
   (let ((count (or count 1))
-	(case-fold-search t)
-	(last-forward (point))
-	foundp)
+        (case-fold-search t)
+        (last-forward (point))
+        foundp)
     (while (> count 0)
       (setq foundp nil)
       (goto-char last-forward)
       (let ((last-backward
-	     ;; Just in case we are actually sitting on the "begin"
-	     ;; keyword, allow for the keyword and an extra character,
-	     ;; as this will be used when looking forward for the
-	     ;; "begin" keyword.
-	     (save-excursion (forward-word-strictly 1) (1+ (point))))
-	    begin-string literal)
-	(while (and (not foundp)
-		    (re-search-backward vhdl-defun-re nil 'move))
-	  ;; If we are in a literal, then try again.
-	  (if (or (= (preceding-char) ?_)
-		  (vhdl-in-literal))
-	      (backward-char)
-	    (if (setq begin-string (vhdl-corresponding-defun))
-		;; This is a real defun keyword.
-		;; Find the corresponding "begin" keyword.
-		;; Look for the begin keyword.
-		(progn
-		  ;; Save the search start point.
-		  (setq last-forward (point))
-		  (while (and (not foundp)
-			      (search-forward begin-string last-backward t))
-		    (if (or (= (preceding-char) ?_)
-			    (save-match-data
-			      (setq literal (vhdl-in-literal))))
-			;; It wasn't a real keyword, so keep searching.
-			(if (eq literal 'comment)
-			    (goto-char
-			     (min (vhdl-point 'eol) last-backward))
-			  (forward-char))
-		      ;; We have found the begin keyword, loop will exit.
-		      (setq foundp (match-beginning 0)))
-		    )
-		  ;; Go back to the defun keyword
-		  (goto-char last-forward)) ; end search for begin keyword
-	      ))
-	  ) ; end of the search for the defun keyword
-	)
+             ;; Just in case we are actually sitting on the "begin"
+             ;; keyword, allow for the keyword and an extra character,
+             ;; as this will be used when looking forward for the
+             ;; "begin" keyword.
+             (save-excursion (forward-word-strictly 1) (1+ (point))))
+            begin-string literal)
+        (while (and (not foundp)
+                    (re-search-backward vhdl-defun-re nil 'move))
+          ;; If we are in a literal, then try again.
+          (if (or (= (preceding-char) ?_)
+                  (vhdl-in-literal))
+              (backward-char)
+            (if (setq begin-string (vhdl-corresponding-defun))
+                ;; This is a real defun keyword.
+                ;; Find the corresponding "begin" keyword.
+                ;; Look for the begin keyword.
+                (progn
+                  ;; Save the search start point.
+                  (setq last-forward (point))
+                  (while (and (not foundp)
+                              (search-forward begin-string last-backward t))
+                    (if (or (= (preceding-char) ?_)
+                            (save-match-data
+                              (setq literal (vhdl-in-literal))))
+                        ;; It wasn't a real keyword, so keep searching.
+                        (if (eq literal 'comment)
+                            (goto-char
+                             (min (vhdl-point 'eol) last-backward))
+                          (forward-char))
+                      ;; We have found the begin keyword, loop will exit.
+                      (setq foundp (match-beginning 0)))
+                    )
+                  ;; Go back to the defun keyword
+                  (goto-char last-forward)) ; end search for begin keyword
+              ))
+          ) ; end of the search for the defun keyword
+        )
       (setq count (1- count))
       )
     (vhdl-keep-region-active)
@@ -6689,21 +6692,21 @@ prefix arg, a buffer position limit which is the farthest back to
 search, and an argument indicating an interactive call."
   (interactive "p\np")
   (let ((count (or count 1))
-	(case-fold-search t)
-	(lim (or lim (point-min)))
-	(here (point))
-	state)
+        (case-fold-search t)
+        (lim (or lim (point-min)))
+        (here (point))
+        state)
     (save-excursion
       (goto-char lim)
       (setq state (parse-partial-sexp (point) here nil nil)))
     (if (and interactive
-	     (or (nth 3 state)
-		 (nth 4 state)
-		 (looking-at (concat "[ \t]*" comment-start-skip))))
-	(forward-sentence (- count))
+             (or (nth 3 state)
+                 (nth 4 state)
+                 (looking-at (concat "[ \t]*" comment-start-skip))))
+        (forward-sentence (- count))
       (while (> count 0)
-	(vhdl-beginning-of-statement-1 lim)
-	(setq count (1- count))))
+        (vhdl-beginning-of-statement-1 lim)
+        (setq count (1- count))))
     ;; its possible we've been left up-buf of lim
     (goto-char (max (point) lim))
     )
@@ -6719,102 +6722,102 @@ search, and an argument indicating an interactive call."
 
 (defconst vhdl-b-o-s-re
   (concat ";[^_]\\|([^_]\\|)[^_]\\|\\bwhen\\b[^_]\\|"
-	  vhdl-begin-bwd-re "\\|" vhdl-statement-bwd-re))
+          vhdl-begin-bwd-re "\\|" vhdl-statement-bwd-re))
 
 (defun vhdl-beginning-of-statement-1 (&optional lim)
   "Move to the start of the current statement, or the previous
 statement if already at the beginning of one."
   (let ((lim (or lim (point-min)))
-	(here (point))
-	(pos (point))
-	donep)
+        (here (point))
+        (pos (point))
+        donep)
     ;; go backwards one balanced expression, but be careful of
     ;; unbalanced paren being reached
     (if (not (vhdl-safe (progn (backward-sexp) t)))
-	(progn
-	  (backward-up-list 1)
-	  (forward-char)
-	  (vhdl-forward-syntactic-ws here)
-	  (setq donep t)))
+        (progn
+          (backward-up-list 1)
+          (forward-char)
+          (vhdl-forward-syntactic-ws here)
+          (setq donep t)))
     (while (and (not donep)
-		(not (bobp))
-		;; look backwards for a statement boundary
-		(progn (forward-char) (re-search-backward vhdl-b-o-s-re lim 'move)))
+                (not (bobp))
+                ;; look backwards for a statement boundary
+                (progn (forward-char) (re-search-backward vhdl-b-o-s-re lim 'move)))
       (if (or (= (preceding-char) ?_)
-	      (vhdl-in-literal))
-	  (backward-char)
-	(cond
-	 ;; If we are looking at an open paren, then stop after it
-	 ((eq (following-char) ?\()
-	  (forward-char)
-	  (vhdl-forward-syntactic-ws here)
-	  (setq donep t))
-	 ;; If we are looking at a close paren, then skip it
-	 ((eq (following-char) ?\))
-	  (forward-char)
-	  (setq pos (point))
-	  (backward-sexp)
-	  (if (< (point) lim)
-	      (progn (goto-char pos)
-		     (vhdl-forward-syntactic-ws here)
-		     (setq donep t))))
-	 ;; If we are looking at a semicolon, then stop
-	 ((and (eq (following-char) ?\;) (not (vhdl-in-quote-p)))
-	  (progn
-	    (forward-char)
-	    (vhdl-forward-syntactic-ws here)
-	    (setq donep t)))
-	 ;; If we are looking at a "begin", then stop
-	 ((and (looking-at vhdl-begin-fwd-re)
-	       (or (not (looking-at "\\<use\\>"))
-		   (save-excursion
-		     (back-to-indentation)
-		     (looking-at "\\(\\w+\\s-*:\\s-*\\)?\\<\\(case\\|elsif\\|if\\)\\>")))
-	       (/= (preceding-char) ?_)
-	       (vhdl-begin-p nil))
-	  ;; If it's a leader "begin", then find the
-	  ;; right place
-	  (if (looking-at vhdl-leader-re)
-	      (save-excursion
-		;; set a default stop point at the begin
-		(setq pos (point))
-		;; is the start point inside the leader area ?
-		(goto-char (vhdl-end-of-leader))
-		(vhdl-forward-syntactic-ws here)
-		(if (< (point) here)
-		    ;; start point was not inside leader area
-		    ;; set stop point at word after leader
-		    (setq pos (point))))
-	    (unless (looking-at "\\<else\\s-+generate\\>")
-	      (forward-word-strictly 1))
-	    (vhdl-forward-syntactic-ws here)
-	    (setq pos (point)))
-	  (goto-char pos)
-	  (setq donep t))
-	 ;; If we are looking at a "statement", then stop
-	 ((and (looking-at vhdl-statement-fwd-re)
-	       (/= (preceding-char) ?_)
-	       (vhdl-statement-p nil))
-	  (setq donep t))
-	 ;; If we are looking at a case alternative key, then stop
-	 ((and (looking-at vhdl-case-alternative-re)
-	       (vhdl-case-alternative-p lim))
-	  (save-excursion
-	    ;; set a default stop point at the when
-	    (setq pos (point))
-	    ;; is the start point inside the case alternative key ?
-	    (looking-at vhdl-case-alternative-re)
-	    (goto-char (match-end 0))
-	    (vhdl-forward-syntactic-ws here)
-	    (if (< (point) here)
-		;; start point was not inside the case alternative key
-		;; set stop point at word after case alternative keyleader
-		(setq pos (point))))
-	  (goto-char pos)
-	  (setq donep t))
-	 ;; Bogus find, continue
-	 (t
-	  (backward-char)))))
+              (vhdl-in-literal))
+          (backward-char)
+        (cond
+         ;; If we are looking at an open paren, then stop after it
+         ((eq (following-char) ?\()
+          (forward-char)
+          (vhdl-forward-syntactic-ws here)
+          (setq donep t))
+         ;; If we are looking at a close paren, then skip it
+         ((eq (following-char) ?\))
+          (forward-char)
+          (setq pos (point))
+          (backward-sexp)
+          (if (< (point) lim)
+              (progn (goto-char pos)
+                     (vhdl-forward-syntactic-ws here)
+                     (setq donep t))))
+         ;; If we are looking at a semicolon, then stop
+         ((and (eq (following-char) ?\;) (not (vhdl-in-quote-p)))
+          (progn
+            (forward-char)
+            (vhdl-forward-syntactic-ws here)
+            (setq donep t)))
+         ;; If we are looking at a "begin", then stop
+         ((and (looking-at vhdl-begin-fwd-re)
+               (or (not (looking-at "\\<use\\>"))
+                   (save-excursion
+                     (back-to-indentation)
+                     (looking-at "\\(\\w+\\s-*:\\s-*\\)?\\<\\(case\\|elsif\\|if\\)\\>")))
+               (/= (preceding-char) ?_)
+               (vhdl-begin-p nil))
+          ;; If it's a leader "begin", then find the
+          ;; right place
+          (if (looking-at vhdl-leader-re)
+              (save-excursion
+                ;; set a default stop point at the begin
+                (setq pos (point))
+                ;; is the start point inside the leader area ?
+                (goto-char (vhdl-end-of-leader))
+                (vhdl-forward-syntactic-ws here)
+                (if (< (point) here)
+                    ;; start point was not inside leader area
+                    ;; set stop point at word after leader
+                    (setq pos (point))))
+            (unless (looking-at "\\<else\\s-+generate\\>")
+              (forward-word-strictly 1))
+            (vhdl-forward-syntactic-ws here)
+            (setq pos (point)))
+          (goto-char pos)
+          (setq donep t))
+         ;; If we are looking at a "statement", then stop
+         ((and (looking-at vhdl-statement-fwd-re)
+               (/= (preceding-char) ?_)
+               (vhdl-statement-p nil))
+          (setq donep t))
+         ;; If we are looking at a case alternative key, then stop
+         ((and (looking-at vhdl-case-alternative-re)
+               (vhdl-case-alternative-p lim))
+          (save-excursion
+            ;; set a default stop point at the when
+            (setq pos (point))
+            ;; is the start point inside the case alternative key ?
+            (looking-at vhdl-case-alternative-re)
+            (goto-char (match-end 0))
+            (vhdl-forward-syntactic-ws here)
+            (if (< (point) here)
+                ;; start point was not inside the case alternative key
+                ;; set stop point at word after case alternative keyleader
+                (setq pos (point))))
+          (goto-char pos)
+          (setq donep t))
+         ;; Bogus find, continue
+         (t
+          (backward-char)))))
     ))
 
 ;; Defuns for calculating the current syntactic state:
@@ -6824,23 +6827,23 @@ statement if already at the beginning of one."
 keyword at PLACEHOLDER, then return the library unit type."
   (let ((here (vhdl-point 'bol)))
     (if (save-excursion
-	  (goto-char placeholder)
-	  (vhdl-safe (vhdl-forward-sexp 1 bod))
-	  (<= here (point)))
-	(save-excursion
-	  (goto-char bod)
-	  (cond
-	   ((looking-at "e") 'entity)
-	   ((looking-at "a") 'architecture)
-	   ((looking-at "conf") 'configuration)
-	   ((looking-at "cont") 'context)
-	   ((looking-at "p")
-	    (save-excursion
-	      (goto-char bod)
-	      (forward-sexp)
-	      (vhdl-forward-syntactic-ws here)
-	      (if (looking-at "body\\b[^_]")
-		  'package-body 'package))))))
+          (goto-char placeholder)
+          (vhdl-safe (vhdl-forward-sexp 1 bod))
+          (<= here (point)))
+        (save-excursion
+          (goto-char bod)
+          (cond
+           ((looking-at "e") 'entity)
+           ((looking-at "a") 'architecture)
+           ((looking-at "conf") 'configuration)
+           ((looking-at "cont") 'context)
+           ((looking-at "p")
+            (save-excursion
+              (goto-char bod)
+              (forward-sexp)
+              (vhdl-forward-syntactic-ws here)
+              (if (looking-at "body\\b[^_]")
+                  'package-body 'package))))))
     ))
 
 (defun vhdl-get-block-state (&optional lim)
@@ -6848,60 +6851,60 @@ keyword at PLACEHOLDER, then return the library unit type."
 LIM is the furthest back we need to search (it should be the
 previous libunit keyword)."
   (let ((here (point))
-	(lim (or lim (point-min)))
-	keyword sexp-start sexp-mid sexp-end
-	preceding-sexp containing-sexp
-	containing-begin containing-mid containing-paren)
+        (lim (or lim (point-min)))
+        keyword sexp-start sexp-mid sexp-end
+        preceding-sexp containing-sexp
+        containing-begin containing-mid containing-paren)
     (save-excursion
       ;; Find the containing-paren, and use that as the limit
       (if (setq containing-paren
-		(save-restriction
-		  (narrow-to-region lim (point))
-		  (vhdl-safe (scan-lists (point) -1 1))))
-	  (setq lim containing-paren))
+                (save-restriction
+                  (narrow-to-region lim (point))
+                  (vhdl-safe (scan-lists (point) -1 1))))
+          (setq lim containing-paren))
       ;; Look backwards for "begin" and "end" keywords.
       (while (and (> (point) lim)
-		  (not containing-sexp))
-	(setq keyword (vhdl-backward-to-block lim))
-	(cond
-	 ((eq keyword 'begin)
-	  ;; Found a "begin" keyword
-	  (setq sexp-start (point))
-	  (setq sexp-mid (vhdl-corresponding-mid lim))
-	  (setq sexp-end (vhdl-safe
-			  (save-excursion
-			    (vhdl-forward-sexp 1 lim) (point))))
-	  (if (and sexp-end (<= sexp-end here))
-	      ;; we want to record this sexp, but we only want to
-	      ;; record the last-most of any of them before here
-	      (or preceding-sexp
-		  (setq preceding-sexp sexp-start))
-	    ;; we're contained in this sexp so put sexp-start on
-	    ;; front of list
-	    (setq containing-sexp sexp-start)
-	    (setq containing-mid sexp-mid)
-	    (setq containing-begin t)))
-	 ((eq keyword 'end)
-	  ;; Found an "end" keyword
-	  (forward-sexp)
-	  (setq sexp-end (point))
-	  (setq sexp-mid nil)
-	  (setq sexp-start
-		(or (vhdl-safe (vhdl-backward-sexp 1 lim) (point))
-		    (progn (backward-sexp) (point))))
-	  ;; we want to record this sexp, but we only want to
-	  ;; record the last-most of any of them before here
-	  (or preceding-sexp
-	      (setq preceding-sexp sexp-start)))
-	 )))
+                  (not containing-sexp))
+        (setq keyword (vhdl-backward-to-block lim))
+        (cond
+         ((eq keyword 'begin)
+          ;; Found a "begin" keyword
+          (setq sexp-start (point))
+          (setq sexp-mid (vhdl-corresponding-mid lim))
+          (setq sexp-end (vhdl-safe
+                          (save-excursion
+                            (vhdl-forward-sexp 1 lim) (point))))
+          (if (and sexp-end (<= sexp-end here))
+              ;; we want to record this sexp, but we only want to
+              ;; record the last-most of any of them before here
+              (or preceding-sexp
+                  (setq preceding-sexp sexp-start))
+            ;; we're contained in this sexp so put sexp-start on
+            ;; front of list
+            (setq containing-sexp sexp-start)
+            (setq containing-mid sexp-mid)
+            (setq containing-begin t)))
+         ((eq keyword 'end)
+          ;; Found an "end" keyword
+          (forward-sexp)
+          (setq sexp-end (point))
+          (setq sexp-mid nil)
+          (setq sexp-start
+                (or (vhdl-safe (vhdl-backward-sexp 1 lim) (point))
+                    (progn (backward-sexp) (point))))
+          ;; we want to record this sexp, but we only want to
+          ;; record the last-most of any of them before here
+          (or preceding-sexp
+              (setq preceding-sexp sexp-start)))
+         )))
     ;; Check if the containing-paren should be the containing-sexp
     (if (and containing-paren
-	     (or (null containing-sexp)
-		 (< containing-sexp containing-paren)))
-	(setq containing-sexp containing-paren
-	      preceding-sexp nil
-	      containing-begin nil
-	      containing-mid nil))
+             (or (null containing-sexp)
+                 (< containing-sexp containing-paren)))
+        (setq containing-sexp containing-paren
+              preceding-sexp nil
+              containing-begin nil
+              containing-mid nil))
     (vector containing-sexp preceding-sexp containing-begin containing-mid)
     ))
 
@@ -6914,26 +6917,26 @@ previous libunit keyword)."
 limit.  If no next case alternative is found, nil is returned and
 point is not moved."
   (let ((lim (or lim (point-max)))
-	(here (point))
-	donep foundp)
+        (here (point))
+        donep foundp)
     (while (and (< (point) lim)
-		(not donep))
+                (not donep))
       (if (and (re-search-forward vhdl-s-c-a-re lim 'move)
-	       (save-match-data
-		 (not (vhdl-in-literal)))
-	       (/= (match-beginning 0) here))
-	  (progn
-	    (goto-char (match-beginning 0))
-	    (cond
-	     ((and (looking-at "case")
-		   (re-search-forward "\\bis[^_]" lim t))
-	      (backward-sexp)
-	      (vhdl-forward-sexp))
-	     (t
-	      (setq donep t
-		    foundp t))))))
+               (save-match-data
+                 (not (vhdl-in-literal)))
+               (/= (match-beginning 0) here))
+          (progn
+            (goto-char (match-beginning 0))
+            (cond
+             ((and (looking-at "case")
+                   (re-search-forward "\\bis[^_]" lim t))
+              (backward-sexp)
+              (vhdl-forward-sexp))
+             (t
+              (setq donep t
+                    foundp t))))))
     (if (not foundp)
-	(goto-char here))
+        (goto-char here))
     foundp))
 
 (defun vhdl-backward-skip-label (&optional lim)
@@ -6941,15 +6944,15 @@ point is not moved."
 limit.  If label is not found, nil is returned and point
 is not moved."
   (let ((lim (or lim (point-min)))
-	placeholder)
+        placeholder)
     (if (save-excursion
-	  (vhdl-backward-syntactic-ws lim)
-	  (and (eq (preceding-char) ?:)
-	       (progn
-		 (backward-sexp)
-		 (setq placeholder (point))
-		 (looking-at vhdl-label-key))))
-	(goto-char placeholder))
+          (vhdl-backward-syntactic-ws lim)
+          (and (eq (preceding-char) ?:)
+               (progn
+                 (backward-sexp)
+                 (setq placeholder (point))
+                 (looking-at vhdl-label-key))))
+        (goto-char placeholder))
     ))
 
 (defun vhdl-forward-skip-label (&optional lim)
@@ -6958,9 +6961,9 @@ limit.  If label is not found, nil is returned and point
 is not moved."
   (let ((lim (or lim (point-max))))
     (if (looking-at vhdl-label-key)
-	(progn
-	  (goto-char (match-end 0))
-	  (vhdl-forward-syntactic-ws lim)))
+        (progn
+          (goto-char (match-end 0))
+          (vhdl-forward-syntactic-ws lim)))
     ))
 
 (defun vhdl-get-syntactic-context ()
@@ -6969,303 +6972,303 @@ is not moved."
     (save-restriction
       (beginning-of-line)
       (let* ((indent-point (point))
-	     (case-fold-search t)
-	     vec literal containing-sexp preceding-sexp
-	     containing-begin containing-mid containing-leader
-	     char-before-ip char-after-ip begin-after-ip end-after-ip
-	     placeholder lim library-unit
-	    )
+             (case-fold-search t)
+             vec literal containing-sexp preceding-sexp
+             containing-begin containing-mid containing-leader
+             char-before-ip char-after-ip begin-after-ip end-after-ip
+             placeholder lim library-unit
+            )
 
-	;; Reset the syntactic context
-	(setq vhdl-syntactic-context nil)
+        ;; Reset the syntactic context
+        (setq vhdl-syntactic-context nil)
 
-	(save-excursion
-	  ;; Move to the start of the previous library unit, and
-	  ;; record the position of the "begin" keyword.
-	  (setq placeholder (vhdl-beginning-of-libunit))
-	  ;; The position of the "libunit" keyword gives us a gross
-	  ;; limit point.
-	  (setq lim (point))
-	  )
+        (save-excursion
+          ;; Move to the start of the previous library unit, and
+          ;; record the position of the "begin" keyword.
+          (setq placeholder (vhdl-beginning-of-libunit))
+          ;; The position of the "libunit" keyword gives us a gross
+          ;; limit point.
+          (setq lim (point))
+          )
 
-	;; If there is a previous library unit, and we are enclosed by
-	;; it, then set the syntax accordingly.
-	(and placeholder
-	     (setq library-unit (vhdl-get-library-unit lim placeholder))
-	     (vhdl-add-syntax library-unit lim))
+        ;; If there is a previous library unit, and we are enclosed by
+        ;; it, then set the syntax accordingly.
+        (and placeholder
+             (setq library-unit (vhdl-get-library-unit lim placeholder))
+             (vhdl-add-syntax library-unit lim))
 
-	;; Find the surrounding state.
-	(if (setq vec (vhdl-get-block-state lim))
-	    (progn
-	      (setq containing-sexp (aref vec 0))
-	      (setq preceding-sexp (aref vec 1))
-	      (setq containing-begin (aref vec 2))
-	      (setq containing-mid (aref vec 3))
-	      ))
+        ;; Find the surrounding state.
+        (if (setq vec (vhdl-get-block-state lim))
+            (progn
+              (setq containing-sexp (aref vec 0))
+              (setq preceding-sexp (aref vec 1))
+              (setq containing-begin (aref vec 2))
+              (setq containing-mid (aref vec 3))
+              ))
 
-	;; set the limit on the farthest back we need to search
-	(setq lim (if containing-sexp
-		      (save-excursion
-			(goto-char containing-sexp)
-			;; set containing-leader if required
-			(if (looking-at vhdl-leader-re)
-			    (setq containing-leader (vhdl-end-of-leader)))
-			(vhdl-point 'bol))
-		    (point-min)))
+        ;; set the limit on the farthest back we need to search
+        (setq lim (if containing-sexp
+                      (save-excursion
+                        (goto-char containing-sexp)
+                        ;; set containing-leader if required
+                        (if (looking-at vhdl-leader-re)
+                            (setq containing-leader (vhdl-end-of-leader)))
+                        (vhdl-point 'bol))
+                    (point-min)))
 
-	;; cache char before and after indent point, and move point to
-	;; the most likely position to perform the majority of tests
-	(goto-char indent-point)
-	(skip-chars-forward " \t")
-	(setq literal (vhdl-in-literal))
-	(setq char-after-ip (following-char))
-	(setq begin-after-ip (and
-			      (not literal)
-			      (looking-at vhdl-begin-fwd-re)
-			      (or (not (looking-at "\\<use\\>"))
-				  (save-excursion
-				    (back-to-indentation)
-				    (looking-at "\\(\\w+\\s-*:\\s-*\\)?\\<\\(case\\|elsif\\|if\\)\\>")))
-			      (vhdl-begin-p)))
-	(setq end-after-ip (and
-			    (not literal)
-			    (looking-at vhdl-end-fwd-re)
-			    (vhdl-end-p)))
-	(vhdl-backward-syntactic-ws lim)
-	(setq char-before-ip (preceding-char))
-	(goto-char indent-point)
-	(skip-chars-forward " \t")
+        ;; cache char before and after indent point, and move point to
+        ;; the most likely position to perform the majority of tests
+        (goto-char indent-point)
+        (skip-chars-forward " \t")
+        (setq literal (vhdl-in-literal))
+        (setq char-after-ip (following-char))
+        (setq begin-after-ip (and
+                              (not literal)
+                              (looking-at vhdl-begin-fwd-re)
+                              (or (not (looking-at "\\<use\\>"))
+                                  (save-excursion
+                                    (back-to-indentation)
+                                    (looking-at "\\(\\w+\\s-*:\\s-*\\)?\\<\\(case\\|elsif\\|if\\)\\>")))
+                              (vhdl-begin-p)))
+        (setq end-after-ip (and
+                            (not literal)
+                            (looking-at vhdl-end-fwd-re)
+                            (vhdl-end-p)))
+        (vhdl-backward-syntactic-ws lim)
+        (setq char-before-ip (preceding-char))
+        (goto-char indent-point)
+        (skip-chars-forward " \t")
 
-	;; now figure out syntactic qualities of the current line
-	(cond
-	 ;; CASE 1: in a string or comment.
-	 ((memq literal '(string comment))
-	  (vhdl-add-syntax literal (vhdl-point 'bopl)))
-	 ;; CASE 2: Line is at top level.
-	 ((null containing-sexp)
-	  ;; Find the point to which indentation will be relative
-	  (save-excursion
-	    (if (null preceding-sexp)
-		;; CASE 2X.1
-		;; no preceding-sexp -> use the preceding statement
-		(vhdl-beginning-of-statement-1 lim)
-	      ;; CASE 2X.2
-	      ;; if there is a preceding-sexp then indent relative to it
-	      (goto-char preceding-sexp)
-	      ;; if not at boi, then the block-opening keyword is
-	      ;; probably following a label, so we need a different
-	      ;; relpos
-	      (if (/= (point) (vhdl-point 'boi))
-		  ;; CASE 2X.3
-		  (vhdl-beginning-of-statement-1 lim)))
-	    ;; v-b-o-s could have left us at point-min
-	    (and (bobp)
-		 ;; CASE 2X.4
-		 (vhdl-forward-syntactic-ws indent-point))
-	    (setq placeholder (point)))
-	  (cond
-	   ;; CASE 2A : we are looking at a block-open
-	   (begin-after-ip
-	    (vhdl-add-syntax 'block-open placeholder))
-	   ;; CASE 2B: we are looking at a block-close
-	   (end-after-ip
-	    (vhdl-add-syntax 'block-close placeholder))
-	   ;; CASE 2C: we are looking at a top-level statement
-	   ((progn
-	      (vhdl-backward-syntactic-ws lim)
-	      (or (bobp)
-		  (and (= (preceding-char) ?\;)
-		       (not (vhdl-in-quote-p)))))
-	    (vhdl-add-syntax 'statement placeholder))
-	   ;; CASE 2D: we are looking at a top-level statement-cont
-	   (t
-	    (vhdl-beginning-of-statement-1 lim)
-	    ;; v-b-o-s could have left us at point-min
-	    (and (bobp)
-		 ;; CASE 2D.1
-		 (vhdl-forward-syntactic-ws indent-point))
-	    (vhdl-add-syntax 'statement-cont (point)))
-	   )) ; end CASE 2
-	 ;; CASE 3: line is inside parentheses.  Most likely we are
-	 ;; either in a subprogram argument (interface) list, or a
-	 ;; continued expression containing parentheses.
-	 ((null containing-begin)
-	  (vhdl-backward-syntactic-ws containing-sexp)
-	  (cond
-	   ;; CASE 3A: we are looking at the arglist closing paren
-	   ((eq char-after-ip ?\))
-	    (goto-char containing-sexp)
-	    (vhdl-add-syntax 'arglist-close (vhdl-point 'boi)))
-	   ;; CASE 3B: we are looking at the first argument in an empty
-	   ;; argument list.
-	   ((eq char-before-ip ?\()
-	    (goto-char containing-sexp)
-	    (vhdl-add-syntax 'arglist-intro (vhdl-point 'boi)))
-	   ;; CASE 3C: we are looking at an arglist continuation line,
-	   ;; but the preceding argument is on the same line as the
-	   ;; opening paren.  This case includes multi-line
-	   ;; expression paren groupings.
-	   ((and (save-excursion
-		   (goto-char (1+ containing-sexp))
-		   (skip-chars-forward " \t")
-		   (not (eolp))
-		   (not (looking-at "--\\|`")))
-		 (save-excursion
-		   (vhdl-beginning-of-statement-1 containing-sexp)
-		   (skip-chars-backward " \t(")
-		   (while (and (= (preceding-char) ?\;)
-			       (not (vhdl-in-quote-p)))
-		     (vhdl-beginning-of-statement-1 containing-sexp)
-		     (skip-chars-backward " \t("))
-		   (<= (point) containing-sexp)))
-	    (goto-char containing-sexp)
-	    (vhdl-add-syntax 'arglist-cont-nonempty (vhdl-point 'boi)))
-	   ;; CASE 3D: we are looking at just a normal arglist
-	   ;; continuation line
-	   (t (vhdl-beginning-of-statement-1 containing-sexp)
-	      (vhdl-forward-syntactic-ws indent-point)
-	      (vhdl-add-syntax 'arglist-cont (vhdl-point 'boi)))
-	   ))
-	 ;; CASE 4: A block mid open
-	 ((and begin-after-ip
-	       (looking-at containing-mid))
-	  (goto-char containing-sexp)
-	  ;; If the \"begin\" keyword is a trailer, then find v-b-o-s
-	  (if (looking-at vhdl-trailer-re)
-	      ;; CASE 4.1
-	      (progn (forward-sexp) (vhdl-beginning-of-statement-1 nil)))
-	  (vhdl-backward-skip-label (vhdl-point 'boi))
-	  (vhdl-add-syntax 'block-open (point)))
-	 ;; CASE 5: block close brace
-	 (end-after-ip
-	  (goto-char containing-sexp)
-	  ;; If the \"begin\" keyword is a trailer, then find v-b-o-s
-	  (if (looking-at vhdl-trailer-re)
-	      ;; CASE 5.1
-	      (progn (forward-sexp) (vhdl-beginning-of-statement-1 nil)))
-	  (vhdl-backward-skip-label (vhdl-point 'boi))
-	  (vhdl-add-syntax 'block-close (point)))
-	 ;; CASE 6: A continued statement
-	 ((and (/= char-before-ip ?\;)
-	       ;; check it's not a trailer begin keyword, or a begin
-	       ;; keyword immediately following a label.
-	       (not (and begin-after-ip
-			 (or (looking-at vhdl-trailer-re)
-			     (save-excursion
-			       (vhdl-backward-skip-label containing-sexp)))))
-	       ;; check it's not a statement keyword
-	       (not (and (looking-at vhdl-statement-fwd-re)
-			 (vhdl-statement-p)))
-	       ;; see if the b-o-s is before the indent point
-	       (> indent-point
-		  (save-excursion
-		    (vhdl-beginning-of-statement-1 containing-sexp)
-		    ;; If we ended up after a leader, then this will
-		    ;; move us forward to the start of the first
-		    ;; statement.  Note that a containing sexp here is
-		    ;; always a keyword, not a paren, so this will
-		    ;; have no effect if we hit the containing-sexp.
-		    (vhdl-forward-syntactic-ws indent-point)
-		    (setq placeholder (point))))
-	       ;; check it's not a block-intro
-	       (/= placeholder containing-sexp)
-	       ;; check it's not a case block-intro
-	       (save-excursion
-		 (goto-char placeholder)
-		 (or (not (looking-at vhdl-case-alternative-re))
-		     (> (match-end 0) indent-point))))
-	  ;; Make placeholder skip a label, but only if it puts us
-	  ;; before the indent point at the start of a line.
-	  (let ((new placeholder))
-	    (if (and (> indent-point
-			(save-excursion
-			  (goto-char placeholder)
-			  (vhdl-forward-skip-label indent-point)
-			  (setq new (point))))
-		     (save-excursion
-		       (goto-char new)
-		       (eq new (progn (back-to-indentation) (point)))))
-		(setq placeholder new)))
-	  (vhdl-add-syntax 'statement-cont placeholder)
-	  (if begin-after-ip
-	      (vhdl-add-syntax 'block-open)))
-	 ;; Statement. But what kind?
-	 ;; CASE 7: A case alternative key
-	 ((and (looking-at vhdl-case-alternative-re)
-	       (vhdl-case-alternative-p containing-sexp))
-	  ;; for a case alternative key, we set relpos to the first
-	  ;; non-whitespace char on the line containing the "case"
-	  ;; keyword.
-	  (goto-char containing-sexp)
-	  ;; If the \"begin\" keyword is a trailer, then find v-b-o-s
-	  (if (looking-at vhdl-trailer-re)
-	      (progn (forward-sexp) (vhdl-beginning-of-statement-1 nil)))
-	  (vhdl-add-syntax 'case-alternative (vhdl-point 'boi)))
-	 ;; CASE 8: statement catchall
-	 (t
-	  ;; we know its a statement, but we need to find out if it is
-	  ;; the first statement in a block
-	  (if containing-leader
-	      (goto-char containing-leader)
-	    (goto-char containing-sexp)
-	    ;; Note that a containing sexp here is always a keyword,
-	    ;; not a paren, so skip over the keyword.
-	    (forward-sexp))
-	  ;; move to the start of the first statement
-	  (vhdl-forward-syntactic-ws indent-point)
-	  (setq placeholder (point))
-	  ;; we want to ignore case alternatives keys when skipping forward
-	  (let (incase-p)
-	    (while (looking-at vhdl-case-alternative-re)
-	      (setq incase-p (point))
-	      ;; we also want to skip over the body of the
-	      ;; case/when statement if that doesn't put us at
-	      ;; after the indent-point
-	      (while (vhdl-skip-case-alternative indent-point))
-	      ;; set up the match end
-	      (looking-at vhdl-case-alternative-re)
-	      (goto-char (match-end 0))
-	      ;; move to the start of the first case alternative statement
-	      (vhdl-forward-syntactic-ws indent-point)
-	      (setq placeholder (point)))
-	    (cond
-	     ;; CASE 8A: we saw a case/when statement so we must be
-	     ;; in a switch statement.  find out if we are at the
-	     ;; statement just after a case alternative key
-	     ((and incase-p
-		   (= (point) indent-point))
-	      ;; relpos is the "when" keyword
-	      (vhdl-add-syntax 'statement-case-intro incase-p))
-	     ;; CASE 8B: any old statement
-	     ((< (point) indent-point)
-	      ;; relpos is the first statement of the block
-	      (vhdl-add-syntax 'statement placeholder)
-	      (if begin-after-ip
-		  (vhdl-add-syntax 'block-open)))
-	     ;; CASE 8C: first statement in a block
-	     (t
-	      (goto-char containing-sexp)
-	      ;; If the \"begin\" keyword is a trailer, then find v-b-o-s
-	      (if (looking-at vhdl-trailer-re)
-		  (progn (forward-sexp) (vhdl-beginning-of-statement-1 nil)))
-	      (vhdl-backward-skip-label (vhdl-point 'boi))
-	      (vhdl-add-syntax 'statement-block-intro (point))
-	      (if begin-after-ip
-		  (vhdl-add-syntax 'block-open)))
-	     )))
-	 )
+        ;; now figure out syntactic qualities of the current line
+        (cond
+         ;; CASE 1: in a string or comment.
+         ((memq literal '(string comment))
+          (vhdl-add-syntax literal (vhdl-point 'bopl)))
+         ;; CASE 2: Line is at top level.
+         ((null containing-sexp)
+          ;; Find the point to which indentation will be relative
+          (save-excursion
+            (if (null preceding-sexp)
+                ;; CASE 2X.1
+                ;; no preceding-sexp -> use the preceding statement
+                (vhdl-beginning-of-statement-1 lim)
+              ;; CASE 2X.2
+              ;; if there is a preceding-sexp then indent relative to it
+              (goto-char preceding-sexp)
+              ;; if not at boi, then the block-opening keyword is
+              ;; probably following a label, so we need a different
+              ;; relpos
+              (if (/= (point) (vhdl-point 'boi))
+                  ;; CASE 2X.3
+                  (vhdl-beginning-of-statement-1 lim)))
+            ;; v-b-o-s could have left us at point-min
+            (and (bobp)
+                 ;; CASE 2X.4
+                 (vhdl-forward-syntactic-ws indent-point))
+            (setq placeholder (point)))
+          (cond
+           ;; CASE 2A : we are looking at a block-open
+           (begin-after-ip
+            (vhdl-add-syntax 'block-open placeholder))
+           ;; CASE 2B: we are looking at a block-close
+           (end-after-ip
+            (vhdl-add-syntax 'block-close placeholder))
+           ;; CASE 2C: we are looking at a top-level statement
+           ((progn
+              (vhdl-backward-syntactic-ws lim)
+              (or (bobp)
+                  (and (= (preceding-char) ?\;)
+                       (not (vhdl-in-quote-p)))))
+            (vhdl-add-syntax 'statement placeholder))
+           ;; CASE 2D: we are looking at a top-level statement-cont
+           (t
+            (vhdl-beginning-of-statement-1 lim)
+            ;; v-b-o-s could have left us at point-min
+            (and (bobp)
+                 ;; CASE 2D.1
+                 (vhdl-forward-syntactic-ws indent-point))
+            (vhdl-add-syntax 'statement-cont (point)))
+           )) ; end CASE 2
+         ;; CASE 3: line is inside parentheses.  Most likely we are
+         ;; either in a subprogram argument (interface) list, or a
+         ;; continued expression containing parentheses.
+         ((null containing-begin)
+          (vhdl-backward-syntactic-ws containing-sexp)
+          (cond
+           ;; CASE 3A: we are looking at the arglist closing paren
+           ((eq char-after-ip ?\))
+            (goto-char containing-sexp)
+            (vhdl-add-syntax 'arglist-close (vhdl-point 'boi)))
+           ;; CASE 3B: we are looking at the first argument in an empty
+           ;; argument list.
+           ((eq char-before-ip ?\()
+            (goto-char containing-sexp)
+            (vhdl-add-syntax 'arglist-intro (vhdl-point 'boi)))
+           ;; CASE 3C: we are looking at an arglist continuation line,
+           ;; but the preceding argument is on the same line as the
+           ;; opening paren.  This case includes multi-line
+           ;; expression paren groupings.
+           ((and (save-excursion
+                   (goto-char (1+ containing-sexp))
+                   (skip-chars-forward " \t")
+                   (not (eolp))
+                   (not (looking-at "--\\|`")))
+                 (save-excursion
+                   (vhdl-beginning-of-statement-1 containing-sexp)
+                   (skip-chars-backward " \t(")
+                   (while (and (= (preceding-char) ?\;)
+                               (not (vhdl-in-quote-p)))
+                     (vhdl-beginning-of-statement-1 containing-sexp)
+                     (skip-chars-backward " \t("))
+                   (<= (point) containing-sexp)))
+            (goto-char containing-sexp)
+            (vhdl-add-syntax 'arglist-cont-nonempty (vhdl-point 'boi)))
+           ;; CASE 3D: we are looking at just a normal arglist
+           ;; continuation line
+           (t (vhdl-beginning-of-statement-1 containing-sexp)
+              (vhdl-forward-syntactic-ws indent-point)
+              (vhdl-add-syntax 'arglist-cont (vhdl-point 'boi)))
+           ))
+         ;; CASE 4: A block mid open
+         ((and begin-after-ip
+               (looking-at containing-mid))
+          (goto-char containing-sexp)
+          ;; If the \"begin\" keyword is a trailer, then find v-b-o-s
+          (if (looking-at vhdl-trailer-re)
+              ;; CASE 4.1
+              (progn (forward-sexp) (vhdl-beginning-of-statement-1 nil)))
+          (vhdl-backward-skip-label (vhdl-point 'boi))
+          (vhdl-add-syntax 'block-open (point)))
+         ;; CASE 5: block close brace
+         (end-after-ip
+          (goto-char containing-sexp)
+          ;; If the \"begin\" keyword is a trailer, then find v-b-o-s
+          (if (looking-at vhdl-trailer-re)
+              ;; CASE 5.1
+              (progn (forward-sexp) (vhdl-beginning-of-statement-1 nil)))
+          (vhdl-backward-skip-label (vhdl-point 'boi))
+          (vhdl-add-syntax 'block-close (point)))
+         ;; CASE 6: A continued statement
+         ((and (/= char-before-ip ?\;)
+               ;; check it's not a trailer begin keyword, or a begin
+               ;; keyword immediately following a label.
+               (not (and begin-after-ip
+                         (or (looking-at vhdl-trailer-re)
+                             (save-excursion
+                               (vhdl-backward-skip-label containing-sexp)))))
+               ;; check it's not a statement keyword
+               (not (and (looking-at vhdl-statement-fwd-re)
+                         (vhdl-statement-p)))
+               ;; see if the b-o-s is before the indent point
+               (> indent-point
+                  (save-excursion
+                    (vhdl-beginning-of-statement-1 containing-sexp)
+                    ;; If we ended up after a leader, then this will
+                    ;; move us forward to the start of the first
+                    ;; statement.  Note that a containing sexp here is
+                    ;; always a keyword, not a paren, so this will
+                    ;; have no effect if we hit the containing-sexp.
+                    (vhdl-forward-syntactic-ws indent-point)
+                    (setq placeholder (point))))
+               ;; check it's not a block-intro
+               (/= placeholder containing-sexp)
+               ;; check it's not a case block-intro
+               (save-excursion
+                 (goto-char placeholder)
+                 (or (not (looking-at vhdl-case-alternative-re))
+                     (> (match-end 0) indent-point))))
+          ;; Make placeholder skip a label, but only if it puts us
+          ;; before the indent point at the start of a line.
+          (let ((new placeholder))
+            (if (and (> indent-point
+                        (save-excursion
+                          (goto-char placeholder)
+                          (vhdl-forward-skip-label indent-point)
+                          (setq new (point))))
+                     (save-excursion
+                       (goto-char new)
+                       (eq new (progn (back-to-indentation) (point)))))
+                (setq placeholder new)))
+          (vhdl-add-syntax 'statement-cont placeholder)
+          (if begin-after-ip
+              (vhdl-add-syntax 'block-open)))
+         ;; Statement. But what kind?
+         ;; CASE 7: A case alternative key
+         ((and (looking-at vhdl-case-alternative-re)
+               (vhdl-case-alternative-p containing-sexp))
+          ;; for a case alternative key, we set relpos to the first
+          ;; non-whitespace char on the line containing the "case"
+          ;; keyword.
+          (goto-char containing-sexp)
+          ;; If the \"begin\" keyword is a trailer, then find v-b-o-s
+          (if (looking-at vhdl-trailer-re)
+              (progn (forward-sexp) (vhdl-beginning-of-statement-1 nil)))
+          (vhdl-add-syntax 'case-alternative (vhdl-point 'boi)))
+         ;; CASE 8: statement catchall
+         (t
+          ;; we know its a statement, but we need to find out if it is
+          ;; the first statement in a block
+          (if containing-leader
+              (goto-char containing-leader)
+            (goto-char containing-sexp)
+            ;; Note that a containing sexp here is always a keyword,
+            ;; not a paren, so skip over the keyword.
+            (forward-sexp))
+          ;; move to the start of the first statement
+          (vhdl-forward-syntactic-ws indent-point)
+          (setq placeholder (point))
+          ;; we want to ignore case alternatives keys when skipping forward
+          (let (incase-p)
+            (while (looking-at vhdl-case-alternative-re)
+              (setq incase-p (point))
+              ;; we also want to skip over the body of the
+              ;; case/when statement if that doesn't put us at
+              ;; after the indent-point
+              (while (vhdl-skip-case-alternative indent-point))
+              ;; set up the match end
+              (looking-at vhdl-case-alternative-re)
+              (goto-char (match-end 0))
+              ;; move to the start of the first case alternative statement
+              (vhdl-forward-syntactic-ws indent-point)
+              (setq placeholder (point)))
+            (cond
+             ;; CASE 8A: we saw a case/when statement so we must be
+             ;; in a switch statement.  find out if we are at the
+             ;; statement just after a case alternative key
+             ((and incase-p
+                   (= (point) indent-point))
+              ;; relpos is the "when" keyword
+              (vhdl-add-syntax 'statement-case-intro incase-p))
+             ;; CASE 8B: any old statement
+             ((< (point) indent-point)
+              ;; relpos is the first statement of the block
+              (vhdl-add-syntax 'statement placeholder)
+              (if begin-after-ip
+                  (vhdl-add-syntax 'block-open)))
+             ;; CASE 8C: first statement in a block
+             (t
+              (goto-char containing-sexp)
+              ;; If the \"begin\" keyword is a trailer, then find v-b-o-s
+              (if (looking-at vhdl-trailer-re)
+                  (progn (forward-sexp) (vhdl-beginning-of-statement-1 nil)))
+              (vhdl-backward-skip-label (vhdl-point 'boi))
+              (vhdl-add-syntax 'statement-block-intro (point))
+              (if begin-after-ip
+                  (vhdl-add-syntax 'block-open)))
+             )))
+         )
 
-	;; now we need to look at any modifiers
-	(goto-char indent-point)
-	(skip-chars-forward " \t")
-	(if (or (looking-at "--") (looking-at "/\\*"))
-	    (vhdl-add-syntax 'comment))
-	(if (looking-at "`")
-	    (vhdl-add-syntax 'directive))
-	(if (eq literal 'pound)
-	    (vhdl-add-syntax 'cpp-macro))
-	;; return the syntax
-	vhdl-syntactic-context))))
+        ;; now we need to look at any modifiers
+        (goto-char indent-point)
+        (skip-chars-forward " \t")
+        (if (or (looking-at "--") (looking-at "/\\*"))
+            (vhdl-add-syntax 'comment))
+        (if (looking-at "`")
+            (vhdl-add-syntax 'directive))
+        (if (eq literal 'pound)
+            (vhdl-add-syntax 'cpp-macro))
+        ;; return the syntax
+        vhdl-syntactic-context))))
 
 ;; Standard indentation line-ups:
 
@@ -7274,54 +7277,54 @@ is not moved."
 after the containing paren which starts the arglist."
   (save-excursion
     (let* ((containing-sexp
-	    (save-excursion
-	      ;; arglist-cont-nonempty gives relpos ==
-	      ;; to boi of containing-sexp paren. This
-	      ;; is good when offset is +, but bad
-	      ;; when it is vhdl-lineup-arglist, so we
-	      ;; have to special case a kludge here.
-	      (if (memq (car langelem) '(arglist-intro arglist-cont-nonempty))
-		  (progn
-		    (beginning-of-line)
-		    (backward-up-list 1)
-		    (skip-chars-forward " \t" (vhdl-point 'eol)))
-		(goto-char (cdr langelem)))
-	      (point)))
-	   (cs-curcol (save-excursion
-			(goto-char (cdr langelem))
-			(current-column))))
+            (save-excursion
+              ;; arglist-cont-nonempty gives relpos ==
+              ;; to boi of containing-sexp paren. This
+              ;; is good when offset is +, but bad
+              ;; when it is vhdl-lineup-arglist, so we
+              ;; have to special case a kludge here.
+              (if (memq (car langelem) '(arglist-intro arglist-cont-nonempty))
+                  (progn
+                    (beginning-of-line)
+                    (backward-up-list 1)
+                    (skip-chars-forward " \t" (vhdl-point 'eol)))
+                (goto-char (cdr langelem)))
+              (point)))
+           (cs-curcol (save-excursion
+                        (goto-char (cdr langelem))
+                        (current-column))))
       (if (save-excursion
-	    (beginning-of-line)
-	    (looking-at "[ \t]*)"))
-	  (progn (goto-char (match-end 0))
-		 (backward-sexp)
-		 (forward-char)
-		 (vhdl-forward-syntactic-ws)
-		 (- (current-column) cs-curcol))
-	(goto-char containing-sexp)
-	(or (eolp)
-	    (let ((eol (vhdl-point 'eol))
-		  (here (progn
-			  (forward-char)
-			  (skip-chars-forward " \t")
-			  (point))))
-	      (vhdl-forward-syntactic-ws)
-	      (if (< (point) eol)
-		  (goto-char here))))
-	(- (current-column) cs-curcol)
-	))))
+            (beginning-of-line)
+            (looking-at "[ \t]*)"))
+          (progn (goto-char (match-end 0))
+                 (backward-sexp)
+                 (forward-char)
+                 (vhdl-forward-syntactic-ws)
+                 (- (current-column) cs-curcol))
+        (goto-char containing-sexp)
+        (or (eolp)
+            (let ((eol (vhdl-point 'eol))
+                  (here (progn
+                          (forward-char)
+                          (skip-chars-forward " \t")
+                          (point))))
+              (vhdl-forward-syntactic-ws)
+              (if (< (point) eol)
+                  (goto-char here))))
+        (- (current-column) cs-curcol)
+        ))))
 
 (defun vhdl-lineup-arglist-intro (langelem)
   "Lineup an arglist-intro line to just after the open paren."
   (save-excursion
     (let ((cs-curcol (save-excursion
-		       (goto-char (cdr langelem))
-		       (current-column)))
-	  (ce-curcol (save-excursion
-		       (beginning-of-line)
-		       (backward-up-list 1)
-		       (skip-chars-forward " \t" (vhdl-point 'eol))
-		       (current-column))))
+                       (goto-char (cdr langelem))
+                       (current-column)))
+          (ce-curcol (save-excursion
+                       (beginning-of-line)
+                       (backward-up-list 1)
+                       (skip-chars-forward " \t" (vhdl-point 'eol))
+                       (current-column))))
       (- ce-curcol cs-curcol -1))))
 
 (defun vhdl-lineup-comment (langelem)
@@ -7332,55 +7335,55 @@ only-lines."
     (back-to-indentation)
     ;; at or to the right of comment-column
     (if (>= (current-column) comment-column)
-	(vhdl-comment-indent)
+        (vhdl-comment-indent)
       ;; otherwise, indent as specified by vhdl-comment-only-line-offset
       (if (not (bolp))
-	  ;; inside multi-line comment
-	  (if (looking-at "\\*")
-	      1
-	    ;; otherwise
-	  (or (car-safe vhdl-comment-only-line-offset)
-		vhdl-comment-only-line-offset))
-	(or (cdr-safe vhdl-comment-only-line-offset)
-	    (car-safe vhdl-comment-only-line-offset)
-	    -1000			;jam it against the left side
-	    )))))
+          ;; inside multi-line comment
+          (if (looking-at "\\*")
+              1
+            ;; otherwise
+          (or (car-safe vhdl-comment-only-line-offset)
+                vhdl-comment-only-line-offset))
+        (or (cdr-safe vhdl-comment-only-line-offset)
+            (car-safe vhdl-comment-only-line-offset)
+            -1000                       ;jam it against the left side
+            )))))
 
 (defun vhdl-lineup-statement-cont (langelem)
   "Line up statement-cont after the assignment operator."
   (save-excursion
     (let* ((relpos (cdr langelem))
-	   (assignp (save-excursion
-		     (goto-char (vhdl-point 'boi))
-		     (and (re-search-forward "\\(<\\|:\\|=\\)="
-					     (vhdl-point 'eol) t)
-			  (- (point) (vhdl-point 'boi)))))
-	   (curcol (progn
-		     (goto-char relpos)
-		     (current-column)))
-	   foundp)
+           (assignp (save-excursion
+                     (goto-char (vhdl-point 'boi))
+                     (and (re-search-forward "\\(<\\|:\\|=\\)="
+                                             (vhdl-point 'eol) t)
+                          (- (point) (vhdl-point 'boi)))))
+           (curcol (progn
+                     (goto-char relpos)
+                     (current-column)))
+           foundp)
       (while (and (not foundp)
-		  (< (point) (vhdl-point 'eol)))
-	(re-search-forward "\\(<\\|:\\|=\\)=\\|(" (vhdl-point 'eol) 'move)
-	(if (vhdl-in-literal)
-	    (forward-char)
-	  (if (= (preceding-char) ?\()
-	      ;; skip over any parenthesized expressions
-	      (goto-char (min (vhdl-point 'eol)
-			      (scan-lists (point) 1 1)))
-	    ;; found an assignment operator (not at eol)
-	    (setq foundp (not (looking-at "\\s-*$"))))))
+                  (< (point) (vhdl-point 'eol)))
+        (re-search-forward "\\(<\\|:\\|=\\)=\\|(" (vhdl-point 'eol) 'move)
+        (if (vhdl-in-literal)
+            (forward-char)
+          (if (= (preceding-char) ?\()
+              ;; skip over any parenthesized expressions
+              (goto-char (min (vhdl-point 'eol)
+                              (scan-lists (point) 1 1)))
+            ;; found an assignment operator (not at eol)
+            (setq foundp (not (looking-at "\\s-*$"))))))
       (if (not foundp)
-	  ;; there's no assignment operator on the line
-	  vhdl-basic-offset
-	;; calculate indentation column after assign and ws, unless
-	;; our line contains an assignment operator
-	(if (not assignp)
-	    (progn
-	      (forward-char)
-	      (skip-chars-forward " \t")
-	      (setq assignp 0)))
-	(- (current-column) assignp curcol))
+          ;; there's no assignment operator on the line
+          vhdl-basic-offset
+        ;; calculate indentation column after assign and ws, unless
+        ;; our line contains an assignment operator
+        (if (not assignp)
+            (progn
+              (forward-char)
+              (skip-chars-forward " \t")
+              (setq assignp 0)))
+        (- (current-column) assignp curcol))
       )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -7392,13 +7395,13 @@ only-lines."
 (defun vhdl-update-progress-info (string pos)
   "Update progress information."
   (when (and vhdl-progress-info (not noninteractive)
-	     (< vhdl-progress-interval
-		(- (nth 1 (current-time)) (aref vhdl-progress-info 2))))
+             (< vhdl-progress-interval
+                (- (nth 1 (current-time)) (aref vhdl-progress-info 2))))
     (let ((delta (- (aref vhdl-progress-info 1)
                     (aref vhdl-progress-info 0))))
       (message "%s... (%2d%%)" string
-	       (if (= 0 delta)
-		   100
+               (if (= 0 delta)
+                   100
                  (floor (* 100.0 (- pos (aref vhdl-progress-info 0)))
                         delta))))
     (aset vhdl-progress-info 2 (nth 1 (current-time)))))
@@ -7421,36 +7424,36 @@ else indent `correctly'."
     ;; expand word
     ((= (char-syntax (preceding-char)) ?w)
      (let ((case-fold-search (not vhdl-word-completion-case-sensitive))
-	   (case-replace nil)
-	   (hippie-expand-only-buffers
-	    (or (and (boundp 'hippie-expand-only-buffers)
-		     hippie-expand-only-buffers)
-		'(vhdl-mode))))
+           (case-replace nil)
+           (hippie-expand-only-buffers
+            (or (and (boundp 'hippie-expand-only-buffers)
+                     hippie-expand-only-buffers)
+                '(vhdl-mode))))
        (vhdl-expand-abbrev prefix-arg)))
     ;; expand parenthesis
     ((or (= (preceding-char) ?\() (= (preceding-char) ?\)))
      (let ((case-fold-search (not vhdl-word-completion-case-sensitive))
-	   (case-replace nil))
+           (case-replace nil))
        (vhdl-expand-paren prefix-arg)))
     ;; insert tab
     ((> (current-column) (current-indentation))
      (insert-tab))
     ;; toggle comment indent
     ((and (looking-at "--")
-	  (or (eq last-command 'vhdl-electric-tab)
-	      (eq last-command 'vhdl-electric-return)))
+          (or (eq last-command 'vhdl-electric-tab)
+              (eq last-command 'vhdl-electric-return)))
      (cond ((= (current-indentation) 0) ; no indent
-	    (indent-to 1)
-	    (indent-according-to-mode))
-	   ((< (current-indentation) comment-column) ; normal indent
-	    (indent-to comment-column)
-	    (indent-according-to-mode))
-	   (t				; inline comment indent
-	    (delete-region (line-beginning-position) (point)))))
+            (indent-to 1)
+            (indent-according-to-mode))
+           ((< (current-indentation) comment-column) ; normal indent
+            (indent-to comment-column)
+            (indent-according-to-mode))
+           (t                           ; inline comment indent
+            (delete-region (line-beginning-position) (point)))))
     ;; dedent
     ((and (>= (current-indentation) vhdl-basic-offset)
-	  (or (eq last-command 'vhdl-electric-tab)
-	      (eq last-command 'vhdl-electric-return)))
+          (or (eq last-command 'vhdl-electric-tab)
+              (eq last-command 'vhdl-electric-return)))
      (backward-delete-char-untabify vhdl-basic-offset nil))
     ;; indent line
     (t (indent-according-to-mode)))
@@ -7463,7 +7466,7 @@ character is a space."
   (if (and (= (preceding-char) ? ) (vhdl-in-comment-p))
       (indent-new-comment-line)
     (when (and (>= (preceding-char) ?a) (<= (preceding-char) ?z)
-	       (not (vhdl-in-comment-p)))
+               (not (vhdl-in-comment-p)))
       (vhdl-fix-case-word -1))
     (newline-and-indent)))
 
@@ -7472,45 +7475,45 @@ character is a space."
 indentation change."
   (interactive)
   (let* ((syntax (and vhdl-indent-syntax-based (vhdl-get-syntactic-context)))
-	 (pos (- (point-max) (point)))
-	 (is-comment nil)
-	 (indent
-	  (if syntax
-	      ;; indent syntax-based
-	      (if (and (eq (caar syntax) 'comment)
-		       (>= (vhdl-get-offset (car syntax)) comment-column))
-		  ;; special case: comments at or right of comment-column
-		  (vhdl-get-offset (car syntax))
-		;; align comments like following code line
-		(when vhdl-indent-comment-like-next-code-line
-		  (save-excursion
-		    (while (eq (caar syntax) 'comment)
-		      (setq is-comment t)
-		      (beginning-of-line 2)
-		      (setq syntax (vhdl-get-syntactic-context)))))
-		(when is-comment
-		  (push (cons 'comment nil) syntax))
-		(apply '+ (mapcar 'vhdl-get-offset syntax)))
-	    ;; indent like previous nonblank line
-	    (save-excursion (beginning-of-line)
-			    (re-search-backward "^[^\n]" nil t)
-			    (current-indentation))))
-	 (shift-amt  (- indent (current-indentation))))
+         (pos (- (point-max) (point)))
+         (is-comment nil)
+         (indent
+          (if syntax
+              ;; indent syntax-based
+              (if (and (eq (caar syntax) 'comment)
+                       (>= (vhdl-get-offset (car syntax)) comment-column))
+                  ;; special case: comments at or right of comment-column
+                  (vhdl-get-offset (car syntax))
+                ;; align comments like following code line
+                (when vhdl-indent-comment-like-next-code-line
+                  (save-excursion
+                    (while (eq (caar syntax) 'comment)
+                      (setq is-comment t)
+                      (beginning-of-line 2)
+                      (setq syntax (vhdl-get-syntactic-context)))))
+                (when is-comment
+                  (push (cons 'comment nil) syntax))
+                (apply '+ (mapcar 'vhdl-get-offset syntax)))
+            ;; indent like previous nonblank line
+            (save-excursion (beginning-of-line)
+                            (re-search-backward "^[^\n]" nil t)
+                            (current-indentation))))
+         (shift-amt  (- indent (current-indentation))))
     (and vhdl-echo-syntactic-information-p
-	 (message "syntax: %s, indent= %d" syntax indent))
+         (message "syntax: %s, indent= %d" syntax indent))
     (let ((has-formfeed
-	   (save-excursion (beginning-of-line) (looking-at "\\s-*\f"))))
+           (save-excursion (beginning-of-line) (looking-at "\\s-*\f"))))
       (when (or (not (zerop shift-amt)) has-formfeed)
-	(delete-region (vhdl-point 'bol) (vhdl-point 'boi))
-	(beginning-of-line)
-	(when has-formfeed (insert "\f"))
-	(indent-to indent)))
+        (delete-region (vhdl-point 'bol) (vhdl-point 'boi))
+        (beginning-of-line)
+        (when has-formfeed (insert "\f"))
+        (indent-to indent)))
     (if (< (point) (vhdl-point 'boi))
-	(back-to-indentation)
+        (back-to-indentation)
       ;; If initial point was within line's indentation, position after
       ;; the indentation.  Else stay at same point in text.
       (when (> (- (point-max) pos) (point))
-	(goto-char (- (point-max) pos))))
+        (goto-char (- (point-max) pos))))
     (run-hooks 'vhdl-special-indent-hook)
     (vhdl-update-progress-info "Indenting" (vhdl-current-line))
     shift-amt))
@@ -7521,7 +7524,7 @@ Adds progress reporting to `indent-region'."
   (interactive "r\nP")
   (when vhdl-progress-interval
     (setq vhdl-progress-info (vector (count-lines (point-min) beg)
-				     (count-lines (point-min) end) 0)))
+                                     (count-lines (point-min) end) 0)))
   (indent-region beg end column)
   (when vhdl-progress-interval (message "Indenting...done"))
   (setq vhdl-progress-info nil))
@@ -7536,13 +7539,13 @@ Calls `indent-region' for whole buffer and adds progress reporting."
   "Indent group of lines between empty lines."
   (interactive)
   (let ((beg (save-excursion
-	       (if (re-search-backward vhdl-align-group-separate nil t)
-		   (point-marker)
-		 (point-min-marker))))
-	(end (save-excursion
-	       (if (re-search-forward vhdl-align-group-separate nil t)
-		   (point-marker)
-		 (point-max-marker)))))
+               (if (re-search-backward vhdl-align-group-separate nil t)
+                   (point-marker)
+                 (point-min-marker))))
+        (end (save-excursion
+               (if (re-search-forward vhdl-align-group-separate nil t)
+                   (point-marker)
+                 (point-max-marker)))))
     (vhdl-indent-region beg end)))
 
 (defun vhdl-indent-sexp (&optional endpos)
@@ -7552,7 +7555,7 @@ ENDPOS is encountered."
   (interactive)
   (save-excursion
     (let ((beg (point))
-	  (end (progn (vhdl-forward-sexp nil endpos) (point))))
+          (end (progn (vhdl-forward-sexp nil endpos) (point))))
       (indent-region beg end nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -7570,32 +7573,32 @@ ENDPOS is encountered."
   "Check syntactic information for current line."
   (interactive "P")
   (let ((expected (save-excursion
-		    (end-of-line)
-		    (when (search-backward " -- ((" (vhdl-point 'bol) t)
-		      (forward-char 4)
-		      (read (current-buffer)))))
-	(actual (vhdl-get-syntactic-context))
-	(expurgated))
+                    (end-of-line)
+                    (when (search-backward " -- ((" (vhdl-point 'bol) t)
+                      (forward-char 4)
+                      (read (current-buffer)))))
+        (actual (vhdl-get-syntactic-context))
+        (expurgated))
     ;; remove the library unit symbols
     (mapc
      (function
       (lambda (elt)
-	(if (memq (car elt) '(entity configuration context package
-				     package-body architecture))
-	    nil
-	  (setq expurgated (append expurgated (list elt))))))
+        (if (memq (car elt) '(entity configuration context package
+                                     package-body architecture))
+            nil
+          (setq expurgated (append expurgated (list elt))))))
      actual)
     (if (and (not arg) expected (listp expected))
-	(if (not (equal expected expurgated))
-	    (error "ERROR:  Should be: %s, is: %s" expected expurgated))
+        (if (not (equal expected expurgated))
+            (error "ERROR:  Should be: %s, is: %s" expected expurgated))
       (save-excursion
-	(beginning-of-line)
-	(when (not (looking-at "^\\s-*\\(--.*\\)?$"))
-	  (end-of-line)
-	  (if (search-backward " -- ((" (vhdl-point 'bol) t)
-	      (delete-region (point) (line-end-position)))
-	  (insert " -- ")
-	  (insert (format "%s" expurgated))))))
+        (beginning-of-line)
+        (when (not (looking-at "^\\s-*\\(--.*\\)?$"))
+          (end-of-line)
+          (if (search-backward " -- ((" (vhdl-point 'bol) t)
+              (delete-region (point) (line-end-position)))
+          (insert " -- ")
+          (insert (format "%s" expurgated))))))
   (vhdl-keep-region-active))
 
 
@@ -7607,12 +7610,12 @@ ENDPOS is encountered."
   '(
     ;; after some keywords
     (vhdl-mode "^\\s-*\\(across\\|constant\\|quantity\\|signal\\|subtype\\|terminal\\|through\\|type\\|variable\\)[ \t]"
-	       "^\\s-*\\(across\\|constant\\|quantity\\|signal\\|subtype\\|terminal\\|through\\|type\\|variable\\)\\([ \t]+\\)" 2)
+               "^\\s-*\\(across\\|constant\\|quantity\\|signal\\|subtype\\|terminal\\|through\\|type\\|variable\\)\\([ \t]+\\)" 2)
     ;; before ':'
     (vhdl-mode ":[^=]" "\\([ \t]*\\):[^=]")
     ;; after direction specifications
     (vhdl-mode ":[ \t]*\\(in\\|out\\|inout\\|buffer\\|\\)\\>"
-	       ":[ \t]*\\(in\\|out\\|inout\\|buffer\\|\\)\\([ \t]+\\)" 2)
+               ":[ \t]*\\(in\\|out\\|inout\\|buffer\\|\\)\\([ \t]+\\)" 2)
     ;; before "==", ":=", "=>", and "<="
     (vhdl-mode "[<:=]=" "\\([ \t]*\\)\\??[<:=]=" 1) ; since "<= ... =>" can occur
     (vhdl-mode "=>" "\\([ \t]*\\)=>" 1)
@@ -7646,14 +7649,14 @@ is ignored.  If this variable is non-nil, then the clause is tried anyway.")
   (let
       ;; search for group beginning
       ((beg (save-excursion
-	      (if (re-search-backward vhdl-align-group-separate nil t)
-		  (progn (beginning-of-line 2) (back-to-indentation) (point))
-		(point-min))))
+              (if (re-search-backward vhdl-align-group-separate nil t)
+                  (progn (beginning-of-line 2) (back-to-indentation) (point))
+                (point-min))))
        ;; search for group end
        (end (save-excursion
-	      (if (re-search-forward vhdl-align-group-separate nil t)
-		  (progn (beginning-of-line) (point))
-		(point-max)))))
+              (if (re-search-forward vhdl-align-group-separate nil t)
+                  (progn (beginning-of-line) (point))
+                (point-max)))))
     ;; run FUNCTION
     (funcall function beg end spacing)))
 
@@ -7665,41 +7668,41 @@ parentheses."
       ;; search for beginning of balanced group of parentheses
       (setq beg (vhdl-re-search-backward "[()]" nil t))
       (while (looking-at ")")
-	(forward-char) (backward-sexp)
-	(setq beg (vhdl-re-search-backward "[()]" nil t)))
+        (forward-char) (backward-sexp)
+        (setq beg (vhdl-re-search-backward "[()]" nil t)))
       ;; search for end of balanced group of parentheses
       (when beg
-	(forward-list)
-	(setq end (point))
-	(goto-char (1+ beg))
-	(skip-chars-forward " \t\n\r\f")
-	(setq beg (point))))
+        (forward-list)
+        (setq end (point))
+        (goto-char (1+ beg))
+        (skip-chars-forward " \t\n\r\f")
+        (setq beg (point))))
     ;; run FUNCTION
     (if beg
-	(funcall function beg end spacing)
+        (funcall function beg end spacing)
       (error "ERROR:  Not within a list enclosed by a pair of parentheses"))))
 
 (defun vhdl-do-same-indent (function &optional spacing)
   "Apply FUNCTION to block of lines with same indent."
   (let ((indent (current-indentation))
-	beg end)
+        beg end)
     ;; search for first line with same indent
     (save-excursion
       (while (and (not (bobp))
-		  (or (looking-at "^\\s-*\\(--.*\\)?$")
-		      (= (current-indentation) indent)))
-	(unless (looking-at "^\\s-*$")
-	  (back-to-indentation) (setq beg (point)))
-	(beginning-of-line -0)))
+                  (or (looking-at "^\\s-*\\(--.*\\)?$")
+                      (= (current-indentation) indent)))
+        (unless (looking-at "^\\s-*$")
+          (back-to-indentation) (setq beg (point)))
+        (beginning-of-line -0)))
     ;; search for last line with same indent
     (save-excursion
       (while (and (not (eobp))
-		  (or (looking-at "^\\s-*\\(--.*\\)?$")
-		      (= (current-indentation) indent)))
-	(if (looking-at "^\\s-*$")
-	    (beginning-of-line 2)
-	  (beginning-of-line 2)
-	  (setq end (point)))))
+                  (or (looking-at "^\\s-*\\(--.*\\)?$")
+                      (= (current-indentation) indent)))
+        (if (looking-at "^\\s-*$")
+            (beginning-of-line 2)
+          (beginning-of-line 2)
+          (setq end (point)))))
     ;; run FUNCTION
     (funcall function beg end spacing)))
 
@@ -7719,23 +7722,23 @@ indentation is done before aligning."
       (goto-char begin)
       (setq bol (setq begin (progn (beginning-of-line) (point))))
       (when indent
-	(indent-region bol end nil))))
+        (indent-region bol end nil))))
   (let ((copy (copy-alist alignment-list)))
     (vhdl-prepare-search-2
      (while copy
        (save-excursion
-	 (goto-char begin)
-	 (let (element
-	       (eol (point-at-eol)))
-	   (setq element (nth 0 copy))
-	   (when (and (or (and (listp (car element))
-			       (memq major-mode (car element)))
-			  (eq major-mode (car element)))
-		      (or vhdl-align-try-all-clauses
-			  (re-search-forward (car (cdr element)) eol t)))
-	     (vhdl-align-region-2 begin end (car (cdr (cdr element)))
-				  (car (cdr (cdr (cdr element)))) spacing))
-	   (setq copy (cdr copy))))))))
+         (goto-char begin)
+         (let (element
+               (eol (point-at-eol)))
+           (setq element (nth 0 copy))
+           (when (and (or (and (listp (car element))
+                               (memq major-mode (car element)))
+                          (eq major-mode (car element)))
+                      (or vhdl-align-try-all-clauses
+                          (re-search-forward (car (cdr element)) eol t)))
+             (vhdl-align-region-2 begin end (car (cdr (cdr element)))
+                                  (car (cdr (cdr (cdr element)))) spacing))
+           (setq copy (cdr copy))))))))
 
 (defun vhdl-align-region-2 (begin end match &optional substr spacing)
   "Align a range of lines from BEGIN to END.  The regular expression
@@ -7753,53 +7756,53 @@ the token in MATCH."
       ;; character
       (goto-char begin)
       (setq eol (point-at-eol)
-	    bol (setq begin (progn (beginning-of-line) (point))))
+            bol (setq begin (progn (beginning-of-line) (point))))
       (while (< bol end)
-	(save-excursion
-	  (when (and (vhdl-re-search-forward match eol t)
-		     (save-excursion
-		       (goto-char (match-beginning 0))
-		       (forward-char)
-		       (and (not (vhdl-in-literal))
-			    (not (vhdl-in-quote-p))
-			    (not (vhdl-in-extended-identifier-p))))
-		     (not (looking-at "\\s-*$")))
-	    (setq distance (- (match-beginning substr) bol))
-	    (when (> distance max)
-	      (setq max distance))))
-	(forward-line)
-	(setq bol (point)
-	      eol (point-at-eol))
-	(setq lines (1+ lines)))
+        (save-excursion
+          (when (and (vhdl-re-search-forward match eol t)
+                     (save-excursion
+                       (goto-char (match-beginning 0))
+                       (forward-char)
+                       (and (not (vhdl-in-literal))
+                            (not (vhdl-in-quote-p))
+                            (not (vhdl-in-extended-identifier-p))))
+                     (not (looking-at "\\s-*$")))
+            (setq distance (- (match-beginning substr) bol))
+            (when (> distance max)
+              (setq max distance))))
+        (forward-line)
+        (setq bol (point)
+              eol (point-at-eol))
+        (setq lines (1+ lines)))
       ;; Now insert enough maxs to push each assignment operator to
       ;; the same column.  We need to use 'lines' as a counter, since
       ;; the location of the mark may change
       (goto-char (setq bol begin))
       (setq eol (point-at-eol))
       (while (> lines 0)
-  	(when (and (vhdl-re-search-forward match eol t)
-		   (save-excursion
-		     (goto-char (match-beginning 0))
-		     (forward-char)
-		     (and (not (vhdl-in-literal))
-			  (not (vhdl-in-quote-p))
-			  (not (vhdl-in-extended-identifier-p))))
-		   (not (looking-at "\\s-*$"))
-		   (> (match-beginning 0)  ; not if at boi
-		      (save-excursion (back-to-indentation) (point))))
-	  (setq width (- (match-end substr) (match-beginning substr)))
-	  (setq distance (- (match-beginning substr) bol))
-	  (goto-char (match-beginning substr))
-	  (delete-char width)
-	  (insert-char ?  (+ (- max distance) spacing)))
-	(beginning-of-line)
-	(forward-line)
-	(setq bol (point)
-	      eol (point-at-eol))
-	(setq lines (1- lines))))))
+        (when (and (vhdl-re-search-forward match eol t)
+                   (save-excursion
+                     (goto-char (match-beginning 0))
+                     (forward-char)
+                     (and (not (vhdl-in-literal))
+                          (not (vhdl-in-quote-p))
+                          (not (vhdl-in-extended-identifier-p))))
+                   (not (looking-at "\\s-*$"))
+                   (> (match-beginning 0)  ; not if at boi
+                      (save-excursion (back-to-indentation) (point))))
+          (setq width (- (match-end substr) (match-beginning substr)))
+          (setq distance (- (match-beginning substr) bol))
+          (goto-char (match-beginning substr))
+          (delete-char width)
+          (insert-char ?  (+ (- max distance) spacing)))
+        (beginning-of-line)
+        (forward-line)
+        (setq bol (point)
+              eol (point-at-eol))
+        (setq lines (1- lines))))))
 
 (defun vhdl-align-region-groups (beg end &optional spacing
-				     no-message no-comments)
+                                     no-message no-comments)
   "Align region, treat groups of lines separately."
   (interactive "r\nP")
   (save-excursion
@@ -7812,36 +7815,36 @@ the token in MATCH."
       (setq end (point-marker))
       (untabify beg end)
       (unless no-message
-	(when vhdl-progress-interval
-	  (setq vhdl-progress-info (vector (count-lines (point-min) beg)
-					   (count-lines (point-min) end) 0))))
+        (when vhdl-progress-interval
+          (setq vhdl-progress-info (vector (count-lines (point-min) beg)
+                                           (count-lines (point-min) end) 0))))
       (when (nth 0 vhdl-beautify-options)
-	(vhdl-fixup-whitespace-region beg end t))
+        (vhdl-fixup-whitespace-region beg end t))
       (goto-char beg)
       (if (not vhdl-align-groups)
-	  ;; align entire region
-	  (progn (vhdl-align-region-1 beg end spacing)
-		 (unless no-comments
-		   (vhdl-align-inline-comment-region-1 beg end)))
-	;; align groups
-	(while (and (< beg end)
-		    (re-search-forward vhdl-align-group-separate end t))
-	  (setq pos (point-marker))
-	  (vhdl-align-region-1 beg pos spacing)
-	  (unless no-comments (vhdl-align-inline-comment-region-1 beg pos))
-	  (vhdl-update-progress-info "Aligning" (vhdl-current-line))
-	  (setq beg (1+ pos))
-	  (goto-char beg))
-	;; align last group
-	(when (< beg end)
-	  (vhdl-align-region-1 beg end spacing)
-	  (unless no-comments (vhdl-align-inline-comment-region-1 beg end))
-	  (vhdl-update-progress-info "Aligning" (vhdl-current-line))))
+          ;; align entire region
+          (progn (vhdl-align-region-1 beg end spacing)
+                 (unless no-comments
+                   (vhdl-align-inline-comment-region-1 beg end)))
+        ;; align groups
+        (while (and (< beg end)
+                    (re-search-forward vhdl-align-group-separate end t))
+          (setq pos (point-marker))
+          (vhdl-align-region-1 beg pos spacing)
+          (unless no-comments (vhdl-align-inline-comment-region-1 beg pos))
+          (vhdl-update-progress-info "Aligning" (vhdl-current-line))
+          (setq beg (1+ pos))
+          (goto-char beg))
+        ;; align last group
+        (when (< beg end)
+          (vhdl-align-region-1 beg end spacing)
+          (unless no-comments (vhdl-align-inline-comment-region-1 beg end))
+          (vhdl-update-progress-info "Aligning" (vhdl-current-line))))
       (when vhdl-indent-tabs-mode
-	(tabify orig end))
+        (tabify orig end))
       (unless no-message
-	(when vhdl-progress-interval (message "Aligning...done"))
-	(setq vhdl-progress-info nil)))))
+        (when vhdl-progress-interval (message "Aligning...done"))
+        (setq vhdl-progress-info nil)))))
 
 (defun vhdl-align-region (beg end &optional spacing)
   "Align region, treat blocks with same indent and argument lists separately."
@@ -7852,41 +7855,41 @@ the token in MATCH."
     ;; align blocks with same indent and argument lists
     (save-excursion
       (let ((cur-beg beg)
-	    indent cur-end)
-	(when vhdl-progress-interval
-	  (setq vhdl-progress-info (vector (count-lines (point-min) beg)
-					   (count-lines (point-min) end) 0)))
-	(goto-char end)
-	(setq end (point-marker))
-	(goto-char cur-beg)
-	(while (< (point) end)
-	  ;; is argument list opening?
-	  (if (setq cur-beg (nth 1 (save-excursion (parse-partial-sexp
-						    (point) (vhdl-point 'eol)))))
-	      ;; determine region for argument list
-	      (progn (goto-char cur-beg)
-		     (forward-sexp)
-		     (setq cur-end (point))
-		     (beginning-of-line 2))
-	    ;; determine region with same indent
-	    (setq indent (current-indentation))
-	    (setq cur-beg (point))
-	    (setq cur-end (vhdl-point 'bonl))
-	    (beginning-of-line 2)
-	    (while (and (< (point) end)
-			(or (looking-at "^\\s-*\\(--.*\\)?$")
-			    (= (current-indentation) indent))
-			(<= (save-excursion
-			      (nth 0 (parse-partial-sexp
-				      (point) (vhdl-point 'eol)))) 0))
-	      (unless (looking-at "^\\s-*$")
-		(setq cur-end (vhdl-point 'bonl)))
-	      (beginning-of-line 2)))
-	  ;; align region
-	  (vhdl-align-region-groups cur-beg cur-end spacing t t))
-	(vhdl-align-inline-comment-region beg end spacing noninteractive)
-	(when vhdl-progress-interval (message "Aligning...done"))
-	(setq vhdl-progress-info nil)))))
+            indent cur-end)
+        (when vhdl-progress-interval
+          (setq vhdl-progress-info (vector (count-lines (point-min) beg)
+                                           (count-lines (point-min) end) 0)))
+        (goto-char end)
+        (setq end (point-marker))
+        (goto-char cur-beg)
+        (while (< (point) end)
+          ;; is argument list opening?
+          (if (setq cur-beg (nth 1 (save-excursion (parse-partial-sexp
+                                                    (point) (vhdl-point 'eol)))))
+              ;; determine region for argument list
+              (progn (goto-char cur-beg)
+                     (forward-sexp)
+                     (setq cur-end (point))
+                     (beginning-of-line 2))
+            ;; determine region with same indent
+            (setq indent (current-indentation))
+            (setq cur-beg (point))
+            (setq cur-end (vhdl-point 'bonl))
+            (beginning-of-line 2)
+            (while (and (< (point) end)
+                        (or (looking-at "^\\s-*\\(--.*\\)?$")
+                            (= (current-indentation) indent))
+                        (<= (save-excursion
+                              (nth 0 (parse-partial-sexp
+                                      (point) (vhdl-point 'eol)))) 0))
+              (unless (looking-at "^\\s-*$")
+                (setq cur-end (vhdl-point 'bonl)))
+              (beginning-of-line 2)))
+          ;; align region
+          (vhdl-align-region-groups cur-beg cur-end spacing t t))
+        (vhdl-align-inline-comment-region beg end spacing noninteractive)
+        (when vhdl-progress-interval (message "Aligning...done"))
+        (setq vhdl-progress-info nil)))))
 
 (defun vhdl-align-group (&optional spacing)
   "Align group of lines between empty lines."
@@ -7911,12 +7914,12 @@ the token in MATCH."
      (save-excursion
        ;; search for declarative part
        (when (and (re-search-backward "^\\(architecture\\|begin\\|configuration\\|context\\|end\\|entity\\|package\\)\\>" nil t)
-		  (not (member (upcase (match-string 1)) '("BEGIN" "END"))))
-	 (setq beg (point))
-	 (re-search-forward "^\\(begin\\|end\\)\\>" nil t)
-	 (setq end (point)))))
+                  (not (member (upcase (match-string 1)) '("BEGIN" "END"))))
+         (setq beg (point))
+         (re-search-forward "^\\(begin\\|end\\)\\>" nil t)
+         (setq end (point)))))
     (if beg
-	(vhdl-align-region-groups beg end spacing)
+        (vhdl-align-region-groups beg end spacing)
       (error "ERROR:  Not within the declarative part of a design unit"))))
 
 (defun vhdl-align-buffer ()
@@ -7931,77 +7934,77 @@ the token in MATCH."
   "Align inline comments in region."
   (save-excursion
     (let ((start-max comment-column)
-	  (length-max 0)
-	  comment-list start-list tmp-list start length
-	  cur-start prev-start no-code)
+          (length-max 0)
+          comment-list start-list tmp-list start length
+          cur-start prev-start no-code)
       (setq spacing (or spacing 2))
       (vhdl-prepare-search-2
        (goto-char beg)
        ;; search for comment start positions and lengths
        (while (< (point) end)
-	 (when (and (not (looking-at "^\\s-*\\(begin\\|end\\)\\>"))
-		    (looking-at "^\\(.*?[^ \t\n\r\f-]+\\)\\s-*\\(--.*\\)$")
-		    (not (save-excursion (goto-char (match-beginning 2))
-					 (vhdl-in-literal))))
-	   (setq start (+ (- (match-end 1) (match-beginning 1)) spacing))
-	   (setq length (- (match-end 2) (match-beginning 2)))
-	   (setq start-max (max start start-max))
-	   (setq length-max (max length length-max))
-	   (push (cons start length) comment-list))
-	 (beginning-of-line 2))
+         (when (and (not (looking-at "^\\s-*\\(begin\\|end\\)\\>"))
+                    (looking-at "^\\(.*?[^ \t\n\r\f-]+\\)\\s-*\\(--.*\\)$")
+                    (not (save-excursion (goto-char (match-beginning 2))
+                                         (vhdl-in-literal))))
+           (setq start (+ (- (match-end 1) (match-beginning 1)) spacing))
+           (setq length (- (match-end 2) (match-beginning 2)))
+           (setq start-max (max start start-max))
+           (setq length-max (max length length-max))
+           (push (cons start length) comment-list))
+         (beginning-of-line 2))
        (setq comment-list
-	     (sort comment-list (function (lambda (a b) (> (car a) (car b))))))
+             (sort comment-list (function (lambda (a b) (> (car a) (car b))))))
        ;; reduce start positions
        (setq start-list (list (caar comment-list)))
        (setq comment-list (cdr comment-list))
        (while comment-list
-	 (unless (or (= (caar comment-list) (car start-list))
-		     (<= (+ (car start-list) (cdar comment-list))
-			    end-comment-column))
-	   (push (caar comment-list) start-list))
-	 (setq comment-list (cdr comment-list)))
+         (unless (or (= (caar comment-list) (car start-list))
+                     (<= (+ (car start-list) (cdar comment-list))
+                            end-comment-column))
+           (push (caar comment-list) start-list))
+         (setq comment-list (cdr comment-list)))
        ;; align lines as nicely as possible
        (goto-char beg)
        (while (< (point) end)
-	 (setq cur-start nil)
-	 (when (and (not (looking-at "^\\s-*\\(begin\\|end\\)\\>"))
-		    (or (and (looking-at "^\\(.*?[^ \t\n\r\f-]+\\)\\(\\s-*\\)\\(--.*\\)$")
-			     (not (save-excursion
-				    (goto-char (match-beginning 3))
-				    (vhdl-in-literal))))
-			(and (looking-at "^\\(\\)\\(\\s-*\\)\\(--.*\\)$")
-			     (>= (- (match-end 2) (match-beginning 2))
-				 comment-column))))
-	   (setq start (+ (- (match-end 1) (match-beginning 1)) spacing))
-	   (setq length (- (match-end 3) (match-beginning 3)))
-	   (setq no-code (= (match-beginning 1) (match-end 1)))
-	   ;; insert minimum whitespace
-	   (goto-char (match-end 2))
-	   (delete-region (match-beginning 2) (match-end 2))
-	   (insert-char ?\  spacing)
-	   (setq tmp-list start-list)
-	   ;; insert additional whitespace to align
-	   (setq cur-start
-		 (cond
-		  ;; align comment-only line to inline comment of previous line
-		  ((and no-code prev-start
-			(<= length (- end-comment-column prev-start)))
-		   prev-start)
-		  ;; align all comments at `start-max' if this is possible
-		  ((<= (+ start-max length-max) end-comment-column)
-		   start-max)
-		  ;; align at `comment-column' if possible
-		  ((and (<= start comment-column)
-			(<= length (- end-comment-column comment-column)))
-		   comment-column)
-		  ;; align at left-most possible start position otherwise
-		  (t
-		   (while (and tmp-list (< (car tmp-list) start))
-		     (setq tmp-list (cdr tmp-list)))
-		   (car tmp-list))))
-	   (indent-to cur-start))
-	 (setq prev-start cur-start)
-	 (beginning-of-line 2))))))
+         (setq cur-start nil)
+         (when (and (not (looking-at "^\\s-*\\(begin\\|end\\)\\>"))
+                    (or (and (looking-at "^\\(.*?[^ \t\n\r\f-]+\\)\\(\\s-*\\)\\(--.*\\)$")
+                             (not (save-excursion
+                                    (goto-char (match-beginning 3))
+                                    (vhdl-in-literal))))
+                        (and (looking-at "^\\(\\)\\(\\s-*\\)\\(--.*\\)$")
+                             (>= (- (match-end 2) (match-beginning 2))
+                                 comment-column))))
+           (setq start (+ (- (match-end 1) (match-beginning 1)) spacing))
+           (setq length (- (match-end 3) (match-beginning 3)))
+           (setq no-code (= (match-beginning 1) (match-end 1)))
+           ;; insert minimum whitespace
+           (goto-char (match-end 2))
+           (delete-region (match-beginning 2) (match-end 2))
+           (insert-char ?\  spacing)
+           (setq tmp-list start-list)
+           ;; insert additional whitespace to align
+           (setq cur-start
+                 (cond
+                  ;; align comment-only line to inline comment of previous line
+                  ((and no-code prev-start
+                        (<= length (- end-comment-column prev-start)))
+                   prev-start)
+                  ;; align all comments at `start-max' if this is possible
+                  ((<= (+ start-max length-max) end-comment-column)
+                   start-max)
+                  ;; align at `comment-column' if possible
+                  ((and (<= start comment-column)
+                        (<= length (- end-comment-column comment-column)))
+                   comment-column)
+                  ;; align at left-most possible start position otherwise
+                  (t
+                   (while (and tmp-list (< (car tmp-list) start))
+                     (setq tmp-list (cdr tmp-list)))
+                   (car tmp-list))))
+           (indent-to cur-start))
+         (setq prev-start cur-start)
+         (beginning-of-line 2))))))
 
 (defun vhdl-align-inline-comment-region (beg end &optional spacing no-message)
   "Align inline comments within a region.  Groups of code lines separated by
@@ -8019,20 +8022,20 @@ empty lines are aligned individually, if `vhdl-align-groups' is non-nil."
       (unless no-message (message "Aligning inline comments..."))
       (goto-char beg)
       (if (not vhdl-align-groups)
-	  ;; align entire region
-	  (vhdl-align-inline-comment-region-1 beg end spacing)
-	;; align groups
-	(while (and (< beg end)
-		    (re-search-forward vhdl-align-group-separate end t))
-	  (setq pos (point-marker))
-	  (vhdl-align-inline-comment-region-1 beg pos spacing)
-	  (setq beg (1+ pos))
-	  (goto-char beg))
-	;; align last group
-	(when (< beg end)
-	  (vhdl-align-inline-comment-region-1 beg end spacing)))
+          ;; align entire region
+          (vhdl-align-inline-comment-region-1 beg end spacing)
+        ;; align groups
+        (while (and (< beg end)
+                    (re-search-forward vhdl-align-group-separate end t))
+          (setq pos (point-marker))
+          (vhdl-align-inline-comment-region-1 beg pos spacing)
+          (setq beg (1+ pos))
+          (goto-char beg))
+        ;; align last group
+        (when (< beg end)
+          (vhdl-align-inline-comment-region-1 beg end spacing)))
       (when vhdl-indent-tabs-mode
-	(tabify orig end))
+        (tabify orig end))
       (unless no-message (message "Aligning inline comments...done")))))
 
 (defun vhdl-align-inline-comment-group (&optional spacing)
@@ -8040,17 +8043,17 @@ empty lines are aligned individually, if `vhdl-align-groups' is non-nil."
   (interactive)
   (save-excursion
     (let ((start (point))
-	  beg end)
+          beg end)
       (setq end (if (re-search-forward vhdl-align-group-separate nil t)
-		    (point-marker) (point-max)))
+                    (point-marker) (point-max)))
       (goto-char start)
       (setq beg (if (re-search-backward vhdl-align-group-separate nil t)
-		    (point) (point-min)))
+                    (point) (point-min)))
       (untabify beg end)
       (message "Aligning inline comments...")
       (vhdl-align-inline-comment-region-1 beg end)
       (when vhdl-indent-tabs-mode
-	(tabify beg end))
+        (tabify beg end))
       (message "Aligning inline comments...done"))))
 
 (defun vhdl-align-inline-comment-buffer ()
@@ -8075,45 +8078,45 @@ end of line, do nothing in comments and strings."
     (goto-char beg)
     (while (re-search-forward "\\(--.*\n\\|\"[^\"\n]*[\"\n]\\|'.'\\|\\\\[^\\\n]*[\\\n]\\)\\|\\(\\s-*\\([,;]\\)\\)" end t)
       (if (match-string 1)
-	  (goto-char (match-end 1))
-	(replace-match "\\3 " nil nil nil 2)))
+          (goto-char (match-end 1))
+        (replace-match "\\3 " nil nil nil 2)))
     ;; have no space after `('
     (goto-char beg)
     (while (re-search-forward "\\(--.*\n\\|\"[^\"\n]*[\"\n]\\|'.'\\|\\\\[^\\\n]*[\\\n]\\)\\|\\((\\)\\s-+" end t)
       (if (match-string 1)
-	  (goto-char (match-end 1))
-	(replace-match "\\2")))
+          (goto-char (match-end 1))
+        (replace-match "\\2")))
     ;; have no space before `)'
     (goto-char beg)
     (while (re-search-forward "\\(--.*\n\\|\"[^\"\n]*[\"\n]\\|'.'\\|\\\\[^\\\n]*[\\\n]\\|^\\s-+\\)\\|\\s-+\\()\\)" end t)
       (if (match-string 1)
-	  (goto-char (match-end 1))
-	(replace-match "\\2")))
+          (goto-char (match-end 1))
+        (replace-match "\\2")))
     ;; surround operator symbols by one space
     (goto-char beg)
     (while (re-search-forward "\\(--.*\n\\|\"[^\"\n]*[\"\n]\\|'.'\\|\\\\[^\\\n]*[\\\n]\\)\\|\\(\\([^/:<>=\n]\\)\\(:\\|\\??=\\|\\??<<\\|\\??>>\\|\\??<\\|\\??>\\|:=\\|\\??<=\\|\\??>=\\|=>\\|\\??/=\\|\\?\\?\\)\\([^=>\n]\\|$\\)\\)" end t)
       (if (or (match-string 1)
-	      (<= (match-beginning 0)  ; not if at boi
-		 (save-excursion (back-to-indentation) (point))))
-	  (goto-char (match-end 0))
-	(replace-match "\\3 \\4 \\5")
-	(goto-char (match-end 2))))
+              (<= (match-beginning 0)  ; not if at boi
+                 (save-excursion (back-to-indentation) (point))))
+          (goto-char (match-end 0))
+        (replace-match "\\3 \\4 \\5")
+        (goto-char (match-end 2))))
     ;; eliminate multiple spaces and spaces at end of line
     (goto-char beg)
     (while (or (and (looking-at "--.*\n") (re-search-forward "--.*\n" end t))
-	       (and (looking-at "--.*") (re-search-forward "--.*" end t))
-	       (and (looking-at "\"") (re-search-forward "\"[^\"\n]*[\"\n]" end t))
-	       (and (looking-at "\\s-+$") (re-search-forward "\\s-+$" end t)
-		    (progn (replace-match "" nil nil) t))
-	       (and (looking-at "\\s-+;") (re-search-forward "\\s-+;" end t)
-		    (progn (replace-match ";" nil nil) t))
-	       (and (looking-at "^\\s-+") (re-search-forward "^\\s-+" end t))
-	       (and (looking-at "\\s-+--") (re-search-forward "\\s-+" end t)
-		    (progn (replace-match "  " nil nil) t))
-	       (and (looking-at "\\s-+") (re-search-forward "\\s-+" end t)
-		    (progn (replace-match " " nil nil) t))
-	       (and (looking-at "-") (re-search-forward "-" end t))
-	       (re-search-forward "[^ \t\"-]+" end t))))
+               (and (looking-at "--.*") (re-search-forward "--.*" end t))
+               (and (looking-at "\"") (re-search-forward "\"[^\"\n]*[\"\n]" end t))
+               (and (looking-at "\\s-+$") (re-search-forward "\\s-+$" end t)
+                    (progn (replace-match "" nil nil) t))
+               (and (looking-at "\\s-+;") (re-search-forward "\\s-+;" end t)
+                    (progn (replace-match ";" nil nil) t))
+               (and (looking-at "^\\s-+") (re-search-forward "^\\s-+" end t))
+               (and (looking-at "\\s-+--") (re-search-forward "\\s-+" end t)
+                    (progn (replace-match "  " nil nil) t))
+               (and (looking-at "\\s-+") (re-search-forward "\\s-+" end t)
+                    (progn (replace-match " " nil nil) t))
+               (and (looking-at "-") (re-search-forward "-" end t))
+               (re-search-forward "[^ \t\"-]+" end t))))
   (unless no-message (message "Fixing up whitespace...done")))
 
 (defun vhdl-fixup-whitespace-buffer ()
@@ -8130,24 +8133,24 @@ end of line, do nothing in comments."
   "Convert all words matching WORD-REGEXP in region to lower or upper case,
 depending on parameter UPPER-CASE."
   (let ((case-replace nil)
-	(last-update 0))
+        (last-update 0))
     (vhdl-prepare-search-2
      (save-excursion
        (goto-char end)
        (setq end (point-marker))
        (goto-char beg)
        (while (re-search-forward word-regexp end t)
-	 (or (vhdl-in-literal)
-	     (if upper-case
-		 (upcase-word -1)
-	       (downcase-word -1)))
-	 (when (and count vhdl-progress-interval (not noninteractive)
-		    (< vhdl-progress-interval
-		       (- (nth 1 (current-time)) last-update)))
-	   (message "Fixing case... (%2d%s)"
-		    (+ (* count 20) (/ (* 20 (- (point) beg)) (- end beg)))
-		    "%")
-	   (setq last-update (nth 1 (current-time)))))
+         (or (vhdl-in-literal)
+             (if upper-case
+                 (upcase-word -1)
+               (downcase-word -1)))
+         (when (and count vhdl-progress-interval (not noninteractive)
+                    (< vhdl-progress-interval
+                       (- (nth 1 (current-time)) last-update)))
+           (message "Fixing case... (%2d%s)"
+                    (+ (* count 20) (/ (* 20 (- (point) beg)) (- end beg)))
+                    "%")
+           (setq last-update (nth 1 (current-time)))))
        (goto-char end)))))
 
 (defun vhdl-fix-case-region (beg end &optional arg)
@@ -8179,19 +8182,19 @@ options vhdl-upper-case-{keywords,types,attributes,enum-values}."
     (when arg (backward-word 1))
     (vhdl-prepare-search-1
      (when (and vhdl-upper-case-keywords
-		(looking-at vhdl-keywords-regexp))
+                (looking-at vhdl-keywords-regexp))
        (upcase-word 1))
      (when (and vhdl-upper-case-types
-		(looking-at vhdl-types-regexp))
+                (looking-at vhdl-types-regexp))
        (upcase-word 1))
      (when (and vhdl-upper-case-attributes
-		(looking-at vhdl-attributes-regexp))
+                (looking-at vhdl-attributes-regexp))
        (upcase-word 1))
      (when (and vhdl-upper-case-enum-values
-		(looking-at vhdl-enum-values-regexp))
+                (looking-at vhdl-enum-values-regexp))
        (upcase-word 1))
      (when (and vhdl-upper-case-constants
-		(looking-at vhdl-constants-regexp))
+                (looking-at vhdl-constants-regexp))
        (upcase-word 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -8212,39 +8215,39 @@ Currently supported keywords: `begin', `if'."
        (goto-char beg)
        ;; `begin' keyword
        (while (re-search-forward
-	       "^\\s-*[^ \t\n].*?\\(\\<begin\\>\\)\\(.*\\<end\\>\\)?" end t)
-	 (goto-char (match-end 0))
-	 (setq point (point-marker))
-	 (when (and (match-string 1)
-		    (or (not (match-string 2))
-			(save-excursion (goto-char (match-end 2))
-					(vhdl-in-literal)))
-		    (not (save-excursion (goto-char (match-beginning 1))
-					 (vhdl-in-literal))))
-	   (goto-char (match-beginning 1))
-	   (insert "\n")
-	   (indent-according-to-mode))
-	 (goto-char point))
+               "^\\s-*[^ \t\n].*?\\(\\<begin\\>\\)\\(.*\\<end\\>\\)?" end t)
+         (goto-char (match-end 0))
+         (setq point (point-marker))
+         (when (and (match-string 1)
+                    (or (not (match-string 2))
+                        (save-excursion (goto-char (match-end 2))
+                                        (vhdl-in-literal)))
+                    (not (save-excursion (goto-char (match-beginning 1))
+                                         (vhdl-in-literal))))
+           (goto-char (match-beginning 1))
+           (insert "\n")
+           (indent-according-to-mode))
+         (goto-char point))
        (goto-char beg)
        ;; `for', `if' keywords
        (while (re-search-forward "\\<\\(for\\|if\\)\\>" end t)
-	 (goto-char (match-end 1))
-	 (setq point (point-marker))
-	 ;; exception: in literal or preceded by `end', `wait' or label
-	 (when (and (not (save-excursion (goto-char (match-beginning 1))
-					 (vhdl-in-literal)))
-		    (save-excursion
-		      (beginning-of-line 1)
-		      (save-match-data
-			(and (re-search-forward "^\\s-*\\([^ \t\n].*\\)"
-						(match-beginning 1) t)
-			     (not (string-match
-				   "\\(\\<end\\>\\|\\<wait .*\\|\\w+\\s-*:\\)\\s-*$"
-				   (match-string 1)))))))
-	   (goto-char (match-beginning 1))
-	   (insert "\n")
-	   (indent-according-to-mode))
-	 (goto-char point))))))
+         (goto-char (match-end 1))
+         (setq point (point-marker))
+         ;; exception: in literal or preceded by `end', `wait' or label
+         (when (and (not (save-excursion (goto-char (match-beginning 1))
+                                         (vhdl-in-literal)))
+                    (save-excursion
+                      (beginning-of-line 1)
+                      (save-match-data
+                        (and (re-search-forward "^\\s-*\\([^ \t\n].*\\)"
+                                                (match-beginning 1) t)
+                             (not (string-match
+                                   "\\(\\<end\\>\\|\\<wait .*\\|\\w+\\s-*:\\)\\s-*$"
+                                   (match-string 1)))))))
+           (goto-char (match-beginning 1))
+           (insert "\n")
+           (indent-according-to-mode))
+         (goto-char point))))))
 
 (defun vhdl-fix-statement-buffer ()
   "Force statements in buffer on separate line except when on same line
@@ -8264,7 +8267,7 @@ with `end' keyword (necessary for correct indentation)."
     (goto-char beg)
     (while (re-search-forward "[ \t]+$" end t)
       (unless (vhdl-in-literal)
-	(replace-match "" nil nil)))))
+        (replace-match "" nil nil)))))
 
 (defun vhdl-remove-trailing-spaces ()
   "Remove trailing spaces in buffer."
@@ -8322,11 +8325,11 @@ buffer."
       ;; wrap and end-comment-column
       (goto-char beg)
       (while (re-search-forward "\\s-" end t)
-	(when(> (current-column) vhdl-end-comment-column)
-	  (backward-char)
-	  (when (re-search-backward "\\s-" beg t)
-	    (replace-match "\n")
-	    (indent-to margin)))))))
+        (when(> (current-column) vhdl-end-comment-column)
+          (backward-char)
+          (when (re-search-backward "\\s-" beg t)
+            (replace-match "\n")
+            (indent-to margin)))))))
 
 (defun vhdl-fill-group ()
   "Fill group of lines between empty lines."
@@ -8372,9 +8375,9 @@ buffer."
      (end-of-line)
      ;; look whether in process
      (if (not (and (re-search-backward "^\\s-*\\(\\w+[ \t\n\r\f]*:[ \t\n\r\f]*\\)?\\(process\\|end\\s-+process\\)\\>" nil t)
-		   (equal (upcase (match-string 2)) "PROCESS")
-		   (save-excursion (re-search-forward "^\\s-*end\\s-+process\\>" nil t))))
-	 (error "ERROR:  Not within a process")
+                   (equal (upcase (match-string 2)) "PROCESS")
+                   (save-excursion (re-search-forward "^\\s-*end\\s-+process\\>" nil t))))
+         (error "ERROR:  Not within a process")
        (message "Updating sensitivity list...")
        (vhdl-update-sensitivity-list)
        (message "Updating sensitivity list...done")))))
@@ -8395,144 +8398,144 @@ buffer."
 (defun vhdl-update-sensitivity-list ()
   "Update sensitivity list."
     (let ((proc-beg (point))
-	  (proc-end (re-search-forward "^\\s-*end\\s-+process\\>" nil t))
-	  (proc-mid (vhdl-re-search-backward
-		     "\\(\\(\\<begin\\>\\)\\|^\\s-*process\\>\\)" nil t))
-	  seq-region-list)
+          (proc-end (re-search-forward "^\\s-*end\\s-+process\\>" nil t))
+          (proc-mid (vhdl-re-search-backward
+                     "\\(\\(\\<begin\\>\\)\\|^\\s-*process\\>\\)" nil t))
+          seq-region-list)
       (cond
        ;; error if 'begin' keyword missing
        ((not (match-string 2))
-	(error "ERROR:  No 'begin' keyword found"))
+        (error "ERROR:  No 'begin' keyword found"))
        ;; search for wait statement (no sensitivity list allowed)
        ((progn (goto-char proc-mid)
-	       (vhdl-re-search-forward "\\<wait\\>" proc-end t))
-	(error "ERROR:  Process with wait statement, sensitivity list not generated"))
+               (vhdl-re-search-forward "\\<wait\\>" proc-end t))
+        (error "ERROR:  Process with wait statement, sensitivity list not generated"))
        ;; combinational process (update sensitivity list)
        (t
-	(let
-	    ;; scan for visible signals
-	    ((visible-list (vhdl-get-visible-signals))
-	     ;; define syntactic regions where signals are read
-	     (scan-regions-list
-	      '(;; right-hand side of signal/variable assignment
-		;; (special case: "<=" is relational operator in a condition)
-		((vhdl-re-search-forward "[<:]=" proc-end t)
-		 (vhdl-re-search-forward ";\\|\\<\\(then\\|loop\\|report\\|severity\\|is\\)\\>" proc-end t))
-		;; if condition
-		((vhdl-re-search-forward "^\\s-*if\\>" proc-end t)
-		 (vhdl-re-search-forward "\\<then\\>" proc-end t))
-		;; elsif condition
-		((vhdl-re-search-forward "\\<elsif\\>" proc-end t)
-		 (vhdl-re-search-forward "\\<then\\>" proc-end t))
-		;; while loop condition
-		((vhdl-re-search-forward "^\\s-*while\\>" proc-end t)
-		 (vhdl-re-search-forward "\\<loop\\>" proc-end t))
-		;; exit/next condition
-		((vhdl-re-search-forward "\\<\\(exit\\|next\\)\\s-+\\w+\\s-+when\\>" proc-end t)
-		 (vhdl-re-search-forward ";" proc-end t))
-		;; assert condition
-		((vhdl-re-search-forward "\\<assert\\>" proc-end t)
-		 (vhdl-re-search-forward "\\(\\<report\\>\\|\\<severity\\>\\|;\\)" proc-end t))
-		;; case expression
-		((vhdl-re-search-forward "^\\s-*case\\>" proc-end t)
-		 (vhdl-re-search-forward "\\<is\\>" proc-end t))
-		;; parameter list of procedure call, array index
-		((and (re-search-forward "^\\s-*\\(\\w\\|\\.\\)+[ \t\n\r\f]*(" proc-end t)
-		      (1- (point)))
-		 (progn (backward-char) (forward-sexp)
-			(while (looking-at "(") (forward-sexp)) (point)))))
-	     name field read-list sens-list signal-list tmp-list
-	     sens-beg sens-end beg end margin)
-	  ;; scan for signals in old sensitivity list
-	  (goto-char proc-beg)
-	  (vhdl-re-search-forward "\\<process\\>" proc-mid t)
-	  (if (not (looking-at "[ \t\n\r\f]*("))
-	      (setq sens-beg (point))
-	    (setq sens-beg (vhdl-re-search-forward "\\([ \t\n\r\f]*\\)([ \t\n\r\f]*" nil t))
-	    (goto-char (match-end 1))
-	    (forward-sexp)
-	    (setq sens-end (1- (point)))
-	    (goto-char sens-beg)
-	    (while (and (vhdl-re-search-forward "\\(\\w+\\)" sens-end t)
-			(setq sens-list
-			      (cons (downcase (match-string 0)) sens-list))
-			(vhdl-re-search-forward "\\s-*,\\s-*" sens-end t))))
-	  (setq signal-list (append visible-list sens-list))
-	  ;; search for sequential parts
-	  (goto-char proc-mid)
-	  (while (setq beg (re-search-forward "^\\s-*\\(els\\)?if\\>" proc-end t))
-	    (setq end (vhdl-re-search-forward "\\<then\\>" proc-end t))
-	    (when (vhdl-re-search-backward "\\('event\\|\\<\\(falling\\|rising\\)_edge\\)\\>" beg t)
-	      (goto-char end)
-	      (backward-word-strictly 1)
-	      (vhdl-forward-sexp)
-	      (push (cons end (point)) seq-region-list)
-	      (beginning-of-line)))
-	  ;; scan for signals read in process
-	  (while scan-regions-list
-	    (goto-char proc-mid)
-	    (while (and (setq beg (eval (nth 0 (car scan-regions-list))))
-			(setq end (eval (nth 1 (car scan-regions-list)))))
-	      (goto-char beg)
-	      (unless (or (vhdl-in-literal)
-			  (and seq-region-list
-			       (let ((tmp-list seq-region-list))
-				 (while (and tmp-list
-					     (< (point) (caar tmp-list)))
-				   (setq tmp-list (cdr tmp-list)))
-				 (and tmp-list (< (point) (cdar tmp-list))))))
-		(while (vhdl-re-search-forward "[^'\".]\\<\\([a-zA-Z]\\w*\\)\\(\\(\\.\\w+\\|[ \t\n\r\f]*([^)]*)\\)*\\)[ \t\n\r\f]*\\('\\(\\w+\\)\\|\\(=>\\)\\)?" end t)
-		  (setq name (match-string 1))
-		  ;; get array index range
-		  (when vhdl-array-index-record-field-in-sensitivity-list
-		    (setq field (match-string 2))
-		    ;; not use if it includes a variable name
-		    (save-match-data
-		      (setq tmp-list visible-list)
-		      (while (and field tmp-list)
-			(when (string-match
-			       (concat "\\<" (car tmp-list) "\\>") field)
-			  (setq field nil))
-			(setq tmp-list (cdr tmp-list)))))
-		  (when (and (not (match-string 6)) ; not when formal parameter
-			     (not (and (match-string 5) ; not event attribute
-				       (not (member (downcase (match-string 5))
-						    '("event" "last_event" "transaction")))))
-			     (member (downcase name) signal-list))
-		    ;; not add if name or name+field already exists
-		    (unless
-			(or (member-ignore-case name read-list)
-			    (member-ignore-case (concat name field) read-list))
-		      (push (concat name field) read-list))
-		    (setq tmp-list read-list)
-		    ;; remove existing name+field if name is added
-		    (save-match-data
-		      (while tmp-list
-			(when (string-match (concat "^" name field "[(.]")
-					    (car tmp-list))
-			  (setq read-list (delete (car tmp-list) read-list)))
-			(setq tmp-list (cdr tmp-list)))))
-		  (goto-char (match-end 1)))))
-	    (setq scan-regions-list (cdr scan-regions-list)))
-	  ;; update sensitivity list
-	  (goto-char sens-beg)
-	  (if sens-end
-	      (delete-region sens-beg sens-end)
-	    (when read-list
-	      (insert " ()") (backward-char)))
-	  (setq read-list (sort read-list 'string<))
-	  (when read-list
-	    (setq margin (current-column))
-	    (insert (car read-list))
-	    (setq read-list (cdr read-list))
-	    (while read-list
-	      (insert ",")
-	      (if (<= (+ (current-column) (length (car read-list)) 2)
-		      end-comment-column)
-		  (insert " ")
-		(insert "\n") (indent-to margin))
-	      (insert (car read-list))
-	      (setq read-list (cdr read-list)))))))))
+        (let
+            ;; scan for visible signals
+            ((visible-list (vhdl-get-visible-signals))
+             ;; define syntactic regions where signals are read
+             (scan-regions-list
+              '(;; right-hand side of signal/variable assignment
+                ;; (special case: "<=" is relational operator in a condition)
+                ((vhdl-re-search-forward "[<:]=" proc-end t)
+                 (vhdl-re-search-forward ";\\|\\<\\(then\\|loop\\|report\\|severity\\|is\\)\\>" proc-end t))
+                ;; if condition
+                ((vhdl-re-search-forward "^\\s-*if\\>" proc-end t)
+                 (vhdl-re-search-forward "\\<then\\>" proc-end t))
+                ;; elsif condition
+                ((vhdl-re-search-forward "\\<elsif\\>" proc-end t)
+                 (vhdl-re-search-forward "\\<then\\>" proc-end t))
+                ;; while loop condition
+                ((vhdl-re-search-forward "^\\s-*while\\>" proc-end t)
+                 (vhdl-re-search-forward "\\<loop\\>" proc-end t))
+                ;; exit/next condition
+                ((vhdl-re-search-forward "\\<\\(exit\\|next\\)\\s-+\\w+\\s-+when\\>" proc-end t)
+                 (vhdl-re-search-forward ";" proc-end t))
+                ;; assert condition
+                ((vhdl-re-search-forward "\\<assert\\>" proc-end t)
+                 (vhdl-re-search-forward "\\(\\<report\\>\\|\\<severity\\>\\|;\\)" proc-end t))
+                ;; case expression
+                ((vhdl-re-search-forward "^\\s-*case\\>" proc-end t)
+                 (vhdl-re-search-forward "\\<is\\>" proc-end t))
+                ;; parameter list of procedure call, array index
+                ((and (re-search-forward "^\\s-*\\(\\w\\|\\.\\)+[ \t\n\r\f]*(" proc-end t)
+                      (1- (point)))
+                 (progn (backward-char) (forward-sexp)
+                        (while (looking-at "(") (forward-sexp)) (point)))))
+             name field read-list sens-list signal-list tmp-list
+             sens-beg sens-end beg end margin)
+          ;; scan for signals in old sensitivity list
+          (goto-char proc-beg)
+          (vhdl-re-search-forward "\\<process\\>" proc-mid t)
+          (if (not (looking-at "[ \t\n\r\f]*("))
+              (setq sens-beg (point))
+            (setq sens-beg (vhdl-re-search-forward "\\([ \t\n\r\f]*\\)([ \t\n\r\f]*" nil t))
+            (goto-char (match-end 1))
+            (forward-sexp)
+            (setq sens-end (1- (point)))
+            (goto-char sens-beg)
+            (while (and (vhdl-re-search-forward "\\(\\w+\\)" sens-end t)
+                        (setq sens-list
+                              (cons (downcase (match-string 0)) sens-list))
+                        (vhdl-re-search-forward "\\s-*,\\s-*" sens-end t))))
+          (setq signal-list (append visible-list sens-list))
+          ;; search for sequential parts
+          (goto-char proc-mid)
+          (while (setq beg (re-search-forward "^\\s-*\\(els\\)?if\\>" proc-end t))
+            (setq end (vhdl-re-search-forward "\\<then\\>" proc-end t))
+            (when (vhdl-re-search-backward "\\('event\\|\\<\\(falling\\|rising\\)_edge\\)\\>" beg t)
+              (goto-char end)
+              (backward-word-strictly 1)
+              (vhdl-forward-sexp)
+              (push (cons end (point)) seq-region-list)
+              (beginning-of-line)))
+          ;; scan for signals read in process
+          (while scan-regions-list
+            (goto-char proc-mid)
+            (while (and (setq beg (eval (nth 0 (car scan-regions-list))))
+                        (setq end (eval (nth 1 (car scan-regions-list)))))
+              (goto-char beg)
+              (unless (or (vhdl-in-literal)
+                          (and seq-region-list
+                               (let ((tmp-list seq-region-list))
+                                 (while (and tmp-list
+                                             (< (point) (caar tmp-list)))
+                                   (setq tmp-list (cdr tmp-list)))
+                                 (and tmp-list (< (point) (cdar tmp-list))))))
+                (while (vhdl-re-search-forward "[^'\".]\\<\\([a-zA-Z]\\w*\\)\\(\\(\\.\\w+\\|[ \t\n\r\f]*([^)]*)\\)*\\)[ \t\n\r\f]*\\('\\(\\w+\\)\\|\\(=>\\)\\)?" end t)
+                  (setq name (match-string 1))
+                  ;; get array index range
+                  (when vhdl-array-index-record-field-in-sensitivity-list
+                    (setq field (match-string 2))
+                    ;; not use if it includes a variable name
+                    (save-match-data
+                      (setq tmp-list visible-list)
+                      (while (and field tmp-list)
+                        (when (string-match
+                               (concat "\\<" (car tmp-list) "\\>") field)
+                          (setq field nil))
+                        (setq tmp-list (cdr tmp-list)))))
+                  (when (and (not (match-string 6)) ; not when formal parameter
+                             (not (and (match-string 5) ; not event attribute
+                                       (not (member (downcase (match-string 5))
+                                                    '("event" "last_event" "transaction")))))
+                             (member (downcase name) signal-list))
+                    ;; not add if name or name+field already exists
+                    (unless
+                        (or (member-ignore-case name read-list)
+                            (member-ignore-case (concat name field) read-list))
+                      (push (concat name field) read-list))
+                    (setq tmp-list read-list)
+                    ;; remove existing name+field if name is added
+                    (save-match-data
+                      (while tmp-list
+                        (when (string-match (concat "^" name field "[(.]")
+                                            (car tmp-list))
+                          (setq read-list (delete (car tmp-list) read-list)))
+                        (setq tmp-list (cdr tmp-list)))))
+                  (goto-char (match-end 1)))))
+            (setq scan-regions-list (cdr scan-regions-list)))
+          ;; update sensitivity list
+          (goto-char sens-beg)
+          (if sens-end
+              (delete-region sens-beg sens-end)
+            (when read-list
+              (insert " ()") (backward-char)))
+          (setq read-list (sort read-list 'string<))
+          (when read-list
+            (setq margin (current-column))
+            (insert (car read-list))
+            (setq read-list (cdr read-list))
+            (while read-list
+              (insert ",")
+              (if (<= (+ (current-column) (length (car read-list)) 2)
+                      end-comment-column)
+                  (insert " ")
+                (insert "\n") (indent-to margin))
+              (insert (car read-list))
+              (setq read-list (cdr read-list)))))))))
 
 (defun vhdl-get-visible-signals ()
   "Get all signals visible in the current block."
@@ -8541,88 +8544,88 @@ buffer."
      ;; get entity name
      (save-excursion
        (unless (and (re-search-backward "^\\(architecture\\s-+\\w+\\s-+of\\s-+\\(\\w+\\)\\|end\\)\\>" nil t)
-		    (not (equal "END" (upcase (match-string 1))))
-		    (setq entity-name (match-string 2)))
-	 (error "ERROR:  Not within an architecture")))
+                    (not (equal "END" (upcase (match-string 1))))
+                    (setq entity-name (match-string 2)))
+         (error "ERROR:  Not within an architecture")))
      ;; search for signals declared in entity port clause
      (save-excursion
        (goto-char (point-min))
        (unless (re-search-forward (concat "^entity\\s-+" entity-name "\\>") nil t)
-	 (setq file-name
-	       (concat (vhdl-replace-string vhdl-entity-file-name entity-name t)
-		       "." (file-name-extension (buffer-file-name)))))
+         (setq file-name
+               (concat (vhdl-replace-string vhdl-entity-file-name entity-name t)
+                       "." (file-name-extension (buffer-file-name)))))
        (vhdl-visit-file
-	file-name t
-	(vhdl-prepare-search-2
-	 (goto-char (point-min))
-	 (if (not (re-search-forward (concat "^entity\\s-+" entity-name "\\>") nil t))
-	     (error "ERROR:  Entity \"%s\" not found:\n  --> see option `vhdl-entity-file-name'" entity-name)
-	   (when (setq beg (vhdl-re-search-forward
-			    "\\<port[ \t\n\r\f]*("
-			    (save-excursion
-			      (re-search-forward "^end\\>" nil t)) t))
-	     (setq end (save-excursion
-			 (backward-char) (forward-sexp) (point)))
-	     (vhdl-forward-syntactic-ws)
-	     (while (< (point) end)
-	       (when (looking-at "signal[ \t\n\r\f]+")
-		 (goto-char (match-end 0)))
-	       (while (looking-at "\\([a-zA-Z]\\w*\\)[ \t\n\r\f,]+")
-		 (setq signal-list
-		       (cons (downcase (match-string 1)) signal-list))
-		 (goto-char (match-end 0))
-		 (vhdl-forward-syntactic-ws))
-	       (re-search-forward ";" end 1)
-	       (vhdl-forward-syntactic-ws)))))))
+        file-name t
+        (vhdl-prepare-search-2
+         (goto-char (point-min))
+         (if (not (re-search-forward (concat "^entity\\s-+" entity-name "\\>") nil t))
+             (error "ERROR:  Entity \"%s\" not found:\n  --> see option `vhdl-entity-file-name'" entity-name)
+           (when (setq beg (vhdl-re-search-forward
+                            "\\<port[ \t\n\r\f]*("
+                            (save-excursion
+                              (re-search-forward "^end\\>" nil t)) t))
+             (setq end (save-excursion
+                         (backward-char) (forward-sexp) (point)))
+             (vhdl-forward-syntactic-ws)
+             (while (< (point) end)
+               (when (looking-at "signal[ \t\n\r\f]+")
+                 (goto-char (match-end 0)))
+               (while (looking-at "\\([a-zA-Z]\\w*\\)[ \t\n\r\f,]+")
+                 (setq signal-list
+                       (cons (downcase (match-string 1)) signal-list))
+                 (goto-char (match-end 0))
+                 (vhdl-forward-syntactic-ws))
+               (re-search-forward ";" end 1)
+               (vhdl-forward-syntactic-ws)))))))
      ;; search for signals declared in architecture declarative part
      (save-excursion
        (if (not (and (setq beg (re-search-backward "^\\(architecture\\s-+\\w+\\s-+of\\s-+\\(\\w+\\)\\|end\\)\\>" nil t))
-		     (not (equal "END" (upcase (match-string 1))))
-		     (setq end (re-search-forward "^begin\\>" nil t))))
-	   (error "ERROR:  No architecture declarative part found")
-	 ;; scan for all declared signal and alias names
-	 (goto-char beg)
-	 (while (re-search-forward "^\\s-*\\(\\(signal\\)\\|alias\\)\\>" end t)
-	   (when (= 0 (nth 0 (parse-partial-sexp beg (point))))
-	     (if (match-string 2)
-		 ;; scan signal name
-		 (while (looking-at "[ \t\n\r\f,]+\\([a-zA-Z]\\w*\\)")
-		   (setq signal-list
-			 (cons (downcase (match-string 1)) signal-list))
-		   (goto-char (match-end 0)))
-	       ;; scan alias name, check is alias of (declared) signal
-	       (when (and (looking-at "[ \t\n\r\f]+\\([a-zA-Z]\\w*\\)[^;]*\\<is[ \t\n\r\f]+\\([a-zA-Z]\\w*\\)")
-			  (member (downcase (match-string 2)) signal-list))
-		 (setq signal-list
-		       (cons (downcase (match-string 1)) signal-list))
-		 (goto-char (match-end 0))))
-	     (setq beg (point))))))
+                     (not (equal "END" (upcase (match-string 1))))
+                     (setq end (re-search-forward "^begin\\>" nil t))))
+           (error "ERROR:  No architecture declarative part found")
+         ;; scan for all declared signal and alias names
+         (goto-char beg)
+         (while (re-search-forward "^\\s-*\\(\\(signal\\)\\|alias\\)\\>" end t)
+           (when (= 0 (nth 0 (parse-partial-sexp beg (point))))
+             (if (match-string 2)
+                 ;; scan signal name
+                 (while (looking-at "[ \t\n\r\f,]+\\([a-zA-Z]\\w*\\)")
+                   (setq signal-list
+                         (cons (downcase (match-string 1)) signal-list))
+                   (goto-char (match-end 0)))
+               ;; scan alias name, check is alias of (declared) signal
+               (when (and (looking-at "[ \t\n\r\f]+\\([a-zA-Z]\\w*\\)[^;]*\\<is[ \t\n\r\f]+\\([a-zA-Z]\\w*\\)")
+                          (member (downcase (match-string 2)) signal-list))
+                 (setq signal-list
+                       (cons (downcase (match-string 1)) signal-list))
+                 (goto-char (match-end 0))))
+             (setq beg (point))))))
      ;; search for signals declared in surrounding block declarative parts
      (save-excursion
        (while (and (progn (while (and (setq beg (re-search-backward "^\\s-*\\(\\w+\\s-*:\\s-*\\(block\\|\\(for\\|if\\).*\\<generate\\>\\)\\|\\(end\\)\\s-+block\\)\\>" nil t))
-				      (match-string 4))
-			    (goto-char (match-end 4))
-			    (vhdl-backward-sexp)
-			    (re-search-backward "^\\s-*\\w+\\s-*:\\s-*\\(block\\|generate\\)\\>" nil t))
-			  beg)
-		   (setq end (re-search-forward "^\\s-*begin\\>" nil t)))
-	 ;; scan for all declared signal names
-	 (goto-char beg)
-	 (while (re-search-forward "^\\s-*\\(\\(signal\\)\\|alias\\)\\>" end t)
-	   (when (= 0 (nth 0 (parse-partial-sexp beg (point))))
-	     (if (match-string 2)
-		 ;; scan signal name
-		 (while (looking-at "[ \t\n,]+\\(\\w+\\)")
-		   (setq signal-list
-			 (cons (downcase (match-string 1)) signal-list))
-		   (goto-char (match-end 0)))
-	       ;; scan alias name, check is alias of (declared) signal
-	       (when (and (looking-at "[ \t\n]+\\(\\w+\\)[^;]*\\<is[ \t\n]+\\(\\w+\\)")
-			  (member (downcase (match-string 2)) signal-list))
-		 (setq signal-list
-		       (cons (downcase (match-string 1)) signal-list))
-		 (goto-char (match-end 0))))))
-	 (goto-char beg)))
+                                      (match-string 4))
+                            (goto-char (match-end 4))
+                            (vhdl-backward-sexp)
+                            (re-search-backward "^\\s-*\\w+\\s-*:\\s-*\\(block\\|generate\\)\\>" nil t))
+                          beg)
+                   (setq end (re-search-forward "^\\s-*begin\\>" nil t)))
+         ;; scan for all declared signal names
+         (goto-char beg)
+         (while (re-search-forward "^\\s-*\\(\\(signal\\)\\|alias\\)\\>" end t)
+           (when (= 0 (nth 0 (parse-partial-sexp beg (point))))
+             (if (match-string 2)
+                 ;; scan signal name
+                 (while (looking-at "[ \t\n,]+\\(\\w+\\)")
+                   (setq signal-list
+                         (cons (downcase (match-string 1)) signal-list))
+                   (goto-char (match-end 0)))
+               ;; scan alias name, check is alias of (declared) signal
+               (when (and (looking-at "[ \t\n]+\\(\\w+\\)[^;]*\\<is[ \t\n]+\\(\\w+\\)")
+                          (member (downcase (match-string 2)) signal-list))
+                 (setq signal-list
+                       (cons (downcase (match-string 1)) signal-list))
+                 (goto-char (match-end 0))))))
+         (goto-char beg)))
      signal-list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -8646,38 +8649,38 @@ buffer."
   (save-excursion
     (vhdl-prepare-search-2
      (let ((pos (point))
-	   beg end)
+           beg end)
        (end-of-line)
        (if (not (re-search-backward "^\\s-*\\(generic\\|port\\)[ \t\n\r\f]*(" nil t))
-	   (error "ERROR:  Not within a generic/port clause")
-	 ;; search for end of clause
-	 (goto-char (match-end 0))
-	 (setq beg (1- (point)))
-	 (vhdl-forward-syntactic-ws)
-	 (while (looking-at "\\w+\\([ \t\n\r\f]*,[ \t\n\r\f]*\\w+\\)*[ \t\n\r\f]*:[ \t\n\r\f]*\\w+[^;]*;")
-	   (goto-char (1- (match-end 0)))
-	   (setq end (point-marker))
-	   (forward-char)
-	   (vhdl-forward-syntactic-ws))
-	 (goto-char end)
-	 (when (> pos (point-at-eol))
-	   (error "ERROR:  Not within a generic/port clause"))
-	 ;; delete closing parenthesis on separate line (not supported style)
-	 (when (save-excursion (beginning-of-line) (looking-at "^\\s-*);"))
-	   (vhdl-line-kill)
-	   (vhdl-backward-syntactic-ws)
-	   (setq end (point-marker))
-	   (insert ";"))
-	 ;; delete superfluous parentheses
-	 (while (progn (goto-char beg)
-		       (condition-case () (forward-sexp)
-			 (error (goto-char (point-max))))
-		       (< (point) end))
-	   (delete-char -1))
-	 ;; add closing parenthesis
-	 (when (> (point) end)
-	   (goto-char end)
-	   (insert ")")))))))
+           (error "ERROR:  Not within a generic/port clause")
+         ;; search for end of clause
+         (goto-char (match-end 0))
+         (setq beg (1- (point)))
+         (vhdl-forward-syntactic-ws)
+         (while (looking-at "\\w+\\([ \t\n\r\f]*,[ \t\n\r\f]*\\w+\\)*[ \t\n\r\f]*:[ \t\n\r\f]*\\w+[^;]*;")
+           (goto-char (1- (match-end 0)))
+           (setq end (point-marker))
+           (forward-char)
+           (vhdl-forward-syntactic-ws))
+         (goto-char end)
+         (when (> pos (point-at-eol))
+           (error "ERROR:  Not within a generic/port clause"))
+         ;; delete closing parenthesis on separate line (not supported style)
+         (when (save-excursion (beginning-of-line) (looking-at "^\\s-*);"))
+           (vhdl-line-kill)
+           (vhdl-backward-syntactic-ws)
+           (setq end (point-marker))
+           (insert ";"))
+         ;; delete superfluous parentheses
+         (while (progn (goto-char beg)
+                       (condition-case () (forward-sexp)
+                         (error (goto-char (point-max))))
+                       (< (point) end))
+           (delete-char -1))
+         ;; add closing parenthesis
+         (when (> (point) end)
+           (goto-char end)
+           (insert ")")))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -8730,99 +8733,99 @@ is omitted or nil."
   (if (and vhdl-stutter-mode (not (vhdl-in-literal)))
       (cond
        ((and abbrev-start-location (= abbrev-start-location (point)))
-	(setq abbrev-start-location nil)
-	(goto-char last-abbrev-location)
-	(beginning-of-line nil)
-	(vhdl-comment-display))
-       ((/= (preceding-char) ?-)	; standard dash (minus)
-	(self-insert-command count))
+        (setq abbrev-start-location nil)
+        (goto-char last-abbrev-location)
+        (beginning-of-line nil)
+        (vhdl-comment-display))
+       ((/= (preceding-char) ?-)        ; standard dash (minus)
+        (self-insert-command count))
        (t (self-insert-command count)
-	  (message "Enter '-' for horiz. line, 'CR' for commenting-out code, else enter comment")
-	  (let ((next-input (read-char)))
-	    (if (= next-input ?-)	; triple dash
-		(progn
-		  (vhdl-comment-display-line)
-		  (message
-		   "Enter '-' for display comment, else continue coding")
-		  (let ((next-input (read-char)))
-		    (if (= next-input ?-) ; four dashes
-			(vhdl-comment-display t)
-		      (push (vhdl-character-to-event next-input)
+          (message "Enter '-' for horiz. line, 'CR' for commenting-out code, else enter comment")
+          (let ((next-input (read-char)))
+            (if (= next-input ?-)       ; triple dash
+                (progn
+                  (vhdl-comment-display-line)
+                  (message
+                   "Enter '-' for display comment, else continue coding")
+                  (let ((next-input (read-char)))
+                    (if (= next-input ?-) ; four dashes
+                        (vhdl-comment-display t)
+                      (push (vhdl-character-to-event next-input)
                                         ; pushback the char
                             unread-command-events))))
               (push (vhdl-character-to-event next-input) ; pushback the char
                     unread-command-events)
-	      (vhdl-comment-insert)))))
+              (vhdl-comment-insert)))))
     (self-insert-command count)))
 
 (defun vhdl-electric-open-bracket (count) "`[' --> `(', `([' --> `['"
   (interactive "p")
   (if (and vhdl-stutter-mode (= count 1) (not (vhdl-in-literal)))
       (if (= (preceding-char) ?\()
-	  (progn (delete-char -1) (insert-char ?\[ 1))
-	(insert-char ?\( 1))
+          (progn (delete-char -1) (insert-char ?\[ 1))
+        (insert-char ?\( 1))
     (self-insert-command count)))
 
 (defun vhdl-electric-close-bracket (count) "`]' --> `)', `)]' --> `]'"
   (interactive "p")
   (if (and vhdl-stutter-mode (= count 1) (not (vhdl-in-literal)))
       (progn
-	(if (= (preceding-char) ?\))
-	    (progn (delete-char -1) (insert-char ?\] 1))
-	  (insert-char ?\) 1))
-	(blink-matching-open))
+        (if (= (preceding-char) ?\))
+            (progn (delete-char -1) (insert-char ?\] 1))
+          (insert-char ?\) 1))
+        (blink-matching-open))
     (self-insert-command count)))
 
 (defun vhdl-electric-quote (count) "\\='\\=' --> \""
   (interactive "p")
   (if (and vhdl-stutter-mode (= count 1) (not (vhdl-in-literal)))
       (if (= (preceding-char) vhdl-last-input-event)
-	  (progn (delete-char -1) (insert-char ?\" 1))
-	(insert-char ?\' 1))
+          (progn (delete-char -1) (insert-char ?\" 1))
+        (insert-char ?\' 1))
     (self-insert-command count)))
 
 (defun vhdl-electric-semicolon (count) "`;;' --> ` : ', `: ;' --> ` := '"
   (interactive "p")
   (if (and vhdl-stutter-mode (= count 1) (not (vhdl-in-literal)))
       (cond ((= (preceding-char) vhdl-last-input-event)
-	     (progn (delete-char -1)
-		    (unless (eq (preceding-char) ? ) (insert " "))
-		    (insert ": ")
-		    (setq this-command 'vhdl-electric-colon)))
-	    ((and
-	      (eq last-command 'vhdl-electric-colon) (= (preceding-char) ? ))
-	     (progn (delete-char -1) (insert "= ")))
-	    (t (insert-char ?\; 1)))
+             (progn (delete-char -1)
+                    (unless (eq (preceding-char) ? ) (insert " "))
+                    (insert ": ")
+                    (setq this-command 'vhdl-electric-colon)))
+            ((and
+              (eq last-command 'vhdl-electric-colon) (= (preceding-char) ? ))
+             (progn (delete-char -1) (insert "= ")))
+            (t (insert-char ?\; 1)))
     (self-insert-command count)))
 
 (defun vhdl-electric-comma (count) "`,,' --> ` <= '"
   (interactive "p")
   (if (and vhdl-stutter-mode (= count 1) (not (vhdl-in-literal)))
       (cond ((= (preceding-char) vhdl-last-input-event)
-	     (progn (delete-char -1)
-		    (unless (eq (preceding-char) ? ) (insert " "))
-		    (insert "<= ")))
-	    (t (insert-char ?\, 1)))
+             (progn (delete-char -1)
+                    (unless (eq (preceding-char) ? ) (insert " "))
+                    (insert "<= ")))
+            (t (insert-char ?\, 1)))
     (self-insert-command count)))
 
 (defun vhdl-electric-period (count) "`..' --> ` => '"
   (interactive "p")
   (if (and vhdl-stutter-mode (= count 1) (not (vhdl-in-literal)))
       (cond ((= (preceding-char) vhdl-last-input-event)
-	     (progn (delete-char -1)
-		    (unless (eq (preceding-char) ? ) (insert " "))
-		    (insert "=> ")))
-	    (t (insert-char ?\. 1)))
+             (progn (delete-char -1)
+                    (unless (eq (preceding-char) ? ) (insert " "))
+                    (insert "=> ")))
+            (t (insert-char ?\. 1)))
     (self-insert-command count)))
 
 (defun vhdl-electric-equal (count) "`==' --> ` == '"
   (interactive "p")
   (if (and vhdl-stutter-mode (= count 1) (not (vhdl-in-literal)))
       (cond ((= (preceding-char) vhdl-last-input-event)
-	     (progn (delete-char -1)
-		    (unless (eq (preceding-char) ? ) (insert " "))
-		    (insert "== ")))
-	    (t (insert-char ?\= 1)))
+             (progn (delete-char -1)
+                    (unless (eq (preceding-char) ? ) (insert " "))
+                    (insert "== ")))
+            (t (insert-char ?\= 1)))
     (self-insert-command count)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -8842,9 +8845,9 @@ is omitted or nil."
     (when (vhdl-template-field "name" nil t start (point))
       (insert " : ")
       (unless (vhdl-template-field
-	       (concat "[type" (and (vhdl-standard-p 'ams) " or nature") "]")
-	       nil t)
-	(delete-char -3))
+               (concat "[type" (and (vhdl-standard-p 'ams) " or nature") "]")
+               nil t)
+        (delete-char -3))
       (vhdl-insert-keyword " IS ")
       (vhdl-template-field "name" ";")
       (vhdl-comment-insert-inline))))
@@ -8853,17 +8856,17 @@ is omitted or nil."
   "Insert architecture."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	arch-name)
+        (start (point))
+        arch-name)
     (vhdl-insert-keyword "ARCHITECTURE ")
     (when (setq arch-name
-		(vhdl-template-field "name" nil t start (point)))
+                (vhdl-template-field "name" nil t start (point)))
       (vhdl-insert-keyword " OF ")
       (if (save-excursion
-	    (vhdl-prepare-search-1
-	     (vhdl-re-search-backward "\\<entity \\(\\w+\\) is\\>" nil t)))
-	  (insert (match-string 1))
-	(vhdl-template-field "entity name"))
+            (vhdl-prepare-search-1
+             (vhdl-re-search-backward "\\<entity \\(\\w+\\) is\\>" nil t)))
+          (insert (match-string 1))
+        (vhdl-template-field "entity name"))
       (vhdl-insert-keyword " IS\n")
       (vhdl-template-begin-end
        (unless (vhdl-standard-p '87) "ARCHITECTURE") arch-name margin
@@ -8875,7 +8878,7 @@ is omitted or nil."
   (let ((start (point)))
     (vhdl-insert-keyword "ARRAY (")
     (when (or (vhdl-template-field "range" nil (not secondary) start (point))
-	      secondary)
+              secondary)
       (vhdl-insert-keyword ") OF ")
       (vhdl-template-field (if (eq kind 'type) "type" "nature"))
       (vhdl-insert-keyword ";"))))
@@ -8891,18 +8894,18 @@ is omitted or nil."
       (setq start (point))
       (vhdl-insert-keyword " REPORT ")
       (unless (vhdl-template-field "string expression" nil nil nil nil t)
-	(delete-region start (point)))
+        (delete-region start (point)))
       (setq start (point))
       (vhdl-insert-keyword " SEVERITY ")
       (unless (vhdl-template-field "[NOTE | WARNING | ERROR | FAILURE]" nil t)
-	(delete-region start (point)))
+        (delete-region start (point)))
       (insert ";"))))
 
 (defun vhdl-template-attribute ()
   "Insert an attribute declaration or specification."
   (interactive)
   (if (eq (vhdl-decision-query
-	   "attribute" "(d)eclaration or (s)pecification?" t) ?s)
+           "attribute" "(d)eclaration or (s)pecification?" t) ?s)
       (vhdl-template-attribute-spec)
     (vhdl-template-attribute-decl)))
 
@@ -8931,8 +8934,8 @@ is omitted or nil."
   "Insert a block."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	label)
+        (start (point))
+        label)
     (vhdl-insert-keyword ": BLOCK ")
     (goto-char start)
     (when (setq label (vhdl-template-field "label" nil t start (+ (point) 8)))
@@ -8940,8 +8943,8 @@ is omitted or nil."
       (forward-char 1)
       (insert "(")
       (if (vhdl-template-field "[guard expression]" nil t)
-	  (insert ")")
-	(delete-char -2))
+          (insert ")")
+        (delete-char -2))
       (unless (vhdl-standard-p '87) (vhdl-insert-keyword " IS"))
       (insert "\n")
       (vhdl-template-begin-end "BLOCK" label margin)
@@ -8951,7 +8954,7 @@ is omitted or nil."
   "Insert a block configuration statement."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point)))
+        (start (point)))
     (vhdl-insert-keyword "FOR ")
     (when (vhdl-template-field "block name" nil t start (point))
       (vhdl-insert-keyword "\n\n")
@@ -8968,13 +8971,13 @@ is omitted or nil."
     (setq position (point))
     (insert " ")
     (while (or
-	    (progn (vhdl-insert-keyword "FOR ")
-		   (if (vhdl-template-field "[quantity name]" " USE " t)
-		       (progn (vhdl-template-field "quantity name" " => ") t)
-		     (delete-region (point)
-				    (progn (forward-word-strictly -1) (point)))
-		     nil))
-	    (vhdl-template-field "[quantity name]" " => " t))
+            (progn (vhdl-insert-keyword "FOR ")
+                   (if (vhdl-template-field "[quantity name]" " USE " t)
+                       (progn (vhdl-template-field "quantity name" " => ") t)
+                     (delete-region (point)
+                                    (progn (forward-word-strictly -1) (point)))
+                     nil))
+            (vhdl-template-field "[quantity name]" " => " t))
       (vhdl-template-field "expression")
       (setq position (point))
       (insert ", "))
@@ -8982,12 +8985,12 @@ is omitted or nil."
     (unless (vhdl-sequential-statement-p)
       (vhdl-insert-keyword " ON ")
       (if (vhdl-template-field "[sensitivity list]" nil t)
-	  (setq position (point))
-	(delete-region position (point))))
+          (setq position (point))
+        (delete-region position (point))))
     (vhdl-insert-keyword " WHEN ")
     (when vhdl-conditions-in-parenthesis (insert "("))
     (if (vhdl-template-field "[condition]" nil t)
-	(when vhdl-conditions-in-parenthesis (insert ")"))
+        (when vhdl-conditions-in-parenthesis (insert ")"))
       (delete-region position (point)))
     (insert ";")))
 
@@ -8995,12 +8998,12 @@ is omitted or nil."
   "Insert a case statement."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	label)
+        (start (point))
+        label)
     (unless kind (setq kind (if (or (vhdl-sequential-statement-p)
-				    (not (vhdl-standard-p 'ams))) 'is 'use)))
+                                    (not (vhdl-standard-p 'ams))) 'is 'use)))
     (if (or (not (eq vhdl-optional-labels 'all)) (vhdl-standard-p '87))
-	(vhdl-insert-keyword "CASE ")
+        (vhdl-insert-keyword "CASE ")
       (vhdl-insert-keyword ": CASE ")
       (goto-char start)
       (setq label (vhdl-template-field "[label]" nil t))
@@ -9017,10 +9020,10 @@ is omitted or nil."
       (indent-to (+ margin vhdl-basic-offset))
       (vhdl-insert-keyword "WHEN ")
       (let ((position (point)))
-	(insert " => ;\n")
-	(indent-to (+ margin vhdl-basic-offset))
-	(vhdl-insert-keyword "WHEN OTHERS => null;")
-	(goto-char position)))))
+        (insert " => ;\n")
+        (indent-to (+ margin vhdl-basic-offset))
+        (vhdl-insert-keyword "WHEN OTHERS => null;")
+        (goto-char position)))))
 
 (defun vhdl-template-case-is ()
   "Insert a sequential case statement."
@@ -9042,20 +9045,20 @@ is omitted or nil."
 since these are almost equivalent)."
   (interactive)
   (let ((margin (current-indentation))
-	(result (vhdl-template-configuration-spec t)))
+        (result (vhdl-template-configuration-spec t)))
     (when result
       (insert "\n")
       (indent-to margin)
       (vhdl-insert-keyword "END FOR;")
       (when (eq result 'no-use)
-	(end-of-line -0)))))
+        (end-of-line -0)))))
 
 (defun vhdl-template-component-decl ()
   "Insert a component declaration."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	name end-column)
+        (start (point))
+        name end-column)
     (vhdl-insert-keyword "COMPONENT ")
     (when (setq name (vhdl-template-field "name" nil t start (point)))
       (unless (vhdl-standard-p '87) (vhdl-insert-keyword " IS"))
@@ -9078,41 +9081,41 @@ since these are almost equivalent)."
   "Insert a component instantiation statement."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	unit position)
+        (start (point))
+        unit position)
     (when (vhdl-template-field "instance label" nil t start (point))
       (insert ": ")
       (if (not (vhdl-use-direct-instantiation))
-	  (vhdl-template-field "component name")
-	;; direct instantiation
-	(setq unit (vhdl-template-field
-		    "[COMPONENT | ENTITY | CONFIGURATION]" " " t))
-	(setq unit (upcase (or unit "")))
-	(cond ((equal unit "ENTITY")
-	       (let ((begin (point)))
-		 (vhdl-template-field "library name" "." t begin (point) nil
-				    (vhdl-work-library))
-	       (vhdl-template-field "entity name" "(")
-	       (if (vhdl-template-field "[architecture name]" nil t)
-		   (insert ")")
-		   (delete-char -1))))
-	      ((equal unit "CONFIGURATION")
-	       (vhdl-template-field "library name" "." nil nil nil nil
-				    (vhdl-work-library))
-	       (vhdl-template-field "configuration name"))
-	      (t (vhdl-template-field "component name"))))
+          (vhdl-template-field "component name")
+        ;; direct instantiation
+        (setq unit (vhdl-template-field
+                    "[COMPONENT | ENTITY | CONFIGURATION]" " " t))
+        (setq unit (upcase (or unit "")))
+        (cond ((equal unit "ENTITY")
+               (let ((begin (point)))
+                 (vhdl-template-field "library name" "." t begin (point) nil
+                                    (vhdl-work-library))
+               (vhdl-template-field "entity name" "(")
+               (if (vhdl-template-field "[architecture name]" nil t)
+                   (insert ")")
+                   (delete-char -1))))
+              ((equal unit "CONFIGURATION")
+               (vhdl-template-field "library name" "." nil nil nil nil
+                                    (vhdl-work-library))
+               (vhdl-template-field "configuration name"))
+              (t (vhdl-template-field "component name"))))
       (insert "\n")
       (indent-to (+ margin vhdl-basic-offset))
       (setq position (point))
       (vhdl-insert-keyword "GENERIC ")
       (when (vhdl-template-map position t t)
-	(insert "\n")
-	(indent-to (+ margin vhdl-basic-offset)))
+        (insert "\n")
+        (indent-to (+ margin vhdl-basic-offset)))
       (setq position (point))
       (vhdl-insert-keyword "PORT ")
       (unless (vhdl-template-map position t t)
-	(delete-region (line-beginning-position) (point))
-	(delete-char -1))
+        (delete-region (line-beginning-position) (point))
+        (delete-char -1))
       (insert ";"))))
 
 (defun vhdl-template-conditional-signal-asst ()
@@ -9121,23 +9124,23 @@ since these are almost equivalent)."
   (when (vhdl-template-field "target signal")
     (insert " <= ")
     (let ((margin (current-column))
-	  (start (point))
-	  position)
+          (start (point))
+          position)
       (vhdl-template-field "waveform")
       (setq position (point))
       (vhdl-insert-keyword " WHEN ")
       (when vhdl-conditions-in-parenthesis (insert "("))
       (while (and (vhdl-template-field "[condition]" nil t)
-		  (progn
-		    (when vhdl-conditions-in-parenthesis (insert ")"))
-		    (setq position (point))
-		    (vhdl-insert-keyword " ELSE")
-		    (insert "\n")
-		    (indent-to margin)
-		    (vhdl-template-field "[waveform]" nil t)))
-	(setq position (point))
-	(vhdl-insert-keyword " WHEN ")
-	(when vhdl-conditions-in-parenthesis (insert "(")))
+                  (progn
+                    (when vhdl-conditions-in-parenthesis (insert ")"))
+                    (setq position (point))
+                    (vhdl-insert-keyword " ELSE")
+                    (insert "\n")
+                    (indent-to margin)
+                    (vhdl-template-field "[waveform]" nil t)))
+        (setq position (point))
+        (vhdl-insert-keyword " WHEN ")
+        (when vhdl-conditions-in-parenthesis (insert "(")))
       (delete-region position (point))
       (insert ";")
       (when vhdl-auto-align (vhdl-align-region-groups start (point) 1)))))
@@ -9149,16 +9152,16 @@ a configuration declaration if not within a design unit."
   (interactive)
   (vhdl-prepare-search-1
    (cond
-    ((and (save-excursion		; architecture body
-	    (re-search-backward "^\\(architecture\\|end\\)\\>" nil t))
-	  (equal "ARCHITECTURE" (upcase (match-string 1))))
+    ((and (save-excursion               ; architecture body
+            (re-search-backward "^\\(architecture\\|end\\)\\>" nil t))
+          (equal "ARCHITECTURE" (upcase (match-string 1))))
      (vhdl-template-configuration-spec))
-    ((and (save-excursion		; configuration declaration
-	    (re-search-backward "^\\(configuration\\|end\\)\\>" nil t))
-	  (equal "CONFIGURATION" (upcase (match-string 1))))
+    ((and (save-excursion               ; configuration declaration
+            (re-search-backward "^\\(configuration\\|end\\)\\>" nil t))
+          (equal "CONFIGURATION" (upcase (match-string 1))))
      (if (eq (vhdl-decision-query
-	      "configuration" "(b)lock or (c)omponent configuration?" t) ?c)
-	 (vhdl-template-component-conf)
+              "configuration" "(b)lock or (c)omponent configuration?" t) ?c)
+         (vhdl-template-component-conf)
        (vhdl-template-block-configuration)))
     (t (vhdl-template-configuration-decl))))) ; otherwise
 
@@ -9166,68 +9169,68 @@ a configuration declaration if not within a design unit."
   "Insert a configuration specification."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	aspect position)
+        (start (point))
+        aspect position)
     (vhdl-insert-keyword "FOR ")
     (when (vhdl-template-field "instance names | OTHERS | ALL" " : "
-			       t start (point))
+                               t start (point))
       (vhdl-template-field "component name" "\n")
       (indent-to (+ margin vhdl-basic-offset))
       (setq start (point))
       (vhdl-insert-keyword "USE ")
       (if (and optional-use
-	       (not (setq aspect (vhdl-template-field
-				  "[ENTITY | CONFIGURATION | OPEN]" " " t))))
-	  (progn (delete-region start (point)) 'no-use)
-	(unless optional-use
-	  (setq aspect (vhdl-template-field
-			"ENTITY | CONFIGURATION | OPEN" " ")))
-	(setq aspect (upcase (or aspect "")))
-	(cond ((equal aspect "ENTITY")
-	       (vhdl-template-field "library name" "." nil nil nil nil
-				    (vhdl-work-library))
-	       (vhdl-template-field "entity name" "(")
-	       (if (vhdl-template-field "[architecture name]" nil t)
-		   (insert ")")
-		 (delete-char -1))
-	       (insert "\n")
-	       (indent-to (+ margin (* 2 vhdl-basic-offset)))
-	       (setq position (point))
-	       (vhdl-insert-keyword "GENERIC ")
-	       (when (vhdl-template-map position t t)
-		 (insert "\n")
-		 (indent-to (+ margin (* 2 vhdl-basic-offset))))
-	       (setq position (point))
-	       (vhdl-insert-keyword "PORT ")
-	       (unless (vhdl-template-map position t t)
-		 (delete-region (line-beginning-position) (point))
-		 (delete-char -1))
-	       (insert ";")
-	       t)
-	      ((equal aspect "CONFIGURATION")
-	       (vhdl-template-field "library name" "." nil nil nil nil
-				    (vhdl-work-library))
-	       (vhdl-template-field "configuration name" ";"))
-	      (t (delete-char -1) (insert ";") t))))))
+               (not (setq aspect (vhdl-template-field
+                                  "[ENTITY | CONFIGURATION | OPEN]" " " t))))
+          (progn (delete-region start (point)) 'no-use)
+        (unless optional-use
+          (setq aspect (vhdl-template-field
+                        "ENTITY | CONFIGURATION | OPEN" " ")))
+        (setq aspect (upcase (or aspect "")))
+        (cond ((equal aspect "ENTITY")
+               (vhdl-template-field "library name" "." nil nil nil nil
+                                    (vhdl-work-library))
+               (vhdl-template-field "entity name" "(")
+               (if (vhdl-template-field "[architecture name]" nil t)
+                   (insert ")")
+                 (delete-char -1))
+               (insert "\n")
+               (indent-to (+ margin (* 2 vhdl-basic-offset)))
+               (setq position (point))
+               (vhdl-insert-keyword "GENERIC ")
+               (when (vhdl-template-map position t t)
+                 (insert "\n")
+                 (indent-to (+ margin (* 2 vhdl-basic-offset))))
+               (setq position (point))
+               (vhdl-insert-keyword "PORT ")
+               (unless (vhdl-template-map position t t)
+                 (delete-region (line-beginning-position) (point))
+                 (delete-char -1))
+               (insert ";")
+               t)
+              ((equal aspect "CONFIGURATION")
+               (vhdl-template-field "library name" "." nil nil nil nil
+                                    (vhdl-work-library))
+               (vhdl-template-field "configuration name" ";"))
+              (t (delete-char -1) (insert ";") t))))))
 
 
 (defun vhdl-template-configuration-decl ()
   "Insert a configuration declaration."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	entity-exists string name position)
+        (start (point))
+        entity-exists string name position)
     (vhdl-insert-keyword "CONFIGURATION ")
     (when (setq name (vhdl-template-field "name" nil t start (point)))
       (vhdl-insert-keyword " OF ")
       (save-excursion
-	(vhdl-prepare-search-1
-	 (setq entity-exists (vhdl-re-search-backward
-			      "\\<entity \\(\\w*\\) is\\>" nil t))
-	 (setq string (match-string 1))))
+        (vhdl-prepare-search-1
+         (setq entity-exists (vhdl-re-search-backward
+                              "\\<entity \\(\\w*\\) is\\>" nil t))
+         (setq string (match-string 1))))
       (if (and entity-exists (not (equal string "")))
-	  (insert string)
-	(vhdl-template-field "entity name"))
+          (insert string)
+        (vhdl-template-field "entity name"))
       (vhdl-insert-keyword " IS\n")
       (when (memq vhdl-insert-empty-lines '(unit all)) (insert "\n"))
       (indent-to (+ margin vhdl-basic-offset))
@@ -9237,7 +9240,7 @@ a configuration declaration if not within a design unit."
       (indent-to margin)
       (vhdl-insert-keyword "END ")
       (unless (vhdl-standard-p '87)
-	(vhdl-insert-keyword "CONFIGURATION "))
+        (vhdl-insert-keyword "CONFIGURATION "))
       (insert name ";")
       (goto-char position))))
 
@@ -9245,28 +9248,28 @@ a configuration declaration if not within a design unit."
   "Insert a constant declaration."
   (interactive)
   (let ((start (point))
-	(in-arglist (vhdl-in-argument-list-p)))
+        (in-arglist (vhdl-in-argument-list-p)))
     (vhdl-insert-keyword "CONSTANT ")
     (when (vhdl-template-field "name" nil t start (point))
       (insert " : ")
       (when in-arglist (vhdl-insert-keyword "IN "))
       (vhdl-template-field "type")
       (if in-arglist
-	  (progn (insert ";")
-		 (vhdl-comment-insert-inline))
-	(let ((position (point)))
-	  (insert " := ")
-	  (unless (vhdl-template-field "[initialization]" nil t)
-	    (delete-region position (point)))
-	  (insert ";")
-	  (vhdl-comment-insert-inline))))))
+          (progn (insert ";")
+                 (vhdl-comment-insert-inline))
+        (let ((position (point)))
+          (insert " := ")
+          (unless (vhdl-template-field "[initialization]" nil t)
+            (delete-region position (point)))
+          (insert ";")
+          (vhdl-comment-insert-inline))))))
 
 (defun vhdl-template-context ()
   "Insert a context declaration."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	entity-exists string name position)
+        (start (point))
+        entity-exists string name position)
     (vhdl-insert-keyword "CONTEXT ")
     (when (setq name (vhdl-template-field "name" nil t start (point)))
       (vhdl-insert-keyword " IS\n")
@@ -9278,7 +9281,7 @@ a configuration declaration if not within a design unit."
       (indent-to margin)
       (vhdl-insert-keyword "END ")
       (unless (vhdl-standard-p '87)
-	(vhdl-insert-keyword "CONTEXT "))
+        (vhdl-insert-keyword "CONTEXT "))
       (insert name ";")
       (goto-char position))))
 
@@ -9307,7 +9310,7 @@ a configuration declaration if not within a design unit."
   (let ((start (point)))
     (vhdl-insert-keyword "DISCONNECT ")
     (when (vhdl-template-field "signal names | OTHERS | ALL"
-			       " : " t start (point))
+                               " : " t start (point))
       (vhdl-template-field "type")
       (vhdl-insert-keyword " AFTER ")
       (vhdl-template-field "time expression" ";"))))
@@ -9319,10 +9322,10 @@ a configuration declaration if not within a design unit."
     (vhdl-prepare-search-1
      (vhdl-insert-keyword "ELSE")
      (if (and (save-excursion (vhdl-re-search-backward "\\(\\(\\<when\\>\\)\\|;\\)" nil t))
-	      (match-string 2))
-	 (insert " ")
+              (match-string 2))
+         (insert " ")
        (unless (vhdl-sequential-statement-p)
- 	 (vhdl-insert-keyword " GENERATE"))
+         (vhdl-insert-keyword " GENERATE"))
        (indent-according-to-mode)
        (setq margin (current-indentation))
        (insert "\n")
@@ -9332,25 +9335,25 @@ a configuration declaration if not within a design unit."
   "Insert an elsif statement."
   (interactive)
   (let ((start (point))
-	margin)
+        margin)
     (vhdl-insert-keyword "ELSIF ")
       (when vhdl-conditions-in-parenthesis (insert "("))
       (when (vhdl-template-field "condition" nil t start (point))
-	(when vhdl-conditions-in-parenthesis (insert ")"))
-	(indent-according-to-mode)
-	(setq margin (current-indentation))
-	(vhdl-insert-keyword
+        (when vhdl-conditions-in-parenthesis (insert ")"))
+        (indent-according-to-mode)
+        (setq margin (current-indentation))
+        (vhdl-insert-keyword
        (concat " " (cond ((vhdl-sequential-statement-p) "THEN")
-			 ((vhdl-standard-p 'ams) "USE")
-			 (t "GENERATE")) "\n"))
+                         ((vhdl-standard-p 'ams) "USE")
+                         (t "GENERATE")) "\n"))
       (indent-to (+ margin vhdl-basic-offset)))))
 
 (defun vhdl-template-entity ()
   "Insert an entity."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	name end-column)
+        (start (point))
+        name end-column)
     (vhdl-insert-keyword "ENTITY ")
     (when (setq name (vhdl-template-field "name" nil t start (point)))
       (vhdl-insert-keyword " IS\n\n")
@@ -9364,11 +9367,11 @@ a configuration declaration if not within a design unit."
       (when (memq vhdl-insert-empty-lines '(unit all)) (insert "\n"))
       (indent-to (+ margin vhdl-basic-offset))
       (when (vhdl-template-generic-list t)
-	(when (memq vhdl-insert-empty-lines '(unit all)) (insert "\n")))
+        (when (memq vhdl-insert-empty-lines '(unit all)) (insert "\n")))
       (insert "\n")
       (indent-to (+ margin vhdl-basic-offset))
       (when (vhdl-template-port-list t)
-	(when (memq vhdl-insert-empty-lines '(unit all)) (insert "\n")))
+        (when (memq vhdl-insert-empty-lines '(unit all)) (insert "\n")))
       (beginning-of-line 2)
       (forward-char end-column))))
 
@@ -9378,12 +9381,12 @@ a configuration declaration if not within a design unit."
   (let ((start (point)))
     (vhdl-insert-keyword "EXIT ")
     (if (vhdl-template-field "[loop label]" nil t start (point))
-	(let ((position (point)))
-	  (vhdl-insert-keyword " WHEN ")
-	  (when vhdl-conditions-in-parenthesis (insert "("))
-	  (if (vhdl-template-field "[condition]" nil t)
-	      (when vhdl-conditions-in-parenthesis (insert ")"))
-	    (delete-region position (point))))
+        (let ((position (point)))
+          (vhdl-insert-keyword " WHEN ")
+          (when vhdl-conditions-in-parenthesis (insert "("))
+          (if (vhdl-template-field "[condition]" nil t)
+              (when vhdl-conditions-in-parenthesis (insert ")"))
+            (delete-region position (point))))
       (delete-char -1))
     (insert ";")))
 
@@ -9396,13 +9399,13 @@ a configuration declaration if not within a design unit."
       (insert " : ")
       (vhdl-template-field "type")
       (unless (vhdl-standard-p '87)
-	(vhdl-insert-keyword " OPEN ")
-	(unless (vhdl-template-field "[READ_MODE | WRITE_MODE | APPEND_MODE]"
-				     nil t)
-	  (delete-char -6)))
+        (vhdl-insert-keyword " OPEN ")
+        (unless (vhdl-template-field "[READ_MODE | WRITE_MODE | APPEND_MODE]"
+                                     nil t)
+          (delete-char -6)))
       (vhdl-insert-keyword " IS ")
       (when (vhdl-standard-p '87)
-	(vhdl-template-field "[IN | OUT]" " " t))
+        (vhdl-template-field "[IN | OUT]" " " t))
       (vhdl-template-field "filename-string" nil nil nil nil t)
       (insert ";")
       (vhdl-comment-insert-inline))))
@@ -9416,19 +9419,19 @@ otherwise."
   (interactive)
   (vhdl-prepare-search-1
    (cond
-    ((vhdl-sequential-statement-p)	; sequential statement
+    ((vhdl-sequential-statement-p)      ; sequential statement
      (vhdl-template-for-loop))
-    ((and (save-excursion		; configuration declaration
-	    (re-search-backward "^\\(configuration\\|end\\)\\>" nil t))
-	  (equal "CONFIGURATION" (upcase (match-string 1))))
+    ((and (save-excursion               ; configuration declaration
+            (re-search-backward "^\\(configuration\\|end\\)\\>" nil t))
+          (equal "CONFIGURATION" (upcase (match-string 1))))
      (if (eq (vhdl-decision-query
-	      "for" "(b)lock or (c)omponent configuration?" t) ?c)
-	 (vhdl-template-component-conf)
+              "for" "(b)lock or (c)omponent configuration?" t) ?c)
+         (vhdl-template-component-conf)
        (vhdl-template-block-configuration)))
     ((and (save-excursion
-	    (re-search-backward		; architecture declarative part
-	     "^\\(architecture\\|entity\\|begin\\|end\\)\\>" nil t))
-	  (equal "ARCHITECTURE" (upcase (match-string 1))))
+            (re-search-backward         ; architecture declarative part
+             "^\\(architecture\\|entity\\|begin\\|end\\)\\>" nil t))
+          (equal "ARCHITECTURE" (upcase (match-string 1))))
      (vhdl-template-configuration-spec))
     (t (vhdl-template-for-generate))))) ; concurrent statement
 
@@ -9436,8 +9439,8 @@ otherwise."
   "Insert a for-generate."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	label position)
+        (start (point))
+        label position)
     (vhdl-insert-keyword ": FOR ")
     (setq position (point-marker))
     (goto-char start)
@@ -9452,10 +9455,10 @@ otherwise."
   "Insert a for loop."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	label index)
+        (start (point))
+        label index)
     (if (not (eq vhdl-optional-labels 'all))
-	(vhdl-insert-keyword "FOR ")
+        (vhdl-insert-keyword "FOR ")
       (vhdl-insert-keyword ": FOR ")
       (goto-char start)
       (setq label (vhdl-template-field "[label]" nil t))
@@ -9463,16 +9466,16 @@ otherwise."
       (forward-word-strictly 1)
       (forward-char 1))
     (when (setq index (vhdl-template-field "loop variable"
-					   nil t start (point)))
+                                           nil t start (point)))
       (vhdl-insert-keyword " IN ")
       (vhdl-template-field "range")
       (vhdl-insert-keyword " LOOP\n\n")
       (indent-to margin)
       (vhdl-insert-keyword "END LOOP")
       (if label
-	  (insert " " label ";")
-	(insert ";")
-	(when vhdl-self-insert-comments (insert "  -- " index)))
+          (insert " " label ";")
+        (insert ";")
+        (when vhdl-self-insert-comments (insert "  -- " index)))
       (forward-line -1)
       (indent-to (+ margin vhdl-basic-offset)))))
 
@@ -9480,8 +9483,8 @@ otherwise."
   "Insert a function declaration or body."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	name)
+        (start (point))
+        name)
     (vhdl-insert-keyword "FUNCTION ")
     (when (setq name (vhdl-template-field "name" nil t start (point)))
       (vhdl-template-argument-list t)
@@ -9492,12 +9495,12 @@ otherwise."
       (vhdl-insert-keyword "RETURN ")
       (vhdl-template-field "type")
       (if (if kind (eq kind 'body)
-	    (eq (vhdl-decision-query nil "(d)eclaration or (b)ody?") ?b))
-	  (progn (vhdl-insert-keyword " IS\n")
-		 (vhdl-template-begin-end
-		  (unless (vhdl-standard-p '87) "FUNCTION") name margin)
-		 (vhdl-comment-block))
-	(insert ";")))))
+            (eq (vhdl-decision-query nil "(d)eclaration or (b)ody?") ?b))
+          (progn (vhdl-insert-keyword " IS\n")
+                 (vhdl-template-begin-end
+                  (unless (vhdl-standard-p '87) "FUNCTION") name margin)
+                 (vhdl-comment-block))
+        (insert ";")))))
 
 (defun vhdl-template-function-decl ()
   "Insert a function declaration."
@@ -9522,14 +9525,14 @@ otherwise."
   (let ((start (point)))
     (vhdl-prepare-search-1
      (cond
-      ((and (save-excursion		; entity declaration
-	      (re-search-backward "^\\(entity\\|end\\)\\>" nil t))
-	    (equal "ENTITY" (upcase (match-string 1))))
+      ((and (save-excursion             ; entity declaration
+              (re-search-backward "^\\(entity\\|end\\)\\>" nil t))
+            (equal "ENTITY" (upcase (match-string 1))))
        (vhdl-template-generic-list nil))
       ((or (save-excursion
-	     (or (beginning-of-line)
-		 (looking-at "^\\s-*\\w+\\s-*:\\s-*\\w+")))
-	   (equal 'statement-cont (caar (vhdl-get-syntactic-context))))
+             (or (beginning-of-line)
+                 (looking-at "^\\s-*\\w+\\s-*:\\s-*\\w+")))
+           (equal 'statement-cont (caar (vhdl-get-syntactic-context))))
        (vhdl-insert-keyword "GENERIC ")
        (vhdl-template-map start))
       (t (vhdl-template-generic-list nil t))))))
@@ -9539,8 +9542,8 @@ otherwise."
   (interactive)
   (let ((start (point)))
     (if (eq (vhdl-decision-query
-	     "group" "(d)eclaration or (t)emplate declaration?" t) ?t)
-	(vhdl-template-group-template)
+             "group" "(d)eclaration or (t)emplate declaration?" t) ?t)
+        (vhdl-template-group-template)
       (vhdl-template-group-decl))))
 
 (defun vhdl-template-group-decl ()
@@ -9569,16 +9572,16 @@ otherwise."
   (if (vhdl-sequential-statement-p)
       (vhdl-template-if-then)
     (if (and (vhdl-standard-p 'ams)
-	     (eq (vhdl-decision-query "if" "(g)enerate or (u)se?" t) ?u))
-	(vhdl-template-if-use)
+             (eq (vhdl-decision-query "if" "(g)enerate or (u)se?" t) ?u))
+        (vhdl-template-if-use)
       (vhdl-template-if-generate))))
 
 (defun vhdl-template-if-generate ()
   "Insert an if-generate."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	label position)
+        (start (point))
+        label position)
     (vhdl-insert-keyword ": IF ")
     (setq position (point-marker))
     (goto-char start)
@@ -9593,10 +9596,10 @@ otherwise."
   "Insert a sequential if statement."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	label)
+        (start (point))
+        label)
     (if (or (not (eq vhdl-optional-labels 'all)) (vhdl-standard-p '87))
-	(vhdl-insert-keyword "IF ")
+        (vhdl-insert-keyword "IF ")
       (vhdl-insert-keyword ": IF ")
       (goto-char start)
       (setq label (vhdl-template-field "[label]" nil t))
@@ -9634,22 +9637,22 @@ otherwise."
   "Insert a library specification."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	name end-pos)
+        (start (point))
+        name end-pos)
     (vhdl-insert-keyword "LIBRARY ")
     (when (setq name (vhdl-template-field "names" nil t start (point)))
       (insert ";")
       (unless (string-match "," name)
-	(setq end-pos (point))
-	(insert "\n")
-	(indent-to margin)
-	(vhdl-insert-keyword "USE ")
-	(insert name)
-	(vhdl-insert-keyword "..ALL;")
-	(backward-char 5)
-	(if (vhdl-template-field "package name")
-	    (forward-char 5)
-	  (delete-region end-pos (+ (point) 5)))))))
+        (setq end-pos (point))
+        (insert "\n")
+        (indent-to margin)
+        (vhdl-insert-keyword "USE ")
+        (insert name)
+        (vhdl-insert-keyword "..ALL;")
+        (backward-char 5)
+        (if (vhdl-template-field "package name")
+            (forward-char 5)
+          (delete-region end-pos (+ (point) 5)))))))
 
 (defun vhdl-template-limit ()
   "Insert a limit."
@@ -9657,7 +9660,7 @@ otherwise."
   (let ((start (point)))
     (vhdl-insert-keyword "LIMIT ")
     (when (vhdl-template-field "quantity names | OTHERS | ALL" " : "
-			       t start (point))
+                               t start (point))
       (vhdl-template-field "type")
       (vhdl-insert-keyword " WITH ")
       (vhdl-template-field "real expression" ";"))))
@@ -9667,19 +9670,19 @@ otherwise."
   (interactive)
   (let ((char (vhdl-decision-query nil "(w)hile, (f)or, or (b)are?" t)))
     (cond ((eq char ?w)
-	   (vhdl-template-while-loop))
-	  ((eq char ?f)
-	   (vhdl-template-for-loop))
-	  (t (vhdl-template-bare-loop)))))
+           (vhdl-template-while-loop))
+          ((eq char ?f)
+           (vhdl-template-for-loop))
+          (t (vhdl-template-bare-loop)))))
 
 (defun vhdl-template-bare-loop ()
   "Insert a loop."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	label)
+        (start (point))
+        label)
     (if (not (eq vhdl-optional-labels 'all))
-	(vhdl-insert-keyword "LOOP ")
+        (vhdl-insert-keyword "LOOP ")
       (vhdl-insert-keyword ": LOOP ")
       (goto-char start)
       (setq label (vhdl-template-field "[label]" nil t))
@@ -9697,42 +9700,42 @@ otherwise."
   "Insert a map specification with association list."
   (interactive)
   (let ((start (or start (point)))
-	margin end-pos)
+        margin end-pos)
     (vhdl-insert-keyword "MAP (")
     (if (not vhdl-association-list-with-formals)
-	(if (vhdl-template-field
-	     (concat (and optional "[") "association list" (and optional "]"))
-	     ")" (or (not secondary) optional)
-	     (and (not secondary) start) (point))
-	    t
-	  (if (and optional secondary) (delete-region start (point)))
-	  nil)
+        (if (vhdl-template-field
+             (concat (and optional "[") "association list" (and optional "]"))
+             ")" (or (not secondary) optional)
+             (and (not secondary) start) (point))
+            t
+          (if (and optional secondary) (delete-region start (point)))
+          nil)
       (if vhdl-argument-list-indent
-	  (setq margin (current-column))
-	(setq margin (+ (current-indentation) vhdl-basic-offset))
-	(insert "\n")
-	(indent-to margin))
+          (setq margin (current-column))
+        (setq margin (+ (current-indentation) vhdl-basic-offset))
+        (insert "\n")
+        (indent-to margin))
       (if (vhdl-template-field
-	   (concat (and optional "[") "formal" (and optional "]"))
-	   " => " (or (not secondary) optional)
-	   (and (not secondary) start) (point))
-	  (progn
-	    (vhdl-template-field "actual" ",")
-	    (setq end-pos (point))
-	    (insert "\n")
-	    (indent-to margin)
-	    (while (vhdl-template-field "[formal]" " => " t)
-	      (vhdl-template-field "actual" ",")
-	      (setq end-pos (point))
-	      (insert "\n")
-	      (indent-to margin))
-	    (delete-region end-pos (point))
-	    (delete-char -1)
-	    (insert ")")
-	    (when vhdl-auto-align (vhdl-align-region-groups start (point) 1))
-	    t)
-	(when (and optional secondary) (delete-region start (point)))
-	nil))))
+           (concat (and optional "[") "formal" (and optional "]"))
+           " => " (or (not secondary) optional)
+           (and (not secondary) start) (point))
+          (progn
+            (vhdl-template-field "actual" ",")
+            (setq end-pos (point))
+            (insert "\n")
+            (indent-to margin)
+            (while (vhdl-template-field "[formal]" " => " t)
+              (vhdl-template-field "actual" ",")
+              (setq end-pos (point))
+              (insert "\n")
+              (indent-to margin))
+            (delete-region end-pos (point))
+            (delete-char -1)
+            (insert ")")
+            (when vhdl-auto-align (vhdl-align-region-groups start (point) 1))
+            t)
+        (when (and optional secondary) (delete-region start (point)))
+        nil))))
 
 (defun vhdl-template-modify (&optional noerror)
   "Actualize modification date."
@@ -9741,11 +9744,11 @@ otherwise."
    (save-excursion
      (goto-char (point-min))
      (if (re-search-forward vhdl-modify-date-prefix-string nil t)
-	 (progn (delete-region (point) (progn (end-of-line) (point)))
-		(vhdl-template-insert-date))
+         (progn (delete-region (point) (progn (end-of-line) (point)))
+                (vhdl-template-insert-date))
        (unless noerror
-	 (error "ERROR:  Modification date prefix string \"%s\" not found"
-			vhdl-modify-date-prefix-string))))))
+         (error "ERROR:  Modification date prefix string \"%s\" not found"
+                        vhdl-modify-date-prefix-string))))))
 
 
 (defun vhdl-template-modify-noerror ()
@@ -9756,38 +9759,38 @@ otherwise."
   "Insert a nature declaration."
   (interactive)
   (let ((start (point))
-	name mid-pos end-pos)
+        name mid-pos end-pos)
     (vhdl-insert-keyword "NATURE ")
     (when (setq name (vhdl-template-field "name" nil t start (point)))
       (vhdl-insert-keyword " IS ")
       (let ((definition
-	      (upcase
-	       (or (vhdl-template-field
-		    "across type | ARRAY | RECORD")
-		   ""))))
-	(cond ((equal definition "")
-	       (insert ";"))
-	      ((equal definition "ARRAY")
-	       (delete-region (point) (progn (forward-word-strictly -1)
+              (upcase
+               (or (vhdl-template-field
+                    "across type | ARRAY | RECORD")
+                   ""))))
+        (cond ((equal definition "")
+               (insert ";"))
+              ((equal definition "ARRAY")
+               (delete-region (point) (progn (forward-word-strictly -1)
                                              (point)))
-	       (vhdl-template-array 'nature t))
-	      ((equal definition "RECORD")
-	       (setq mid-pos (point-marker))
-	       (delete-region (point) (progn (forward-word-strictly -1)
+               (vhdl-template-array 'nature t))
+              ((equal definition "RECORD")
+               (setq mid-pos (point-marker))
+               (delete-region (point) (progn (forward-word-strictly -1)
                                              (point)))
-	       (vhdl-template-record 'nature name t))
-	      (t
-	       (vhdl-insert-keyword " ACROSS ")
-	       (vhdl-template-field "through type")
-	       (vhdl-insert-keyword " THROUGH ")
-	       (vhdl-template-field "reference name")
-	       (vhdl-insert-keyword " REFERENCE;")))
-	(when mid-pos
-	  (setq end-pos (point-marker))
-	  (goto-char mid-pos)
-	  (end-of-line))
-	(vhdl-comment-insert-inline)
-	(when end-pos (goto-char end-pos))))))
+               (vhdl-template-record 'nature name t))
+              (t
+               (vhdl-insert-keyword " ACROSS ")
+               (vhdl-template-field "through type")
+               (vhdl-insert-keyword " THROUGH ")
+               (vhdl-template-field "reference name")
+               (vhdl-insert-keyword " REFERENCE;")))
+        (when mid-pos
+          (setq end-pos (point-marker))
+          (goto-char mid-pos)
+          (end-of-line))
+        (vhdl-comment-insert-inline)
+        (when end-pos (goto-char end-pos))))))
 
 (defun vhdl-template-next ()
   "Insert a next statement."
@@ -9795,12 +9798,12 @@ otherwise."
   (let ((start (point)))
     (vhdl-insert-keyword "NEXT ")
     (if (vhdl-template-field "[loop label]" nil t start (point))
-	(let ((position (point)))
-	  (vhdl-insert-keyword " WHEN ")
-	  (when vhdl-conditions-in-parenthesis (insert "("))
-	  (if (vhdl-template-field "[condition]" nil t)
-	      (when vhdl-conditions-in-parenthesis (insert ")"))
-	    (delete-region position (point))))
+        (let ((position (point)))
+          (vhdl-insert-keyword " WHEN ")
+          (when vhdl-conditions-in-parenthesis (insert "("))
+          (if (vhdl-template-field "[condition]" nil t)
+              (when vhdl-conditions-in-parenthesis (insert ")"))
+            (delete-region position (point))))
       (delete-char -1))
     (insert ";")))
 
@@ -9809,29 +9812,29 @@ otherwise."
   (interactive)
   (let ((start (point)))
     (if (or (= (preceding-char) ?\() (not vhdl-template-invoked-by-hook))
-	(progn (unless vhdl-template-invoked-by-hook (insert "("))
-	       (vhdl-insert-keyword "OTHERS => '")
-	       (when (vhdl-template-field "value" nil t start (point))
-		 (insert "')")))
+        (progn (unless vhdl-template-invoked-by-hook (insert "("))
+               (vhdl-insert-keyword "OTHERS => '")
+               (when (vhdl-template-field "value" nil t start (point))
+                 (insert "')")))
       (vhdl-insert-keyword "OTHERS "))))
 
 (defun vhdl-template-package (&optional kind)
   "Insert a package specification or body."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	name body position)
+        (start (point))
+        name body position)
     (vhdl-insert-keyword "PACKAGE ")
     (setq body (if kind (eq kind 'body)
-		 (eq (vhdl-decision-query nil "(d)eclaration or (b)ody?") ?b)))
+                 (eq (vhdl-decision-query nil "(d)eclaration or (b)ody?") ?b)))
     (when body
       (vhdl-insert-keyword "BODY ")
       (when (save-excursion
-	      (vhdl-prepare-search-1
-	       (vhdl-re-search-backward "\\<package \\(\\w+\\) is\\>" nil t)))
-	(insert (setq name (match-string 1)))))
+              (vhdl-prepare-search-1
+               (vhdl-re-search-backward "\\<package \\(\\w+\\) is\\>" nil t)))
+        (insert (setq name (match-string 1)))))
     (when (or name
-	      (setq name (vhdl-template-field "name" nil t start (point))))
+              (setq name (vhdl-template-field "name" nil t start (point))))
       (vhdl-insert-keyword " IS\n")
       (when (memq vhdl-insert-empty-lines '(unit all)) (insert "\n"))
       (indent-to (+ margin vhdl-basic-offset))
@@ -9841,7 +9844,7 @@ otherwise."
       (indent-to margin)
       (vhdl-insert-keyword "END ")
       (unless (vhdl-standard-p '87)
-	(vhdl-insert-keyword (concat "PACKAGE " (and body "BODY "))))
+        (vhdl-insert-keyword (concat "PACKAGE " (and body "BODY "))))
       (insert (or name "") ";")
       (goto-char position))))
 
@@ -9861,14 +9864,14 @@ otherwise."
   (let ((start (point)))
     (vhdl-prepare-search-1
      (cond
-      ((and (save-excursion		; entity declaration
-	      (re-search-backward "^\\(entity\\|end\\)\\>" nil t))
-	    (equal "ENTITY" (upcase (match-string 1))))
+      ((and (save-excursion             ; entity declaration
+              (re-search-backward "^\\(entity\\|end\\)\\>" nil t))
+            (equal "ENTITY" (upcase (match-string 1))))
        (vhdl-template-port-list nil))
       ((or (save-excursion
-	     (or (beginning-of-line)
-		 (looking-at "^\\s-*\\w+\\s-*:\\s-*\\w+")))
-	   (equal 'statement-cont (caar (vhdl-get-syntactic-context))))
+             (or (beginning-of-line)
+                 (looking-at "^\\s-*\\w+\\s-*:\\s-*\\w+")))
+           (equal 'statement-cont (caar (vhdl-get-syntactic-context))))
        (vhdl-insert-keyword "PORT ")
        (vhdl-template-map start))
       (t (vhdl-template-port-list nil))))))
@@ -9877,9 +9880,9 @@ otherwise."
   "Insert a procedural."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	(case-fold-search t)
-	label)
+        (start (point))
+        (case-fold-search t)
+        label)
     (vhdl-insert-keyword "PROCEDURAL ")
     (when (memq vhdl-optional-labels '(process all))
       (goto-char start)
@@ -9898,24 +9901,24 @@ otherwise."
   "Insert a procedure declaration or body."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	name)
+        (start (point))
+        name)
     (vhdl-insert-keyword "PROCEDURE ")
     (when (setq name (vhdl-template-field "name" nil t start (point)))
       (vhdl-template-argument-list)
       (if (if kind (eq kind 'body)
-	    (eq (vhdl-decision-query nil "(d)eclaration or (b)ody?") ?b))
-	  (progn (vhdl-insert-keyword " IS")
-		 (when vhdl-auto-align
-		   (vhdl-align-region-groups start (point) 1))
-		 (end-of-line) (insert "\n")
-		 (vhdl-template-begin-end
-		  (unless (vhdl-standard-p '87) "PROCEDURE")
-		  name margin)
-		 (vhdl-comment-block))
-	(insert ";")
-	(when vhdl-auto-align (vhdl-align-region-groups start (point) 1))
-	(end-of-line)))))
+            (eq (vhdl-decision-query nil "(d)eclaration or (b)ody?") ?b))
+          (progn (vhdl-insert-keyword " IS")
+                 (when vhdl-auto-align
+                   (vhdl-align-region-groups start (point) 1))
+                 (end-of-line) (insert "\n")
+                 (vhdl-template-begin-end
+                  (unless (vhdl-standard-p '87) "PROCEDURE")
+                  name margin)
+                 (vhdl-comment-block))
+        (insert ";")
+        (when vhdl-auto-align (vhdl-align-region-groups start (point) 1))
+        (end-of-line)))))
 
 (defun vhdl-template-procedure-decl ()
   "Insert a procedure declaration."
@@ -9931,12 +9934,12 @@ otherwise."
   "Insert a process."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	(reset-kind vhdl-reset-kind)
-	label seq input-signals clock reset final-pos)
+        (start (point))
+        (reset-kind vhdl-reset-kind)
+        label seq input-signals clock reset final-pos)
     (setq seq (if kind (eq kind 'seq)
-		(eq (vhdl-decision-query
-		     "process" "(c)ombinational or (s)equential?" t) ?s)))
+                (eq (vhdl-decision-query
+                     "process" "(c)ombinational or (s)equential?" t) ?s)))
     (vhdl-insert-keyword "PROCESS ")
     (when (memq vhdl-optional-labels '(process all))
       (goto-char start)
@@ -9948,26 +9951,26 @@ otherwise."
       (forward-char 1))
     (insert "(")
     (if (not seq)
-	(unless (or (and (vhdl-standard-p '08) vhdl-sensitivity-list-all
-			 (progn (insert "all)") (setq input-signals "all")))
-		    (setq input-signals
-			  (vhdl-template-field "[sensitivity list]" ")" t)))
-	  (setq input-signals "")
-	  (delete-char -2))
+        (unless (or (and (vhdl-standard-p '08) vhdl-sensitivity-list-all
+                         (progn (insert "all)") (setq input-signals "all")))
+                    (setq input-signals
+                          (vhdl-template-field "[sensitivity list]" ")" t)))
+          (setq input-signals "")
+          (delete-char -2))
       (setq clock (or (and (not (equal "" vhdl-clock-name))
-			   (progn (insert vhdl-clock-name) vhdl-clock-name))
-		      (vhdl-template-field "clock name") "<clock>"))
+                           (progn (insert vhdl-clock-name) vhdl-clock-name))
+                      (vhdl-template-field "clock name") "<clock>"))
       (when (eq reset-kind 'query)
-	(setq reset-kind
-	      (if (eq (vhdl-decision-query
-		       "" "(a)synchronous or (s)ynchronous reset?" t) ?a)
-		  'async
-		'sync)))
+        (setq reset-kind
+              (if (eq (vhdl-decision-query
+                       "" "(a)synchronous or (s)ynchronous reset?" t) ?a)
+                  'async
+                'sync)))
       (when (eq reset-kind 'async)
-	(insert ", ")
-	(setq reset (or (and (not (equal "" vhdl-reset-name))
-			     (progn (insert vhdl-reset-name) vhdl-reset-name))
-			(vhdl-template-field "reset name") "<reset>")))
+        (insert ", ")
+        (setq reset (or (and (not (equal "" vhdl-reset-name))
+                             (progn (insert vhdl-reset-name) vhdl-reset-name))
+                        (vhdl-template-field "reset name") "<reset>")))
       (insert ")"))
     (unless (vhdl-standard-p '87) (vhdl-insert-keyword " IS"))
     (insert "\n")
@@ -9977,31 +9980,31 @@ otherwise."
       (setq final-pos (point-marker))
       (vhdl-prepare-search-2
        (when (and (vhdl-re-search-backward "\\<begin\\>" nil t)
-		  (vhdl-re-search-backward "\\<process\\>" nil t))
-	 (end-of-line -0)
-	 (if (bobp)
-	     (progn (insert "\n") (forward-line -1))
-	   (insert "\n"))
-	 (indent-to margin)
-	 (insert "-- purpose: ")
-	 (if (not (vhdl-template-field "[description]" nil t))
-	     (vhdl-line-kill-entire)
-	   (insert "\n")
-	   (indent-to margin)
-	   (insert "-- type   : ")
-	   (insert (if seq "sequential" "combinational") "\n")
-	   (indent-to margin)
-	   (insert "-- inputs : ")
-	   (if (not seq)
-	       (insert input-signals)
-	     (insert clock ", ")
-	     (when reset (insert reset ", "))
-	     (unless (vhdl-template-field "[signal names]" nil t)
-	       (delete-char -2)))
-	   (insert "\n")
-	   (indent-to margin)
-	   (insert "-- outputs: ")
-	   (vhdl-template-field "[signal names]" nil t))))
+                  (vhdl-re-search-backward "\\<process\\>" nil t))
+         (end-of-line -0)
+         (if (bobp)
+             (progn (insert "\n") (forward-line -1))
+           (insert "\n"))
+         (indent-to margin)
+         (insert "-- purpose: ")
+         (if (not (vhdl-template-field "[description]" nil t))
+             (vhdl-line-kill-entire)
+           (insert "\n")
+           (indent-to margin)
+           (insert "-- type   : ")
+           (insert (if seq "sequential" "combinational") "\n")
+           (indent-to margin)
+           (insert "-- inputs : ")
+           (if (not seq)
+               (insert input-signals)
+             (insert clock ", ")
+             (when reset (insert reset ", "))
+             (unless (vhdl-template-field "[signal names]" nil t)
+               (delete-char -2)))
+           (insert "\n")
+           (indent-to margin)
+           (insert "-- outputs: ")
+           (vhdl-template-field "[signal names]" nil t))))
       (goto-char final-pos))))
 
 (defun vhdl-template-process-comb ()
@@ -10019,19 +10022,19 @@ otherwise."
   (interactive)
   (if (vhdl-in-argument-list-p)
       (let ((start (point)))
-	(vhdl-insert-keyword "QUANTITY ")
-	(when (vhdl-template-field "names" nil t start (point))
-	  (insert " : ")
-	  (vhdl-template-field "[IN | OUT]" " " t)
-	  (vhdl-template-field "type")
-	  (insert ";")
-	  (vhdl-comment-insert-inline)))
+        (vhdl-insert-keyword "QUANTITY ")
+        (when (vhdl-template-field "names" nil t start (point))
+          (insert " : ")
+          (vhdl-template-field "[IN | OUT]" " " t)
+          (vhdl-template-field "type")
+          (insert ";")
+          (vhdl-comment-insert-inline)))
     (let ((char (vhdl-decision-query
-		 "quantity" "(f)ree, (b)ranch, or (s)ource quantity?" t)))
+                 "quantity" "(f)ree, (b)ranch, or (s)ource quantity?" t)))
       (cond ((eq char ?f) (vhdl-template-quantity-free))
-	    ((eq char ?b) (vhdl-template-quantity-branch))
-	    ((eq char ?s) (vhdl-template-quantity-source))
-	    (t (vhdl-template-undo (point) (point)))))))
+            ((eq char ?b) (vhdl-template-quantity-branch))
+            ((eq char ?s) (vhdl-template-quantity-source))
+            (t (vhdl-template-undo (point) (point)))))))
 
 (defun vhdl-template-quantity-free ()
   "Insert a free quantity declaration."
@@ -10073,7 +10076,7 @@ otherwise."
   (vhdl-template-field "type" " ")
   (if (eq (vhdl-decision-query nil "(s)pectrum or (n)oise?") ?n)
       (progn (vhdl-insert-keyword "NOISE ")
-	     (vhdl-template-field "power expression"))
+             (vhdl-template-field "power expression"))
     (vhdl-insert-keyword "SPECTRUM ")
     (vhdl-template-field "magnitude expression" ", ")
     (vhdl-template-field "phase expression"))
@@ -10084,20 +10087,20 @@ otherwise."
   "Insert a record type declaration."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	(first t))
+        (start (point))
+        (first t))
     (vhdl-insert-keyword "RECORD\n")
     (indent-to (+ margin vhdl-basic-offset))
     (when (or (vhdl-template-field "element names"
-				   nil (not secondary) start (point))
-	      secondary)
+                                   nil (not secondary) start (point))
+              secondary)
       (while (or first (vhdl-template-field "[element names]" nil t))
-	(insert " : ")
-	(vhdl-template-field (if (eq kind 'type) "type" "nature") ";")
-	(vhdl-comment-insert-inline)
-	(insert "\n")
-	(indent-to (+ margin vhdl-basic-offset))
-	(setq first nil))
+        (insert " : ")
+        (vhdl-template-field (if (eq kind 'type) "type" "nature") ";")
+        (vhdl-comment-insert-inline)
+        (insert "\n")
+        (indent-to (+ margin vhdl-basic-offset))
+        (setq first nil))
       (delete-region (line-beginning-position) (point))
       (indent-to margin)
       (vhdl-insert-keyword "END RECORD")
@@ -10111,12 +10114,12 @@ otherwise."
   (let ((start (point)))
     (vhdl-insert-keyword "REPORT ")
     (if (equal "\"\"" (vhdl-template-field
-		       "string expression" nil t start (point) t))
-	(delete-char -2)
+                       "string expression" nil t start (point) t))
+        (delete-char -2)
       (setq start (point))
       (vhdl-insert-keyword " SEVERITY ")
       (unless (vhdl-template-field "[NOTE | WARNING | ERROR | FAILURE]" nil t)
-	(delete-region start (point)))
+        (delete-region start (point)))
       (insert ";"))))
 
 (defun vhdl-template-return ()
@@ -10132,14 +10135,14 @@ otherwise."
   "Insert a selected signal assignment."
   (interactive)
   (let ((margin (current-indentation))
-	(start (point))
-	(choices t))
+        (start (point))
+        (choices t))
     (let ((position (point)))
       (vhdl-insert-keyword " SELECT ")
       (goto-char position))
     (vhdl-insert-keyword "WITH ")
     (when (vhdl-template-field "selector expression"
-			       nil t start (+ (point) 7))
+                               nil t start (+ (point) 7))
       (forward-word-strictly 1)
       (delete-char 1)
       (insert "\n")
@@ -10153,13 +10156,13 @@ otherwise."
       (insert "\n")
       (indent-to (+ margin vhdl-basic-offset))
       (while (and choices (vhdl-template-field "[waveform]" nil t))
-	(vhdl-insert-keyword " WHEN ")
-	(if (setq choices (vhdl-template-field "[choices]" "," t))
-	    (progn (insert "\n") (indent-to (+ margin vhdl-basic-offset)))
-	  (vhdl-insert-keyword "OTHERS")))
+        (vhdl-insert-keyword " WHEN ")
+        (if (setq choices (vhdl-template-field "[choices]" "," t))
+            (progn (insert "\n") (indent-to (+ margin vhdl-basic-offset)))
+          (vhdl-insert-keyword "OTHERS")))
       (when choices
-	(fixup-whitespace)
-	(delete-char -2))
+        (fixup-whitespace)
+        (delete-char -2))
       (insert ";")
       (when vhdl-auto-align (vhdl-align-region-groups start (point) 1)))))
 
@@ -10167,42 +10170,42 @@ otherwise."
   "Insert a signal declaration."
   (interactive)
   (let ((start (point))
-	(in-arglist (vhdl-in-argument-list-p)))
+        (in-arglist (vhdl-in-argument-list-p)))
     (vhdl-insert-keyword "SIGNAL ")
     (when (vhdl-template-field "names" nil t start (point))
       (insert " : ")
       (when in-arglist (vhdl-template-field "[IN | OUT | INOUT]" " " t))
       (vhdl-template-field "type")
       (if in-arglist
-	  (progn (insert ";")
-		 (vhdl-comment-insert-inline))
-	(let ((position (point)))
-	  (insert " := ")
-	  (unless (vhdl-template-field "[initialization]" nil t)
-	    (delete-region position (point)))
-	  (insert ";")
-	  (vhdl-comment-insert-inline))))))
+          (progn (insert ";")
+                 (vhdl-comment-insert-inline))
+        (let ((position (point)))
+          (insert " := ")
+          (unless (vhdl-template-field "[initialization]" nil t)
+            (delete-region position (point)))
+          (insert ";")
+          (vhdl-comment-insert-inline))))))
 
 (defun vhdl-template-subnature ()
   "Insert a subnature declaration."
   (interactive)
   (let ((start (point))
-	position)
+        position)
     (vhdl-insert-keyword "SUBNATURE ")
     (when (vhdl-template-field "name" nil t start (point))
       (vhdl-insert-keyword " IS ")
       (vhdl-template-field "nature" " (")
       (if (vhdl-template-field "[index range]" nil t)
-	  (insert ")")
-	(delete-char -2))
+          (insert ")")
+        (delete-char -2))
       (setq position (point))
       (vhdl-insert-keyword " TOLERANCE ")
       (if (equal "\"\"" (vhdl-template-field "[string expression]"
-					     nil t nil nil t))
-	  (delete-region position (point))
-	(vhdl-insert-keyword " ACROSS ")
-	(vhdl-template-field "string expression" nil nil nil nil t)
-	(vhdl-insert-keyword " THROUGH"))
+                                             nil t nil nil t))
+          (delete-region position (point))
+        (vhdl-insert-keyword " ACROSS ")
+        (vhdl-template-field "string expression" nil nil nil nil t)
+        (vhdl-insert-keyword " THROUGH"))
       (insert ";")
       (vhdl-comment-insert-inline))))
 
@@ -10229,8 +10232,8 @@ otherwise."
       (vhdl-insert-keyword " IS ")
       (vhdl-template-field "type" " ")
       (unless
-	  (vhdl-template-field "[RANGE value range | ( index range )]" nil t)
-	(delete-char -1))
+          (vhdl-template-field "[RANGE value range | ( index range )]" nil t)
+        (delete-char -1))
       (insert ";")
       (vhdl-comment-insert-inline))))
 
@@ -10249,45 +10252,45 @@ otherwise."
   "Insert a type declaration."
   (interactive)
   (let ((start (point))
-	name mid-pos end-pos)
+        name mid-pos end-pos)
     (vhdl-insert-keyword "TYPE ")
     (when (setq name (vhdl-template-field "name" nil t start (point)))
       (vhdl-insert-keyword " IS ")
       (let ((definition
-	      (upcase
-	       (or (vhdl-template-field
-		    "[scalar type | ARRAY | RECORD | ACCESS | FILE | ENUM]" nil t)
-		   ""))))
-	(cond ((equal definition "")
-	       (delete-char -4)
-	       (insert ";"))
-	      ((equal definition "ARRAY")
-	       (delete-region (point) (progn (forward-word-strictly -1)
+              (upcase
+               (or (vhdl-template-field
+                    "[scalar type | ARRAY | RECORD | ACCESS | FILE | ENUM]" nil t)
+                   ""))))
+        (cond ((equal definition "")
+               (delete-char -4)
+               (insert ";"))
+              ((equal definition "ARRAY")
+               (delete-region (point) (progn (forward-word-strictly -1)
                                              (point)))
-	       (vhdl-template-array 'type t))
-	      ((equal definition "RECORD")
-	       (setq mid-pos (point-marker))
-	       (delete-region (point) (progn (forward-word-strictly -1)
+               (vhdl-template-array 'type t))
+              ((equal definition "RECORD")
+               (setq mid-pos (point-marker))
+               (delete-region (point) (progn (forward-word-strictly -1)
                                              (point)))
-	       (vhdl-template-record 'type name t))
-	      ((equal definition "ACCESS")
-	       (insert " ")
-	       (vhdl-template-field "type" ";"))
-	      ((equal definition "FILE")
-	       (vhdl-insert-keyword " OF ")
-	       (vhdl-template-field "type" ";"))
-	      ((equal definition "ENUM")
-	       (kill-word -1)
-	       (insert "(")
-	       (setq end-pos (point-marker))
-	       (insert ");"))
-	      (t (insert ";")))
-	(when mid-pos
-	  (setq end-pos (point-marker))
-	  (goto-char mid-pos)
-	  (end-of-line))
-	(vhdl-comment-insert-inline)
-	(when end-pos (goto-char end-pos))))))
+               (vhdl-template-record 'type name t))
+              ((equal definition "ACCESS")
+               (insert " ")
+               (vhdl-template-field "type" ";"))
+              ((equal definition "FILE")
+               (vhdl-insert-keyword " OF ")
+               (vhdl-template-field "type" ";"))
+              ((equal definition "ENUM")
+               (kill-word -1)
+               (insert "(")
+               (setq end-pos (point-marker))
+               (insert ");"))
+              (t (insert ";")))
+        (when mid-pos
+          (setq end-pos (point-marker))
+          (goto-char mid-pos)
+          (end-of-line))
+        (vhdl-comment-insert-inline)
+        (when end-pos (goto-char end-pos))))))
 
 (defun vhdl-template-use ()
   "Insert a use clause."
@@ -10299,46 +10302,46 @@ otherwise."
        (vhdl-insert-keyword "..ALL;")
        (backward-char 6)
        (when (vhdl-template-field "library name" nil t start (+ (point) 6))
-	 (forward-char 1)
-	 (vhdl-template-field "package name")
-	 (forward-char 5))))))
+         (forward-char 1)
+         (vhdl-template-field "package name")
+         (forward-char 5))))))
 
 (defun vhdl-template-variable ()
   "Insert a variable declaration."
   (interactive)
   (let ((start (point))
-	(in-arglist (vhdl-in-argument-list-p)))
+        (in-arglist (vhdl-in-argument-list-p)))
     (vhdl-prepare-search-2
      (if (or (save-excursion
-	       (progn (vhdl-beginning-of-block)
-		      (looking-at "\\s-*\\(\\w+\\s-*:\\s-*\\)?\\<\\(\\<function\\|procedure\\|process\\|procedural\\)\\>")))
-	     (save-excursion (backward-word-strictly 1)
+               (progn (vhdl-beginning-of-block)
+                      (looking-at "\\s-*\\(\\w+\\s-*:\\s-*\\)?\\<\\(\\<function\\|procedure\\|process\\|procedural\\)\\>")))
+             (save-excursion (backward-word-strictly 1)
                              (looking-at "\\<shared\\>")))
-	 (vhdl-insert-keyword "VARIABLE ")
+         (vhdl-insert-keyword "VARIABLE ")
        (if (vhdl-standard-p '87)
-	   (error "ERROR:  Not within sequential block")
-	 (vhdl-insert-keyword "SHARED VARIABLE "))))
+           (error "ERROR:  Not within sequential block")
+         (vhdl-insert-keyword "SHARED VARIABLE "))))
     (when (vhdl-template-field "names" nil t start (point))
       (insert " : ")
       (when in-arglist (vhdl-template-field "[IN | OUT | INOUT]" " " t))
       (vhdl-template-field "type")
       (if in-arglist
-	  (progn (insert ";")
-		 (vhdl-comment-insert-inline))
-	(let ((position (point)))
-	  (insert " := ")
-	  (unless (vhdl-template-field "[initialization]" nil t)
-	    (delete-region position (point)))
-	  (insert ";")
-	  (vhdl-comment-insert-inline))))))
+          (progn (insert ";")
+                 (vhdl-comment-insert-inline))
+        (let ((position (point)))
+          (insert " := ")
+          (unless (vhdl-template-field "[initialization]" nil t)
+            (delete-region position (point)))
+          (insert ";")
+          (vhdl-comment-insert-inline))))))
 
 (defun vhdl-template-wait ()
   "Insert a wait statement."
   (interactive)
   (vhdl-insert-keyword "WAIT ")
   (unless (vhdl-template-field
-	   "[ON sensitivity list] [UNTIL condition] [FOR time expression]"
-	   nil t)
+           "[ON sensitivity list] [UNTIL condition] [FOR time expression]"
+           nil t)
     (delete-char -1))
   (insert ";"))
 
@@ -10346,16 +10349,16 @@ otherwise."
   "Indent correctly if within a case statement."
   (interactive)
   (let ((position (point))
-	margin)
+        margin)
     (vhdl-prepare-search-2
      (if (and (= (current-column) (current-indentation))
-	      (vhdl-re-search-forward "\\<end\\>" nil t)
-	      (looking-at "\\s-*\\<case\\>"))
-	 (progn
-	   (setq margin (current-indentation))
-	   (goto-char position)
-	   (delete-horizontal-space)
-	   (indent-to (+ margin vhdl-basic-offset)))
+              (vhdl-re-search-forward "\\<end\\>" nil t)
+              (looking-at "\\s-*\\<case\\>"))
+         (progn
+           (setq margin (current-indentation))
+           (goto-char position)
+           (delete-horizontal-space)
+           (indent-to (+ margin vhdl-basic-offset)))
        (goto-char position)))
     (vhdl-insert-keyword "WHEN ")))
 
@@ -10363,10 +10366,10 @@ otherwise."
   "Insert a while loop."
   (interactive)
   (let* ((margin (current-indentation))
-	 (start (point))
-	 label)
+         (start (point))
+         label)
     (if (not (eq vhdl-optional-labels 'all))
-	(vhdl-insert-keyword "WHILE ")
+        (vhdl-insert-keyword "WHILE ")
       (vhdl-insert-keyword ": WHILE ")
       (goto-char start)
       (setq label (vhdl-template-field "[label]" nil t))
@@ -10388,7 +10391,7 @@ otherwise."
   (interactive)
   (vhdl-prepare-search-1
    (if (and (save-excursion (vhdl-re-search-backward "\\(\\<limit\\>\\|;\\)"))
-	    (equal ";" (match-string 1)))
+            (equal ";" (match-string 1)))
        (vhdl-template-selected-signal-asst)
      (vhdl-insert-keyword "WITH "))))
 
@@ -10399,12 +10402,12 @@ otherwise."
   "Insert a wait statement for rising/falling clock edge."
   (interactive)
   (let ((start (point))
-	clock)
+        clock)
     (vhdl-insert-keyword "WAIT UNTIL ")
     (when (setq clock
-		(or (and (not (equal "" vhdl-clock-name))
-			 (progn (insert vhdl-clock-name) vhdl-clock-name))
-		    (vhdl-template-field "clock name" nil t start (point))))
+                (or (and (not (equal "" vhdl-clock-name))
+                         (progn (insert vhdl-clock-name) vhdl-clock-name))
+                    (vhdl-template-field "clock name" nil t start (point))))
       (insert "'event")
       (vhdl-insert-keyword " AND ")
       (insert clock)
@@ -10412,34 +10415,34 @@ otherwise."
        " = " (if vhdl-clock-rising-edge vhdl-one-string vhdl-zero-string) ";")
       (vhdl-comment-insert-inline
        (concat (if vhdl-clock-rising-edge "rising" "falling")
-	       " clock edge")))))
+               " clock edge")))))
 
 (defun vhdl-template-seq-process (clock reset reset-kind)
   "Insert a template for the body of a sequential process."
   (let ((margin (current-indentation))
-	position)
+        position)
     (vhdl-insert-keyword "IF ")
     (when vhdl-conditions-in-parenthesis (insert "("))
     (when (eq reset-kind 'async)
       (insert reset " = "
-	      (if vhdl-reset-active-high vhdl-one-string vhdl-zero-string))
+              (if vhdl-reset-active-high vhdl-one-string vhdl-zero-string))
       (when vhdl-conditions-in-parenthesis (insert ")"))
       (vhdl-insert-keyword " THEN")
       (vhdl-comment-insert-inline
        (concat "asynchronous reset (active "
-	       (if vhdl-reset-active-high "high" "low") ")"))
+               (if vhdl-reset-active-high "high" "low") ")"))
       (insert "\n") (indent-to (+ margin vhdl-basic-offset))
       (setq position (point))
       (insert "\n") (indent-to margin)
       (vhdl-insert-keyword "ELSIF ")
       (when vhdl-conditions-in-parenthesis (insert "(")))
     (if (eq vhdl-clock-edge-condition 'function)
-	(insert (if vhdl-clock-rising-edge "rising" "falling")
-		"_edge(" clock ")")
+        (insert (if vhdl-clock-rising-edge "rising" "falling")
+                "_edge(" clock ")")
       (insert clock "'event")
       (vhdl-insert-keyword " AND ")
       (insert clock " = "
-	      (if vhdl-clock-rising-edge vhdl-one-string vhdl-zero-string)))
+              (if vhdl-clock-rising-edge vhdl-one-string vhdl-zero-string)))
     (when vhdl-conditions-in-parenthesis (insert ")"))
     (vhdl-insert-keyword " THEN")
     (vhdl-comment-insert-inline
@@ -10449,15 +10452,15 @@ otherwise."
       (vhdl-insert-keyword "IF ")
       (when vhdl-conditions-in-parenthesis (insert "("))
       (setq reset (or (and (not (equal "" vhdl-reset-name))
-			   (progn (insert vhdl-reset-name) vhdl-reset-name))
-		      (vhdl-template-field "reset name") "<reset>"))
+                           (progn (insert vhdl-reset-name) vhdl-reset-name))
+                      (vhdl-template-field "reset name") "<reset>"))
       (insert " = "
-	      (if vhdl-reset-active-high vhdl-one-string vhdl-zero-string))
+              (if vhdl-reset-active-high vhdl-one-string vhdl-zero-string))
       (when vhdl-conditions-in-parenthesis (insert ")"))
       (vhdl-insert-keyword " THEN")
       (vhdl-comment-insert-inline
        (concat "synchronous reset (active "
-	       (if vhdl-reset-active-high "high" "low") ")"))
+               (if vhdl-reset-active-high "high" "low") ")"))
       (insert "\n") (indent-to (+ margin (* 2 vhdl-basic-offset)))
       (setq position (point))
       (insert "\n") (indent-to (+ margin vhdl-basic-offset))
@@ -10478,18 +10481,18 @@ specification, if not already there."
   (let ((margin (current-indentation)))
     (unless (equal library "std")
       (unless (or (save-excursion
-		    (vhdl-prepare-search-1
-		     (and (not (bobp))
-			  (re-search-backward
-			   (concat "^\\s-*\\(\\(library\\)\\s-+\\(\\w+\\s-*,\\s-*\\)*"
-				   library "\\|end\\)\\>") nil t)
-			  (match-string 2))))
-		  (equal (downcase library) "work"))
-	(vhdl-insert-keyword "LIBRARY ")
-	(insert library ";")
-	(when package
-	  (insert "\n")
-	  (indent-to margin))))
+                    (vhdl-prepare-search-1
+                     (and (not (bobp))
+                          (re-search-backward
+                           (concat "^\\s-*\\(\\(library\\)\\s-+\\(\\w+\\s-*,\\s-*\\)*"
+                                   library "\\|end\\)\\>") nil t)
+                          (match-string 2))))
+                  (equal (downcase library) "work"))
+        (vhdl-insert-keyword "LIBRARY ")
+        (insert library ";")
+        (when package
+          (insert "\n")
+          (indent-to margin))))
     (when package
       (vhdl-insert-keyword "USE ")
       (insert library "." package)
@@ -10626,9 +10629,9 @@ specification, if not already there."
   (unless (equal vhdl-file-header "")
     (let (pos)
       (save-excursion
-	(goto-char (point-min))
-	(vhdl-insert-string-or-file vhdl-file-header)
-	(setq pos (point-marker)))
+        (goto-char (point-min))
+        (vhdl-insert-string-or-file vhdl-file-header)
+        (setq pos (point-marker)))
       (vhdl-template-replace-header-keywords
        (point-min-marker) pos file-title))))
 
@@ -10638,96 +10641,96 @@ specification, if not already there."
   (unless (equal vhdl-file-footer "")
     (let (pos)
       (save-excursion
-	(goto-char (point-max))
-	(setq pos (point-marker))
-	(vhdl-insert-string-or-file vhdl-file-footer)
-	(unless (= (preceding-char) ?\n)
-	  (insert "\n")))
+        (goto-char (point-max))
+        (setq pos (point-marker))
+        (vhdl-insert-string-or-file vhdl-file-footer)
+        (unless (= (preceding-char) ?\n)
+          (insert "\n")))
       (vhdl-template-replace-header-keywords pos (point-max-marker)))))
 
 (defun vhdl-template-replace-header-keywords (beg end &optional file-title
-						  is-model)
+                                                  is-model)
   "Replace keywords in header and footer."
   (let ((project-title (or (nth 0 (vhdl-aget vhdl-project-alist vhdl-project))
-			   ""))
-	(project-desc (or (nth 9 (vhdl-aget vhdl-project-alist vhdl-project))
-			  ""))
-	pos)
+                           ""))
+        (project-desc (or (nth 9 (vhdl-aget vhdl-project-alist vhdl-project))
+                          ""))
+        pos)
     (vhdl-prepare-search-2
      (save-excursion
        (goto-char beg)
        (while (search-forward "<projectdesc>" end t)
-	 (replace-match project-desc t t))
+         (replace-match project-desc t t))
        (goto-char beg)
        (while (search-forward "<filename>" end t)
-	 (replace-match (buffer-name) t t))
+         (replace-match (buffer-name) t t))
        (goto-char beg)
        (while (search-forward "<copyright>" end t)
-	 (replace-match vhdl-copyright-string t t))
+         (replace-match vhdl-copyright-string t t))
        (goto-char beg)
        (while (search-forward "<author>" end t)
-	 (replace-match "" t t)
-	 (insert (user-full-name))
-	 (when user-mail-address (insert "  <" user-mail-address ">")))
+         (replace-match "" t t)
+         (insert (user-full-name))
+         (when user-mail-address (insert "  <" user-mail-address ">")))
        (goto-char beg)
        (while (search-forward "<authorfull>" end t)
-	 (replace-match (user-full-name) t t))
+         (replace-match (user-full-name) t t))
        (goto-char beg)
        (while (search-forward "<login>" end t)
-	 (replace-match (user-login-name) t t))
+         (replace-match (user-login-name) t t))
        (goto-char beg)
        (while (search-forward "<project>" end t)
-	 (replace-match project-title t t))
+         (replace-match project-title t t))
        (goto-char beg)
        (while (search-forward "<company>" end t)
-	 (replace-match vhdl-company-name t t))
+         (replace-match vhdl-company-name t t))
        (goto-char beg)
        (while (search-forward "<platform>" end t)
-	 (replace-match vhdl-platform-spec t t))
+         (replace-match vhdl-platform-spec t t))
        (goto-char beg)
        (while (search-forward "<standard>" end t)
-	 (replace-match
-	  (concat "VHDL" (cond ((vhdl-standard-p '87) "'87")
-			       ((vhdl-standard-p '93) "'93/02")
-			       ((vhdl-standard-p '08) "'08"))
-		  (when (vhdl-standard-p 'ams) ", VHDL-AMS")
-		  (when (vhdl-standard-p 'math) ", Math Packages")) t t))
+         (replace-match
+          (concat "VHDL" (cond ((vhdl-standard-p '87) "'87")
+                               ((vhdl-standard-p '93) "'93/02")
+                               ((vhdl-standard-p '08) "'08"))
+                  (when (vhdl-standard-p 'ams) ", VHDL-AMS")
+                  (when (vhdl-standard-p 'math) ", Math Packages")) t t))
        (goto-char beg)
        ;; Replace <RCS> with $, so that RCS for the source is
        ;; not over-enthusiastic with replacements
        (while (search-forward "<RCS>" end t)
-	 (replace-match "$" nil t))
+         (replace-match "$" nil t))
        (goto-char beg)
        (while (search-forward "<date>" end t)
-	 (replace-match "" t t)
-	 (vhdl-template-insert-date))
+         (replace-match "" t t)
+         (vhdl-template-insert-date))
        (goto-char beg)
        (while (search-forward "<year>" end t)
-	 (replace-match (format-time-string "%Y" nil) t t))
+         (replace-match (format-time-string "%Y" nil) t t))
        (goto-char beg)
        (when file-title
-	 (while (search-forward "<title string>" end t)
-	   (replace-match file-title t t))
-	 (goto-char beg))
+         (while (search-forward "<title string>" end t)
+           (replace-match file-title t t))
+         (goto-char beg))
        (let (string)
-	 (while (re-search-forward "<\\(\\(\\w\\|\\s_\\)*\\) string>" end t)
-	   (save-match-data
-	     (setq string (read-string (concat (match-string 1) ": "))))
-	   (replace-match string t t)))
+         (while (re-search-forward "<\\(\\(\\w\\|\\s_\\)*\\) string>" end t)
+           (save-match-data
+             (setq string (read-string (concat (match-string 1) ": "))))
+           (replace-match string t t)))
        (goto-char beg)
        (when (and (not is-model) (search-forward "<cursor>" end t))
-	 (replace-match "" t t)
-	 (setq pos (point))))
+         (replace-match "" t t)
+         (setq pos (point))))
      (when pos (goto-char pos))
      (unless is-model
        (when (or (not project-title) (equal project-title ""))
-	 (message "You can specify a project title in user option `vhdl-project-alist'"))
+         (message "You can specify a project title in user option `vhdl-project-alist'"))
        (when (or (not project-desc) (equal project-desc ""))
-	 (message "You can specify a project description in user option `vhdl-project-alist'"))
+         (message "You can specify a project description in user option `vhdl-project-alist'"))
        (when (equal vhdl-platform-spec "")
-	 (message "You can specify a platform in user option `vhdl-platform-spec'"))
+         (message "You can specify a platform in user option `vhdl-platform-spec'"))
        (when (equal vhdl-company-name "")
-	 (message "You can specify a company name in user option `vhdl-company-name'"))))))
+         (message "You can specify a company name in user option `vhdl-company-name'"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Comment templates and functions
@@ -10735,15 +10738,15 @@ specification, if not already there."
 (defun vhdl-comment-indent ()
   "Indent comments."
   (let* ((position (point))
-	 (col
-	  (progn
-	    (forward-line -1)
-	    (if (re-search-forward "--" position t)
-		(- (current-column) 2)	; existing comment at bol stays there
-	      (goto-char position)
-	      (skip-chars-backward " \t")
-	      (max comment-column	; else indent to comment column
-		   (1+ (current-column))))))) ; except leave at least one space
+         (col
+          (progn
+            (forward-line -1)
+            (if (re-search-forward "--" position t)
+                (- (current-column) 2)  ; existing comment at bol stays there
+              (goto-char position)
+              (skip-chars-backward " \t")
+              (max comment-column       ; else indent to comment column
+                   (1+ (current-column))))))) ; except leave at least one space
     (goto-char position)
     col))
 
@@ -10754,29 +10757,29 @@ If starting after end-comment-column, start a new line."
   (interactive)
   (when (> (current-column) end-comment-column) (newline-and-indent))
   (if (or (looking-at "\\s-*$") ; end of line
-	  (and (not unread-command-events) ; called with key binding or menu
-	       (not (end-of-line))))
+          (and (not unread-command-events) ; called with key binding or menu
+               (not (end-of-line))))
       (let (margin)
-	(while (= (preceding-char) ?-) (delete-char -1))
-	(setq margin (current-column))
-	(delete-horizontal-space)
-	(if (bolp)
-	    (progn (indent-to margin) (insert "--"))
-	  (insert "  ")
-	  (indent-to comment-column)
-	  (insert "--"))
-	(if (not unread-command-events) (insert " ")))
+        (while (= (preceding-char) ?-) (delete-char -1))
+        (setq margin (current-column))
+        (delete-horizontal-space)
+        (if (bolp)
+            (progn (indent-to margin) (insert "--"))
+          (insert "  ")
+          (indent-to comment-column)
+          (insert "--"))
+        (if (not unread-command-events) (insert " ")))
     ;; else code following current point implies commenting out code
     (let (next-input code)
       (while (= (preceding-char) ?-) (delete-char -2))
       (while (= (setq next-input (read-char)) 13) ; CR
-	(insert "--") ; or have a space after it?
-	(forward-char -2)
-	(forward-line 1)
-	(message "Enter CR if commenting out a line of code.")
-	(setq code t))
+        (insert "--") ; or have a space after it?
+        (forward-char -2)
+        (forward-line 1)
+        (message "Enter CR if commenting out a line of code.")
+        (setq code t))
       (unless code
-	(insert "--")) ; hardwire to 1 space or use vhdl-basic-offset?
+        (insert "--")) ; hardwire to 1 space or use vhdl-basic-offset?
       (push (vhdl-character-to-event next-input) ; pushback the char
             unread-command-events))))
 
@@ -10797,7 +10800,7 @@ If starting after end-comment-column, start a new line."
   (while (= (preceding-char) ?-) (delete-char -2))
   (insert "--")
   (let* ((col (current-column))
-	 (len (- end-comment-column col)))
+         (len (- end-comment-column col)))
     (insert-char vhdl-comment-display-line-char len)))
 
 (defun vhdl-comment-append-inline ()
@@ -10812,15 +10815,15 @@ If starting after end-comment-column, start a new line."
 (defun vhdl-comment-insert-inline (&optional string always-insert)
   "Insert inline comment."
   (when (or (and string (or vhdl-self-insert-comments always-insert))
-	    (and (not string) vhdl-prompt-for-comments))
+            (and (not string) vhdl-prompt-for-comments))
     (let ((position (point)))
       (insert "  ")
       (indent-to comment-column)
       (insert "-- ")
       (if (not (or (and string (progn (insert string) t))
-		   (vhdl-template-field "[comment]" nil t)))
-	  (delete-region position (point))
-	(while (= (preceding-char) ?\ ) (delete-char -1))))))
+                   (vhdl-template-field "[comment]" nil t)))
+          (delete-region position (point))
+        (while (= (preceding-char) ?\ ) (delete-char -1))))))
 
 (defun vhdl-comment-block ()
   "Insert comment for code block."
@@ -10828,18 +10831,18 @@ If starting after end-comment-column, start a new line."
     (let ((final-pos (point-marker)))
       (vhdl-prepare-search-2
        (when (and (re-search-backward "^\\s-*begin\\>" nil t)
-		  (re-search-backward "\\<\\(architecture\\|block\\|function\\|procedure\\|process\\|procedural\\)\\>" nil t))
-	 (let (margin)
-	   (back-to-indentation)
-	   (setq margin (current-column))
-	   (end-of-line -0)
-	   (if (bobp)
-	       (progn (insert "\n") (forward-line -1))
-	     (insert "\n"))
-	   (indent-to margin)
-	   (insert "-- purpose: ")
-	   (unless (vhdl-template-field "[description]" nil t)
-	     (vhdl-line-kill-entire)))))
+                  (re-search-backward "\\<\\(architecture\\|block\\|function\\|procedure\\|process\\|procedural\\)\\>" nil t))
+         (let (margin)
+           (back-to-indentation)
+           (setq margin (current-column))
+           (end-of-line -0)
+           (if (bobp)
+               (progn (insert "\n") (forward-line -1))
+             (insert "\n"))
+           (indent-to margin)
+           (insert "-- purpose: ")
+           (unless (vhdl-template-field "[description]" nil t)
+             (vhdl-line-kill-entire)))))
       (goto-char final-pos))))
 
 (defun vhdl-comment-uncomment-region (beg end &optional arg)
@@ -10853,7 +10856,7 @@ If starting after end-comment-column, start a new line."
     (beginning-of-line)
     (setq beg (point))
     (if (looking-at (concat "\\s-*" comment-start))
-	(comment-region beg end '(4))
+        (comment-region beg end '(4))
       (comment-region beg end))))
 
 (defun vhdl-comment-uncomment-line (&optional arg)
@@ -10875,8 +10878,8 @@ If starting after end-comment-column, start a new line."
     (beginning-of-line)
     (while (< (point) end)
       (if (looking-at "^\\(\\s-*--.*\n\\)")
-	  (progn (delete-region (match-beginning 1) (match-end 1)))
-	(beginning-of-line 2)))))
+          (progn (delete-region (match-beginning 1) (match-end 1)))
+        (beginning-of-line 2)))))
 
 (defun vhdl-comment-kill-inline-region (beg end)
   "Kill inline comments in region."
@@ -10888,7 +10891,7 @@ If starting after end-comment-column, start a new line."
     (beginning-of-line)
     (while (< (point) end)
       (when (looking-at "^.*[^ \t\n\r\f-]+\\(\\s-*--.*\\)$")
-	(delete-region (match-beginning 1) (match-end 1)))
+        (delete-region (match-beginning 1) (match-end 1)))
       (beginning-of-line 2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10921,23 +10924,23 @@ Point is left between them."
   "Read from user a procedure or function argument list."
   (insert " (")
   (let ((margin (current-column))
-	(start (point))
-	(end-pos (point))
-	not-empty interface semicolon-pos)
+        (start (point))
+        (end-pos (point))
+        not-empty interface semicolon-pos)
     (unless vhdl-argument-list-indent
       (setq margin (+ (current-indentation) vhdl-basic-offset))
       (insert "\n")
       (indent-to margin))
     (setq interface (vhdl-template-field
-		     (concat "[CONSTANT | SIGNAL"
-			     (unless is-function " | VARIABLE") "]") " " t))
+                     (concat "[CONSTANT | SIGNAL"
+                             (unless is-function " | VARIABLE") "]") " " t))
     (while (vhdl-template-field "[names]" nil t)
       (setq not-empty t)
       (insert " : ")
       (unless is-function
-	(if (and interface (equal (upcase interface) "CONSTANT"))
-	    (vhdl-insert-keyword "IN ")
-	  (vhdl-template-field "[IN | OUT | INOUT]" " " t)))
+        (if (and interface (equal (upcase interface) "CONSTANT"))
+            (vhdl-insert-keyword "IN ")
+          (vhdl-template-field "[IN | OUT | INOUT]" " " t)))
       (vhdl-template-field "type")
       (setq semicolon-pos (point))
       (insert ";")
@@ -10946,116 +10949,116 @@ Point is left between them."
       (insert "\n")
       (indent-to margin)
       (setq interface (vhdl-template-field
-		       (concat "[CONSTANT | SIGNAL"
-			       (unless is-function " | VARIABLE") "]") " " t)))
+                       (concat "[CONSTANT | SIGNAL"
+                               (unless is-function " | VARIABLE") "]") " " t)))
     (delete-region end-pos (point))
     (when semicolon-pos (goto-char semicolon-pos))
     (if not-empty
-	(progn (delete-char 1) (insert ")"))
+        (progn (delete-char 1) (insert ")"))
       (delete-char -2))))
 
 (defun vhdl-template-generic-list (optional &optional no-value)
   "Read from user a generic spec argument list."
   (let (margin
-	(start (point)))
+        (start (point)))
     (vhdl-insert-keyword "GENERIC (")
     (setq margin (current-column))
     (unless vhdl-argument-list-indent
       (let ((position (point)))
-	(back-to-indentation)
-	(setq margin (+ (current-column) vhdl-basic-offset))
-	(goto-char position)
-	(insert "\n")
-	(indent-to margin)))
+        (back-to-indentation)
+        (setq margin (+ (current-column) vhdl-basic-offset))
+        (goto-char position)
+        (insert "\n")
+        (indent-to margin)))
     (let ((vhdl-generics (vhdl-template-field
-			  (concat (and optional "[") "name"
-				  (and no-value "s") (and optional "]"))
-			  nil optional)))
+                          (concat (and optional "[") "name"
+                                  (and no-value "s") (and optional "]"))
+                          nil optional)))
       (if (not vhdl-generics)
-	  (if optional
-	      (progn (vhdl-line-kill-entire) (end-of-line -0)
-		     (unless vhdl-argument-list-indent
-		       (vhdl-line-kill-entire) (end-of-line -0)))
-	    (vhdl-template-undo start (point))
-	    nil )
-	(insert " : ")
-	(let (semicolon-pos end-pos)
-	  (while vhdl-generics
-	    (vhdl-template-field "type")
-	    (if no-value
-		(progn (setq semicolon-pos (point))
-		       (insert ";"))
-	      (insert " := ")
-	      (unless (vhdl-template-field "[value]" nil t)
-		(delete-char -4))
-	      (setq semicolon-pos (point))
-	      (insert ";"))
-	    (vhdl-comment-insert-inline)
-	    (setq end-pos (point))
- 	    (insert "\n")
-	    (indent-to margin)
-	    (setq vhdl-generics (vhdl-template-field
-				 (concat "[name" (and no-value "s") "]")
-				 " : " t)))
-	  (delete-region end-pos (point))
-	  (goto-char semicolon-pos)
-	  (insert ")")
-	  (end-of-line)
-	  (when vhdl-auto-align (vhdl-align-region-groups start (point) 1))
-	  t)))))
+          (if optional
+              (progn (vhdl-line-kill-entire) (end-of-line -0)
+                     (unless vhdl-argument-list-indent
+                       (vhdl-line-kill-entire) (end-of-line -0)))
+            (vhdl-template-undo start (point))
+            nil )
+        (insert " : ")
+        (let (semicolon-pos end-pos)
+          (while vhdl-generics
+            (vhdl-template-field "type")
+            (if no-value
+                (progn (setq semicolon-pos (point))
+                       (insert ";"))
+              (insert " := ")
+              (unless (vhdl-template-field "[value]" nil t)
+                (delete-char -4))
+              (setq semicolon-pos (point))
+              (insert ";"))
+            (vhdl-comment-insert-inline)
+            (setq end-pos (point))
+            (insert "\n")
+            (indent-to margin)
+            (setq vhdl-generics (vhdl-template-field
+                                 (concat "[name" (and no-value "s") "]")
+                                 " : " t)))
+          (delete-region end-pos (point))
+          (goto-char semicolon-pos)
+          (insert ")")
+          (end-of-line)
+          (when vhdl-auto-align (vhdl-align-region-groups start (point) 1))
+          t)))))
 
 (defun vhdl-template-port-list (optional)
   "Read from user a port spec argument list."
   (let ((start (point))
-	margin vhdl-ports object)
+        margin vhdl-ports object)
     (vhdl-insert-keyword "PORT (")
     (setq margin (current-column))
     (unless vhdl-argument-list-indent
       (let ((position (point)))
-	(back-to-indentation)
-	(setq margin (+ (current-column) vhdl-basic-offset))
-	(goto-char position)
-	(insert "\n")
-	(indent-to margin)))
+        (back-to-indentation)
+        (setq margin (+ (current-column) vhdl-basic-offset))
+        (goto-char position)
+        (insert "\n")
+        (indent-to margin)))
     (when (vhdl-standard-p 'ams)
       (setq object (vhdl-template-field "[SIGNAL | TERMINAL | QUANTITY]"
-					" " t)))
+                                        " " t)))
     (setq vhdl-ports (vhdl-template-field
-		      (concat (and optional "[") "names" (and optional "]"))
-		      nil optional))
+                      (concat (and optional "[") "names" (and optional "]"))
+                      nil optional))
     (if (not vhdl-ports)
-	(if optional
-	    (progn (vhdl-line-kill-entire) (end-of-line -0)
-		   (unless vhdl-argument-list-indent
-		     (vhdl-line-kill-entire) (end-of-line -0)))
-	  (vhdl-template-undo start (point))
-	  nil)
+        (if optional
+            (progn (vhdl-line-kill-entire) (end-of-line -0)
+                   (unless vhdl-argument-list-indent
+                     (vhdl-line-kill-entire) (end-of-line -0)))
+          (vhdl-template-undo start (point))
+          nil)
       (insert " : ")
       (let (semicolon-pos end-pos)
-	(while vhdl-ports
-	  (cond ((or (null object) (equal "SIGNAL" (upcase object)))
-		 (vhdl-template-field "IN | OUT | INOUT" " "))
-		((equal "QUANTITY" (upcase object))
-		 (vhdl-template-field "[IN | OUT]" " " t)))
-	  (vhdl-template-field
-	   (if (and object (equal "TERMINAL" (upcase object)))
-		    "nature" "type"))
-	  (setq semicolon-pos (point))
-	  (insert ";")
-	  (vhdl-comment-insert-inline)
-	  (setq end-pos (point))
-	  (insert "\n")
-	  (indent-to margin)
-	  (when (vhdl-standard-p 'ams)
-	    (setq object (vhdl-template-field "[SIGNAL | TERMINAL | QUANTITY]"
-					      " " t)))
-	  (setq vhdl-ports (vhdl-template-field "[names]" " : " t)))
-	(delete-region end-pos (point))
-	(goto-char semicolon-pos)
-	(insert ")")
-	(end-of-line)
-	(when vhdl-auto-align (vhdl-align-region-groups start end-pos 1))
-	t))))
+        (while vhdl-ports
+          (cond ((or (null object) (equal "SIGNAL" (upcase object)))
+                 (vhdl-template-field "IN | OUT | INOUT" " "))
+                ((equal "QUANTITY" (upcase object))
+                 (vhdl-template-field "[IN | OUT]" " " t)))
+          (vhdl-template-field
+           (if (and object (equal "TERMINAL" (upcase object)))
+                    "nature" "type"))
+          (setq semicolon-pos (point))
+          (insert ";")
+          (vhdl-comment-insert-inline)
+          (setq end-pos (point))
+          (insert "\n")
+          (indent-to margin)
+          (when (vhdl-standard-p 'ams)
+            (setq object (vhdl-template-field "[SIGNAL | TERMINAL | QUANTITY]"
+                                              " " t)))
+          (setq vhdl-ports (vhdl-template-field "[names]" " : " t)))
+        (delete-region end-pos (point))
+        (goto-char semicolon-pos)
+        (insert ")")
+        (end-of-line)
+        (when vhdl-auto-align (vhdl-align-region-groups start end-pos 1))
+        t))))
 
 (defun vhdl-template-generate-body (margin label)
   "Insert body for generate template."
@@ -11086,41 +11089,41 @@ Point is left between them."
 if in comment and past end-comment-column."
   (interactive "p")
   (cond ((vhdl-in-comment-p)
-	 (self-insert-command count)
-	 (cond ((>= (current-column) (+ 2 end-comment-column))
-		(backward-char 1)
-		(skip-chars-backward "^ \t\n\r\f")
-		(indent-new-comment-line)
-		(skip-chars-forward "^ \t\n\r\f")
-		(forward-char 1))
-	       ((>= (current-column) end-comment-column)
-		(indent-new-comment-line))
-	       (t nil)))
-	((or (and (>= (preceding-char) ?a) (<= (preceding-char) ?z))
-	     (and (>= (preceding-char) ?A) (<= (preceding-char) ?Z)))
-	 (vhdl-prepare-search-1
-	  (or (expand-abbrev) (vhdl-fix-case-word -1)))
-	 (self-insert-command count))
-	(t (self-insert-command count))))
+         (self-insert-command count)
+         (cond ((>= (current-column) (+ 2 end-comment-column))
+                (backward-char 1)
+                (skip-chars-backward "^ \t\n\r\f")
+                (indent-new-comment-line)
+                (skip-chars-forward "^ \t\n\r\f")
+                (forward-char 1))
+               ((>= (current-column) end-comment-column)
+                (indent-new-comment-line))
+               (t nil)))
+        ((or (and (>= (preceding-char) ?a) (<= (preceding-char) ?z))
+             (and (>= (preceding-char) ?A) (<= (preceding-char) ?Z)))
+         (vhdl-prepare-search-1
+          (or (expand-abbrev) (vhdl-fix-case-word -1)))
+         (self-insert-command count))
+        (t (self-insert-command count))))
 
 (defun vhdl-template-field (prompt &optional follow-string optional
-				   begin end is-string default)
+                                   begin end is-string default)
   "Prompt for string and insert it in buffer with optional FOLLOW-STRING.
 If OPTIONAL is nil, the prompt is left if an empty string is inserted.  If
 an empty string is inserted, return nil and call `vhdl-template-undo' for
 the region between BEGIN and END.  IS-STRING indicates whether a string
 with double-quotes is to be inserted.  DEFAULT specifies a default string."
   (let ((position (point))
-	string)
+        string)
     (insert "<" prompt ">")
     (setq string
-	  (condition-case ()
-	      (read-from-minibuffer (concat prompt ": ")
-				    (or (and is-string '("\"\"" . 2)) default)
-				    vhdl-minibuffer-local-map)
-	    (quit (if (and optional begin end)
-		      (progn (beep) "")
-		    (keyboard-quit)))))
+          (condition-case ()
+              (read-from-minibuffer (concat prompt ": ")
+                                    (or (and is-string '("\"\"" . 2)) default)
+                                    vhdl-minibuffer-local-map)
+            (quit (if (and optional begin end)
+                      (progn (beep) "")
+                    (keyboard-quit)))))
     (when (or (not (equal string "")) optional)
       (delete-region position (point)))
     (when (and (equal string "") optional begin end)
@@ -11129,15 +11132,15 @@ with double-quotes is to be inserted.  DEFAULT specifies a default string."
     (unless (equal string "")
       (insert string)
       (vhdl-fix-case-region-1 position (point) vhdl-upper-case-keywords
-			      vhdl-keywords-regexp)
+                              vhdl-keywords-regexp)
       (vhdl-fix-case-region-1 position (point) vhdl-upper-case-types
-			      vhdl-types-regexp)
+                              vhdl-types-regexp)
       (vhdl-fix-case-region-1 position (point) vhdl-upper-case-attributes
-			      (concat "'" vhdl-attributes-regexp))
+                              (concat "'" vhdl-attributes-regexp))
       (vhdl-fix-case-region-1 position (point) vhdl-upper-case-enum-values
-			      vhdl-enum-values-regexp)
+                              vhdl-enum-values-regexp)
       (vhdl-fix-case-region-1 position (point) vhdl-upper-case-constants
-			      vhdl-constants-regexp))
+                              vhdl-constants-regexp))
     (when (or (not (equal string "")) (not optional))
       (insert (or follow-string "")))
     (if (equal string "") nil string)))
@@ -11150,10 +11153,10 @@ with double-quotes is to be inserted.  DEFAULT specifies a default string."
     (let ((char (read-char)))
       (delete-region start (point))
       (if (and optional (eq char ?\r))
-	  (progn (insert " ")
-		 (unexpand-abbrev)
-		 (throw 'abort "ERROR:  Template aborted"))
-	char))))
+          (progn (insert " ")
+                 (unexpand-abbrev)
+                 (throw 'abort "ERROR:  Template aborted"))
+        char))))
 
 (defun vhdl-insert-keyword (keyword)
   "Insert KEYWORD and adjust case."
@@ -11175,16 +11178,16 @@ else insert tab (used for word completion in VHDL minibuffer)."
    ;; expand word
    ((= (char-syntax (preceding-char)) ?w)
     (let ((case-fold-search (not vhdl-word-completion-case-sensitive))
-	  (case-replace nil)
-	  (hippie-expand-only-buffers
-	   (or (and (boundp 'hippie-expand-only-buffers)
-		    hippie-expand-only-buffers)
-	       '(vhdl-mode))))
+          (case-replace nil)
+          (hippie-expand-only-buffers
+           (or (and (boundp 'hippie-expand-only-buffers)
+                    hippie-expand-only-buffers)
+               '(vhdl-mode))))
       (vhdl-expand-abbrev prefix-arg)))
    ;; expand parenthesis
    ((or (= (preceding-char) ?\() (= (preceding-char) ?\)))
     (let ((case-fold-search (not vhdl-word-completion-case-sensitive))
-	  (case-replace nil))
+          (case-replace nil))
       (vhdl-expand-paren prefix-arg)))
    ;; insert tab
    (t (insert-tab))))
@@ -11194,9 +11197,9 @@ else insert tab (used for word completion in VHDL minibuffer)."
   (interactive)
   (vhdl-prepare-search-2
    (when (or (re-search-forward
-	      (concat "<\\(" vhdl-template-prompt-syntax "\\)>") nil t)
-	     (re-search-backward
-	      (concat "<\\(" vhdl-template-prompt-syntax "\\)>") nil t))
+              (concat "<\\(" vhdl-template-prompt-syntax "\\)>") nil t)
+             (re-search-backward
+              (concat "<\\(" vhdl-template-prompt-syntax "\\)>") nil t))
      (let ((string (match-string 1)))
        (replace-match "")
        (vhdl-template-field string)))))
@@ -11204,21 +11207,21 @@ else insert tab (used for word completion in VHDL minibuffer)."
 (defun vhdl-template-undo (begin end)
   "Undo aborted template by deleting region and unexpanding the keyword."
   (cond (vhdl-template-invoked-by-hook
-	 (goto-char end)
-	 (insert " ")
-	 (delete-region begin end)
-	 (unexpand-abbrev))
-	(t (delete-region begin end))))
+         (goto-char end)
+         (insert " ")
+         (delete-region begin end)
+         (unexpand-abbrev))
+        (t (delete-region begin end))))
 
 (defun vhdl-insert-string-or-file (string)
   "Insert STRING or file contents if STRING is an existing file name."
   (unless (equal string "")
     (let ((file-name
-	   (progn (string-match "^\\([^\n]+\\)" string)
-		  (vhdl-resolve-env-variable (match-string 1 string)))))
+           (progn (string-match "^\\([^\n]+\\)" string)
+                  (vhdl-resolve-env-variable (match-string 1 string)))))
       (if (file-exists-p file-name)
-	   (forward-char (cadr (insert-file-contents file-name)))
-	(insert string)))))
+           (forward-char (cadr (insert-file-contents file-name)))
+        (insert string)))))
 
 (defun vhdl-beginning-of-block ()
   "Move cursor to the beginning of the enclosing block."
@@ -11228,27 +11231,27 @@ else insert tab (used for word completion in VHDL minibuffer)."
        (beginning-of-line)
        ;; search backward for block beginning or end
        (while (or (while (and (setq pos (re-search-backward "^\\s-*\\(\\(end\\)\\|\\(\\(impure\\|pure\\)[ \t\n\r\f]+\\)?\\(function\\|procedure\\)\\|\\(for\\)\\|\\(architecture\\|component\\|configuration\\|context\\|entity\\|package\\(\\s-+body\\)?\\|type[ \t\n\r\f]+\\w+[ \t\n\r\f]+is[ \t\n\r\f]+\\(record\\|protected\\(\\s-+body\\)?\\)\\|units\\)\\|\\(\\w+[ \t\n\r\f]*:[ \t\n\r\f]*\\)?\\(postponed[ \t\n\r\f]+\\)?\\(block\\|case\\|for\\|if\\|procedural\\|process\\|while\\|loop\\)\\)\\>" nil t))
-			      ;; not consider subprogram declarations
-			      (or (and (match-string 5)
-				       (save-match-data
-					 (save-excursion
-					   (goto-char (match-end 5))
-					   (forward-word-strictly 1)
-					   (vhdl-forward-syntactic-ws)
-					   (when (looking-at "(")
-					     (forward-sexp))
-					   (re-search-forward "\\<is\\>\\|\\(;\\)" nil t))
-					 (match-string 1)))
-				  ;; not consider configuration specifications
-				  (and (match-string 6)
-				       (save-match-data
-					 (save-excursion
-					   (vhdl-end-of-block)
-					   (beginning-of-line)
-					   (not (looking-at "^\\s-*end\\s-+\\(for\\|generate\\|loop\\)\\>"))))))))
-		  (match-string 2))
-	 ;; skip subblock if block end found
-	 (vhdl-beginning-of-block))))
+                              ;; not consider subprogram declarations
+                              (or (and (match-string 5)
+                                       (save-match-data
+                                         (save-excursion
+                                           (goto-char (match-end 5))
+                                           (forward-word-strictly 1)
+                                           (vhdl-forward-syntactic-ws)
+                                           (when (looking-at "(")
+                                             (forward-sexp))
+                                           (re-search-forward "\\<is\\>\\|\\(;\\)" nil t))
+                                         (match-string 1)))
+                                  ;; not consider configuration specifications
+                                  (and (match-string 6)
+                                       (save-match-data
+                                         (save-excursion
+                                           (vhdl-end-of-block)
+                                           (beginning-of-line)
+                                           (not (looking-at "^\\s-*end\\s-+\\(for\\|generate\\|loop\\)\\>"))))))))
+                  (match-string 2))
+         ;; skip subblock if block end found
+         (vhdl-beginning-of-block))))
     (when pos (goto-char pos))))
 
 (defun vhdl-end-of-block ()
@@ -11259,21 +11262,21 @@ else insert tab (used for word completion in VHDL minibuffer)."
        (end-of-line)
        ;; search forward for block beginning or end
        (while (or (while (and (setq pos (re-search-forward "^\\s-*\\(\\(end\\)\\|\\(\\(impure\\|pure\\)[ \t\n\r\f]+\\)?\\(function\\|procedure\\)\\|\\(for\\)\\|\\(architecture\\|component\\|configuration\\|context\\|entity\\|package\\(\\s-+body\\)?\\|type[ \t\n\r\f]+\\w+[ \t\n\r\f]+is[ \t\n\r\f]+\\(record\\|protected\\(\\s-+body\\)?\\)\\|units\\)\\|\\(\\w+[ \t\n\r\f]*:[ \t\n\r\f]*\\)?\\(postponed[ \t\n\r\f]+\\)?\\(block\\|case\\|for\\|if\\|procedural\\|process\\|while\\|loop\\)\\)\\>" nil t))
-			      ;; not consider subprogram declarations
-			      (or (and (match-string 5)
-				       (save-match-data
-					 (save-excursion (re-search-forward "\\<is\\>\\|\\(;\\)" nil t))
-					 (match-string 1)))
-				  ;; not consider configuration specifications
-				  (and (match-string 6)
-				       (save-match-data
-					 (save-excursion
-					   (vhdl-end-of-block)
-					   (beginning-of-line)
-					   (not (looking-at "^\\s-*end\\s-+\\(for\\|generate\\|loop\\)\\>"))))))))
-		  (not (match-string 2)))
-	 ;; skip subblock if block beginning found
-	 (vhdl-end-of-block))))
+                              ;; not consider subprogram declarations
+                              (or (and (match-string 5)
+                                       (save-match-data
+                                         (save-excursion (re-search-forward "\\<is\\>\\|\\(;\\)" nil t))
+                                         (match-string 1)))
+                                  ;; not consider configuration specifications
+                                  (and (match-string 6)
+                                       (save-match-data
+                                         (save-excursion
+                                           (vhdl-end-of-block)
+                                           (beginning-of-line)
+                                           (not (looking-at "^\\s-*end\\s-+\\(for\\|generate\\|loop\\)\\>"))))))))
+                  (not (match-string 2)))
+         ;; skip subblock if block beginning found
+         (vhdl-end-of-block))))
     (when pos (goto-char pos))))
 
 (defun vhdl-sequential-statement-p ()
@@ -11283,21 +11286,21 @@ else insert tab (used for word completion in VHDL minibuffer)."
       (vhdl-prepare-search-2
        ;; is sequential statement if ...
        (and (re-search-backward "^\\s-*begin\\>" nil t)
-	    ;; ... point is between "begin" and "end" of ...
-	    (progn (vhdl-end-of-block)
-		   (< start (point)))
-	    ;; ... a sequential block
-	    (progn (vhdl-beginning-of-block)
-		   (looking-at "^\\s-*\\(\\(\\w+[ \t\n\r\f]+\\)?\\(function\\|procedure\\)\\|\\(\\w+[ \t\n\r\f]*:[ \t\n\r\f]*\\)?\\(\\w+[ \t\n\r\f]+\\)?\\(procedural\\|process\\)\\)\\>")))))))
+            ;; ... point is between "begin" and "end" of ...
+            (progn (vhdl-end-of-block)
+                   (< start (point)))
+            ;; ... a sequential block
+            (progn (vhdl-beginning-of-block)
+                   (looking-at "^\\s-*\\(\\(\\w+[ \t\n\r\f]+\\)?\\(function\\|procedure\\)\\|\\(\\w+[ \t\n\r\f]*:[ \t\n\r\f]*\\)?\\(\\w+[ \t\n\r\f]+\\)?\\(procedural\\|process\\)\\)\\>")))))))
 
 (defun vhdl-in-argument-list-p ()
   "Check if within an argument list."
   (save-excursion
     (vhdl-prepare-search-2
      (or (string-match "arglist"
-		       (format "%s" (caar (vhdl-get-syntactic-context))))
-	 (progn (beginning-of-line)
-		(looking-at "^\\s-*\\(generic\\|port\\|\\(\\(impure\\|pure\\)\\s-+\\|\\)function\\|procedure\\)\\>\\s-*\\(\\w+\\s-*\\)?("))))))
+                       (format "%s" (caar (vhdl-get-syntactic-context))))
+         (progn (beginning-of-line)
+                (looking-at "^\\s-*\\(generic\\|port\\|\\(\\(impure\\|pure\\)\\s-+\\|\\)function\\|procedure\\)\\>\\s-*\\(\\w+\\s-*\\)?("))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Abbrev hooks
@@ -11306,33 +11309,33 @@ else insert tab (used for word completion in VHDL minibuffer)."
   "Do function, if syntax says abbrev is a keyword, invoked by hooked abbrev,
 but not if inside a comment or quote."
   (if (or (vhdl-in-literal)
-	  (save-excursion
-	    (forward-word-strictly -1)
-	    (and (looking-at "\\<end\\>") (not (looking-at "\\<end;")))))
+          (save-excursion
+            (forward-word-strictly -1)
+            (and (looking-at "\\<end\\>") (not (looking-at "\\<end;")))))
       (progn
-	(insert " ")
-	(unexpand-abbrev)
-	(backward-word-strictly 1)
-	(vhdl-case-word 1)
-	(delete-char 1))
+        (insert " ")
+        (unexpand-abbrev)
+        (backward-word-strictly 1)
+        (vhdl-case-word 1)
+        (delete-char 1))
     (if (not vhdl-electric-mode)
-	(progn
-	  (insert " ")
-	  (unexpand-abbrev)
-	  (backward-word-strictly 1)
-	  (vhdl-case-word 1)
-	  (delete-char 1))
+        (progn
+          (insert " ")
+          (unexpand-abbrev)
+          (backward-word-strictly 1)
+          (vhdl-case-word 1)
+          (delete-char 1))
       (let ((invoke-char vhdl-last-input-event)
-	    (abbrev-mode -1)
-	    (vhdl-template-invoked-by-hook t))
-	(let ((caught (catch 'abort
-			(funcall func))))
-	  (when (stringp caught) (message "%s" caught)))
-	(when (= invoke-char ?-) (setq abbrev-start-location (point)))
-	;; delete CR which is still in event queue
-	(if (fboundp 'enqueue-eval-event)
-	    (enqueue-eval-event 'delete-char -1)
-	  (push (vhdl-character-to-event ?\177)	; push back a delete char
+            (abbrev-mode -1)
+            (vhdl-template-invoked-by-hook t))
+        (let ((caught (catch 'abort
+                        (funcall func))))
+          (when (stringp caught) (message "%s" caught)))
+        (when (= invoke-char ?-) (setq abbrev-start-location (point)))
+        ;; delete CR which is still in event queue
+        (if (fboundp 'enqueue-eval-event)
+            (enqueue-eval-event 'delete-char -1)
+          (push (vhdl-character-to-event ?\177) ; push back a delete char
                 unread-command-events))))))
 
 (defun vhdl-template-alias-hook ()
@@ -11466,8 +11469,8 @@ but not if inside a comment or quote."
   "Insert the built-in construct template with NAME."
   (interactive
    (list (let ((completion-ignore-case t))
-	   (completing-read "Construct name: "
-			    vhdl-template-construct-alist nil t))))
+           (completing-read "Construct name: "
+                            vhdl-template-construct-alist nil t))))
   (vhdl-template-insert-fun
    (cadr (assoc name vhdl-template-construct-alist))))
 
@@ -11475,8 +11478,8 @@ but not if inside a comment or quote."
   "Insert the built-in package template with NAME."
   (interactive
    (list (let ((completion-ignore-case t))
-	   (completing-read "Package name: "
-			    vhdl-template-package-alist nil t))))
+           (completing-read "Package name: "
+                            vhdl-template-package-alist nil t))))
   (vhdl-template-insert-fun
    (cadr (assoc name vhdl-template-package-alist))))
 
@@ -11484,8 +11487,8 @@ but not if inside a comment or quote."
   "Insert the built-in directive template with NAME."
   (interactive
    (list (let ((completion-ignore-case t))
-	   (completing-read "Directive name: "
-			    vhdl-template-directive-alist nil t))))
+           (completing-read "Directive name: "
+                            vhdl-template-directive-alist nil t))))
   (vhdl-template-insert-fun
    (cadr (assoc name vhdl-template-directive-alist))))
 
@@ -11506,8 +11509,8 @@ but not if inside a comment or quote."
      (list (completing-read "Model name: " vhdl-model-alist))))
   (indent-according-to-mode)
   (let ((start (point-marker))
-	(margin (current-indentation))
-	model position prompt string end)
+        (margin (current-indentation))
+        model position prompt string end)
     (vhdl-prepare-search-2
      (when (setq model (assoc model-name vhdl-model-alist))
        ;; insert model
@@ -11520,61 +11523,61 @@ but not if inside a comment or quote."
        (goto-char start)
        (beginning-of-line)
        (while (< (point) end)
-	 (unless (looking-at "^$")
-	   (insert-char ?  margin))
-	 (beginning-of-line 2))
+         (unless (looking-at "^$")
+           (insert-char ?  margin))
+         (beginning-of-line 2))
        (goto-char start)
        ;; insert clock
        (unless (equal "" vhdl-clock-name)
-	 (while (re-search-forward "<clock>" end t)
-	   (replace-match vhdl-clock-name)))
+         (while (re-search-forward "<clock>" end t)
+           (replace-match vhdl-clock-name)))
        (goto-char start)
        ;; insert reset
        (unless (equal "" vhdl-reset-name)
-	 (while (re-search-forward "<reset>" end t)
-	   (replace-match vhdl-reset-name)))
+         (while (re-search-forward "<reset>" end t)
+           (replace-match vhdl-reset-name)))
        ;; replace header prompts
        (vhdl-template-replace-header-keywords start end nil t)
        (goto-char start)
        ;; query other prompts
        (while (re-search-forward
-	       (concat "<\\(" vhdl-template-prompt-syntax "\\)>") end t)
-	 (unless (equal "cursor" (match-string 1))
-	   (setq position (match-beginning 1))
-	   (setq prompt (match-string 1))
-	   (replace-match "")
-	   (setq string (vhdl-template-field prompt nil t))
-	   ;; replace occurrences of same prompt
-	   (while (re-search-forward (concat "<\\(" prompt "\\)>") end t)
-	     (replace-match (or string "")))
-	   (goto-char position)))
+               (concat "<\\(" vhdl-template-prompt-syntax "\\)>") end t)
+         (unless (equal "cursor" (match-string 1))
+           (setq position (match-beginning 1))
+           (setq prompt (match-string 1))
+           (replace-match "")
+           (setq string (vhdl-template-field prompt nil t))
+           ;; replace occurrences of same prompt
+           (while (re-search-forward (concat "<\\(" prompt "\\)>") end t)
+             (replace-match (or string "")))
+           (goto-char position)))
        (goto-char start)
        ;; goto final position
        (if (re-search-forward "<cursor>" end t)
-	   (replace-match "")
-	 (goto-char end))))))
+           (replace-match "")
+         (goto-char end))))))
 
 (defun vhdl-model-defun ()
   "Define help and hook functions for user models."
   (let ((model-alist vhdl-model-alist)
-	model-name model-keyword)
+        model-name model-keyword)
     (while model-alist
       ;; define functions for user models that can be invoked from menu and key
       ;; bindings and which themselves call `vhdl-model-insert' with the model
       ;; name as argument
       (setq model-name (nth 0 (car model-alist)))
       (eval `(defun ,(vhdl-function-name "vhdl-model" model-name) ()
-	       ,(concat "Insert model for \"" model-name "\".")
-	       (interactive)
-	       (vhdl-model-insert ,model-name)))
+               ,(concat "Insert model for \"" model-name "\".")
+               (interactive)
+               (vhdl-model-insert ,model-name)))
       ;; define hooks for user models that are invoked from keyword abbrevs
       (setq model-keyword (nth 3 (car model-alist)))
       (unless (equal model-keyword "")
-	(eval `(defun
-		 ,(vhdl-function-name
-		   "vhdl-model" model-name "hook") ()
-		 (vhdl-hooked-abbrev
-		  ',(vhdl-function-name "vhdl-model" model-name)))))
+        (eval `(defun
+                 ,(vhdl-function-name
+                   "vhdl-model" model-name "hook") ()
+                 (vhdl-hooked-abbrev
+                  ',(vhdl-function-name "vhdl-model" model-name)))))
       (setq model-alist (cdr model-alist)))))
 
 (vhdl-model-defun)
@@ -11596,12 +11599,12 @@ but not if inside a comment or quote."
   "Check that the text following point matches the regexp in STRING."
   (if (looking-at string)
       (progn (goto-char (match-end 0))
-	     (when (vhdl-in-literal)
-	       (end-of-line))
-	     (point))
+             (when (vhdl-in-literal)
+               (end-of-line))
+             (point))
     (unless optional
       (throw 'parse (format "ERROR:  Syntax error near line %s, expecting \"%s\""
-			    (vhdl-current-line) string)))
+                            (vhdl-current-line) string)))
     nil))
 
 (defun vhdl-replace-string (regexp-cons string &optional adjust-case)
@@ -11609,24 +11612,24 @@ but not if inside a comment or quote."
   (vhdl-prepare-search-1
    (if (string-match (car regexp-cons) string)
        (if adjust-case
-	   (funcall vhdl-file-name-case
-		    (replace-match (cdr regexp-cons) t nil string))
-	 (replace-match (cdr regexp-cons) t nil string))
+           (funcall vhdl-file-name-case
+                    (replace-match (cdr regexp-cons) t nil string))
+         (replace-match (cdr regexp-cons) t nil string))
      string)))
 
 (defun vhdl-parse-group-comment ()
   "Parse comment and empty lines between groups of lines."
   (let ((start (point))
-	string)
+        string)
     (vhdl-forward-comment (point-max))
     (setq string (buffer-substring-no-properties start (point)))
     (vhdl-forward-syntactic-ws)
     ;; strip off leading blanks and first newline
     (while (string-match "^\\(\\s-+\\)" string)
       (setq string (concat (substring string 0 (match-beginning 1))
-			   (substring string (match-end 1)))))
+                           (substring string (match-end 1)))))
     (if (and (not (equal string "")) (equal (substring string 0 1) "\n"))
-	(substring string 1)
+        (substring string 1)
       string)))
 
 (defun vhdl-paste-group-comment (string indent)
@@ -11635,9 +11638,9 @@ with INDENT."
   (let ((pos (point-marker)))
     (when (> indent 0)
       (while (string-match "^\\(--\\)" string)
-	(setq string (concat (substring string 0 (match-beginning 1))
-			     (make-string indent ? )
-			     (substring string (match-beginning 1))))))
+        (setq string (concat (substring string 0 (match-beginning 1))
+                             (make-string indent ? )
+                             (substring string (match-beginning 1))))))
     (beginning-of-line)
     (insert string)
     (goto-char pos)))
@@ -11654,27 +11657,27 @@ reflected in a subsequent paste operation."
       (error "ERROR:  No port has been read")
     (message "Flattening port for next paste...")
     (let ((new-vhdl-port-list (list (car vhdl-port-list)))
-	  (old-vhdl-port-list (cdr vhdl-port-list))
-	  old-port-list new-port-list old-port new-port names)
+          (old-vhdl-port-list (cdr vhdl-port-list))
+          old-port-list new-port-list old-port new-port names)
       ;; traverse port list and flatten entries
       (while (cdr old-vhdl-port-list)
-	(setq old-port-list (car old-vhdl-port-list))
-	(setq new-port-list nil)
-	(while old-port-list
-	  (setq old-port (car old-port-list))
-	  (setq names (car old-port))
-	  (while names
-	    (setq new-port (cons (if as-alist (car names) (list (car names)))
-				 (cdr old-port)))
-	    (setq new-port-list (append new-port-list (list new-port)))
-	    (setq names (cdr names)))
-	  (setq old-port-list (cdr old-port-list)))
-	(setq old-vhdl-port-list (cdr old-vhdl-port-list))
-	(setq new-vhdl-port-list (append new-vhdl-port-list
-					 (list new-port-list))))
+        (setq old-port-list (car old-vhdl-port-list))
+        (setq new-port-list nil)
+        (while old-port-list
+          (setq old-port (car old-port-list))
+          (setq names (car old-port))
+          (while names
+            (setq new-port (cons (if as-alist (car names) (list (car names)))
+                                 (cdr old-port)))
+            (setq new-port-list (append new-port-list (list new-port)))
+            (setq names (cdr names)))
+          (setq old-port-list (cdr old-port-list)))
+        (setq old-vhdl-port-list (cdr old-vhdl-port-list))
+        (setq new-vhdl-port-list (append new-vhdl-port-list
+                                         (list new-port-list))))
       (setq vhdl-port-list
-	    (append new-vhdl-port-list (list old-vhdl-port-list))
-	    vhdl-port-flattened t)
+            (append new-vhdl-port-list (list old-vhdl-port-list))
+            vhdl-port-flattened t)
       (message "Flattening port for next paste...done"))))
 
 (defvar vhdl-port-reversed-direction nil
@@ -11689,18 +11692,18 @@ reflected in a subsequent paste operation."
       (error "ERROR:  No port has been read")
     (message "Reversing port directions for next paste...")
     (let ((port-list (nth 2 vhdl-port-list))
-	  port-dir-car port-dir)
+          port-dir-car port-dir)
       ;; traverse port list and reverse directions
       (while port-list
-	(setq port-dir-car (cddr (car port-list))
-	      port-dir (car port-dir-car))
-	(setcar port-dir-car
-		(cond ((equal port-dir "in") "out")
-		      ((equal port-dir "IN") "OUT")
-		      ((equal port-dir "out") "in")
-		      ((equal port-dir "OUT") "IN")
-		      (t port-dir)))
-	(setq port-list (cdr port-list)))
+        (setq port-dir-car (cddr (car port-list))
+              port-dir (car port-dir-car))
+        (setcar port-dir-car
+                (cond ((equal port-dir "in") "out")
+                      ((equal port-dir "IN") "OUT")
+                      ((equal port-dir "out") "in")
+                      ((equal port-dir "OUT") "IN")
+                      (t port-dir)))
+        (setq port-list (cdr port-list)))
       (setq vhdl-port-reversed-direction (not vhdl-port-reversed-direction))
       (message "Reversing port directions for next paste...done"))))
 
@@ -11709,255 +11712,255 @@ reflected in a subsequent paste operation."
   (interactive)
   (save-excursion
     (let (parse-error end-of-list
-	  decl-type name generic-list port-list context-clause
-	  object names direct type init comment group-comment)
+          decl-type name generic-list port-list context-clause
+          object names direct type init comment group-comment)
       (vhdl-prepare-search-2
        (setq
-	parse-error
-	(catch 'parse
-	  ;; check if within entity or component declaration
-	  (end-of-line)
-	  (when (or (not (re-search-backward
-			  "^\\s-*\\(component\\|entity\\|end\\)\\>" nil t))
-		    (equal "END" (upcase (match-string 1))))
-	    (throw 'parse "ERROR:  Not within an entity or component declaration"))
-	  (setq decl-type (downcase (match-string-no-properties 1)))
-	  (forward-word-strictly 1)
-	  (vhdl-parse-string "\\s-+\\(\\w+\\)\\(\\s-+is\\>\\)?")
-	  (setq name (match-string-no-properties 1))
-	  (message "Reading port of %s \"%s\"..." decl-type name)
-	  (vhdl-forward-syntactic-ws)
-	  ;; parse generic clause
-	  (when (vhdl-parse-string "generic[ \t\n\r\f]*(" t)
-	    ;; parse group comment and spacing
-	    (setq group-comment (vhdl-parse-group-comment))
-	    (setq end-of-list (vhdl-parse-string ")[ \t\n\r\f]*;[ \t\n\r\f]*" t))
-	    (while (not end-of-list)
-	      ;; parse names (accept extended identifiers)
-	      (vhdl-parse-string "\\(\\\\[^\\]+\\\\\\|\\w+\\)[ \t\n\r\f]*")
-	      (setq names (list (match-string-no-properties 1)))
-	      (while (vhdl-parse-string ",[ \t\n\r\f]*\\(\\\\[^\\]+\\\\\\|\\w+\\)[ \t\n\r\f]*" t)
-		(setq names
-		      (append names (list (match-string-no-properties 1)))))
-	      ;; parse type
-	      (vhdl-parse-string ":[ \t\n\r\f]*\\([^():;\n]+\\)")
-	      (setq type (match-string-no-properties 1))
-	      (when (vhdl-in-comment-p) ; if stuck in comment
-		(setq type (concat type (and (vhdl-parse-string ".*")
-					     (match-string-no-properties 0)))))
-	      (setq comment nil)
-	      (while (looking-at "(")
-		(setq type
-		      (concat type
-			      (buffer-substring-no-properties
-			       (point) (progn (forward-sexp) (point)))
-			      (and (vhdl-parse-string "\\([^():;\n]*\\)" t)
-				   (match-string-no-properties 1)))))
-	      ;; special case: closing parenthesis is on separate line
-	      (when (and type (string-match "\\(\\s-*--\\s-*\\)\\(.*\\)" type))
-		(setq comment (substring type (match-beginning 2)))
-		(setq type (substring type 0 (match-beginning 1))))
-	      ;; strip of trailing group-comment
-	      (string-match "\\(\\(\\s-*\\S-+\\)+\\)\\s-*" type)
-	      (setq type (substring type 0 (match-end 1)))
-	      ;; parse initialization expression
-	      (setq init nil)
-	      (when (vhdl-parse-string ":=[ \t\n\r\f]*" t)
-		(vhdl-parse-string "\\([^();\n]*\\)")
-		(setq init (match-string-no-properties 1))
-		(while (looking-at "(")
-		  (setq init
-			(concat init
-				(buffer-substring-no-properties
-				 (point) (progn (forward-sexp) (point)))
-				(and (vhdl-parse-string "\\([^();\n]*\\)" t)
-				     (match-string-no-properties 1))))))
-	      ;; special case: closing parenthesis is on separate line
-	      (when (and init (string-match "\\(\\s-*--\\s-*\\)\\(.*\\)" init))
-		(setq comment (substring init (match-beginning 2)))
-		(setq init (substring init 0 (match-beginning 1)))
-		(vhdl-forward-syntactic-ws))
-	      (skip-chars-forward " \t")
-	      ;; parse inline comment, special case: as above, no initial.
-	      (unless comment
-		(setq comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
-				   (match-string-no-properties 1))))
-	      (vhdl-forward-syntactic-ws)
-	      (setq end-of-list (vhdl-parse-string ")" t))
-	      (vhdl-parse-string "\\s-*;\\s-*")
-	      ;; parse inline comment
-	      (unless comment
-		(setq comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
-				   (match-string-no-properties 1))))
-	      ;; save everything in list
-	      (setq generic-list (append generic-list
-					 (list (list names type init
-						     comment group-comment))))
-	      ;; parse group comment and spacing
-	      (setq group-comment (vhdl-parse-group-comment))))
-	  ;; parse port clause
-	  (when (vhdl-parse-string "port[ \t\n\r\f]*(" t)
-	    ;; parse group comment and spacing
-	    (setq group-comment (vhdl-parse-group-comment))
-	    (setq end-of-list (vhdl-parse-string ")[ \t\n\r\f]*;[ \t\n\r\f]*" t))
-	    (while (not end-of-list)
-	      ;; parse object
-	      (setq object
-		    (and (vhdl-parse-string "\\<\\(signal\\|quantity\\|terminal\\)\\>[ \t\n\r\f]*" t)
-			 (match-string-no-properties 1)))
-	      ;; parse names (accept extended identifiers)
-	      (vhdl-parse-string "\\(\\\\[^\\]+\\\\\\|\\w+\\)[ \t\n\r\f]*")
-	      (setq names (list (match-string-no-properties 1)))
-	      (while (vhdl-parse-string ",[ \t\n\r\f]*\\(\\\\[^\\]+\\\\\\|\\w+\\)[ \t\n\r\f]*" t)
-		(setq names (append names (list (match-string-no-properties 1)))))
-	      ;; parse direction
-	      (vhdl-parse-string ":[ \t\n\r\f]*")
-	      (setq direct
-		    (and (vhdl-parse-string "\\<\\(in\\|out\\|inout\\|buffer\\|linkage\\)\\>[ \t\n\r\f]+" t)
-			 (match-string-no-properties 1)))
-	      ;; parse type
-	      (vhdl-parse-string "\\([^();\n]+\\)")
-	      (setq type (match-string-no-properties 1))
-	      (when (vhdl-in-comment-p) ; if stuck in comment
-		(setq type (concat type (and (vhdl-parse-string ".*")
-					     (match-string-no-properties 0)))))
-	      (setq comment nil)
-	      (while (looking-at "(")
-		(setq type (concat type
-				   (buffer-substring-no-properties
-				    (point) (progn (forward-sexp) (point)))
-				   (and (vhdl-parse-string "\\([^();\n]*\\)" t)
-					(match-string-no-properties 1)))))
-	      ;; special case: closing parenthesis is on separate line
-	      (when (and type (string-match "\\(\\s-*--\\s-*\\)\\(.*\\)" type))
-		(setq comment (substring type (match-beginning 2)))
-		(setq type (substring type 0 (match-beginning 1))))
-	      ;; strip of trailing group-comment
-	      (string-match "\\(\\(\\s-*\\S-+\\)+\\)\\s-*" type)
-	      (setq type (substring type 0 (match-end 1)))
-	      (vhdl-forward-syntactic-ws)
-	      (setq end-of-list (vhdl-parse-string ")" t))
-	      (vhdl-parse-string "\\s-*;\\s-*")
-	      ;; parse inline comment
-	      (unless comment
-		(setq comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
-				   (match-string-no-properties 1))))
-	      ;; save everything in list
-	      (setq port-list (append port-list
-				      (list (list names object direct type
-						  comment group-comment))))
-	      ;; parse group comment and spacing
-	      (setq group-comment (vhdl-parse-group-comment))))
-	  ;; parse context clause
-	  (setq context-clause (vhdl-scan-context-clause))
-;	  ;; add surrounding package to context clause
-;	  (when (and (equal decl-type "component")
-;		     (re-search-backward "^\\s-*package\\s-+\\(\\w+\\)" nil t))
-;	    (setq context-clause
-;		  (append context-clause
-;			  (list (cons (vhdl-work-library)
-;				      (match-string-no-properties 1))))))
-	  (message "Reading port of %s \"%s\"...done" decl-type name)
-	  nil)))
+        parse-error
+        (catch 'parse
+          ;; check if within entity or component declaration
+          (end-of-line)
+          (when (or (not (re-search-backward
+                          "^\\s-*\\(component\\|entity\\|end\\)\\>" nil t))
+                    (equal "END" (upcase (match-string 1))))
+            (throw 'parse "ERROR:  Not within an entity or component declaration"))
+          (setq decl-type (downcase (match-string-no-properties 1)))
+          (forward-word-strictly 1)
+          (vhdl-parse-string "\\s-+\\(\\w+\\)\\(\\s-+is\\>\\)?")
+          (setq name (match-string-no-properties 1))
+          (message "Reading port of %s \"%s\"..." decl-type name)
+          (vhdl-forward-syntactic-ws)
+          ;; parse generic clause
+          (when (vhdl-parse-string "generic[ \t\n\r\f]*(" t)
+            ;; parse group comment and spacing
+            (setq group-comment (vhdl-parse-group-comment))
+            (setq end-of-list (vhdl-parse-string ")[ \t\n\r\f]*;[ \t\n\r\f]*" t))
+            (while (not end-of-list)
+              ;; parse names (accept extended identifiers)
+              (vhdl-parse-string "\\(\\\\[^\\]+\\\\\\|\\w+\\)[ \t\n\r\f]*")
+              (setq names (list (match-string-no-properties 1)))
+              (while (vhdl-parse-string ",[ \t\n\r\f]*\\(\\\\[^\\]+\\\\\\|\\w+\\)[ \t\n\r\f]*" t)
+                (setq names
+                      (append names (list (match-string-no-properties 1)))))
+              ;; parse type
+              (vhdl-parse-string ":[ \t\n\r\f]*\\([^():;\n]+\\)")
+              (setq type (match-string-no-properties 1))
+              (when (vhdl-in-comment-p) ; if stuck in comment
+                (setq type (concat type (and (vhdl-parse-string ".*")
+                                             (match-string-no-properties 0)))))
+              (setq comment nil)
+              (while (looking-at "(")
+                (setq type
+                      (concat type
+                              (buffer-substring-no-properties
+                               (point) (progn (forward-sexp) (point)))
+                              (and (vhdl-parse-string "\\([^():;\n]*\\)" t)
+                                   (match-string-no-properties 1)))))
+              ;; special case: closing parenthesis is on separate line
+              (when (and type (string-match "\\(\\s-*--\\s-*\\)\\(.*\\)" type))
+                (setq comment (substring type (match-beginning 2)))
+                (setq type (substring type 0 (match-beginning 1))))
+              ;; strip of trailing group-comment
+              (string-match "\\(\\(\\s-*\\S-+\\)+\\)\\s-*" type)
+              (setq type (substring type 0 (match-end 1)))
+              ;; parse initialization expression
+              (setq init nil)
+              (when (vhdl-parse-string ":=[ \t\n\r\f]*" t)
+                (vhdl-parse-string "\\([^();\n]*\\)")
+                (setq init (match-string-no-properties 1))
+                (while (looking-at "(")
+                  (setq init
+                        (concat init
+                                (buffer-substring-no-properties
+                                 (point) (progn (forward-sexp) (point)))
+                                (and (vhdl-parse-string "\\([^();\n]*\\)" t)
+                                     (match-string-no-properties 1))))))
+              ;; special case: closing parenthesis is on separate line
+              (when (and init (string-match "\\(\\s-*--\\s-*\\)\\(.*\\)" init))
+                (setq comment (substring init (match-beginning 2)))
+                (setq init (substring init 0 (match-beginning 1)))
+                (vhdl-forward-syntactic-ws))
+              (skip-chars-forward " \t")
+              ;; parse inline comment, special case: as above, no initial.
+              (unless comment
+                (setq comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
+                                   (match-string-no-properties 1))))
+              (vhdl-forward-syntactic-ws)
+              (setq end-of-list (vhdl-parse-string ")" t))
+              (vhdl-parse-string "\\s-*;\\s-*")
+              ;; parse inline comment
+              (unless comment
+                (setq comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
+                                   (match-string-no-properties 1))))
+              ;; save everything in list
+              (setq generic-list (append generic-list
+                                         (list (list names type init
+                                                     comment group-comment))))
+              ;; parse group comment and spacing
+              (setq group-comment (vhdl-parse-group-comment))))
+          ;; parse port clause
+          (when (vhdl-parse-string "port[ \t\n\r\f]*(" t)
+            ;; parse group comment and spacing
+            (setq group-comment (vhdl-parse-group-comment))
+            (setq end-of-list (vhdl-parse-string ")[ \t\n\r\f]*;[ \t\n\r\f]*" t))
+            (while (not end-of-list)
+              ;; parse object
+              (setq object
+                    (and (vhdl-parse-string "\\<\\(signal\\|quantity\\|terminal\\)\\>[ \t\n\r\f]*" t)
+                         (match-string-no-properties 1)))
+              ;; parse names (accept extended identifiers)
+              (vhdl-parse-string "\\(\\\\[^\\]+\\\\\\|\\w+\\)[ \t\n\r\f]*")
+              (setq names (list (match-string-no-properties 1)))
+              (while (vhdl-parse-string ",[ \t\n\r\f]*\\(\\\\[^\\]+\\\\\\|\\w+\\)[ \t\n\r\f]*" t)
+                (setq names (append names (list (match-string-no-properties 1)))))
+              ;; parse direction
+              (vhdl-parse-string ":[ \t\n\r\f]*")
+              (setq direct
+                    (and (vhdl-parse-string "\\<\\(in\\|out\\|inout\\|buffer\\|linkage\\)\\>[ \t\n\r\f]+" t)
+                         (match-string-no-properties 1)))
+              ;; parse type
+              (vhdl-parse-string "\\([^();\n]+\\)")
+              (setq type (match-string-no-properties 1))
+              (when (vhdl-in-comment-p) ; if stuck in comment
+                (setq type (concat type (and (vhdl-parse-string ".*")
+                                             (match-string-no-properties 0)))))
+              (setq comment nil)
+              (while (looking-at "(")
+                (setq type (concat type
+                                   (buffer-substring-no-properties
+                                    (point) (progn (forward-sexp) (point)))
+                                   (and (vhdl-parse-string "\\([^();\n]*\\)" t)
+                                        (match-string-no-properties 1)))))
+              ;; special case: closing parenthesis is on separate line
+              (when (and type (string-match "\\(\\s-*--\\s-*\\)\\(.*\\)" type))
+                (setq comment (substring type (match-beginning 2)))
+                (setq type (substring type 0 (match-beginning 1))))
+              ;; strip of trailing group-comment
+              (string-match "\\(\\(\\s-*\\S-+\\)+\\)\\s-*" type)
+              (setq type (substring type 0 (match-end 1)))
+              (vhdl-forward-syntactic-ws)
+              (setq end-of-list (vhdl-parse-string ")" t))
+              (vhdl-parse-string "\\s-*;\\s-*")
+              ;; parse inline comment
+              (unless comment
+                (setq comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
+                                   (match-string-no-properties 1))))
+              ;; save everything in list
+              (setq port-list (append port-list
+                                      (list (list names object direct type
+                                                  comment group-comment))))
+              ;; parse group comment and spacing
+              (setq group-comment (vhdl-parse-group-comment))))
+          ;; parse context clause
+          (setq context-clause (vhdl-scan-context-clause))
+;         ;; add surrounding package to context clause
+;         (when (and (equal decl-type "component")
+;                    (re-search-backward "^\\s-*package\\s-+\\(\\w+\\)" nil t))
+;           (setq context-clause
+;                 (append context-clause
+;                         (list (cons (vhdl-work-library)
+;                                     (match-string-no-properties 1))))))
+          (message "Reading port of %s \"%s\"...done" decl-type name)
+          nil)))
       ;; finish parsing
       (if parse-error
-	  (error parse-error)
-	(setq vhdl-port-list (list name generic-list port-list context-clause)
-	      vhdl-port-reversed-direction nil
-	      vhdl-port-flattened nil)))))
+          (error parse-error)
+        (setq vhdl-port-list (list name generic-list port-list context-clause)
+              vhdl-port-reversed-direction nil
+              vhdl-port-flattened nil)))))
 
 (defun vhdl-port-paste-context-clause (&optional exclude-pack-name)
   "Paste a context clause."
   (let ((margin (current-indentation))
-	(clause-list (nth 3 vhdl-port-list))
-	clause)
+        (clause-list (nth 3 vhdl-port-list))
+        clause)
     (while clause-list
       (setq clause (car clause-list))
       (unless (or (and exclude-pack-name (equal (downcase (cdr clause))
-						(downcase exclude-pack-name)))
-		  (save-excursion
-		    (re-search-backward
-		     (concat "^\\s-*use\\s-+" (car clause)
-			     "." (cdr clause) "\\>") nil t)))
-	(vhdl-template-standard-package (car clause) (cdr clause))
-	(insert "\n"))
+                                                (downcase exclude-pack-name)))
+                  (save-excursion
+                    (re-search-backward
+                     (concat "^\\s-*use\\s-+" (car clause)
+                             "." (cdr clause) "\\>") nil t)))
+        (vhdl-template-standard-package (car clause) (cdr clause))
+        (insert "\n"))
       (setq clause-list (cdr clause-list)))))
 
 (defun vhdl-port-paste-generic (&optional no-init)
   "Paste a generic clause."
   (let ((margin (current-indentation))
-	(generic-list (nth 1 vhdl-port-list))
-	list-margin start names generic)
+        (generic-list (nth 1 vhdl-port-list))
+        list-margin start names generic)
     ;; paste generic clause
     (when generic-list
       (setq start (point))
       (vhdl-insert-keyword "GENERIC (")
       (unless vhdl-argument-list-indent
-	(insert "\n") (indent-to (+ margin vhdl-basic-offset)))
+        (insert "\n") (indent-to (+ margin vhdl-basic-offset)))
       (setq list-margin (current-column))
       (while generic-list
-	(setq generic (car generic-list))
-	;; paste group comment and spacing
-	(when (memq vhdl-include-group-comments '(decl always))
-	  (vhdl-paste-group-comment (nth 4 generic) list-margin))
-	;; paste names
-	(setq names (nth 0 generic))
-	(while names
-	  (insert (car names))
-	  (setq names (cdr names))
-	  (when names (insert ", ")))
-	;; paste type
-	(insert " : " (nth 1 generic))
-	;; paste initialization
-	(when (and (not no-init) (nth 2 generic))
-	  (insert " := " (nth 2 generic)))
-	(unless (cdr generic-list) (insert ")"))
-	(insert ";")
-	;; paste comment
-	(when (and vhdl-include-port-comments (nth 3 generic))
-	  (vhdl-comment-insert-inline (nth 3 generic) t))
-	(setq generic-list (cdr generic-list))
-	(when generic-list (insert "\n") (indent-to list-margin)))
+        (setq generic (car generic-list))
+        ;; paste group comment and spacing
+        (when (memq vhdl-include-group-comments '(decl always))
+          (vhdl-paste-group-comment (nth 4 generic) list-margin))
+        ;; paste names
+        (setq names (nth 0 generic))
+        (while names
+          (insert (car names))
+          (setq names (cdr names))
+          (when names (insert ", ")))
+        ;; paste type
+        (insert " : " (nth 1 generic))
+        ;; paste initialization
+        (when (and (not no-init) (nth 2 generic))
+          (insert " := " (nth 2 generic)))
+        (unless (cdr generic-list) (insert ")"))
+        (insert ";")
+        ;; paste comment
+        (when (and vhdl-include-port-comments (nth 3 generic))
+          (vhdl-comment-insert-inline (nth 3 generic) t))
+        (setq generic-list (cdr generic-list))
+        (when generic-list (insert "\n") (indent-to list-margin)))
       ;; align generic clause
       (when vhdl-auto-align (vhdl-align-region-groups start (point) 1 t)))))
 
 (defun vhdl-port-paste-port ()
   "Paste a port clause."
   (let ((margin (current-indentation))
-	(port-list (nth 2 vhdl-port-list))
-	list-margin start names port)
+        (port-list (nth 2 vhdl-port-list))
+        list-margin start names port)
     ;; paste port clause
     (when port-list
       (setq start (point))
       (vhdl-insert-keyword "PORT (")
       (unless vhdl-argument-list-indent
-	(insert "\n") (indent-to (+ margin vhdl-basic-offset)))
+        (insert "\n") (indent-to (+ margin vhdl-basic-offset)))
       (setq list-margin (current-column))
       (while port-list
-	(setq port (car port-list))
-	;; paste group comment and spacing
-	(when (memq vhdl-include-group-comments '(decl always))
-	  (vhdl-paste-group-comment (nth 5 port) list-margin))
-	;; paste object
-	(when (nth 1 port) (insert (nth 1 port) " "))
-	;; paste names
-	(setq names (nth 0 port))
-	(while names
-	  (insert (car names))
-	  (setq names (cdr names))
-	  (when names (insert ", ")))
-	;; paste direction
-	(insert " : ")
-	(when (nth 2 port) (insert (nth 2 port) " "))
-	;; paste type
-	(insert (nth 3 port))
-	(unless (cdr port-list) (insert ")"))
-	(insert ";")
-	;; paste comment
-	(when (and vhdl-include-port-comments (nth 4 port))
-	  (vhdl-comment-insert-inline (nth 4 port) t))
-	(setq port-list (cdr port-list))
-	(when port-list (insert "\n") (indent-to list-margin)))
+        (setq port (car port-list))
+        ;; paste group comment and spacing
+        (when (memq vhdl-include-group-comments '(decl always))
+          (vhdl-paste-group-comment (nth 5 port) list-margin))
+        ;; paste object
+        (when (nth 1 port) (insert (nth 1 port) " "))
+        ;; paste names
+        (setq names (nth 0 port))
+        (while names
+          (insert (car names))
+          (setq names (cdr names))
+          (when names (insert ", ")))
+        ;; paste direction
+        (insert " : ")
+        (when (nth 2 port) (insert (nth 2 port) " "))
+        ;; paste type
+        (insert (nth 3 port))
+        (unless (cdr port-list) (insert ")"))
+        (insert ";")
+        ;; paste comment
+        (when (and vhdl-include-port-comments (nth 4 port))
+          (vhdl-comment-insert-inline (nth 4 port) t))
+        (setq port-list (cdr port-list))
+        (when port-list (insert "\n") (indent-to list-margin)))
       ;; align port clause
       (when vhdl-auto-align (vhdl-align-region-groups start (point) 1)))))
 
@@ -11965,23 +11968,23 @@ reflected in a subsequent paste operation."
   "Paste as an entity or component declaration."
   (unless no-indent (indent-according-to-mode))
   (let ((margin (current-indentation))
-	(name (nth 0 vhdl-port-list)))
+        (name (nth 0 vhdl-port-list)))
     (vhdl-insert-keyword (if (eq kind 'entity) "ENTITY " "COMPONENT "))
     (insert name)
     (when (or (eq kind 'entity) (not (vhdl-standard-p '87)))
-	(vhdl-insert-keyword " IS"))
+        (vhdl-insert-keyword " IS"))
     ;; paste generic and port clause
     (when (nth 1 vhdl-port-list)
       (insert "\n")
       (when (and (memq vhdl-insert-empty-lines '(unit all)) (eq kind 'entity))
-	(insert "\n"))
+        (insert "\n"))
       (indent-to (+ margin vhdl-basic-offset))
       (vhdl-port-paste-generic (eq kind 'component)))
     (when (nth 2 vhdl-port-list)
       (insert "\n")
       (when (and (memq vhdl-insert-empty-lines '(unit all))
-		 (eq kind 'entity))
-	(insert "\n"))
+                 (eq kind 'entity))
+        (insert "\n"))
       (indent-to (+ margin vhdl-basic-offset)))
     (vhdl-port-paste-port)
     (insert "\n")
@@ -11990,9 +11993,9 @@ reflected in a subsequent paste operation."
     (indent-to margin)
     (vhdl-insert-keyword "END")
     (if (eq kind 'entity)
-	(progn
-	  (unless (vhdl-standard-p '87) (vhdl-insert-keyword " ENTITY"))
-	  (insert " " name))
+        (progn
+          (unless (vhdl-standard-p '87) (vhdl-insert-keyword " ENTITY"))
+          (insert " " name))
       (vhdl-insert-keyword " COMPONENT")
       (unless (vhdl-standard-p '87) (insert " " name)))
     (insert ";")))
@@ -12020,103 +12023,103 @@ reflected in a subsequent paste operation."
   (interactive)
   (unless secondary (indent-according-to-mode))
   (let ((margin (current-indentation))
-	list-margin start generic
-	(generic-list (nth 1 vhdl-port-list)))
+        list-margin start generic
+        (generic-list (nth 1 vhdl-port-list)))
     (when generic-list
       (setq start (point))
       (vhdl-insert-keyword "GENERIC MAP (")
       (if (not vhdl-association-list-with-formals)
-	  ;; paste list of actual generics
-	  (while generic-list
-	    (insert (if no-constants
-		      (car (nth 0 (car generic-list)))
-		    (or (nth 2 (car generic-list)) " ")))
-	    (setq generic-list (cdr generic-list))
-	    (insert (if generic-list ", " ")"))
-	    (when (and (not generic-list) secondary
-		       (null (nth 2 vhdl-port-list)))
-	      (insert ";")))
-	(unless vhdl-argument-list-indent
-	  (insert "\n") (indent-to (+ margin vhdl-basic-offset)))
-	(setq list-margin (current-column))
-	(while generic-list
-	  (setq generic (car generic-list))
-	  ;; paste group comment and spacing
-	  (when (eq vhdl-include-group-comments 'always)
-	    (vhdl-paste-group-comment (nth 4 generic) list-margin))
-	  ;; paste formal and actual generic
-	  (insert (car (nth 0 generic)) " => "
-		  (if no-constants
-		      (vhdl-replace-string vhdl-actual-generic-name
-					   (car (nth 0 generic)))
-		    (or (nth 2 generic) "")))
-	  (setq generic-list (cdr generic-list))
-	  (insert (if generic-list "," ")"))
-	  (when (and (not generic-list) secondary
-		     (null (nth 2 vhdl-port-list)))
-	    (insert ";"))
-	  ;; paste comment
-	  (when (or vhdl-include-type-comments
-		    (and vhdl-include-port-comments (nth 3 generic)))
-	    (vhdl-comment-insert-inline
-	     (concat
-	      (when vhdl-include-type-comments
-		(concat "[" (nth 1 generic) "] "))
-	      (when vhdl-include-port-comments (nth 3 generic))) t))
-	  (when generic-list (insert "\n") (indent-to list-margin)))
-	;; align generic map
-	(when vhdl-auto-align
-	  (vhdl-align-region-groups start (point) 1 t))))))
+          ;; paste list of actual generics
+          (while generic-list
+            (insert (if no-constants
+                      (car (nth 0 (car generic-list)))
+                    (or (nth 2 (car generic-list)) " ")))
+            (setq generic-list (cdr generic-list))
+            (insert (if generic-list ", " ")"))
+            (when (and (not generic-list) secondary
+                       (null (nth 2 vhdl-port-list)))
+              (insert ";")))
+        (unless vhdl-argument-list-indent
+          (insert "\n") (indent-to (+ margin vhdl-basic-offset)))
+        (setq list-margin (current-column))
+        (while generic-list
+          (setq generic (car generic-list))
+          ;; paste group comment and spacing
+          (when (eq vhdl-include-group-comments 'always)
+            (vhdl-paste-group-comment (nth 4 generic) list-margin))
+          ;; paste formal and actual generic
+          (insert (car (nth 0 generic)) " => "
+                  (if no-constants
+                      (vhdl-replace-string vhdl-actual-generic-name
+                                           (car (nth 0 generic)))
+                    (or (nth 2 generic) "")))
+          (setq generic-list (cdr generic-list))
+          (insert (if generic-list "," ")"))
+          (when (and (not generic-list) secondary
+                     (null (nth 2 vhdl-port-list)))
+            (insert ";"))
+          ;; paste comment
+          (when (or vhdl-include-type-comments
+                    (and vhdl-include-port-comments (nth 3 generic)))
+            (vhdl-comment-insert-inline
+             (concat
+              (when vhdl-include-type-comments
+                (concat "[" (nth 1 generic) "] "))
+              (when vhdl-include-port-comments (nth 3 generic))) t))
+          (when generic-list (insert "\n") (indent-to list-margin)))
+        ;; align generic map
+        (when vhdl-auto-align
+          (vhdl-align-region-groups start (point) 1 t))))))
 
 (defun vhdl-port-paste-port-map ()
   "Paste as a port map."
   (let ((margin (current-indentation))
-	list-margin start port
-	(port-list (nth 2 vhdl-port-list)))
+        list-margin start port
+        (port-list (nth 2 vhdl-port-list)))
     (when port-list
       (setq start (point))
       (vhdl-insert-keyword "PORT MAP (")
       (if (not vhdl-association-list-with-formals)
-	  ;; paste list of actual ports
-	  (while port-list
-	    (insert (vhdl-replace-string vhdl-actual-port-name
-					 (car (nth 0 (car port-list)))))
-	    (setq port-list (cdr port-list))
-	    (insert (if port-list ", " ")")))
-	(unless vhdl-argument-list-indent
-	  (insert "\n") (indent-to (+ margin vhdl-basic-offset)))
-	(setq list-margin (current-column))
-	(while port-list
-	  (setq port (car port-list))
-	  ;; paste group comment and spacing
-	  (when (eq vhdl-include-group-comments 'always)
-	    (vhdl-paste-group-comment (nth 5 port) list-margin))
-	  ;; paste formal and actual port
-	  (insert (car (nth 0 port)) " => ")
-	  (insert (vhdl-replace-string vhdl-actual-port-name
-				       (car (nth 0 port))))
-	  (setq port-list (cdr port-list))
-	  (insert (if port-list "," ");"))
-	  ;; paste comment
-	  (when (or (and vhdl-include-direction-comments (nth 2 port))
-		    vhdl-include-type-comments
-		    (and vhdl-include-port-comments (nth 4 port)))
-	    (vhdl-comment-insert-inline
-	     (concat
-	      (cond ((and vhdl-include-direction-comments
-			  vhdl-include-type-comments)
-		     (concat "[" (format "%-4s" (concat (nth 2 port) " "))
-			     (nth 3 port) "] "))
-		    ((and vhdl-include-direction-comments (nth 2 port))
-		     (format "%-6s" (concat "[" (nth 2 port) "] ")))
-		    (vhdl-include-direction-comments "      ")
-		    (vhdl-include-type-comments
-		     (concat "[" (nth 3 port) "] ")))
-	      (when vhdl-include-port-comments (nth 4 port))) t))
-	  (when port-list (insert "\n") (indent-to list-margin)))
-	;; align port clause
-	(when vhdl-auto-align
-	  (vhdl-align-region-groups start (point) 1))))))
+          ;; paste list of actual ports
+          (while port-list
+            (insert (vhdl-replace-string vhdl-actual-port-name
+                                         (car (nth 0 (car port-list)))))
+            (setq port-list (cdr port-list))
+            (insert (if port-list ", " ")")))
+        (unless vhdl-argument-list-indent
+          (insert "\n") (indent-to (+ margin vhdl-basic-offset)))
+        (setq list-margin (current-column))
+        (while port-list
+          (setq port (car port-list))
+          ;; paste group comment and spacing
+          (when (eq vhdl-include-group-comments 'always)
+            (vhdl-paste-group-comment (nth 5 port) list-margin))
+          ;; paste formal and actual port
+          (insert (car (nth 0 port)) " => ")
+          (insert (vhdl-replace-string vhdl-actual-port-name
+                                       (car (nth 0 port))))
+          (setq port-list (cdr port-list))
+          (insert (if port-list "," ");"))
+          ;; paste comment
+          (when (or (and vhdl-include-direction-comments (nth 2 port))
+                    vhdl-include-type-comments
+                    (and vhdl-include-port-comments (nth 4 port)))
+            (vhdl-comment-insert-inline
+             (concat
+              (cond ((and vhdl-include-direction-comments
+                          vhdl-include-type-comments)
+                     (concat "[" (format "%-4s" (concat (nth 2 port) " "))
+                             (nth 3 port) "] "))
+                    ((and vhdl-include-direction-comments (nth 2 port))
+                     (format "%-6s" (concat "[" (nth 2 port) "] ")))
+                    (vhdl-include-direction-comments "      ")
+                    (vhdl-include-type-comments
+                     (concat "[" (nth 3 port) "] ")))
+              (when vhdl-include-port-comments (nth 4 port))) t))
+          (when port-list (insert "\n") (indent-to list-margin)))
+        ;; align port clause
+        (when vhdl-auto-align
+          (vhdl-align-region-groups start (point) 1))))))
 
 (defun vhdl-port-paste-instance (&optional name no-indent title)
   "Paste as an instantiation."
@@ -12128,43 +12131,43 @@ reflected in a subsequent paste operation."
       (vhdl-port-flatten)
       (unless no-indent (indent-according-to-mode))
       (let ((margin (current-indentation)))
-	;; paste instantiation
-	(cond (name
-	       (insert name))
-	      ((equal (cdr vhdl-instance-name) "")
-	       (setq name (vhdl-template-field "instance name")))
-	      ((string-match "%d" (cdr vhdl-instance-name))
-	       (let ((n 1))
-		 (while (save-excursion
-			  (setq name (format (vhdl-replace-string
-					      vhdl-instance-name
-					      (nth 0 vhdl-port-list)) n))
-			  (goto-char (point-min))
-			  (vhdl-re-search-forward name nil t))
-		   (setq n (1+ n)))
-		 (insert name)))
-	      (t (insert (vhdl-replace-string vhdl-instance-name
-					      (nth 0 vhdl-port-list)))))
-	(message "Pasting port as instantiation \"%s\"..." name)
-	(insert ": ")
-	(when title
-	  (save-excursion
-	    (beginning-of-line)
-	    (indent-to vhdl-basic-offset)
-	    (insert "-- instance \"" name "\"\n")))
-	(if (not (vhdl-use-direct-instantiation))
-	    (insert (nth 0 vhdl-port-list))
-	  (vhdl-insert-keyword "ENTITY ")
-	  (insert (vhdl-work-library) "." (nth 0 vhdl-port-list)))
-	(when (nth 1 vhdl-port-list)
-	  (insert "\n") (indent-to (+ margin vhdl-basic-offset))
-	  (vhdl-port-paste-generic-map t t))
-	(when (nth 2 vhdl-port-list)
-	  (insert "\n") (indent-to (+ margin vhdl-basic-offset))
-	  (vhdl-port-paste-port-map))
-	(unless (or (nth 1 vhdl-port-list) (nth 2 vhdl-port-list))
-	  (insert ";"))
-	(message "Pasting port as instantiation \"%s\"...done" name))
+        ;; paste instantiation
+        (cond (name
+               (insert name))
+              ((equal (cdr vhdl-instance-name) "")
+               (setq name (vhdl-template-field "instance name")))
+              ((string-match "%d" (cdr vhdl-instance-name))
+               (let ((n 1))
+                 (while (save-excursion
+                          (setq name (format (vhdl-replace-string
+                                              vhdl-instance-name
+                                              (nth 0 vhdl-port-list)) n))
+                          (goto-char (point-min))
+                          (vhdl-re-search-forward name nil t))
+                   (setq n (1+ n)))
+                 (insert name)))
+              (t (insert (vhdl-replace-string vhdl-instance-name
+                                              (nth 0 vhdl-port-list)))))
+        (message "Pasting port as instantiation \"%s\"..." name)
+        (insert ": ")
+        (when title
+          (save-excursion
+            (beginning-of-line)
+            (indent-to vhdl-basic-offset)
+            (insert "-- instance \"" name "\"\n")))
+        (if (not (vhdl-use-direct-instantiation))
+            (insert (nth 0 vhdl-port-list))
+          (vhdl-insert-keyword "ENTITY ")
+          (insert (vhdl-work-library) "." (nth 0 vhdl-port-list)))
+        (when (nth 1 vhdl-port-list)
+          (insert "\n") (indent-to (+ margin vhdl-basic-offset))
+          (vhdl-port-paste-generic-map t t))
+        (when (nth 2 vhdl-port-list)
+          (insert "\n") (indent-to (+ margin vhdl-basic-offset))
+          (vhdl-port-paste-port-map))
+        (unless (or (nth 1 vhdl-port-list) (nth 2 vhdl-port-list))
+          (insert ";"))
+        (message "Pasting port as instantiation \"%s\"...done" name))
       (setq vhdl-port-list orig-vhdl-port-list))))
 
 (defun vhdl-port-paste-constants (&optional no-indent)
@@ -12178,34 +12181,34 @@ reflected in a subsequent paste operation."
       (vhdl-port-flatten)
       (unless no-indent (indent-according-to-mode))
       (let ((margin (current-indentation))
-	    start generic name
-	    (generic-list (nth 1 vhdl-port-list)))
-	(when generic-list
-	  (setq start (point))
-	  (while generic-list
-	    (setq generic (car generic-list))
-	    ;; paste group comment and spacing
-	    (when (memq vhdl-include-group-comments '(decl always))
-	      (vhdl-paste-group-comment (nth 4 generic) margin))
-	    (vhdl-insert-keyword "CONSTANT ")
-	    ;; paste generic constants
-	    (setq name (nth 0 generic))
-	    (when name
-	      (insert (vhdl-replace-string vhdl-actual-generic-name (car name)))
-	      ;; paste type
-	      (insert " : " (nth 1 generic))
-	      ;; paste initialization
-	      (when (nth 2 generic)
-		(insert " := " (nth 2 generic)))
-	      (insert ";")
-	      ;; paste comment
-	      (when (and vhdl-include-port-comments (nth 3 generic))
-		(vhdl-comment-insert-inline (nth 3 generic) t))
-	      (setq generic-list (cdr generic-list))
-	      (when generic-list (insert "\n") (indent-to margin))))
-	    ;; align signal list
-	  (when vhdl-auto-align
-	    (vhdl-align-region-groups start (point) 1))))
+            start generic name
+            (generic-list (nth 1 vhdl-port-list)))
+        (when generic-list
+          (setq start (point))
+          (while generic-list
+            (setq generic (car generic-list))
+            ;; paste group comment and spacing
+            (when (memq vhdl-include-group-comments '(decl always))
+              (vhdl-paste-group-comment (nth 4 generic) margin))
+            (vhdl-insert-keyword "CONSTANT ")
+            ;; paste generic constants
+            (setq name (nth 0 generic))
+            (when name
+              (insert (vhdl-replace-string vhdl-actual-generic-name (car name)))
+              ;; paste type
+              (insert " : " (nth 1 generic))
+              ;; paste initialization
+              (when (nth 2 generic)
+                (insert " := " (nth 2 generic)))
+              (insert ";")
+              ;; paste comment
+              (when (and vhdl-include-port-comments (nth 3 generic))
+                (vhdl-comment-insert-inline (nth 3 generic) t))
+              (setq generic-list (cdr generic-list))
+              (when generic-list (insert "\n") (indent-to margin))))
+            ;; align signal list
+          (when vhdl-auto-align
+            (vhdl-align-region-groups start (point) 1))))
       (message "Pasting port as constants...done")
       (setq vhdl-port-list orig-vhdl-port-list))))
 
@@ -12217,64 +12220,64 @@ reflected in a subsequent paste operation."
     (message "Pasting port as signals...")
     (unless no-indent (indent-according-to-mode))
     (let ((margin (current-indentation))
-	  start port names type generic-list port-name constant-name pos
-	  (port-list (nth 2 vhdl-port-list)))
+          start port names type generic-list port-name constant-name pos
+          (port-list (nth 2 vhdl-port-list)))
       (when port-list
-	(setq start (point))
-	(while port-list
-	  (setq port (car port-list))
-	  ;; paste group comment and spacing
-	  (when (memq vhdl-include-group-comments '(decl always))
-	    (vhdl-paste-group-comment (nth 5 port) margin))
-	  ;; paste object
-	  (if (nth 1 port)
-	      (insert (nth 1 port) " ")
-	    (vhdl-insert-keyword "SIGNAL "))
-	  ;; paste actual port signals
-	  (setq names (nth 0 port))
-	  (while names
-	    (insert (vhdl-replace-string vhdl-actual-port-name (car names)))
-	    (setq names (cdr names))
-	    (when names (insert ", ")))
-	  ;; paste type
-	  (setq type (nth 3 port))
-	  (setq generic-list (nth 1 vhdl-port-list))
-	  (vhdl-prepare-search-1
-	   (setq pos 0)
-	   ;; replace formal by actual generics
-	   (while generic-list
-	     (setq port-name (car (nth 0 (car generic-list))))
-	     (while (string-match (concat "\\<" port-name "\\>") type pos)
-	       (setq constant-name
-		     (save-match-data (vhdl-replace-string
-				       vhdl-actual-generic-name port-name)))
-	       (setq type (replace-match constant-name t nil type))
-	       (setq pos (match-end 0)))
-	     (setq generic-list (cdr generic-list))))
-	  (insert " : " type)
-	  ;; paste initialization (inputs only)
-	  (when (and initialize (nth 2 port) (equal "IN" (upcase (nth 2 port))))
-	    (insert " := "
-		    (cond ((string-match "integer" (nth 3 port)) "0")
-			  ((string-match "natural" (nth 3 port)) "0")
-			  ((string-match "positive" (nth 3 port)) "0")
-			  ((string-match "real" (nth 3 port)) "0.0")
-			  ((string-match "(.+)" (nth 3 port)) "(others => '0')")
-			  (t "'0'"))))
-	  (insert ";")
-	  ;; paste comment
-	  (when (or (and vhdl-include-direction-comments (nth 2 port))
-		    (and vhdl-include-port-comments (nth 4 port)))
-	    (vhdl-comment-insert-inline
-	     (concat
-	      (cond ((and vhdl-include-direction-comments (nth 2 port))
-		     (format "%-6s" (concat "[" (nth 2 port) "] ")))
-		    (vhdl-include-direction-comments "      "))
-	      (when vhdl-include-port-comments (nth 4 port))) t))
-	  (setq port-list (cdr port-list))
-	  (when port-list (insert "\n") (indent-to margin)))
-	;; align signal list
-	(when vhdl-auto-align (vhdl-align-region-groups start (point) 1))))
+        (setq start (point))
+        (while port-list
+          (setq port (car port-list))
+          ;; paste group comment and spacing
+          (when (memq vhdl-include-group-comments '(decl always))
+            (vhdl-paste-group-comment (nth 5 port) margin))
+          ;; paste object
+          (if (nth 1 port)
+              (insert (nth 1 port) " ")
+            (vhdl-insert-keyword "SIGNAL "))
+          ;; paste actual port signals
+          (setq names (nth 0 port))
+          (while names
+            (insert (vhdl-replace-string vhdl-actual-port-name (car names)))
+            (setq names (cdr names))
+            (when names (insert ", ")))
+          ;; paste type
+          (setq type (nth 3 port))
+          (setq generic-list (nth 1 vhdl-port-list))
+          (vhdl-prepare-search-1
+           (setq pos 0)
+           ;; replace formal by actual generics
+           (while generic-list
+             (setq port-name (car (nth 0 (car generic-list))))
+             (while (string-match (concat "\\<" port-name "\\>") type pos)
+               (setq constant-name
+                     (save-match-data (vhdl-replace-string
+                                       vhdl-actual-generic-name port-name)))
+               (setq type (replace-match constant-name t nil type))
+               (setq pos (match-end 0)))
+             (setq generic-list (cdr generic-list))))
+          (insert " : " type)
+          ;; paste initialization (inputs only)
+          (when (and initialize (nth 2 port) (equal "IN" (upcase (nth 2 port))))
+            (insert " := "
+                    (cond ((string-match "integer" (nth 3 port)) "0")
+                          ((string-match "natural" (nth 3 port)) "0")
+                          ((string-match "positive" (nth 3 port)) "0")
+                          ((string-match "real" (nth 3 port)) "0.0")
+                          ((string-match "(.+)" (nth 3 port)) "(others => '0')")
+                          (t "'0'"))))
+          (insert ";")
+          ;; paste comment
+          (when (or (and vhdl-include-direction-comments (nth 2 port))
+                    (and vhdl-include-port-comments (nth 4 port)))
+            (vhdl-comment-insert-inline
+             (concat
+              (cond ((and vhdl-include-direction-comments (nth 2 port))
+                     (format "%-6s" (concat "[" (nth 2 port) "] ")))
+                    (vhdl-include-direction-comments "      "))
+              (when vhdl-include-port-comments (nth 4 port))) t))
+          (setq port-list (cdr port-list))
+          (when port-list (insert "\n") (indent-to margin)))
+        ;; align signal list
+        (when vhdl-auto-align (vhdl-align-region-groups start (point) 1))))
     (message "Pasting port as signals...done")))
 
 (defun vhdl-port-paste-initializations (&optional no-indent)
@@ -12288,31 +12291,31 @@ reflected in a subsequent paste operation."
       (vhdl-port-flatten)
       (unless no-indent (indent-according-to-mode))
       (let ((margin (current-indentation))
-	    start port name
-	    (port-list (nth 2 vhdl-port-list)))
-	(when port-list
-	  (setq start (point))
-	  (while port-list
-	    (setq port (car port-list))
-	    ;; paste actual port signal (inputs only)
-	    (when (equal "IN" (upcase (nth 2 port)))
-	      (setq name (car (nth 0 port)))
-	      (insert (vhdl-replace-string vhdl-actual-port-name name))
-	      ;; paste initialization
-	      (insert " <= "
-		      (cond ((string-match "integer" (nth 3 port)) "0")
-			    ((string-match "natural" (nth 3 port)) "0")
-			    ((string-match "positive" (nth 3 port)) "0")
-			    ((string-match "real" (nth 3 port)) "0.0")
-			    ((string-match "(.+)" (nth 3 port)) "(others => '0')")
-			    (t "'0'"))
-		      ";"))
-	    (setq port-list (cdr port-list))
-	    (when (and port-list
-		       (equal "IN" (upcase (nth 2 (car port-list)))))
-	      (insert "\n") (indent-to margin)))
-	  ;; align signal list
-	  (when vhdl-auto-align (vhdl-align-region-groups start (point) 1))))
+            start port name
+            (port-list (nth 2 vhdl-port-list)))
+        (when port-list
+          (setq start (point))
+          (while port-list
+            (setq port (car port-list))
+            ;; paste actual port signal (inputs only)
+            (when (equal "IN" (upcase (nth 2 port)))
+              (setq name (car (nth 0 port)))
+              (insert (vhdl-replace-string vhdl-actual-port-name name))
+              ;; paste initialization
+              (insert " <= "
+                      (cond ((string-match "integer" (nth 3 port)) "0")
+                            ((string-match "natural" (nth 3 port)) "0")
+                            ((string-match "positive" (nth 3 port)) "0")
+                            ((string-match "real" (nth 3 port)) "0.0")
+                            ((string-match "(.+)" (nth 3 port)) "(others => '0')")
+                            (t "'0'"))
+                      ";"))
+            (setq port-list (cdr port-list))
+            (when (and port-list
+                       (equal "IN" (upcase (nth 2 (car port-list)))))
+              (insert "\n") (indent-to margin)))
+          ;; align signal list
+          (when vhdl-auto-align (vhdl-align-region-groups start (point) 1))))
       (message "Pasting port as initializations...done")
       (setq vhdl-port-list orig-vhdl-port-list))))
 
@@ -12322,80 +12325,80 @@ reflected in a subsequent paste operation."
   (if (not vhdl-port-list)
       (error "ERROR:  No port read")
     (let ((case-fold-search t)
-	  (ent-name (vhdl-replace-string vhdl-testbench-entity-name
-					 (nth 0 vhdl-port-list)))
-	  (source-buffer (current-buffer))
-	  arch-name config-name ent-file-name arch-file-name
-	  ent-buffer arch-buffer position)
+          (ent-name (vhdl-replace-string vhdl-testbench-entity-name
+                                         (nth 0 vhdl-port-list)))
+          (source-buffer (current-buffer))
+          arch-name config-name ent-file-name arch-file-name
+          ent-buffer arch-buffer position)
       ;; open entity file
       (unless (eq vhdl-testbench-create-files 'none)
-	(setq ent-file-name
-	      (concat (vhdl-replace-string vhdl-testbench-entity-file-name
-					   ent-name t)
-		      "." (file-name-extension (buffer-file-name))))
-	(if (file-exists-p ent-file-name)
-	    (if (y-or-n-p
-		 (concat "File \"" ent-file-name "\" exists; overwrite? "))
-		(progn (find-file ent-file-name)
-		       (erase-buffer)
-		       (set-buffer-modified-p nil))
-	      (if (eq vhdl-testbench-create-files 'separate)
-		  (setq ent-file-name nil)
-		(error "ERROR:  Pasting port as testbench...aborted")))
-	  (find-file ent-file-name)))
+        (setq ent-file-name
+              (concat (vhdl-replace-string vhdl-testbench-entity-file-name
+                                           ent-name t)
+                      "." (file-name-extension (buffer-file-name))))
+        (if (file-exists-p ent-file-name)
+            (if (y-or-n-p
+                 (concat "File \"" ent-file-name "\" exists; overwrite? "))
+                (progn (find-file ent-file-name)
+                       (erase-buffer)
+                       (set-buffer-modified-p nil))
+              (if (eq vhdl-testbench-create-files 'separate)
+                  (setq ent-file-name nil)
+                (error "ERROR:  Pasting port as testbench...aborted")))
+          (find-file ent-file-name)))
       (unless (and (eq vhdl-testbench-create-files 'separate)
-		   (null ent-file-name))
-	;; paste entity header
-	(if vhdl-testbench-include-header
-	    (progn (vhdl-template-header
-		    (concat "Testbench for design \""
-			    (nth 0 vhdl-port-list) "\""))
-		   (goto-char (point-max)))
-	  (vhdl-comment-display-line) (insert "\n\n"))
-	;; paste std_logic_1164 package
-	(when vhdl-testbench-include-library
-	  (vhdl-template-package-std-logic-1164)
-	  (insert "\n\n") (vhdl-comment-display-line) (insert "\n\n"))
-	;; paste entity declaration
-	(vhdl-insert-keyword "ENTITY ")
-	(insert ent-name)
-	(vhdl-insert-keyword " IS")
-	(when (memq vhdl-insert-empty-lines '(unit all)) (insert "\n"))
-	(insert "\n")
-	(vhdl-insert-keyword "END ")
-	(unless (vhdl-standard-p '87) (vhdl-insert-keyword "ENTITY "))
-	(insert ent-name ";")
-	(insert "\n\n")
-	(vhdl-comment-display-line) (insert "\n"))
+                   (null ent-file-name))
+        ;; paste entity header
+        (if vhdl-testbench-include-header
+            (progn (vhdl-template-header
+                    (concat "Testbench for design \""
+                            (nth 0 vhdl-port-list) "\""))
+                   (goto-char (point-max)))
+          (vhdl-comment-display-line) (insert "\n\n"))
+        ;; paste std_logic_1164 package
+        (when vhdl-testbench-include-library
+          (vhdl-template-package-std-logic-1164)
+          (insert "\n\n") (vhdl-comment-display-line) (insert "\n\n"))
+        ;; paste entity declaration
+        (vhdl-insert-keyword "ENTITY ")
+        (insert ent-name)
+        (vhdl-insert-keyword " IS")
+        (when (memq vhdl-insert-empty-lines '(unit all)) (insert "\n"))
+        (insert "\n")
+        (vhdl-insert-keyword "END ")
+        (unless (vhdl-standard-p '87) (vhdl-insert-keyword "ENTITY "))
+        (insert ent-name ";")
+        (insert "\n\n")
+        (vhdl-comment-display-line) (insert "\n"))
       ;; get architecture name
       (setq arch-name (if (equal (cdr vhdl-testbench-architecture-name) "")
-			  (read-from-minibuffer "architecture name: "
-						nil vhdl-minibuffer-local-map)
-			(vhdl-replace-string vhdl-testbench-architecture-name
-					     (nth 0 vhdl-port-list))))
+                          (read-from-minibuffer "architecture name: "
+                                                nil vhdl-minibuffer-local-map)
+                        (vhdl-replace-string vhdl-testbench-architecture-name
+                                             (nth 0 vhdl-port-list))))
       (message "Pasting port as testbench \"%s(%s)\"..." ent-name arch-name)
       ;; open architecture file
       (if (not (eq vhdl-testbench-create-files 'separate))
-	  (insert "\n")
-	(setq ent-buffer (current-buffer))
-	(setq arch-file-name
-	      (concat (vhdl-replace-string vhdl-testbench-architecture-file-name
-					   (concat ent-name " " arch-name) t)
-		      "." (file-name-extension (buffer-file-name))))
-	(when (and (file-exists-p arch-file-name)
-		   (not (y-or-n-p (concat "File \"" arch-file-name
-					  "\" exists; overwrite? "))))
-	  (error "ERROR:  Pasting port as testbench...aborted"))
-	(find-file arch-file-name)
-	(erase-buffer)
-	(set-buffer-modified-p nil)
-	;; paste architecture header
-	(if vhdl-testbench-include-header
-	    (progn (vhdl-template-header
-		    (concat "Testbench architecture for design \""
-			    (nth 0 vhdl-port-list) "\""))
-		   (goto-char (point-max)))
-	  (vhdl-comment-display-line) (insert "\n\n")))
+          (insert "\n")
+        (setq ent-buffer (current-buffer))
+        (setq arch-file-name
+              (concat (vhdl-replace-string vhdl-testbench-architecture-file-name
+                                           (concat ent-name " " arch-name) t)
+                      "." (file-name-extension (buffer-file-name))))
+        (when (and (file-exists-p arch-file-name)
+                   (not (y-or-n-p (concat "File \"" arch-file-name
+                                          "\" exists; overwrite? "))))
+          (error "ERROR:  Pasting port as testbench...aborted"))
+        (find-file arch-file-name)
+        (erase-buffer)
+        (set-buffer-modified-p nil)
+        ;; paste architecture header
+        (if vhdl-testbench-include-header
+            (progn (vhdl-template-header
+                    (concat "Testbench architecture for design \""
+                            (nth 0 vhdl-port-list) "\""))
+                   (goto-char (point-max)))
+          (vhdl-comment-display-line) (insert "\n\n")))
       ;; paste architecture body
       (vhdl-insert-keyword "ARCHITECTURE ")
       (insert arch-name)
@@ -12405,40 +12408,40 @@ reflected in a subsequent paste operation."
       (insert "\n\n") (indent-to vhdl-basic-offset)
       ;; paste component declaration
       (unless (vhdl-use-direct-instantiation)
-	(vhdl-port-paste-component t)
-	(insert "\n\n") (indent-to vhdl-basic-offset))
+        (vhdl-port-paste-component t)
+        (insert "\n\n") (indent-to vhdl-basic-offset))
       ;; paste constants
       (when (nth 1 vhdl-port-list)
-	(insert "-- component generics\n") (indent-to vhdl-basic-offset)
-	(vhdl-port-paste-constants t)
-	(insert "\n\n") (indent-to vhdl-basic-offset))
+        (insert "-- component generics\n") (indent-to vhdl-basic-offset)
+        (vhdl-port-paste-constants t)
+        (insert "\n\n") (indent-to vhdl-basic-offset))
       ;; paste internal signals
       (insert "-- component ports\n") (indent-to vhdl-basic-offset)
       (vhdl-port-paste-signals vhdl-testbench-initialize-signals t)
       (insert "\n")
       ;; paste custom declarations
       (unless (equal "" vhdl-testbench-declarations)
-	(insert "\n")
-	(setq position (point))
-	(vhdl-insert-string-or-file vhdl-testbench-declarations)
-	(vhdl-indent-region position (point)))
+        (insert "\n")
+        (setq position (point))
+        (vhdl-insert-string-or-file vhdl-testbench-declarations)
+        (vhdl-indent-region position (point)))
       (setq position (point))
       (insert "\n\n")
       (vhdl-comment-display-line) (insert "\n")
       (when vhdl-testbench-include-configuration
-	(setq config-name (vhdl-replace-string
-			   vhdl-testbench-configuration-name
-			   (concat ent-name " " arch-name)))
-	(insert "\n")
-	(vhdl-insert-keyword "CONFIGURATION ") (insert config-name)
-	(vhdl-insert-keyword " OF ") (insert ent-name)
-	(vhdl-insert-keyword " IS\n")
-	(indent-to vhdl-basic-offset)
-	(vhdl-insert-keyword "FOR ") (insert arch-name "\n")
-	(indent-to vhdl-basic-offset)
-	(vhdl-insert-keyword "END FOR;\n")
-	(vhdl-insert-keyword "END ") (insert config-name ";\n\n")
-	(vhdl-comment-display-line) (insert "\n"))
+        (setq config-name (vhdl-replace-string
+                           vhdl-testbench-configuration-name
+                           (concat ent-name " " arch-name)))
+        (insert "\n")
+        (vhdl-insert-keyword "CONFIGURATION ") (insert config-name)
+        (vhdl-insert-keyword " OF ") (insert ent-name)
+        (vhdl-insert-keyword " IS\n")
+        (indent-to vhdl-basic-offset)
+        (vhdl-insert-keyword "FOR ") (insert arch-name "\n")
+        (indent-to vhdl-basic-offset)
+        (vhdl-insert-keyword "END FOR;\n")
+        (vhdl-insert-keyword "END ") (insert config-name ";\n\n")
+        (vhdl-comment-display-line) (insert "\n"))
       (goto-char position)
       (vhdl-template-begin-end
        (unless (vhdl-standard-p '87) "ARCHITECTURE") arch-name 0 t)
@@ -12449,23 +12452,23 @@ reflected in a subsequent paste operation."
       (insert "\n")
       ;; paste custom statements
       (unless (equal "" vhdl-testbench-statements)
-	(insert "\n")
-	(setq position (point))
-	(vhdl-insert-string-or-file vhdl-testbench-statements)
-	(vhdl-indent-region position (point)))
+        (insert "\n")
+        (setq position (point))
+        (vhdl-insert-string-or-file vhdl-testbench-statements)
+        (vhdl-indent-region position (point)))
       (insert "\n")
       (indent-to vhdl-basic-offset)
       (unless (eq vhdl-testbench-create-files 'none)
-	(setq arch-buffer (current-buffer))
-	(when ent-buffer (set-buffer ent-buffer) (save-buffer))
-	(set-buffer arch-buffer) (save-buffer))
+        (setq arch-buffer (current-buffer))
+        (when ent-buffer (set-buffer ent-buffer) (save-buffer))
+        (set-buffer arch-buffer) (save-buffer))
       (message "%s"
        (concat (format "Pasting port as testbench \"%s(%s)\"...done"
-		       ent-name arch-name)
-	       (and ent-file-name
-		    (format "\n  File created: \"%s\"" ent-file-name))
-	       (and arch-file-name
-		    (format "\n  File created: \"%s\"" arch-file-name)))))))
+                       ent-name arch-name)
+               (and ent-file-name
+                    (format "\n  File created: \"%s\"" ent-file-name))
+               (and arch-file-name
+                    (format "\n  File created: \"%s\"" arch-file-name)))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -12489,21 +12492,21 @@ reflected in a subsequent paste operation."
       (error "ERROR:  No subprogram interface has been read")
     (message "Flattening subprogram interface...")
     (let ((old-subprog-list (nth 2 vhdl-subprog-list))
-	  new-subprog-list old-subprog new-subprog names)
+          new-subprog-list old-subprog new-subprog names)
       ;; traverse parameter list and flatten entries
       (while old-subprog-list
-	(setq old-subprog (car old-subprog-list))
-	(setq names (car old-subprog))
-	(while names
-	  (setq new-subprog (cons (list (car names)) (cdr old-subprog)))
-	  (setq new-subprog-list (append new-subprog-list (list new-subprog)))
-	  (setq names (cdr names)))
-	(setq old-subprog-list (cdr old-subprog-list)))
+        (setq old-subprog (car old-subprog-list))
+        (setq names (car old-subprog))
+        (while names
+          (setq new-subprog (cons (list (car names)) (cdr old-subprog)))
+          (setq new-subprog-list (append new-subprog-list (list new-subprog)))
+          (setq names (cdr names)))
+        (setq old-subprog-list (cdr old-subprog-list)))
       (setq vhdl-subprog-list
-	    (list (nth 0 vhdl-subprog-list) (nth 1 vhdl-subprog-list)
-		  new-subprog-list (nth 3 vhdl-subprog-list)
-		  (nth 4 vhdl-subprog-list) (nth 5 vhdl-subprog-list))
-	    vhdl-subprog-flattened t)
+            (list (nth 0 vhdl-subprog-list) (nth 1 vhdl-subprog-list)
+                  new-subprog-list (nth 3 vhdl-subprog-list)
+                  (nth 4 vhdl-subprog-list) (nth 5 vhdl-subprog-list))
+            vhdl-subprog-flattened t)
     (message "Flattening subprogram interface...done"))))
 
 (defun vhdl-subprog-copy ()
@@ -12511,188 +12514,188 @@ reflected in a subsequent paste operation."
   (interactive)
   (save-excursion
     (let (parse-error pos end-of-list
-	  name kind param-list object names direct type init
-	  comment group-comment
-	  return-type return-comment return-group-comment)
+          name kind param-list object names direct type init
+          comment group-comment
+          return-type return-comment return-group-comment)
       (vhdl-prepare-search-2
        (setq
-	parse-error
-	(catch 'parse
-	  ;; check if within function declaration
-	  (setq pos (point))
-	  (end-of-line)
-	  (when (looking-at "[ \t\n\r\f]*\\((\\|;\\|is\\>\\)") (goto-char (match-end 0)))
-	  (unless (and (re-search-backward "^\\s-*\\(\\(procedure\\)\\|\\(\\(pure\\|impure\\)\\s-+\\)?function\\)\\s-+\\(\"?\\w+\"?\\)[ \t\n\r\f]*\\(\\((\\)\\|;\\|is\\>\\)" nil t)
-		       (goto-char (match-end 0))
-		       (save-excursion (backward-char)
-				    (forward-sexp)
-				    (<= pos (point))))
-	    (throw 'parse "ERROR:  Not within a subprogram specification"))
-	  (setq name (match-string-no-properties 5))
-	  (setq kind (if (match-string 2) 'procedure 'function))
-	  (setq end-of-list (not (match-string 7)))
-	  (message "Reading interface of subprogram \"%s\"..." name)
-	  ;; parse parameter list
-	  (setq group-comment (vhdl-parse-group-comment))
-	  (setq end-of-list (or end-of-list
-				(vhdl-parse-string ")[ \t\n\r\f]*\\(;\\|\\(is\\|return\\)\\>\\)" t)))
-	  (while (not end-of-list)
-	    ;; parse object
-	    (setq object
-		  (and (vhdl-parse-string "\\(constant\\|signal\\|variable\\|file\\|quantity\\|terminal\\)[ \t\n\r\f]*" t)
-			 (match-string-no-properties 1)))
-	    ;; parse names (accept extended identifiers)
-	    (vhdl-parse-string "\\(\\\\[^\\]+\\\\\\|\\w+\\)[ \t\n\r\f]*")
-	    (setq names (list (match-string-no-properties 1)))
-	    (while (vhdl-parse-string ",[ \t\n\r\f]*\\(\\\\[^\\]+\\\\\\|\\w+\\)[ \t\n\r\f]*" t)
-	      (setq names (append names (list (match-string-no-properties 1)))))
-	    ;; parse direction
-	    (vhdl-parse-string ":[ \t\n\r\f]*")
-	    (setq direct
-		  (and (vhdl-parse-string "\\(in\\|out\\|inout\\|buffer\\|linkage\\)[ \t\n\r\f]+" t)
-		       (match-string-no-properties 1)))
-	    ;; parse type
-	    (vhdl-parse-string "\\([^():;\n]+\\)")
-	    (setq type (match-string-no-properties 1))
-	    (setq comment nil)
-	    (while (looking-at "(")
-	      (setq type
-		    (concat type
-			    (buffer-substring-no-properties
-			     (point) (progn (forward-sexp) (point)))
-			    (and (vhdl-parse-string "\\([^():;\n]*\\)" t)
-				 (match-string-no-properties 1)))))
-	    ;; special case: closing parenthesis is on separate line
-	    (when (and type (string-match "\\(\\s-*--\\s-*\\)\\(.*\\)" type))
-	      (setq comment (substring type (match-beginning 2)))
-	      (setq type (substring type 0 (match-beginning 1))))
-	    ;; strip off trailing group-comment
-	    (string-match "\\(\\(\\s-*\\S-+\\)+\\)\\s-*" type)
-	    (setq type (substring type 0 (match-end 1)))
-	    ;; parse initialization expression
-	    (setq init nil)
-	    (when (vhdl-parse-string ":=[ \t\n\r\f]*" t)
-	      (vhdl-parse-string "\\([^();\n]*\\)")
-	      (setq init (match-string-no-properties 1))
-	      (while (looking-at "(")
-		(setq init
-		      (concat init
-			      (buffer-substring-no-properties
-			       (point) (progn (forward-sexp) (point)))
-			      (and (vhdl-parse-string "\\([^();\n]*\\)" t)
-				   (match-string-no-properties 1))))))
-	    ;; special case: closing parenthesis is on separate line
-	    (when (and init (string-match "\\(\\s-*--\\s-*\\)\\(.*\\)" init))
-	      (setq comment (substring init (match-beginning 2)))
-	      (setq init (substring init 0 (match-beginning 1)))
-	      (vhdl-forward-syntactic-ws))
-	    (skip-chars-forward " \t")
-	    ;; parse inline comment, special case: as above, no initial.
-	    (unless comment
-	      (setq comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
-				 (match-string-no-properties 1))))
-	    (vhdl-forward-syntactic-ws)
-	    (setq end-of-list (vhdl-parse-string ")\\s-*" t))
-	    ;; parse inline comment
-	    (unless comment
-	      (setq comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
-				 (match-string-no-properties 1))))
-	    (setq return-group-comment (vhdl-parse-group-comment))
-	    (vhdl-parse-string "\\(;\\|\\(is\\|\\(return\\)\\)\\>\\)\\s-*")
-	    ;; parse return type
-	    (when (match-string 3)
-	      (vhdl-parse-string "[ \t\n\r\f]*\\(.+\\)[ \t\n\r\f]*\\(;\\|is\\>\\)\\s-*")
-	      (setq return-type (match-string-no-properties 1))
-	      (when (and return-type
-			 (string-match "\\(\\s-*--\\s-*\\)\\(.*\\)" return-type))
-		(setq return-comment (substring return-type (match-beginning 2)))
-		(setq return-type (substring return-type 0 (match-beginning 1))))
-	      ;; strip of trailing group-comment
-	      (string-match "\\(\\(\\s-*\\S-+\\)+\\)\\s-*" return-type)
-	      (setq return-type (substring return-type 0 (match-end 1)))
-	      ;; parse return comment
-	      (unless return-comment
-		(setq return-comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
-					  (match-string-no-properties 1)))))
-	    ;; parse inline comment
-	    (unless comment
-	      (setq comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
-				 (match-string-no-properties 1))))
-	    ;; save everything in list
-	    (setq param-list (append param-list
-				     (list (list names object direct type init
-						 comment group-comment))))
-	    ;; parse group comment and spacing
-	    (setq group-comment (vhdl-parse-group-comment)))
-	  (message "Reading interface of subprogram \"%s\"...done" name)
-	  nil)))
+        parse-error
+        (catch 'parse
+          ;; check if within function declaration
+          (setq pos (point))
+          (end-of-line)
+          (when (looking-at "[ \t\n\r\f]*\\((\\|;\\|is\\>\\)") (goto-char (match-end 0)))
+          (unless (and (re-search-backward "^\\s-*\\(\\(procedure\\)\\|\\(\\(pure\\|impure\\)\\s-+\\)?function\\)\\s-+\\(\"?\\w+\"?\\)[ \t\n\r\f]*\\(\\((\\)\\|;\\|is\\>\\)" nil t)
+                       (goto-char (match-end 0))
+                       (save-excursion (backward-char)
+                                    (forward-sexp)
+                                    (<= pos (point))))
+            (throw 'parse "ERROR:  Not within a subprogram specification"))
+          (setq name (match-string-no-properties 5))
+          (setq kind (if (match-string 2) 'procedure 'function))
+          (setq end-of-list (not (match-string 7)))
+          (message "Reading interface of subprogram \"%s\"..." name)
+          ;; parse parameter list
+          (setq group-comment (vhdl-parse-group-comment))
+          (setq end-of-list (or end-of-list
+                                (vhdl-parse-string ")[ \t\n\r\f]*\\(;\\|\\(is\\|return\\)\\>\\)" t)))
+          (while (not end-of-list)
+            ;; parse object
+            (setq object
+                  (and (vhdl-parse-string "\\(constant\\|signal\\|variable\\|file\\|quantity\\|terminal\\)[ \t\n\r\f]*" t)
+                         (match-string-no-properties 1)))
+            ;; parse names (accept extended identifiers)
+            (vhdl-parse-string "\\(\\\\[^\\]+\\\\\\|\\w+\\)[ \t\n\r\f]*")
+            (setq names (list (match-string-no-properties 1)))
+            (while (vhdl-parse-string ",[ \t\n\r\f]*\\(\\\\[^\\]+\\\\\\|\\w+\\)[ \t\n\r\f]*" t)
+              (setq names (append names (list (match-string-no-properties 1)))))
+            ;; parse direction
+            (vhdl-parse-string ":[ \t\n\r\f]*")
+            (setq direct
+                  (and (vhdl-parse-string "\\(in\\|out\\|inout\\|buffer\\|linkage\\)[ \t\n\r\f]+" t)
+                       (match-string-no-properties 1)))
+            ;; parse type
+            (vhdl-parse-string "\\([^():;\n]+\\)")
+            (setq type (match-string-no-properties 1))
+            (setq comment nil)
+            (while (looking-at "(")
+              (setq type
+                    (concat type
+                            (buffer-substring-no-properties
+                             (point) (progn (forward-sexp) (point)))
+                            (and (vhdl-parse-string "\\([^():;\n]*\\)" t)
+                                 (match-string-no-properties 1)))))
+            ;; special case: closing parenthesis is on separate line
+            (when (and type (string-match "\\(\\s-*--\\s-*\\)\\(.*\\)" type))
+              (setq comment (substring type (match-beginning 2)))
+              (setq type (substring type 0 (match-beginning 1))))
+            ;; strip off trailing group-comment
+            (string-match "\\(\\(\\s-*\\S-+\\)+\\)\\s-*" type)
+            (setq type (substring type 0 (match-end 1)))
+            ;; parse initialization expression
+            (setq init nil)
+            (when (vhdl-parse-string ":=[ \t\n\r\f]*" t)
+              (vhdl-parse-string "\\([^();\n]*\\)")
+              (setq init (match-string-no-properties 1))
+              (while (looking-at "(")
+                (setq init
+                      (concat init
+                              (buffer-substring-no-properties
+                               (point) (progn (forward-sexp) (point)))
+                              (and (vhdl-parse-string "\\([^();\n]*\\)" t)
+                                   (match-string-no-properties 1))))))
+            ;; special case: closing parenthesis is on separate line
+            (when (and init (string-match "\\(\\s-*--\\s-*\\)\\(.*\\)" init))
+              (setq comment (substring init (match-beginning 2)))
+              (setq init (substring init 0 (match-beginning 1)))
+              (vhdl-forward-syntactic-ws))
+            (skip-chars-forward " \t")
+            ;; parse inline comment, special case: as above, no initial.
+            (unless comment
+              (setq comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
+                                 (match-string-no-properties 1))))
+            (vhdl-forward-syntactic-ws)
+            (setq end-of-list (vhdl-parse-string ")\\s-*" t))
+            ;; parse inline comment
+            (unless comment
+              (setq comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
+                                 (match-string-no-properties 1))))
+            (setq return-group-comment (vhdl-parse-group-comment))
+            (vhdl-parse-string "\\(;\\|\\(is\\|\\(return\\)\\)\\>\\)\\s-*")
+            ;; parse return type
+            (when (match-string 3)
+              (vhdl-parse-string "[ \t\n\r\f]*\\(.+\\)[ \t\n\r\f]*\\(;\\|is\\>\\)\\s-*")
+              (setq return-type (match-string-no-properties 1))
+              (when (and return-type
+                         (string-match "\\(\\s-*--\\s-*\\)\\(.*\\)" return-type))
+                (setq return-comment (substring return-type (match-beginning 2)))
+                (setq return-type (substring return-type 0 (match-beginning 1))))
+              ;; strip of trailing group-comment
+              (string-match "\\(\\(\\s-*\\S-+\\)+\\)\\s-*" return-type)
+              (setq return-type (substring return-type 0 (match-end 1)))
+              ;; parse return comment
+              (unless return-comment
+                (setq return-comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
+                                          (match-string-no-properties 1)))))
+            ;; parse inline comment
+            (unless comment
+              (setq comment (and (vhdl-parse-string "--\\s-*\\([^\n]*\\)" t)
+                                 (match-string-no-properties 1))))
+            ;; save everything in list
+            (setq param-list (append param-list
+                                     (list (list names object direct type init
+                                                 comment group-comment))))
+            ;; parse group comment and spacing
+            (setq group-comment (vhdl-parse-group-comment)))
+          (message "Reading interface of subprogram \"%s\"...done" name)
+          nil)))
       ;; finish parsing
       (if parse-error
-	  (error parse-error)
-	(setq vhdl-subprog-list
-	      (list name kind param-list return-type return-comment
-		    return-group-comment)
-	      vhdl-subprog-flattened nil)))))
+          (error parse-error)
+        (setq vhdl-subprog-list
+              (list name kind param-list return-type return-comment
+                    return-group-comment)
+              vhdl-subprog-flattened nil)))))
 
 (defun vhdl-subprog-paste-specification (kind)
   "Paste as a subprogram specification."
   (indent-according-to-mode)
   (let ((margin (current-column))
-	(param-list (nth 2 vhdl-subprog-list))
-	list-margin start names param)
+        (param-list (nth 2 vhdl-subprog-list))
+        list-margin start names param)
     ;; paste keyword and name
     (vhdl-insert-keyword
      (if (eq (nth 1 vhdl-subprog-list) 'procedure) "PROCEDURE " "FUNCTION "))
     (insert (nth 0 vhdl-subprog-list))
     (if (not param-list)
-	(if (eq kind 'decl) (insert ";") (vhdl-insert-keyword " is"))
+        (if (eq kind 'decl) (insert ";") (vhdl-insert-keyword " is"))
       (setq start (point))
       ;; paste parameter list
       (insert " (")
       (unless vhdl-argument-list-indent
-	(insert "\n") (indent-to (+ margin vhdl-basic-offset)))
+        (insert "\n") (indent-to (+ margin vhdl-basic-offset)))
       (setq list-margin (current-column))
       (while param-list
-	(setq param (car param-list))
-	;; paste group comment and spacing
-	(when (memq vhdl-include-group-comments (list kind 'always))
-	  (vhdl-paste-group-comment (nth 6 param) list-margin))
-	;; paste object
-	(when (nth 1 param) (insert (nth 1 param) " "))
-	;; paste names
-	(setq names (nth 0 param))
-	(while names
-	  (insert (car names))
-	  (setq names (cdr names))
-	  (when names (insert ", ")))
-	;; paste direction
-	(insert " : ")
-	(when (nth 2 param) (insert (nth 2 param) " "))
-	;; paste type
-	(insert (nth 3 param))
-	;; paste initialization
-	(when (nth 4 param) (insert " := " (nth 4 param)))
-	;; terminate line
-	(if (cdr param-list)
-	    (insert ";")
-	  (insert ")")
-	  (when (null (nth 3 vhdl-subprog-list))
-	    (if (eq kind 'decl) (insert ";") (vhdl-insert-keyword " is"))))
-	;; paste comment
-	(when (and vhdl-include-port-comments (nth 5 param))
-	  (vhdl-comment-insert-inline (nth 5 param) t))
-	(setq param-list (cdr param-list))
-	(when param-list (insert "\n") (indent-to list-margin)))
+        (setq param (car param-list))
+        ;; paste group comment and spacing
+        (when (memq vhdl-include-group-comments (list kind 'always))
+          (vhdl-paste-group-comment (nth 6 param) list-margin))
+        ;; paste object
+        (when (nth 1 param) (insert (nth 1 param) " "))
+        ;; paste names
+        (setq names (nth 0 param))
+        (while names
+          (insert (car names))
+          (setq names (cdr names))
+          (when names (insert ", ")))
+        ;; paste direction
+        (insert " : ")
+        (when (nth 2 param) (insert (nth 2 param) " "))
+        ;; paste type
+        (insert (nth 3 param))
+        ;; paste initialization
+        (when (nth 4 param) (insert " := " (nth 4 param)))
+        ;; terminate line
+        (if (cdr param-list)
+            (insert ";")
+          (insert ")")
+          (when (null (nth 3 vhdl-subprog-list))
+            (if (eq kind 'decl) (insert ";") (vhdl-insert-keyword " is"))))
+        ;; paste comment
+        (when (and vhdl-include-port-comments (nth 5 param))
+          (vhdl-comment-insert-inline (nth 5 param) t))
+        (setq param-list (cdr param-list))
+        (when param-list (insert "\n") (indent-to list-margin)))
       (when (nth 3 vhdl-subprog-list)
-	(insert "\n") (indent-to list-margin)
-	;; paste group comment and spacing
-	(when (memq vhdl-include-group-comments (list kind 'always))
-	  (vhdl-paste-group-comment (nth 5 vhdl-subprog-list) list-margin))
-	;; paste return type
-	(insert "return " (nth 3 vhdl-subprog-list))
-	(if (eq kind 'decl) (insert ";") (vhdl-insert-keyword " is"))
-	(when (and vhdl-include-port-comments (nth 4 vhdl-subprog-list))
-	  (vhdl-comment-insert-inline (nth 4 vhdl-subprog-list) t)))
+        (insert "\n") (indent-to list-margin)
+        ;; paste group comment and spacing
+        (when (memq vhdl-include-group-comments (list kind 'always))
+          (vhdl-paste-group-comment (nth 5 vhdl-subprog-list) list-margin))
+        ;; paste return type
+        (insert "return " (nth 3 vhdl-subprog-list))
+        (if (eq kind 'decl) (insert ";") (vhdl-insert-keyword " is"))
+        (when (and vhdl-include-port-comments (nth 4 vhdl-subprog-list))
+          (vhdl-comment-insert-inline (nth 4 vhdl-subprog-list) t)))
       ;; align parameter list
       (when vhdl-auto-align (vhdl-align-region-groups start (point) 1 t)))
     ;; paste body
@@ -12700,7 +12703,7 @@ reflected in a subsequent paste operation."
       (insert "\n")
       (vhdl-template-begin-end
        (unless (vhdl-standard-p '87)
-	 (if (eq (nth 1 vhdl-subprog-list) 'procedure) "PROCEDURE" "FUNCTION"))
+         (if (eq (nth 1 vhdl-subprog-list) 'procedure) "PROCEDURE" "FUNCTION"))
        (nth 0 vhdl-subprog-list) margin))))
 
 (defun vhdl-subprog-paste-declaration ()
@@ -12709,11 +12712,11 @@ reflected in a subsequent paste operation."
   (if (not vhdl-subprog-list)
       (error "ERROR:  No subprogram interface read")
     (message "Pasting interface as subprogram declaration \"%s\"..."
-	     (car vhdl-subprog-list))
+             (car vhdl-subprog-list))
     ;; paste specification
     (vhdl-subprog-paste-specification 'decl)
     (message "Pasting interface as subprogram declaration \"%s\"...done"
-	     (car vhdl-subprog-list))))
+             (car vhdl-subprog-list))))
 
 (defun vhdl-subprog-paste-body ()
   "Paste as a subprogram body."
@@ -12721,11 +12724,11 @@ reflected in a subsequent paste operation."
   (if (not vhdl-subprog-list)
       (error "ERROR:  No subprogram interface read")
     (message "Pasting interface as subprogram body \"%s\"..."
-	     (car vhdl-subprog-list))
+             (car vhdl-subprog-list))
     ;; paste specification and body
     (vhdl-subprog-paste-specification 'body)
     (message "Pasting interface as subprogram body \"%s\"...done"
-	     (car vhdl-subprog-list))))
+             (car vhdl-subprog-list))))
 
 (defun vhdl-subprog-paste-call ()
   "Paste as a subprogram call."
@@ -12733,42 +12736,42 @@ reflected in a subsequent paste operation."
   (if (not vhdl-subprog-list)
       (error "ERROR:  No subprogram interface read")
     (let ((orig-vhdl-subprog-list vhdl-subprog-list)
-	  param-list margin list-margin param start)
+          param-list margin list-margin param start)
       ;; flatten local copy of interface list (must be flat for parameter mapping)
       (vhdl-subprog-flatten)
       (setq param-list (nth 2 vhdl-subprog-list))
       (indent-according-to-mode)
       (setq margin (current-indentation))
       (message "Pasting interface as subprogram call \"%s\"..."
-	       (car vhdl-subprog-list))
+               (car vhdl-subprog-list))
       ;; paste name
       (insert (nth 0 vhdl-subprog-list))
       (if (not param-list)
-	  (insert ";")
-	(setq start (point))
-	;; paste parameter list
-	(insert " (")
-	(unless vhdl-argument-list-indent
-	  (insert "\n") (indent-to (+ margin vhdl-basic-offset)))
-	(setq list-margin (current-column))
-	(while param-list
-	  (setq param (car param-list))
-	  ;; paste group comment and spacing
-	  (when (eq vhdl-include-group-comments 'always)
-	    (vhdl-paste-group-comment (nth 6 param) list-margin))
-	  ;; paste formal port
-	  (insert (car (nth 0 param)) " => ")
-	  (setq param-list (cdr param-list))
-	  (insert (if param-list "," ");"))
-	  ;; paste comment
-	  (when (and vhdl-include-port-comments (nth 5 param))
-	    (vhdl-comment-insert-inline (nth 5 param)))
-	  (when param-list (insert "\n") (indent-to list-margin)))
-	;; align parameter list
-	(when vhdl-auto-align
-	  (vhdl-align-region-groups start (point) 1)))
+          (insert ";")
+        (setq start (point))
+        ;; paste parameter list
+        (insert " (")
+        (unless vhdl-argument-list-indent
+          (insert "\n") (indent-to (+ margin vhdl-basic-offset)))
+        (setq list-margin (current-column))
+        (while param-list
+          (setq param (car param-list))
+          ;; paste group comment and spacing
+          (when (eq vhdl-include-group-comments 'always)
+            (vhdl-paste-group-comment (nth 6 param) list-margin))
+          ;; paste formal port
+          (insert (car (nth 0 param)) " => ")
+          (setq param-list (cdr param-list))
+          (insert (if param-list "," ");"))
+          ;; paste comment
+          (when (and vhdl-include-port-comments (nth 5 param))
+            (vhdl-comment-insert-inline (nth 5 param)))
+          (when param-list (insert "\n") (indent-to list-margin)))
+        ;; align parameter list
+        (when vhdl-auto-align
+          (vhdl-align-region-groups start (point) 1)))
       (message "Pasting interface as subprogram call \"%s\"...done"
-	       (car vhdl-subprog-list))
+               (car vhdl-subprog-list))
       (setq vhdl-subprog-list orig-vhdl-subprog-list))))
 
 
@@ -12786,28 +12789,28 @@ reflected in a subsequent paste operation."
   (unless old
     (he-init-string (he-dabbrev-beg) (point))
     (setq he-expand-list
-	  (let ((abbrev-list vhdl-abbrev-list)
-		(sel-abbrev-list '()))
-	    (while abbrev-list
-	      (when (or (not (stringp (car abbrev-list)))
-			(string-match
-			 (concat "^" he-search-string) (car abbrev-list)))
-		(setq sel-abbrev-list
-		      (cons (car abbrev-list) sel-abbrev-list)))
-	      (setq abbrev-list (cdr abbrev-list)))
-	    (nreverse sel-abbrev-list))))
+          (let ((abbrev-list vhdl-abbrev-list)
+                (sel-abbrev-list '()))
+            (while abbrev-list
+              (when (or (not (stringp (car abbrev-list)))
+                        (string-match
+                         (concat "^" he-search-string) (car abbrev-list)))
+                (setq sel-abbrev-list
+                      (cons (car abbrev-list) sel-abbrev-list)))
+              (setq abbrev-list (cdr abbrev-list)))
+            (nreverse sel-abbrev-list))))
   (while (and he-expand-list
-	      (or (not (stringp (car he-expand-list)))
-		  (he-string-member (car he-expand-list) he-tried-table t)))
+              (or (not (stringp (car he-expand-list)))
+                  (he-string-member (car he-expand-list) he-tried-table t)))
     (unless (stringp (car he-expand-list))
       (setq vhdl-expand-upper-case (car he-expand-list)))
     (setq he-expand-list (cdr he-expand-list)))
   (if (null he-expand-list)
       (progn (when old (he-reset-string))
-	     nil)
+             nil)
     (he-substitute-string
      (if vhdl-expand-upper-case
-	 (upcase (car he-expand-list))
+         (upcase (car he-expand-list))
        (car he-expand-list))
      t)
     (setq he-expand-list (cdr he-expand-list))
@@ -12818,8 +12821,8 @@ reflected in a subsequent paste operation."
 expressions (e.g. for index ranges of types and signals)."
   (save-excursion
     (condition-case ()
-	(progn (backward-up-list 1)
- 	       (skip-syntax-backward "w_")) ; crashes in `viper-mode'
+        (progn (backward-up-list 1)
+               (skip-syntax-backward "w_")) ; crashes in `viper-mode'
       (error ()))
     (point)))
 
@@ -12829,14 +12832,14 @@ expressions (e.g. for index ranges of types and signals)."
 
 ;; function for expanding abbrevs and dabbrevs
 (defalias 'vhdl-expand-abbrev (make-hippie-expand-function
-			       '(try-expand-dabbrev
-				 try-expand-dabbrev-all-buffers
-				 vhdl-try-expand-abbrev)))
+                               '(try-expand-dabbrev
+                                 try-expand-dabbrev-all-buffers
+                                 vhdl-try-expand-abbrev)))
 
 ;; function for expanding parenthesis
 (defalias 'vhdl-expand-paren (make-hippie-expand-function
-			      '(try-expand-list
-				try-expand-list-all-buffers)))
+                              '(try-expand-list
+                                try-expand-list-all-buffers)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Line handling functions
@@ -12877,8 +12880,8 @@ expressions (e.g. for index ranges of types and signals)."
   (interactive "P")
   (require 'hippie-exp)
   (let ((case-fold-search t) (case-replace nil)
-	(hippie-expand-try-functions-list
-	 '(try-expand-line try-expand-line-all-buffers)))
+        (hippie-expand-try-functions-list
+         '(try-expand-line try-expand-line-all-buffers)))
     (hippie-expand prefix-arg)))
 
 (defun vhdl-line-transpose-next (&optional arg)
@@ -12915,14 +12918,14 @@ it works within comments too."
   "Move forward to next line with same indent."
   (interactive)
   (let ((pos (point))
-	(indent (current-indentation)))
+        (indent (current-indentation)))
     (beginning-of-line 2)
     (while (and (not (eobp))
-		(or (looking-at "^\\s-*\\(--.*\\)?$")
-		    (> (current-indentation) indent)))
+                (or (looking-at "^\\s-*\\(--.*\\)?$")
+                    (> (current-indentation) indent)))
       (beginning-of-line 2))
     (if (= (current-indentation) indent)
-	(back-to-indentation)
+        (back-to-indentation)
       (message "No following line with same indent found in this block")
       (goto-char pos)
       nil)))
@@ -12931,14 +12934,14 @@ it works within comments too."
   "Move backward to previous line with same indent."
   (interactive)
   (let ((pos (point))
-	(indent (current-indentation)))
+        (indent (current-indentation)))
     (beginning-of-line -0)
     (while (and (not (bobp))
-		(or (looking-at "^\\s-*\\(--.*\\)?$")
-		    (> (current-indentation) indent)))
+                (or (looking-at "^\\s-*\\(--.*\\)?$")
+                    (> (current-indentation) indent)))
       (beginning-of-line -0))
     (if (= (current-indentation) indent)
-	(back-to-indentation)
+        (back-to-indentation)
       (message "No preceding line with same indent found in this block")
       (goto-char pos)
       nil)))
@@ -12950,45 +12953,45 @@ it works within comments too."
   "Get some file statistics."
   (interactive)
   (let ((no-stats 0)
-	(no-code-lines 0)
-	(no-empty-lines 0)
-	(no-comm-lines 0)
-	(no-comments 0)
-	(no-lines (count-lines (point-min) (point-max))))
+        (no-code-lines 0)
+        (no-empty-lines 0)
+        (no-comm-lines 0)
+        (no-comments 0)
+        (no-lines (count-lines (point-min) (point-max))))
     (save-excursion
       ;; count statements
       (goto-char (point-min))
       (while (re-search-forward "\\(--.*\n\\|\"[^\"\n]*[\"\n]\\)\\|;" nil t)
-	(if (match-string 1)
-	    (goto-char (match-end 1))
-	  (setq no-stats (1+ no-stats))))
+        (if (match-string 1)
+            (goto-char (match-end 1))
+          (setq no-stats (1+ no-stats))))
       ;; count code lines
       (goto-char (point-min))
       (while (not (eobp))
-	(unless (looking-at "^\\s-*\\(--.*\\)?$")
-	  (setq no-code-lines (1+ no-code-lines)))
-	(beginning-of-line 2))
+        (unless (looking-at "^\\s-*\\(--.*\\)?$")
+          (setq no-code-lines (1+ no-code-lines)))
+        (beginning-of-line 2))
       ;; count empty lines
       (goto-char (point-min))
       (while (and (re-search-forward "^\\s-*$" nil t)
-		  (not (eq (point) (point-max))))
-	(if (match-string 1)
-	    (goto-char (match-end 1))
-	  (setq no-empty-lines (1+ no-empty-lines))
-	  (unless (eq (point) (point-max))
-	    (forward-char))))
+                  (not (eq (point) (point-max))))
+        (if (match-string 1)
+            (goto-char (match-end 1))
+          (setq no-empty-lines (1+ no-empty-lines))
+          (unless (eq (point) (point-max))
+            (forward-char))))
       ;; count comment-only lines
       (goto-char (point-min))
       (while (re-search-forward "^\\s-*--.*" nil t)
-	(if (match-string 1)
-	    (goto-char (match-end 1))
-	  (setq no-comm-lines (1+ no-comm-lines))))
+        (if (match-string 1)
+            (goto-char (match-end 1))
+          (setq no-comm-lines (1+ no-comm-lines))))
       ;; count comments
       (goto-char (point-min))
       (while (re-search-forward "--.*" nil t)
-	(if (match-string 1)
-	    (goto-char (match-end 1))
-	  (setq no-comments (1+ no-comments)))))
+        (if (match-string 1)
+            (goto-char (match-end 1))
+          (setq no-comments (1+ no-comments)))))
     ;; print results
     (message "\n\
 File statistics: \"%s\"\n\
@@ -12999,8 +13002,8 @@ File statistics: \"%s\"\n\
 # comment lines : %5d\n\
 # comments      : %5d\n\
 # total lines   : %5d\n"
-	     (buffer-file-name) no-stats no-code-lines no-empty-lines
-	     no-comm-lines no-comments no-lines)
+             (buffer-file-name) no-stats no-code-lines no-empty-lines
+             no-comm-lines no-comments no-lines)
     (unless vhdl-emacs-21 (vhdl-show-messages))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -13011,7 +13014,7 @@ File statistics: \"%s\"\n\
   (let (pos)
     (save-excursion
       (while (and (setq pos (re-search-forward regexp bound noerror count))
-		  (save-match-data (vhdl-in-literal)))))
+                  (save-match-data (vhdl-in-literal)))))
     (when pos (goto-char pos))
     pos))
 
@@ -13020,7 +13023,7 @@ File statistics: \"%s\"\n\
   (let (pos)
     (save-excursion
       (while (and (setq pos (re-search-backward regexp bound noerror count))
-		  (save-match-data (vhdl-in-literal)))))
+                  (save-match-data (vhdl-in-literal)))))
     (when pos (goto-char pos))
     pos))
 
@@ -13033,15 +13036,15 @@ File statistics: \"%s\"\n\
   "Set current project to NAME."
   (interactive
    (list (let ((completion-ignore-case t))
-	   (completing-read "Project name: " vhdl-project-alist nil t))))
+           (completing-read "Project name: " vhdl-project-alist nil t))))
   (cond ((equal name "")
-	 (setq vhdl-project nil)
-	 (message "Current VHDL project: None"))
-	((assoc name vhdl-project-alist)
-	 (setq vhdl-project name)
-	 (message "Current VHDL project: \"%s\"" name))
-	(t
-	 (vhdl-warning (format "Unknown VHDL project: \"%s\"" name))))
+         (setq vhdl-project nil)
+         (message "Current VHDL project: None"))
+        ((assoc name vhdl-project-alist)
+         (setq vhdl-project name)
+         (message "Current VHDL project: \"%s\"" name))
+        (t
+         (vhdl-warning (format "Unknown VHDL project: \"%s\"" name))))
   (vhdl-speedbar-update-current-project))
 
 (defun vhdl-set-default-project ()
@@ -13058,33 +13061,33 @@ File statistics: \"%s\"\n\
   "Write project setup for current project."
   (interactive
    (let ((name (vhdl-resolve-env-variable
-		(vhdl-replace-string
-		 (cons "\\(.*\\) \\(.*\\)" (car vhdl-project-file-name))
-		 (concat (subst-char-in-string
-			  ?  ?_ (or (vhdl-project-p)
-				    (error "ERROR:  No current project")))
-			 " " (user-login-name))))))
+                (vhdl-replace-string
+                 (cons "\\(.*\\) \\(.*\\)" (car vhdl-project-file-name))
+                 (concat (subst-char-in-string
+                          ?  ?_ (or (vhdl-project-p)
+                                    (error "ERROR:  No current project")))
+                         " " (user-login-name))))))
      (list (read-file-name
-	    "Write project file: "
-	    (when (file-name-absolute-p name) "") nil nil name))))
+            "Write project file: "
+            (when (file-name-absolute-p name) "") nil nil name))))
   (setq file-name (abbreviate-file-name file-name))
   (let ((orig-buffer (current-buffer)))
     (unless (file-exists-p (file-name-directory file-name))
       (make-directory (file-name-directory file-name) t))
     (if (not (file-writable-p file-name))
-	(error "ERROR:  File not writable: \"%s\"" file-name)
+        (error "ERROR:  File not writable: \"%s\"" file-name)
       (set-buffer (find-file-noselect file-name t t))
       (erase-buffer)
       (insert ";; -*- Emacs-Lisp -*-\n\n"
-	      ";;; " (file-name-nondirectory file-name)
-	      " - project setup file for Emacs VHDL Mode " vhdl-version "\n\n"
-	      ";; Project : " vhdl-project "\n"
-	      ";; Saved   : " (format-time-string "%Y-%m-%d %T ")
-	      (user-login-name) "\n\n\n"
-	      ";; project name\n"
-	      "(setq vhdl-project \"" vhdl-project "\")\n\n"
-	      ";; project setup\n"
-	      "(vhdl-aput 'vhdl-project-alist vhdl-project\n'")
+              ";;; " (file-name-nondirectory file-name)
+              " - project setup file for Emacs VHDL Mode " vhdl-version "\n\n"
+              ";; Project : " vhdl-project "\n"
+              ";; Saved   : " (format-time-string "%Y-%m-%d %T ")
+              (user-login-name) "\n\n\n"
+              ";; project name\n"
+              "(setq vhdl-project \"" vhdl-project "\")\n\n"
+              ";; project setup\n"
+              "(vhdl-aput 'vhdl-project-alist vhdl-project\n'")
       (pp (vhdl-aget vhdl-project-alist vhdl-project) (current-buffer))
       (insert ")\n")
       (save-buffer)
@@ -13095,58 +13098,58 @@ File statistics: \"%s\"\n\
   "Read project setup and set current project."
   (interactive
    (let ((name (vhdl-resolve-env-variable
-		(vhdl-replace-string
-		 (cons "\\(.*\\) \\(.*\\)" (car vhdl-project-file-name))
-		 (concat "" " " (user-login-name))))))
+                (vhdl-replace-string
+                 (cons "\\(.*\\) \\(.*\\)" (car vhdl-project-file-name))
+                 (concat "" " " (user-login-name))))))
      (list (read-file-name
-	    "Read project file: " (when (file-name-absolute-p name) "") nil t
-	    (file-name-directory name)))))
+            "Read project file: " (when (file-name-absolute-p name) "") nil t
+            (file-name-directory name)))))
   (when (file-exists-p file-name)
     (condition-case ()
-	(let ((current-project vhdl-project))
-	  (load-file file-name)
-	  (when (/= (length (vhdl-aget vhdl-project-alist vhdl-project)) 10)
-	    (vhdl-adelete 'vhdl-project-alist vhdl-project)
-	    (error ""))
-	  (if not-make-current
-	      (setq vhdl-project current-project)
-	    (setq vhdl-compiler
- 		  (caar (nth 4 (vhdl-aget vhdl-project-alist vhdl-project)))))
-	  (vhdl-update-mode-menu)
-	  (vhdl-speedbar-refresh)
-	  (unless not-make-current
-	    (message "Current VHDL project: \"%s\"; compiler: \"%s\"%s"
-		     vhdl-project vhdl-compiler (if auto " (auto-loaded)" ""))))
+        (let ((current-project vhdl-project))
+          (load-file file-name)
+          (when (/= (length (vhdl-aget vhdl-project-alist vhdl-project)) 10)
+            (vhdl-adelete 'vhdl-project-alist vhdl-project)
+            (error ""))
+          (if not-make-current
+              (setq vhdl-project current-project)
+            (setq vhdl-compiler
+                  (caar (nth 4 (vhdl-aget vhdl-project-alist vhdl-project)))))
+          (vhdl-update-mode-menu)
+          (vhdl-speedbar-refresh)
+          (unless not-make-current
+            (message "Current VHDL project: \"%s\"; compiler: \"%s\"%s"
+                     vhdl-project vhdl-compiler (if auto " (auto-loaded)" ""))))
       (error (vhdl-warning
-	      (format "ERROR:  Invalid project setup file: \"%s\"" file-name))))))
+              (format "ERROR:  Invalid project setup file: \"%s\"" file-name))))))
 
 (defun vhdl-duplicate-project ()
   "Duplicate setup of current project."
   (interactive)
   (let ((new-name (read-from-minibuffer "New project name: "))
-	(project-entry (vhdl-aget vhdl-project-alist vhdl-project)))
+        (project-entry (vhdl-aget vhdl-project-alist vhdl-project)))
     (setq vhdl-project-alist
-	  (append vhdl-project-alist
-		  (list (cons new-name project-entry))))
+          (append vhdl-project-alist
+                  (list (cons new-name project-entry))))
     (vhdl-update-mode-menu)))
 
 (defun vhdl-auto-load-project ()
   "Automatically load project setup at startup."
   (let ((file-name-list vhdl-project-file-name)
-	file-list list-length)
+        file-list list-length)
     (while file-name-list
       (setq file-list
-	    (append file-list
-		    (file-expand-wildcards
-		     (vhdl-resolve-env-variable
-		      (vhdl-replace-string
-		       (cons "\\(.*\\) \\(.*\\)" (car file-name-list))
-		       (concat "* " (user-login-name)))))))
+            (append file-list
+                    (file-expand-wildcards
+                     (vhdl-resolve-env-variable
+                      (vhdl-replace-string
+                       (cons "\\(.*\\) \\(.*\\)" (car file-name-list))
+                       (concat "* " (user-login-name)))))))
       (setq list-length (or list-length (length file-list)))
       (setq file-name-list (cdr file-name-list)))
     (while file-list
       (vhdl-import-project (expand-file-name (car file-list)) t
-			   (not (> list-length 0)))
+                           (not (> list-length 0)))
       (setq list-length (1- list-length))
       (setq file-list (cdr file-list)))))
 
@@ -13199,41 +13202,41 @@ File statistics: \"%s\"\n\
        (re-search-forward "^\\s-*end\\s-+component\\>" nil t))
       ;; component instantiation
       ((looking-at
-	(concat
-	 "^\\s-*\\w+\\s-*:[ \t\n\r\f]*"
-	 "\\(\\(component\\|configuration\\|entity\\)[ \t\n\r\f]+\\)?"
-	 "\\w+\\(\\s-*(\\w+)\\)?[ \t\n\r\f]*"
-	 "\\(generic\\|port\\)\\s-+map[ \t\n\r\f]*("))
+        (concat
+         "^\\s-*\\w+\\s-*:[ \t\n\r\f]*"
+         "\\(\\(component\\|configuration\\|entity\\)[ \t\n\r\f]+\\)?"
+         "\\w+\\(\\s-*(\\w+)\\)?[ \t\n\r\f]*"
+         "\\(generic\\|port\\)\\s-+map[ \t\n\r\f]*("))
        (goto-char (match-end 0))
        (backward-char)
        (forward-sexp)
        (setq pos (point))
        (vhdl-forward-syntactic-ws)
        (when (looking-at "port\\s-+map[ \t\n\r\f]*(")
-	 (goto-char (match-end 0))
-	 (backward-char)
-	 (forward-sexp)
-	 (setq pos (point)))
+         (goto-char (match-end 0))
+         (backward-char)
+         (forward-sexp)
+         (setq pos (point)))
        (goto-char pos))
       ;; subprogram declaration/body
       ((looking-at "^\\s-*\\(function\\|procedure\\)\\s-+\\(\\w+\\|\".+\"\\)")
        (goto-char (match-end 0))
        (vhdl-forward-syntactic-ws)
        (when (looking-at "(")
-	 (forward-sexp))
+         (forward-sexp))
        (while (and (re-search-forward "\\(;\\)\\|\\(\\<is\\>\\)" nil t)
-		   (vhdl-in-literal)))
+                   (vhdl-in-literal)))
        ;; subprogram body
        (when (match-string 2)
-	 (re-search-forward "^\\s-*\\<begin\\>" nil t)
-	 (backward-word-strictly 1)
-	 (vhdl-forward-sexp)))
+         (re-search-forward "^\\s-*\\<begin\\>" nil t)
+         (backward-word-strictly 1)
+         (vhdl-forward-sexp)))
       ;; block (recursive)
       ((looking-at "^\\s-*\\w+\\s-*:\\s-*block\\>")
        (goto-char (match-end 0))
        (while (and (re-search-forward "^\\s-*\\(\\(\\w+\\s-*:\\s-*block\\>\\)\\|\\(end\\s-+block\\>\\)\\)" nil t)
-		   (match-beginning 2))
-	 (vhdl-hs-forward-sexp-func count)))
+                   (match-beginning 2))
+         (vhdl-hs-forward-sexp-func count)))
       ;; process
       ((looking-at "^\\s-*\\(\\w+\\s-*:\\s-*\\)?process\\>")
        (re-search-forward "^\\s-*end\\s-+process\\>" nil t))
@@ -13258,15 +13261,15 @@ File statistics: \"%s\"\n\
     ;; initialize hideshow
     (unless (assoc 'vhdl-mode hs-special-modes-alist)
       (setq hs-special-modes-alist
-	    (cons (list 'vhdl-mode vhdl-hs-start-regexp nil "--\\( \\|$\\)"
-			'vhdl-hs-forward-sexp-func nil)
-		  hs-special-modes-alist)))
+            (cons (list 'vhdl-mode vhdl-hs-start-regexp nil "--\\( \\|$\\)"
+                        'vhdl-hs-forward-sexp-func nil)
+                  hs-special-modes-alist)))
     (if (featurep 'xemacs) (make-local-hook 'hs-minor-mode-hook))
     (if vhdl-hide-all-init
-	(add-hook 'hs-minor-mode-hook 'hs-hide-all nil t)
+        (add-hook 'hs-minor-mode-hook 'hs-hide-all nil t)
       (remove-hook 'hs-minor-mode-hook 'hs-hide-all t))
     (hs-minor-mode arg)
-    (force-mode-line-update)))		; hack to update menu bar
+    (force-mode-line-update)))          ; hack to update menu bar
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -13280,15 +13283,15 @@ File statistics: \"%s\"\n\
 (defun vhdl-within-translate-off ()
   "Return point if within translate-off region, else nil."
   (and (save-excursion
-	 (re-search-backward
-	  "^\\s-*--\\s-*pragma\\s-*translate_\\(on\\|off\\)\\s-*\n" nil t))
+         (re-search-backward
+          "^\\s-*--\\s-*pragma\\s-*translate_\\(on\\|off\\)\\s-*\n" nil t))
        (equal "off" (match-string 1))
        (point)))
 
 (defun vhdl-start-translate-off (limit)
   "Return point before translate-off pragma if before LIMIT, else nil."
   (when (re-search-forward
-	 "^\\s-*--\\s-*pragma\\s-*translate_off\\s-*\n" limit t)
+         "^\\s-*--\\s-*pragma\\s-*translate_off\\s-*\n" limit t)
     (match-beginning 0)))
 
 (defun vhdl-end-translate-off (limit)
@@ -13299,27 +13302,27 @@ File statistics: \"%s\"\n\
   "Match a translate-off block, setting match-data and returning t, else nil."
   (when (< (point) limit)
     (let ((start (or (vhdl-within-translate-off)
-		     (vhdl-start-translate-off limit)))
-	  (case-fold-search t))
+                     (vhdl-start-translate-off limit)))
+          (case-fold-search t))
       (when start
-	(let ((end (or (vhdl-end-translate-off limit) limit)))
-	  (set-match-data (list start end))
-	  (goto-char end))))))
+        (let ((end (or (vhdl-end-translate-off limit) limit)))
+          (set-match-data (list start end))
+          (goto-char end))))))
 
 (defun vhdl-font-lock-match-item (limit)
   "Match, and move over, any declaration item after point.  Adapted from
 `font-lock-match-c-style-declaration-item-and-skip-to-next'."
   (condition-case nil
       (save-restriction
-	(narrow-to-region (point-min) limit)
-	;; match item
-	(when (looking-at "\\s-*\\([a-zA-Z]\\w*\\)")
-	  (save-match-data
-	    (goto-char (match-end 1))
-	    ;; move to next item
-	    (if (looking-at "\\(\\s-*,\\)")
-		(goto-char (match-end 1))
-	      (end-of-line) t))))
+        (narrow-to-region (point-min) limit)
+        ;; match item
+        (when (looking-at "\\s-*\\([a-zA-Z]\\w*\\)")
+          (save-match-data
+            (goto-char (match-end 1))
+            ;; move to next item
+            (if (looking-at "\\(\\s-*,\\)")
+                (goto-char (match-end 1))
+              (end-of-line) t))))
     (error t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -13420,7 +13423,7 @@ This does highlighting of keywords and standard identifiers.")
 
    ;; highlight names in library clauses
    (list "^\\s-*library\\>"
-	 '(vhdl-font-lock-match-item nil nil (1 font-lock-function-name-face)))
+         '(vhdl-font-lock-match-item nil nil (1 font-lock-function-name-face)))
 
    ;; highlight names in use clauses
    (list
@@ -13444,37 +13447,37 @@ This does highlighting of keywords and standard identifiers.")
 
    ;; highlight signal/variable/constant declaration names
    (list "\\(:[^=]\\)"
-	 '(vhdl-font-lock-match-item
-	   (progn (goto-char (match-beginning 1))
-		  (skip-syntax-backward " ")
-		  (skip-syntax-backward "w_")
-		  (skip-syntax-backward " ")
-		  (while (= (preceding-char) ?,)
-		    (backward-char 1)
-		    (skip-syntax-backward " ")
-		    (skip-syntax-backward "w_")
-		    (skip-syntax-backward " ")))
-	   (goto-char (match-end 1)) (1 font-lock-variable-name-face)))
+         '(vhdl-font-lock-match-item
+           (progn (goto-char (match-beginning 1))
+                  (skip-syntax-backward " ")
+                  (skip-syntax-backward "w_")
+                  (skip-syntax-backward " ")
+                  (while (= (preceding-char) ?,)
+                    (backward-char 1)
+                    (skip-syntax-backward " ")
+                    (skip-syntax-backward "w_")
+                    (skip-syntax-backward " ")))
+           (goto-char (match-end 1)) (1 font-lock-variable-name-face)))
 
    ;; highlight formal parameters in component instantiations and subprogram
    ;; calls
    (list "\\(=>\\)"
-	 '(vhdl-font-lock-match-item
-	   (progn (goto-char (match-beginning 1))
-		  (skip-syntax-backward " ")
-		  (while (= (preceding-char) ?\)) (backward-sexp))
-		  (skip-syntax-backward "w_")
-		  (skip-syntax-backward " ")
-		  (when (memq (preceding-char) '(?n ?N ?|))
-		    (goto-char (point-max))))
-	   (goto-char (match-end 1)) (1 font-lock-variable-name-face)))
+         '(vhdl-font-lock-match-item
+           (progn (goto-char (match-beginning 1))
+                  (skip-syntax-backward " ")
+                  (while (= (preceding-char) ?\)) (backward-sexp))
+                  (skip-syntax-backward "w_")
+                  (skip-syntax-backward " ")
+                  (when (memq (preceding-char) '(?n ?N ?|))
+                    (goto-char (point-max))))
+           (goto-char (match-end 1)) (1 font-lock-variable-name-face)))
 
    ;; highlight alias/group/quantity declaration names and for-loop/-generate
    ;; variables
    (list "\\<\\(alias\\|for\\|group\\|quantity\\)\\s-+\\w+\\s-+\\(across\\|in\\|is\\)\\>"
-	 '(vhdl-font-lock-match-item
-	   (progn (goto-char (match-end 1)) (match-beginning 2))
-	   nil (1 font-lock-variable-name-face)))
+         '(vhdl-font-lock-match-item
+           (progn (goto-char (match-end 1)) (match-beginning 2))
+           nil (1 font-lock-variable-name-face)))
 
    ;; highlight tool directives
    (list
@@ -13504,7 +13507,7 @@ This does background highlighting of translate-off regions.")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font and color definitions
 
-(defvar vhdl-font-lock-prompt-face	   'vhdl-font-lock-prompt-face
+(defvar vhdl-font-lock-prompt-face         'vhdl-font-lock-prompt-face
   "Face name to use for prompts.")
 
 (defvar vhdl-font-lock-attribute-face      'vhdl-font-lock-attribute-face
@@ -13530,10 +13533,10 @@ This does background highlighting of translate-off regions.")
       name)
   (while syntax-alist
     (setq name (vhdl-function-name
-		"vhdl-font-lock" (nth 0 (car syntax-alist)) "face"))
+                "vhdl-font-lock" (nth 0 (car syntax-alist)) "face"))
     (eval `(defvar ,name ',name
-	     ,(concat "Face name to use for "
-		      (nth 0 (car syntax-alist)) ".")))
+             ,(concat "Face name to use for "
+                      (nth 0 (car syntax-alist)) ".")))
     (setq syntax-alist (cdr syntax-alist))))
 
 (defgroup vhdl-highlight-faces nil
@@ -13611,15 +13614,15 @@ This does background highlighting of translate-off regions.")
 (let ((syntax-alist vhdl-special-syntax-alist))
   (while syntax-alist
     (eval `(defface ,(vhdl-function-name
-		      "vhdl-font-lock" (caar syntax-alist) "face")
-	     '((((class color) (background light))
-		(:foreground ,(nth 2 (car syntax-alist))))
-	       (((class color) (background dark))
-		(:foreground ,(nth 3 (car syntax-alist))))
-	       (t ()))
-	     ,(concat "Font lock mode face used to highlight "
-		      (nth 0 (car syntax-alist)) ".")
-	     :group 'vhdl-highlight-faces))
+                      "vhdl-font-lock" (caar syntax-alist) "face")
+             '((((class color) (background light))
+                (:foreground ,(nth 2 (car syntax-alist))))
+               (((class color) (background dark))
+                (:foreground ,(nth 3 (car syntax-alist))))
+               (t ()))
+             ,(concat "Font lock mode face used to highlight "
+                      (nth 0 (car syntax-alist)) ".")
+             :group 'vhdl-highlight-faces))
     (setq syntax-alist (cdr syntax-alist))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -13629,69 +13632,73 @@ This does background highlighting of translate-off regions.")
   "Initialize fontification."
   ;; highlight template prompts and directives
   (setq vhdl-font-lock-keywords-0
-	(list (list (concat "\\(^\\|[ \t(.']\\)\\(<"
-			    vhdl-template-prompt-syntax ">\\)")
-		    2 'vhdl-font-lock-prompt-face t)
-	      (list (concat "--\\s-*"
-			    vhdl-directive-keywords-regexp "\\s-+\\(.*\\)$")
-		    2 'vhdl-font-lock-directive-face t)
-	      ;; highlight c-preprocessor directives
-	      (list "^#[ \t]*\\(\\w+\\)\\([ \t]+\\(\\w+\\)\\)?"
-		    '(1 font-lock-builtin-face)
-		    '(3 font-lock-variable-name-face nil t))))
+        (list (list (concat "\\(^\\|[ \t(.']\\)\\(<"
+                            vhdl-template-prompt-syntax ">\\)")
+                    2 'vhdl-font-lock-prompt-face t)
+              (list (concat "--\\s-*"
+                            vhdl-directive-keywords-regexp "\\s-+\\(.*\\)$")
+                    2 'vhdl-font-lock-directive-face t)
+              ;; highlight c-preprocessor directives
+              (list "^#[ \t]*\\(\\w+\\)\\([ \t]+\\(\\w+\\)\\)?"
+                    '(1 font-lock-builtin-face)
+                    '(3 font-lock-variable-name-face nil t))))
   ;; highlight keywords and standardized types, attributes, enumeration
   ;; values, and subprograms
   (setq vhdl-font-lock-keywords-1
-	(list
-	 (list (concat "'" vhdl-attributes-regexp)
-	       1 'vhdl-font-lock-attribute-face)
-	 (list vhdl-types-regexp       1 'font-lock-type-face)
-	 (list vhdl-functions-regexp   1 'vhdl-font-lock-function-face)
-	 (list vhdl-packages-regexp    1 'vhdl-font-lock-function-face)
-	 (list vhdl-enum-values-regexp 1 'vhdl-font-lock-enumvalue-face)
-	 (list vhdl-constants-regexp   1 'font-lock-constant-face)
-	 (list vhdl-keywords-regexp    1 'font-lock-keyword-face)))
+        (list
+         (list (concat "'" vhdl-attributes-regexp)
+               1 'vhdl-font-lock-attribute-face)
+         (list vhdl-types-regexp       1 'font-lock-type-face)
+         (list vhdl-functions-regexp   1 'vhdl-font-lock-function-face)
+         (list vhdl-packages-regexp    1 'vhdl-font-lock-function-face)
+         (list vhdl-enum-values-regexp 1 'vhdl-font-lock-enumvalue-face)
+         (list vhdl-constants-regexp   1 'font-lock-constant-face)
+         (list vhdl-keywords-regexp    1 'font-lock-keyword-face)))
   ;; highlight words with special syntax.
   (setq vhdl-font-lock-keywords-3
-	(let ((syntax-alist vhdl-special-syntax-alist)
-	      keywords)
-	  (while syntax-alist
-	    (setq keywords
-		  (cons
-		   (list (concat "\\(" (nth 1 (car syntax-alist)) "\\)") 1
-			 (vhdl-function-name
-			  "vhdl-font-lock" (nth 0 (car syntax-alist)) "face")
-			 (nth 4 (car syntax-alist)))
-		   keywords))
-	    (setq syntax-alist (cdr syntax-alist)))
-	  keywords))
+        (let ((syntax-alist vhdl-special-syntax-alist)
+              keywords)
+          (while syntax-alist
+            (setq keywords
+                  (cons
+                   (list (concat "\\(" (nth 1 (car syntax-alist)) "\\)") 1
+                         (vhdl-function-name
+                          "vhdl-font-lock" (nth 0 (car syntax-alist)) "face")
+                         (nth 4 (car syntax-alist)))
+                   keywords))
+            (setq syntax-alist (cdr syntax-alist)))
+          keywords))
   ;; highlight additional reserved words
   (setq vhdl-font-lock-keywords-4
-	(list (list vhdl-reserved-words-regexp 1
-		    'vhdl-font-lock-reserved-words-face)))
+        (list (list vhdl-reserved-words-regexp 1
+                    'vhdl-font-lock-reserved-words-face)))
   ;; highlight everything together
   (setq vhdl-font-lock-keywords
-	(append
-	 vhdl-font-lock-keywords-0
-	 (when vhdl-highlight-keywords vhdl-font-lock-keywords-1)
-	 (when (or vhdl-highlight-forbidden-words
-		   vhdl-highlight-verilog-keywords) vhdl-font-lock-keywords-4)
-	 (when vhdl-highlight-special-words vhdl-font-lock-keywords-3)
-	 (when vhdl-highlight-names vhdl-font-lock-keywords-2)
-	 (when vhdl-highlight-translate-off vhdl-font-lock-keywords-5))))
+        (append
+         vhdl-font-lock-keywords-0
+         (when vhdl-highlight-keywords vhdl-font-lock-keywords-1)
+         (when (or vhdl-highlight-forbidden-words
+                   vhdl-highlight-verilog-keywords) vhdl-font-lock-keywords-4)
+         (when vhdl-highlight-special-words vhdl-font-lock-keywords-3)
+         (when vhdl-highlight-names vhdl-font-lock-keywords-2)
+         (when vhdl-highlight-translate-off vhdl-font-lock-keywords-5))))
 
 ;; initialize fontification for VHDL Mode
-(vhdl-font-lock-init)
+;; DANGER: ONLY EXECUTED AT EMACS STARTUP!!
+(if larumbe/vhdl-use-own-custom-fontify ; Must be defined @ vhdl-settings use-package :init
+    (larumbe/vhdl-font-lock-init)
+  (vhdl-font-lock-init))
+;; End of DANGER
 
 (defun vhdl-fontify-buffer ()
   "Re-initialize fontification and fontify buffer."
   (interactive)
   (setq font-lock-defaults
-	`(vhdl-font-lock-keywords
+        `(vhdl-font-lock-keywords
           nil ,(not vhdl-highlight-case-sensitive) ((?\_ . "w"))
           beginning-of-line))
   (when (fboundp 'font-lock-unset-defaults)
-    (font-lock-unset-defaults))		; not implemented in XEmacs
+    (font-lock-unset-defaults))         ; not implemented in XEmacs
   (font-lock-set-defaults)
   (font-lock-mode nil)
   (font-lock-mode t))
@@ -13703,22 +13710,22 @@ This does background highlighting of translate-off regions.")
   "Initialize custom face and page settings for PostScript printing."
   ;; define custom face settings
   (unless (or (not vhdl-print-customize-faces)
-	      ps-print-color-p)
+              ps-print-color-p)
     (set (make-local-variable 'ps-bold-faces)
-	 '(font-lock-keyword-face
-	   font-lock-type-face
-	   vhdl-font-lock-attribute-face
-	   vhdl-font-lock-enumvalue-face
-	   vhdl-font-lock-directive-face))
+         '(font-lock-keyword-face
+           font-lock-type-face
+           vhdl-font-lock-attribute-face
+           vhdl-font-lock-enumvalue-face
+           vhdl-font-lock-directive-face))
     (set (make-local-variable 'ps-italic-faces)
-	 '(font-lock-comment-face
-	   font-lock-function-name-face
-	   font-lock-type-face
-	   vhdl-font-lock-attribute-face
-	   vhdl-font-lock-enumvalue-face
-	   vhdl-font-lock-directive-face))
+         '(font-lock-comment-face
+           font-lock-function-name-face
+           font-lock-type-face
+           vhdl-font-lock-attribute-face
+           vhdl-font-lock-enumvalue-face
+           vhdl-font-lock-directive-face))
     (set (make-local-variable 'ps-underlined-faces)
-	 '(font-lock-string-face))
+         '(font-lock-string-face))
     (setq ps-always-build-face-reference t))
   ;; define page settings, so that a line containing 79 characters (default)
   ;; fits into one column
@@ -13738,7 +13745,7 @@ This does background highlighting of translate-off regions.")
   "Initialize PostScript printing."
   (if (featurep 'xemacs)
       (when (boundp 'ps-print-color-p)
-	(vhdl-ps-print-settings))
+        (vhdl-ps-print-settings))
     (if (featurep 'xemacs) (make-local-hook 'ps-print-hook))
     (add-hook 'ps-print-hook 'vhdl-ps-print-settings nil t)))
 
@@ -13760,8 +13767,8 @@ project/directory.")
 ;;   (ent-key ent-name ent-file ent-line
 ;;     (arch-key arch-name arch-file arch-line
 ;;       (inst-key inst-name inst-file inst-line inst-comp-name inst-ent-key
-;;		   inst-arch-key inst-conf-key inst-lib-key inst-path)
-;;	 (lib-name pack-key))
+;;                 inst-arch-key inst-conf-key inst-lib-key inst-path)
+;;       (lib-name pack-key))
 ;;     mra-key (lib-name pack-key))
 
 (defvar vhdl-config-alist nil
@@ -13770,7 +13777,7 @@ project/directory.")
 ;; (cache-key
 ;;   (conf-key conf-name conf-file conf-line ent-key arch-key
 ;;     (inst-key inst-comp-name inst-ent-key inst-arch-key
-;;		 inst-conf-key inst-lib-key)
+;;               inst-conf-key inst-lib-key)
 ;;     (lib-name pack-key)))
 
 (defvar vhdl-package-alist nil
@@ -13795,7 +13802,7 @@ project/directory.")
 ;; structure: (parenthesized expression means list of such entries)
 ;; (cache-key
 ;;   (file-name (ent-list) (arch-list) (arch-ent-list) (conf-list)
-;;		(pack-list) (pack-body-list) (inst-list) (inst-ent-list))
+;;              (pack-list) (pack-body-list) (inst-list) (inst-ent-list))
 
 (defvar vhdl-directory-alist nil
   "Cache with source directories for each project.")
@@ -13827,10 +13834,10 @@ hierarchy otherwise.")
   (let ((pos (point)))
     (save-excursion
       (while (and (re-search-forward "^[ \t]*\\(architecture\\|configuration\\|context\\|entity\\|package\\)\\>" nil 1)
-		  (save-excursion
-		    (goto-char (match-beginning 0))
-		    (vhdl-backward-syntactic-ws)
-		    (and (/= (preceding-char) ?\;) (not (bobp))))))
+                  (save-excursion
+                    (goto-char (match-beginning 0))
+                    (vhdl-backward-syntactic-ws)
+                    (and (/= (preceding-char) ?\;) (not (bobp))))))
       (re-search-backward "^[ \t]*end\\>" pos 1)
       (point))))
 
@@ -13848,390 +13855,390 @@ hierarchy otherwise.")
   (let (lib-alist)
     (save-excursion
       (when (re-search-backward "^[ \t]*\\(architecture\\|configuration\\|context\\|entity\\|package\\)\\>" nil t)
-	(while (and (re-search-backward "^[ \t]*\\(end\\|use\\)\\>" nil t)
-		    (equal "USE" (upcase (match-string 1))))
-	  (when (looking-at "^[ \t]*use[ \t\n\r\f]*\\(\\w+\\)\\.\\(\\w+\\)\\.\\w+")
-	    (push (cons (match-string-no-properties 1)
-					(vhdl-match-string-downcase 2))
-		  lib-alist)))))
+        (while (and (re-search-backward "^[ \t]*\\(end\\|use\\)\\>" nil t)
+                    (equal "USE" (upcase (match-string 1))))
+          (when (looking-at "^[ \t]*use[ \t\n\r\f]*\\(\\w+\\)\\.\\(\\w+\\)\\.\\w+")
+            (push (cons (match-string-no-properties 1)
+                                        (vhdl-match-string-downcase 2))
+                  lib-alist)))))
     lib-alist))
 
 (defun vhdl-scan-directory-contents (name &optional project update num-string
-					  non-final)
+                                          non-final)
   "Scan contents of VHDL files in directory or file pattern NAME."
   (string-match "\\(.*[/\\]\\)\\(.*\\)" name)
   (let* ((dir-name (match-string 1 name))
-	 (file-pattern (match-string 2 name))
-	 (is-directory (= 0 (length file-pattern)))
-	 (file-list
-	  (if update
-	      (list name)
-	    (if is-directory
-		(vhdl-get-source-files t dir-name)
-	      (vhdl-directory-files
-	       dir-name t (wildcard-to-regexp file-pattern)))))
-	 (key (or project dir-name))
-	 (file-exclude-regexp
-	  (or (nth 3 (vhdl-aget vhdl-project-alist project)) ""))
-	 (limit-design-file-size (nth 0 vhdl-speedbar-scan-limit))
-	 (limit-hier-file-size (nth 0 (nth 1 vhdl-speedbar-scan-limit)))
-	 (limit-hier-inst-no (nth 1 (nth 1 vhdl-speedbar-scan-limit)))
-	 ent-alist conf-alist pack-alist ent-inst-list file-alist
-	 tmp-list tmp-entry no-files files-exist big-files)
+         (file-pattern (match-string 2 name))
+         (is-directory (= 0 (length file-pattern)))
+         (file-list
+          (if update
+              (list name)
+            (if is-directory
+                (vhdl-get-source-files t dir-name)
+              (vhdl-directory-files
+               dir-name t (wildcard-to-regexp file-pattern)))))
+         (key (or project dir-name))
+         (file-exclude-regexp
+          (or (nth 3 (vhdl-aget vhdl-project-alist project)) ""))
+         (limit-design-file-size (nth 0 vhdl-speedbar-scan-limit))
+         (limit-hier-file-size (nth 0 (nth 1 vhdl-speedbar-scan-limit)))
+         (limit-hier-inst-no (nth 1 (nth 1 vhdl-speedbar-scan-limit)))
+         ent-alist conf-alist pack-alist ent-inst-list file-alist
+         tmp-list tmp-entry no-files files-exist big-files)
     (when (or project update)
       (setq ent-alist (vhdl-aget vhdl-entity-alist key)
-	    conf-alist (vhdl-aget vhdl-config-alist key)
-	    pack-alist (vhdl-aget vhdl-package-alist key)
-	    ent-inst-list (car (vhdl-aget vhdl-ent-inst-alist key))
-	    file-alist (vhdl-aget vhdl-file-alist key)))
+            conf-alist (vhdl-aget vhdl-config-alist key)
+            pack-alist (vhdl-aget vhdl-package-alist key)
+            ent-inst-list (car (vhdl-aget vhdl-ent-inst-alist key))
+            file-alist (vhdl-aget vhdl-file-alist key)))
     (when (and (not is-directory) (null file-list))
       (message "No such file: \"%s\"" name))
     (setq files-exist file-list)
     (when file-list
       (setq no-files (length file-list))
       (message "Scanning %s %s\"%s\"..."
-	       (if is-directory "directory" "files") (or num-string "") name)
+               (if is-directory "directory" "files") (or num-string "") name)
       ;; exclude files
       (unless (equal file-exclude-regexp "")
-	(let ((case-fold-search nil)
-	      file-tmp-list)
-	  (while file-list
-	    (unless (string-match file-exclude-regexp (car file-list))
-	      (push (car file-list) file-tmp-list))
-	    (setq file-list (cdr file-list)))
-	  (setq file-list (nreverse file-tmp-list))))
+        (let ((case-fold-search nil)
+              file-tmp-list)
+          (while file-list
+            (unless (string-match file-exclude-regexp (car file-list))
+              (push (car file-list) file-tmp-list))
+            (setq file-list (cdr file-list)))
+          (setq file-list (nreverse file-tmp-list))))
       ;; do for all files
       (while file-list
-	(unless noninteractive
-	  (message "Scanning %s %s\"%s\"... (%2d%%)"
-		   (if is-directory "directory" "files")
-		   (or num-string "") name
-		   (floor (* 100.0 (- no-files (length file-list))) no-files)))
-	(let ((file-name (abbreviate-file-name (car file-list)))
-	      ent-list arch-list arch-ent-list conf-list
-	      pack-list pack-body-list inst-list inst-ent-list)
-	  ;; scan file
-	  (vhdl-visit-file
-	   file-name nil
-	   (vhdl-prepare-search-2
-	    (save-excursion
-	      ;; scan for design units
-	      (if (and limit-design-file-size
-		       (< limit-design-file-size (buffer-size)))
-		  (progn (message "WARNING:  Scan limit (design units: file size) reached in file:\n  \"%s\"" file-name)
-			 (setq big-files t))
-		;; scan for entities
-		(goto-char (point-min))
-		(while (re-search-forward "^[ \t]*entity[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t)
-		  (let* ((ent-name (match-string-no-properties 1))
-			 (ent-key (downcase ent-name))
-			 (ent-entry (vhdl-aget ent-alist ent-key))
-			 (lib-alist (vhdl-scan-context-clause)))
-		    (if (nth 1 ent-entry)
-			(vhdl-warning-when-idle
-			 "Entity declared twice (used 1.): \"%s\"\n  1. in \"%s\" (line %d)\n  2. in \"%s\" (line %d)"
-			 ent-name  (nth 1 ent-entry) (nth 2 ent-entry)
-			 file-name (vhdl-current-line))
-		      (push ent-key ent-list)
-		      (vhdl-aput 'ent-alist ent-key
-				 (list ent-name file-name (vhdl-current-line)
-				       (nth 3 ent-entry) (nth 4 ent-entry)
-				       lib-alist)))))
-		;; scan for architectures
-		(goto-char (point-min))
-		(while (re-search-forward "^[ \t]*architecture[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+of[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t)
-		  (let* ((arch-name (match-string-no-properties 1))
-			 (arch-key (downcase arch-name))
-			 (ent-name (match-string-no-properties 2))
-			 (ent-key (downcase ent-name))
-			 (ent-entry (vhdl-aget ent-alist ent-key))
-			 (arch-alist (nth 3 ent-entry))
-			 (arch-entry (vhdl-aget arch-alist arch-key))
-			 (lib-arch-alist (vhdl-scan-context-clause)))
-		    (if arch-entry
-			(vhdl-warning-when-idle
-			 "Architecture declared twice (used 1.): \"%s\" of \"%s\"\n  1. in \"%s\" (line %d)\n  2. in \"%s\" (line %d)"
-			 arch-name ent-name (nth 1 arch-entry)
-			 (nth 2 arch-entry) file-name (vhdl-current-line))
-		      (setq arch-list (cons arch-key arch-list)
-			    arch-ent-list (cons ent-key arch-ent-list))
-		      (vhdl-aput 'arch-alist arch-key
-				 (list arch-name file-name (vhdl-current-line)
-				       nil lib-arch-alist))
-		      (vhdl-aput 'ent-alist ent-key
-				 (list (or (nth 0 ent-entry) ent-name)
-				       (nth 1 ent-entry) (nth 2 ent-entry)
-				       (vhdl-sort-alist arch-alist)
-				       arch-key (nth 5 ent-entry))))))
-		;; scan for configurations
-		(goto-char (point-min))
-		(while (re-search-forward "^[ \t]*configuration[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+of[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t)
-		  (let* ((conf-name (match-string-no-properties 1))
-			 (conf-key (downcase conf-name))
-			 (conf-entry (vhdl-aget conf-alist conf-key))
-			 (ent-name (match-string-no-properties 2))
-			 (ent-key (downcase ent-name))
-			 (lib-alist (vhdl-scan-context-clause))
-			 (conf-line (vhdl-current-line))
-			 (end-of-unit (vhdl-get-end-of-unit))
-			 arch-key comp-conf-list inst-key-list
-			 inst-comp-key inst-ent-key inst-arch-key
-			 inst-conf-key inst-lib-key)
-		    (when (vhdl-re-search-forward "\\<for[ \t\n\r\f]+\\(\\w+\\)")
-		      (setq arch-key (vhdl-match-string-downcase 1)))
-		    (if conf-entry
-			(vhdl-warning-when-idle
-			 "Configuration declared twice (used 1.): \"%s\" of \"%s\"\n  1. in \"%s\" (line %d)\n  2. in \"%s\" (line %d)"
-			 conf-name ent-name (nth 1 conf-entry)
-			 (nth 2 conf-entry) file-name conf-line)
-		      (push conf-key conf-list)
-		      ;; scan for subconfigurations and subentities
-		      (while (re-search-forward "^[ \t]*for[ \t\n\r\f]+\\(\\w+\\([ \t\n\r\f]*,[ \t\n\r\f]*\\w+\\)*\\)[ \t\n\r\f]*:[ \t\n\r\f]*\\(\\w+\\)[ \t\n\r\f]+" end-of-unit t)
-			(setq inst-comp-key (vhdl-match-string-downcase 3)
-			      inst-key-list (split-string
-					     (vhdl-match-string-downcase 1)
-					     "[ \t\n\r\f]*,[ \t\n\r\f]*"))
-			(vhdl-forward-syntactic-ws)
-			(when (looking-at "use[ \t\n\r\f]+\\(\\(entity\\)\\|configuration\\)[ \t\n\r\f]+\\(\\w+\\)\\.\\(\\w+\\)[ \t\n\r\f]*\\((\\(\\w+\\))\\)?")
-			  (setq
-			   inst-lib-key (vhdl-match-string-downcase 3)
-			   inst-ent-key (and (match-string 2)
-					     (vhdl-match-string-downcase 4))
-			   inst-arch-key (and (match-string 2)
-					      (vhdl-match-string-downcase 6))
-			   inst-conf-key (and (not (match-string 2))
-					      (vhdl-match-string-downcase 4)))
-			  (while inst-key-list
-			    (setq comp-conf-list
-				  (cons (list (car inst-key-list)
-					      inst-comp-key inst-ent-key
-					      inst-arch-key inst-conf-key
-					      inst-lib-key)
-					comp-conf-list))
-			    (setq inst-key-list (cdr inst-key-list)))))
-		      (vhdl-aput 'conf-alist conf-key
-				 (list conf-name file-name conf-line ent-key
-				       arch-key comp-conf-list lib-alist)))))
-		;; scan for packages
-		(goto-char (point-min))
-		(while (re-search-forward "^[ \t]*package[ \t\n\r\f]+\\(body[ \t\n\r\f]+\\)?\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t)
-		  (let* ((pack-name (match-string-no-properties 2))
-			 (pack-key (downcase pack-name))
-			 (is-body (match-string-no-properties 1))
-			 (pack-entry (vhdl-aget pack-alist pack-key))
-			 (pack-line (vhdl-current-line))
-			 (end-of-unit (vhdl-get-end-of-unit))
-			 comp-name func-name comp-alist func-alist lib-alist)
-		    (if (if is-body (nth 6 pack-entry) (nth 1 pack-entry))
-			(vhdl-warning-when-idle
-			 "Package%s declared twice (used 1.): \"%s\"\n  1. in \"%s\" (line %d)\n  2. in \"%s\" (line %d)"
-			 (if is-body " body" "") pack-name
-			 (if is-body (nth 6 pack-entry) (nth 1 pack-entry))
-			 (if is-body (nth 7 pack-entry) (nth 2 pack-entry))
-			 file-name (vhdl-current-line))
-		      ;; scan for context clauses
-		      (setq lib-alist (vhdl-scan-context-clause))
-		      ;; scan for component and subprogram declarations/bodies
-		      (while (re-search-forward "^[ \t]*\\(component\\|function\\|procedure\\)[ \t\n\r\f]+\\(\\w+\\|\".*\"\\)" end-of-unit t)
-			(if (equal (upcase (match-string 1)) "COMPONENT")
-			    (setq comp-name (match-string-no-properties 2)
-				  comp-alist
-				  (cons (list (downcase comp-name) comp-name
-					      file-name (vhdl-current-line))
-					comp-alist))
-			  (setq func-name (match-string-no-properties 2)
-				func-alist
-				(cons (list (downcase func-name) func-name
-					    file-name (vhdl-current-line))
-				      func-alist))))
-		      (setq func-alist (nreverse func-alist))
-		      (setq comp-alist (nreverse comp-alist))
-		      (if is-body
-			  (push pack-key pack-body-list)
-			(push pack-key pack-list))
-		      (vhdl-aput
-		       'pack-alist pack-key
-		       (if is-body
-			   (list (or (nth 0 pack-entry) pack-name)
-				 (nth 1 pack-entry) (nth 2 pack-entry)
-				 (nth 3 pack-entry) (nth 4 pack-entry)
-				 (nth 5 pack-entry)
-				 file-name pack-line func-alist lib-alist)
-			 (list pack-name file-name pack-line
-			       comp-alist func-alist lib-alist
-			       (nth 6 pack-entry) (nth 7 pack-entry)
-			       (nth 8 pack-entry) (nth 9 pack-entry))))))))
-	      ;; scan for hierarchy
-	      (if (and limit-hier-file-size
-		       (< limit-hier-file-size (buffer-size)))
-		  (progn (message "WARNING:  Scan limit (hierarchy: file size) reached in file:\n  \"%s\"" file-name)
-			 (setq big-files t))
-		;; scan for architectures
-		(goto-char (point-min))
-		(while (re-search-forward "^[ \t]*architecture[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+of[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t)
-		  (let* ((ent-name (match-string-no-properties 2))
-			 (ent-key (downcase ent-name))
-			 (arch-name (match-string-no-properties 1))
-			 (arch-key (downcase arch-name))
-			 (ent-entry (vhdl-aget ent-alist ent-key))
-			 (arch-alist (nth 3 ent-entry))
-			 (arch-entry (vhdl-aget arch-alist arch-key))
-			 (beg-of-unit (point))
-			 (end-of-unit (vhdl-get-end-of-unit))
-			 (inst-no 0)
-			 inst-alist inst-path)
-		    ;; scan for contained instantiations
-		    (while (and (re-search-forward
-				 (concat "^[ \t]*\\(\\w+\\)[ \t\n\r\f]*:[ \t\n\r\f]*\\("
-					 "\\(\\w+\\)[ \t\n\r\f]+\\(--[^\n]*\n[ \t\n\r\f]*\\)*\\(generic\\|port\\)[ \t\n\r\f]+map\\>\\|"
-					 "component[ \t\n\r\f]+\\(\\w+\\)\\|"
-					 "\\(\\(entity\\)\\|configuration\\)[ \t\n\r\f]+\\(\\(\\w+\\)\\.\\)?\\(\\w+\\)\\([ \t\n\r\f]*(\\(\\w+\\))\\)?\\|"
-					 "\\(\\(for\\|if\\)\\>[^;:]+\\<generate\\>\\|block\\>\\)\\)\\|"
-					 "\\(^[ \t]*end[ \t\n\r\f]+\\(generate\\|block\\)\\>\\)") end-of-unit t)
-				(or (not limit-hier-inst-no)
-				    (<= (if (or (match-string 14)
-						(match-string 16))
-					    inst-no
-					  (setq inst-no (1+ inst-no)))
-					limit-hier-inst-no)))
-		      (cond
-		       ;; block/generate beginning found
-		       ((match-string 14)
-			(setq inst-path
-			      (cons (match-string-no-properties 1) inst-path)))
-		       ;; block/generate end found
-		       ((match-string 16)
-			(setq inst-path (cdr inst-path)))
-		       ;; instantiation found
-		       (t
-			(let* ((inst-name (match-string-no-properties 1))
-			       (inst-key (downcase inst-name))
-			       (inst-comp-name
-				(or (match-string-no-properties 3)
-				    (match-string-no-properties 6)))
-			       (inst-ent-key
-				(or (and (match-string 8)
-					 (vhdl-match-string-downcase 11))
-				    (and inst-comp-name
-					 (downcase inst-comp-name))))
-			       (inst-arch-key (vhdl-match-string-downcase 13))
-			       (inst-conf-key
-				(and (not (match-string 8))
-				     (vhdl-match-string-downcase 11)))
-			       (inst-lib-key (vhdl-match-string-downcase 10)))
-			  (goto-char (match-end 1))
-			  (setq inst-list (cons inst-key inst-list)
-				inst-ent-list
-				(cons inst-ent-key inst-ent-list))
-			  (setq inst-alist
-				(append
-				 inst-alist
-				 (list (list inst-key inst-name file-name
-					     (vhdl-current-line) inst-comp-name
-					     inst-ent-key inst-arch-key
-					     inst-conf-key inst-lib-key
-					     (reverse inst-path)))))))))
-		    ;; scan for contained configuration specifications
-		    (goto-char beg-of-unit)
-		    (while (re-search-forward
-			    (concat "^[ \t]*for[ \t\n\r\f]+\\(\\w+\\([ \t\n\r\f]*,[ \t\n\r\f]*\\w+\\)*\\)[ \t\n\r\f]*:[ \t\n\r\f]*\\(\\w+\\)[ \t\n\r\f]+\\(--[^\n]*\n[ \t\n\r\f]*\\)*"
-				    "use[ \t\n\r\f]+\\(\\(entity\\)\\|configuration\\)[ \t\n\r\f]+\\(\\(\\w+\\)\\.\\)?\\(\\w+\\)\\([ \t\n\r\f]*(\\(\\w+\\))\\)?") end-of-unit t)
-		      (let* ((inst-comp-name (match-string-no-properties 3))
-			     (inst-ent-key
-			      (and (match-string 6)
-				   (vhdl-match-string-downcase 9)))
-			     (inst-arch-key (vhdl-match-string-downcase 11))
-			     (inst-conf-key
-			      (and (not (match-string 6))
-				   (vhdl-match-string-downcase 9)))
-			     (inst-lib-key (vhdl-match-string-downcase 8))
-			     (inst-key-list
-			      (split-string (vhdl-match-string-downcase 1)
-					    "[ \t\n\r\f]*,[ \t\n\r\f]*"))
-			     (tmp-inst-alist inst-alist)
-			     inst-entry)
-			(while tmp-inst-alist
-			  (when (and (or (equal "all" (car inst-key-list))
-					 (member (nth 0 (car tmp-inst-alist))
-						 inst-key-list))
-				     (equal
-				      (downcase
-				       (or (nth 4 (car tmp-inst-alist)) ""))
-				      (downcase inst-comp-name)))
-			    (setq inst-entry (car tmp-inst-alist))
-			    (setq inst-ent-list
-				  (cons (or inst-ent-key (nth 5 inst-entry))
-					(vhdl-delete
-					 (nth 5 inst-entry) inst-ent-list)))
-			    (setq inst-entry
-				  (list (nth 0 inst-entry) (nth 1 inst-entry)
-					(nth 2 inst-entry) (nth 3 inst-entry)
-					(nth 4 inst-entry)
-					(or inst-ent-key (nth 5 inst-entry))
-					(or inst-arch-key (nth 6 inst-entry))
-					inst-conf-key inst-lib-key))
-			    (setcar tmp-inst-alist inst-entry))
-			  (setq tmp-inst-alist (cdr tmp-inst-alist)))))
-		    ;; save in cache
-		    (vhdl-aput 'arch-alist arch-key
-			       (list (nth 0 arch-entry) (nth 1 arch-entry)
-				     (nth 2 arch-entry) inst-alist
-				     (nth 4 arch-entry)))
-		    (vhdl-aput 'ent-alist ent-key
-			       (list (nth 0 ent-entry) (nth 1 ent-entry)
-				     (nth 2 ent-entry)
-				     (vhdl-sort-alist arch-alist)
-				     (nth 4 ent-entry) (nth 5 ent-entry)))
-		    (when (and limit-hier-inst-no
-			       (> inst-no limit-hier-inst-no))
-		      (message "WARNING:  Scan limit (hierarchy: instances per architecture) reached in file:\n  \"%s\"" file-name)
-		      (setq big-files t))
-		    (goto-char end-of-unit))))
-	      ;; remember design units for this file
-	      (vhdl-aput 'file-alist file-name
-			 (list ent-list arch-list arch-ent-list conf-list
-			       pack-list pack-body-list
-			       inst-list inst-ent-list))
-	      (setq ent-inst-list (append inst-ent-list ent-inst-list))))))
-	(setq file-list (cdr file-list))))
+        (unless noninteractive
+          (message "Scanning %s %s\"%s\"... (%2d%%)"
+                   (if is-directory "directory" "files")
+                   (or num-string "") name
+                   (floor (* 100.0 (- no-files (length file-list))) no-files)))
+        (let ((file-name (abbreviate-file-name (car file-list)))
+              ent-list arch-list arch-ent-list conf-list
+              pack-list pack-body-list inst-list inst-ent-list)
+          ;; scan file
+          (vhdl-visit-file
+           file-name nil
+           (vhdl-prepare-search-2
+            (save-excursion
+              ;; scan for design units
+              (if (and limit-design-file-size
+                       (< limit-design-file-size (buffer-size)))
+                  (progn (message "WARNING:  Scan limit (design units: file size) reached in file:\n  \"%s\"" file-name)
+                         (setq big-files t))
+                ;; scan for entities
+                (goto-char (point-min))
+                (while (re-search-forward "^[ \t]*entity[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t)
+                  (let* ((ent-name (match-string-no-properties 1))
+                         (ent-key (downcase ent-name))
+                         (ent-entry (vhdl-aget ent-alist ent-key))
+                         (lib-alist (vhdl-scan-context-clause)))
+                    (if (nth 1 ent-entry)
+                        (vhdl-warning-when-idle
+                         "Entity declared twice (used 1.): \"%s\"\n  1. in \"%s\" (line %d)\n  2. in \"%s\" (line %d)"
+                         ent-name  (nth 1 ent-entry) (nth 2 ent-entry)
+                         file-name (vhdl-current-line))
+                      (push ent-key ent-list)
+                      (vhdl-aput 'ent-alist ent-key
+                                 (list ent-name file-name (vhdl-current-line)
+                                       (nth 3 ent-entry) (nth 4 ent-entry)
+                                       lib-alist)))))
+                ;; scan for architectures
+                (goto-char (point-min))
+                (while (re-search-forward "^[ \t]*architecture[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+of[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t)
+                  (let* ((arch-name (match-string-no-properties 1))
+                         (arch-key (downcase arch-name))
+                         (ent-name (match-string-no-properties 2))
+                         (ent-key (downcase ent-name))
+                         (ent-entry (vhdl-aget ent-alist ent-key))
+                         (arch-alist (nth 3 ent-entry))
+                         (arch-entry (vhdl-aget arch-alist arch-key))
+                         (lib-arch-alist (vhdl-scan-context-clause)))
+                    (if arch-entry
+                        (vhdl-warning-when-idle
+                         "Architecture declared twice (used 1.): \"%s\" of \"%s\"\n  1. in \"%s\" (line %d)\n  2. in \"%s\" (line %d)"
+                         arch-name ent-name (nth 1 arch-entry)
+                         (nth 2 arch-entry) file-name (vhdl-current-line))
+                      (setq arch-list (cons arch-key arch-list)
+                            arch-ent-list (cons ent-key arch-ent-list))
+                      (vhdl-aput 'arch-alist arch-key
+                                 (list arch-name file-name (vhdl-current-line)
+                                       nil lib-arch-alist))
+                      (vhdl-aput 'ent-alist ent-key
+                                 (list (or (nth 0 ent-entry) ent-name)
+                                       (nth 1 ent-entry) (nth 2 ent-entry)
+                                       (vhdl-sort-alist arch-alist)
+                                       arch-key (nth 5 ent-entry))))))
+                ;; scan for configurations
+                (goto-char (point-min))
+                (while (re-search-forward "^[ \t]*configuration[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+of[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t)
+                  (let* ((conf-name (match-string-no-properties 1))
+                         (conf-key (downcase conf-name))
+                         (conf-entry (vhdl-aget conf-alist conf-key))
+                         (ent-name (match-string-no-properties 2))
+                         (ent-key (downcase ent-name))
+                         (lib-alist (vhdl-scan-context-clause))
+                         (conf-line (vhdl-current-line))
+                         (end-of-unit (vhdl-get-end-of-unit))
+                         arch-key comp-conf-list inst-key-list
+                         inst-comp-key inst-ent-key inst-arch-key
+                         inst-conf-key inst-lib-key)
+                    (when (vhdl-re-search-forward "\\<for[ \t\n\r\f]+\\(\\w+\\)")
+                      (setq arch-key (vhdl-match-string-downcase 1)))
+                    (if conf-entry
+                        (vhdl-warning-when-idle
+                         "Configuration declared twice (used 1.): \"%s\" of \"%s\"\n  1. in \"%s\" (line %d)\n  2. in \"%s\" (line %d)"
+                         conf-name ent-name (nth 1 conf-entry)
+                         (nth 2 conf-entry) file-name conf-line)
+                      (push conf-key conf-list)
+                      ;; scan for subconfigurations and subentities
+                      (while (re-search-forward "^[ \t]*for[ \t\n\r\f]+\\(\\w+\\([ \t\n\r\f]*,[ \t\n\r\f]*\\w+\\)*\\)[ \t\n\r\f]*:[ \t\n\r\f]*\\(\\w+\\)[ \t\n\r\f]+" end-of-unit t)
+                        (setq inst-comp-key (vhdl-match-string-downcase 3)
+                              inst-key-list (split-string
+                                             (vhdl-match-string-downcase 1)
+                                             "[ \t\n\r\f]*,[ \t\n\r\f]*"))
+                        (vhdl-forward-syntactic-ws)
+                        (when (looking-at "use[ \t\n\r\f]+\\(\\(entity\\)\\|configuration\\)[ \t\n\r\f]+\\(\\w+\\)\\.\\(\\w+\\)[ \t\n\r\f]*\\((\\(\\w+\\))\\)?")
+                          (setq
+                           inst-lib-key (vhdl-match-string-downcase 3)
+                           inst-ent-key (and (match-string 2)
+                                             (vhdl-match-string-downcase 4))
+                           inst-arch-key (and (match-string 2)
+                                              (vhdl-match-string-downcase 6))
+                           inst-conf-key (and (not (match-string 2))
+                                              (vhdl-match-string-downcase 4)))
+                          (while inst-key-list
+                            (setq comp-conf-list
+                                  (cons (list (car inst-key-list)
+                                              inst-comp-key inst-ent-key
+                                              inst-arch-key inst-conf-key
+                                              inst-lib-key)
+                                        comp-conf-list))
+                            (setq inst-key-list (cdr inst-key-list)))))
+                      (vhdl-aput 'conf-alist conf-key
+                                 (list conf-name file-name conf-line ent-key
+                                       arch-key comp-conf-list lib-alist)))))
+                ;; scan for packages
+                (goto-char (point-min))
+                (while (re-search-forward "^[ \t]*package[ \t\n\r\f]+\\(body[ \t\n\r\f]+\\)?\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t)
+                  (let* ((pack-name (match-string-no-properties 2))
+                         (pack-key (downcase pack-name))
+                         (is-body (match-string-no-properties 1))
+                         (pack-entry (vhdl-aget pack-alist pack-key))
+                         (pack-line (vhdl-current-line))
+                         (end-of-unit (vhdl-get-end-of-unit))
+                         comp-name func-name comp-alist func-alist lib-alist)
+                    (if (if is-body (nth 6 pack-entry) (nth 1 pack-entry))
+                        (vhdl-warning-when-idle
+                         "Package%s declared twice (used 1.): \"%s\"\n  1. in \"%s\" (line %d)\n  2. in \"%s\" (line %d)"
+                         (if is-body " body" "") pack-name
+                         (if is-body (nth 6 pack-entry) (nth 1 pack-entry))
+                         (if is-body (nth 7 pack-entry) (nth 2 pack-entry))
+                         file-name (vhdl-current-line))
+                      ;; scan for context clauses
+                      (setq lib-alist (vhdl-scan-context-clause))
+                      ;; scan for component and subprogram declarations/bodies
+                      (while (re-search-forward "^[ \t]*\\(component\\|function\\|procedure\\)[ \t\n\r\f]+\\(\\w+\\|\".*\"\\)" end-of-unit t)
+                        (if (equal (upcase (match-string 1)) "COMPONENT")
+                            (setq comp-name (match-string-no-properties 2)
+                                  comp-alist
+                                  (cons (list (downcase comp-name) comp-name
+                                              file-name (vhdl-current-line))
+                                        comp-alist))
+                          (setq func-name (match-string-no-properties 2)
+                                func-alist
+                                (cons (list (downcase func-name) func-name
+                                            file-name (vhdl-current-line))
+                                      func-alist))))
+                      (setq func-alist (nreverse func-alist))
+                      (setq comp-alist (nreverse comp-alist))
+                      (if is-body
+                          (push pack-key pack-body-list)
+                        (push pack-key pack-list))
+                      (vhdl-aput
+                       'pack-alist pack-key
+                       (if is-body
+                           (list (or (nth 0 pack-entry) pack-name)
+                                 (nth 1 pack-entry) (nth 2 pack-entry)
+                                 (nth 3 pack-entry) (nth 4 pack-entry)
+                                 (nth 5 pack-entry)
+                                 file-name pack-line func-alist lib-alist)
+                         (list pack-name file-name pack-line
+                               comp-alist func-alist lib-alist
+                               (nth 6 pack-entry) (nth 7 pack-entry)
+                               (nth 8 pack-entry) (nth 9 pack-entry))))))))
+              ;; scan for hierarchy
+              (if (and limit-hier-file-size
+                       (< limit-hier-file-size (buffer-size)))
+                  (progn (message "WARNING:  Scan limit (hierarchy: file size) reached in file:\n  \"%s\"" file-name)
+                         (setq big-files t))
+                ;; scan for architectures
+                (goto-char (point-min))
+                (while (re-search-forward "^[ \t]*architecture[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+of[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t)
+                  (let* ((ent-name (match-string-no-properties 2))
+                         (ent-key (downcase ent-name))
+                         (arch-name (match-string-no-properties 1))
+                         (arch-key (downcase arch-name))
+                         (ent-entry (vhdl-aget ent-alist ent-key))
+                         (arch-alist (nth 3 ent-entry))
+                         (arch-entry (vhdl-aget arch-alist arch-key))
+                         (beg-of-unit (point))
+                         (end-of-unit (vhdl-get-end-of-unit))
+                         (inst-no 0)
+                         inst-alist inst-path)
+                    ;; scan for contained instantiations
+                    (while (and (re-search-forward
+                                 (concat "^[ \t]*\\(\\w+\\)[ \t\n\r\f]*:[ \t\n\r\f]*\\("
+                                         "\\(\\w+\\)[ \t\n\r\f]+\\(--[^\n]*\n[ \t\n\r\f]*\\)*\\(generic\\|port\\)[ \t\n\r\f]+map\\>\\|"
+                                         "component[ \t\n\r\f]+\\(\\w+\\)\\|"
+                                         "\\(\\(entity\\)\\|configuration\\)[ \t\n\r\f]+\\(\\(\\w+\\)\\.\\)?\\(\\w+\\)\\([ \t\n\r\f]*(\\(\\w+\\))\\)?\\|"
+                                         "\\(\\(for\\|if\\)\\>[^;:]+\\<generate\\>\\|block\\>\\)\\)\\|"
+                                         "\\(^[ \t]*end[ \t\n\r\f]+\\(generate\\|block\\)\\>\\)") end-of-unit t)
+                                (or (not limit-hier-inst-no)
+                                    (<= (if (or (match-string 14)
+                                                (match-string 16))
+                                            inst-no
+                                          (setq inst-no (1+ inst-no)))
+                                        limit-hier-inst-no)))
+                      (cond
+                       ;; block/generate beginning found
+                       ((match-string 14)
+                        (setq inst-path
+                              (cons (match-string-no-properties 1) inst-path)))
+                       ;; block/generate end found
+                       ((match-string 16)
+                        (setq inst-path (cdr inst-path)))
+                       ;; instantiation found
+                       (t
+                        (let* ((inst-name (match-string-no-properties 1))
+                               (inst-key (downcase inst-name))
+                               (inst-comp-name
+                                (or (match-string-no-properties 3)
+                                    (match-string-no-properties 6)))
+                               (inst-ent-key
+                                (or (and (match-string 8)
+                                         (vhdl-match-string-downcase 11))
+                                    (and inst-comp-name
+                                         (downcase inst-comp-name))))
+                               (inst-arch-key (vhdl-match-string-downcase 13))
+                               (inst-conf-key
+                                (and (not (match-string 8))
+                                     (vhdl-match-string-downcase 11)))
+                               (inst-lib-key (vhdl-match-string-downcase 10)))
+                          (goto-char (match-end 1))
+                          (setq inst-list (cons inst-key inst-list)
+                                inst-ent-list
+                                (cons inst-ent-key inst-ent-list))
+                          (setq inst-alist
+                                (append
+                                 inst-alist
+                                 (list (list inst-key inst-name file-name
+                                             (vhdl-current-line) inst-comp-name
+                                             inst-ent-key inst-arch-key
+                                             inst-conf-key inst-lib-key
+                                             (reverse inst-path)))))))))
+                    ;; scan for contained configuration specifications
+                    (goto-char beg-of-unit)
+                    (while (re-search-forward
+                            (concat "^[ \t]*for[ \t\n\r\f]+\\(\\w+\\([ \t\n\r\f]*,[ \t\n\r\f]*\\w+\\)*\\)[ \t\n\r\f]*:[ \t\n\r\f]*\\(\\w+\\)[ \t\n\r\f]+\\(--[^\n]*\n[ \t\n\r\f]*\\)*"
+                                    "use[ \t\n\r\f]+\\(\\(entity\\)\\|configuration\\)[ \t\n\r\f]+\\(\\(\\w+\\)\\.\\)?\\(\\w+\\)\\([ \t\n\r\f]*(\\(\\w+\\))\\)?") end-of-unit t)
+                      (let* ((inst-comp-name (match-string-no-properties 3))
+                             (inst-ent-key
+                              (and (match-string 6)
+                                   (vhdl-match-string-downcase 9)))
+                             (inst-arch-key (vhdl-match-string-downcase 11))
+                             (inst-conf-key
+                              (and (not (match-string 6))
+                                   (vhdl-match-string-downcase 9)))
+                             (inst-lib-key (vhdl-match-string-downcase 8))
+                             (inst-key-list
+                              (split-string (vhdl-match-string-downcase 1)
+                                            "[ \t\n\r\f]*,[ \t\n\r\f]*"))
+                             (tmp-inst-alist inst-alist)
+                             inst-entry)
+                        (while tmp-inst-alist
+                          (when (and (or (equal "all" (car inst-key-list))
+                                         (member (nth 0 (car tmp-inst-alist))
+                                                 inst-key-list))
+                                     (equal
+                                      (downcase
+                                       (or (nth 4 (car tmp-inst-alist)) ""))
+                                      (downcase inst-comp-name)))
+                            (setq inst-entry (car tmp-inst-alist))
+                            (setq inst-ent-list
+                                  (cons (or inst-ent-key (nth 5 inst-entry))
+                                        (vhdl-delete
+                                         (nth 5 inst-entry) inst-ent-list)))
+                            (setq inst-entry
+                                  (list (nth 0 inst-entry) (nth 1 inst-entry)
+                                        (nth 2 inst-entry) (nth 3 inst-entry)
+                                        (nth 4 inst-entry)
+                                        (or inst-ent-key (nth 5 inst-entry))
+                                        (or inst-arch-key (nth 6 inst-entry))
+                                        inst-conf-key inst-lib-key))
+                            (setcar tmp-inst-alist inst-entry))
+                          (setq tmp-inst-alist (cdr tmp-inst-alist)))))
+                    ;; save in cache
+                    (vhdl-aput 'arch-alist arch-key
+                               (list (nth 0 arch-entry) (nth 1 arch-entry)
+                                     (nth 2 arch-entry) inst-alist
+                                     (nth 4 arch-entry)))
+                    (vhdl-aput 'ent-alist ent-key
+                               (list (nth 0 ent-entry) (nth 1 ent-entry)
+                                     (nth 2 ent-entry)
+                                     (vhdl-sort-alist arch-alist)
+                                     (nth 4 ent-entry) (nth 5 ent-entry)))
+                    (when (and limit-hier-inst-no
+                               (> inst-no limit-hier-inst-no))
+                      (message "WARNING:  Scan limit (hierarchy: instances per architecture) reached in file:\n  \"%s\"" file-name)
+                      (setq big-files t))
+                    (goto-char end-of-unit))))
+              ;; remember design units for this file
+              (vhdl-aput 'file-alist file-name
+                         (list ent-list arch-list arch-ent-list conf-list
+                               pack-list pack-body-list
+                               inst-list inst-ent-list))
+              (setq ent-inst-list (append inst-ent-list ent-inst-list))))))
+        (setq file-list (cdr file-list))))
     (when (or (and (not project) files-exist)
-	      (and project (not non-final)))
+              (and project (not non-final)))
       ;; consistency checks:
       ;; check whether each architecture has a corresponding entity
       (setq tmp-list ent-alist)
       (while tmp-list
-	(when (null (nth 2 (car tmp-list)))
-	  (setq tmp-entry (car (nth 4 (car tmp-list))))
-	  (vhdl-warning-when-idle
-	   "Architecture of non-existing entity: \"%s\" of \"%s\"\n  in \"%s\" (line %d)"
-	   (nth 1 tmp-entry) (nth 1 (car tmp-list)) (nth 2 tmp-entry)
-	   (nth 3 tmp-entry)))
-	(setq tmp-list (cdr tmp-list)))
+        (when (null (nth 2 (car tmp-list)))
+          (setq tmp-entry (car (nth 4 (car tmp-list))))
+          (vhdl-warning-when-idle
+           "Architecture of non-existing entity: \"%s\" of \"%s\"\n  in \"%s\" (line %d)"
+           (nth 1 tmp-entry) (nth 1 (car tmp-list)) (nth 2 tmp-entry)
+           (nth 3 tmp-entry)))
+        (setq tmp-list (cdr tmp-list)))
       ;; check whether configuration has a corresponding entity/architecture
       (setq tmp-list conf-alist)
       (while tmp-list
-	(if (setq tmp-entry (vhdl-aget ent-alist (nth 4 (car tmp-list))))
-	    (unless (vhdl-aget (nth 3 tmp-entry) (nth 5 (car tmp-list)))
-	      (setq tmp-entry (car tmp-list))
-	      (vhdl-warning-when-idle
-	       "Configuration of non-existing architecture: \"%s\" of \"%s(%s)\"\n  in \"%s\" (line %d)"
-	       (nth 1 tmp-entry) (nth 4 tmp-entry) (nth 5 tmp-entry)
-	       (nth 2 tmp-entry) (nth 3 tmp-entry)))
-	  (setq tmp-entry (car tmp-list))
-	  (vhdl-warning-when-idle
-	   "Configuration of non-existing entity: \"%s\" of \"%s\"\n  in \"%s\" (line %d)"
-	   (nth 1 tmp-entry) (nth 4 tmp-entry)
-	   (nth 2 tmp-entry) (nth 3 tmp-entry)))
-	(setq tmp-list (cdr tmp-list)))
+        (if (setq tmp-entry (vhdl-aget ent-alist (nth 4 (car tmp-list))))
+            (unless (vhdl-aget (nth 3 tmp-entry) (nth 5 (car tmp-list)))
+              (setq tmp-entry (car tmp-list))
+              (vhdl-warning-when-idle
+               "Configuration of non-existing architecture: \"%s\" of \"%s(%s)\"\n  in \"%s\" (line %d)"
+               (nth 1 tmp-entry) (nth 4 tmp-entry) (nth 5 tmp-entry)
+               (nth 2 tmp-entry) (nth 3 tmp-entry)))
+          (setq tmp-entry (car tmp-list))
+          (vhdl-warning-when-idle
+           "Configuration of non-existing entity: \"%s\" of \"%s\"\n  in \"%s\" (line %d)"
+           (nth 1 tmp-entry) (nth 4 tmp-entry)
+           (nth 2 tmp-entry) (nth 3 tmp-entry)))
+        (setq tmp-list (cdr tmp-list)))
       ;; check whether each package body has a package declaration
       (setq tmp-list pack-alist)
       (while tmp-list
-	(when (null (nth 2 (car tmp-list)))
-	  (setq tmp-entry (car tmp-list))
-	  (vhdl-warning-when-idle
-	   "Package body of non-existing package: \"%s\"\n  in \"%s\" (line %d)"
-	   (nth 1 tmp-entry) (nth 7 tmp-entry) (nth 8 tmp-entry)))
-	(setq tmp-list (cdr tmp-list)))
+        (when (null (nth 2 (car tmp-list)))
+          (setq tmp-entry (car tmp-list))
+          (vhdl-warning-when-idle
+           "Package body of non-existing package: \"%s\"\n  in \"%s\" (line %d)"
+           (nth 1 tmp-entry) (nth 7 tmp-entry) (nth 8 tmp-entry)))
+        (setq tmp-list (cdr tmp-list)))
       ;; sort lists
       (setq ent-alist (vhdl-sort-alist ent-alist))
       (setq conf-alist (vhdl-sort-alist conf-alist))
@@ -14253,25 +14260,25 @@ hierarchy otherwise.")
     (vhdl-aput 'vhdl-file-alist key file-alist)
     ;; final messages
     (message "Scanning %s %s\"%s\"...done"
-	     (if is-directory "directory" "files") (or num-string "") name)
+             (if is-directory "directory" "files") (or num-string "") name)
     (unless project (message "Scanning directory...done"))
     (when big-files
       (vhdl-warning-when-idle "Scanning is incomplete.\n  --> see user option `vhdl-speedbar-scan-limit'"))
     ;; save cache when scanned non-interactively
     (when (or (not project) (not non-final))
       (when (and noninteractive vhdl-speedbar-save-cache)
-	(vhdl-save-cache key)))
+        (vhdl-save-cache key)))
     t))
 
 (defun vhdl-scan-project-contents (project)
   "Scan the contents of all VHDL files found in the directories and files
 of PROJECT."
   (let ((dir-list (or (nth 2 (vhdl-aget vhdl-project-alist project)) '("")))
-	(default-dir (vhdl-resolve-env-variable
-		      (nth 1 (vhdl-aget vhdl-project-alist project))))
-	(file-exclude-regexp
-	 (or (nth 3 (vhdl-aget vhdl-project-alist project)) ""))
-	dir-list-tmp dir dir-name num-dir act-dir recursive)
+        (default-dir (vhdl-resolve-env-variable
+                      (nth 1 (vhdl-aget vhdl-project-alist project))))
+        (file-exclude-regexp
+         (or (nth 3 (vhdl-aget vhdl-project-alist project)) ""))
+        dir-list-tmp dir dir-name num-dir act-dir recursive)
     ;; clear project alists
     (vhdl-adelete 'vhdl-entity-alist project)
     (vhdl-adelete 'vhdl-config-alist project)
@@ -14284,12 +14291,12 @@ of PROJECT."
       (setq dir (vhdl-resolve-env-variable (car dir-list)))
       (string-match "\\(\\(-r \\)?\\)\\(.*\\)" dir)
       (setq recursive (match-string 1 dir)
-	    dir-name (match-string 3 dir))
+            dir-name (match-string 3 dir))
       (setq dir-list-tmp
-	    (cons (concat recursive
-			  (if (file-name-absolute-p dir-name) "" default-dir)
-			  dir-name)
-		  dir-list-tmp))
+            (cons (concat recursive
+                          (if (file-name-absolute-p dir-name) "" default-dir)
+                          dir-name)
+                  dir-list-tmp))
       (setq dir-list (cdr dir-list)))
     ;; resolve path wildcards
     (setq dir-list-tmp (vhdl-resolve-paths dir-list-tmp))
@@ -14298,32 +14305,32 @@ of PROJECT."
       (setq dir (car dir-list-tmp))
       ;; get subdirectories
       (if (string-match "-r \\(.*[/\\]\\)" dir)
-	  (setq dir-list (append dir-list (vhdl-get-subdirs
-					   (match-string 1 dir))))
-	(setq dir-list (append dir-list (list dir))))
+          (setq dir-list (append dir-list (vhdl-get-subdirs
+                                           (match-string 1 dir))))
+        (setq dir-list (append dir-list (list dir))))
       (setq dir-list-tmp (cdr dir-list-tmp)))
     ;; exclude files
     (unless (equal file-exclude-regexp "")
       (let ((case-fold-search nil))
-	(while dir-list
-	  (unless (string-match file-exclude-regexp (car dir-list))
-	    (push (car dir-list) dir-list-tmp))
-	  (setq dir-list (cdr dir-list)))
-	(setq dir-list (nreverse dir-list-tmp))))
+        (while dir-list
+          (unless (string-match file-exclude-regexp (car dir-list))
+            (push (car dir-list) dir-list-tmp))
+          (setq dir-list (cdr dir-list)))
+        (setq dir-list (nreverse dir-list-tmp))))
     (message "Collecting source files...done")
     ;; scan for design units for each directory in DIR-LIST
     (setq dir-list-tmp nil
-	  num-dir (length dir-list)
-	  act-dir 1)
+          num-dir (length dir-list)
+          act-dir 1)
     (while dir-list
       (setq dir-name (abbreviate-file-name
-		      (expand-file-name (car dir-list))))
+                      (expand-file-name (car dir-list))))
       (vhdl-scan-directory-contents dir-name project nil
-				    (format "(%s/%s) " act-dir num-dir)
-				    (cdr dir-list))
+                                    (format "(%s/%s) " act-dir num-dir)
+                                    (cdr dir-list))
       (pushnew (file-name-directory dir-name) dir-list-tmp :test #'equal)
       (setq dir-list (cdr dir-list)
-	    act-dir (1+ act-dir)))
+            act-dir (1+ act-dir)))
     (vhdl-aput 'vhdl-directory-alist project (list (nreverse dir-list-tmp)))
     (message "Scanning project \"%s\"...done" project)))
 
@@ -14331,116 +14338,116 @@ of PROJECT."
   "Update hierarchy information by contents of current buffer."
   (setq file-name (abbreviate-file-name file-name))
   (let* ((dir-name (file-name-directory file-name))
-	 (directory-alist vhdl-directory-alist)
-	 updated)
+         (directory-alist vhdl-directory-alist)
+         updated)
     (while directory-alist
       (when (member dir-name (nth 1 (car directory-alist)))
-	(let* ((vhdl-project (nth 0 (car directory-alist)))
-	       (project (vhdl-project-p))
-	       (ent-alist (vhdl-aget vhdl-entity-alist
-				     (or project dir-name)))
-	       (conf-alist (vhdl-aget vhdl-config-alist
-				      (or project dir-name)))
-	       (pack-alist (vhdl-aget vhdl-package-alist
-				      (or project dir-name)))
-	       (ent-inst-list (car (vhdl-aget vhdl-ent-inst-alist
-					 (or project dir-name))))
-	       (file-alist (vhdl-aget vhdl-file-alist (or project dir-name)))
-	       (file-entry (vhdl-aget file-alist file-name))
-	       (ent-list (nth 0 file-entry))
-	       (arch-list (nth 1 file-entry))
-	       (arch-ent-list (nth 2 file-entry))
-	       (conf-list (nth 3 file-entry))
-	       (pack-list (nth 4 file-entry))
-	       (pack-body-list (nth 5 file-entry))
-	       (inst-ent-list (nth 7 file-entry))
-	       (cache-key (or project dir-name))
-	       arch-alist key ent-key entry)
-	  ;; delete design units previously contained in this file:
-	  ;; entities
-	  (while ent-list
-	    (setq key (car ent-list)
-		  entry (vhdl-aget ent-alist key))
-	    (when (equal file-name (nth 1 entry))
-	      (if (nth 3 entry)
-		  (vhdl-aput 'ent-alist key
-			     (list (nth 0 entry) nil nil (nth 3 entry) nil))
-		(vhdl-adelete 'ent-alist key)))
-	    (setq ent-list (cdr ent-list)))
-	  ;; architectures
-	  (while arch-list
-	    (setq key (car arch-list)
-		  ent-key (car arch-ent-list)
-		  entry (vhdl-aget ent-alist ent-key)
-		  arch-alist (nth 3 entry))
-	    (when (equal file-name (nth 1 (vhdl-aget arch-alist key)))
-	      (vhdl-adelete 'arch-alist key)
-	      (if (or (nth 1 entry) arch-alist)
-		  (vhdl-aput 'ent-alist ent-key
-			     (list (nth 0 entry) (nth 1 entry) (nth 2 entry)
-				   arch-alist (nth 4 entry) (nth 5 entry)))
-		(vhdl-adelete 'ent-alist ent-key)))
-	    (setq arch-list (cdr arch-list)
-		  arch-ent-list (cdr arch-ent-list)))
-	  ;; configurations
-	  (while conf-list
-	    (setq key (car conf-list))
-	    (when (equal file-name (nth 1 (vhdl-aget conf-alist key)))
-	      (vhdl-adelete 'conf-alist key))
-	    (setq conf-list (cdr conf-list)))
-	  ;; package declarations
-	  (while pack-list
-	    (setq key (car pack-list)
-		  entry (vhdl-aget pack-alist key))
-	    (when (equal file-name (nth 1 entry))
-	      (if (nth 6 entry)
-		  (vhdl-aput 'pack-alist key
-			     (list (nth 0 entry) nil nil nil nil nil
-				   (nth 6 entry) (nth 7 entry) (nth 8 entry)
-				   (nth 9 entry)))
-		(vhdl-adelete 'pack-alist key)))
-	    (setq pack-list (cdr pack-list)))
-	  ;; package bodies
-	  (while pack-body-list
-	    (setq key (car pack-body-list)
-		  entry (vhdl-aget pack-alist key))
-	    (when (equal file-name (nth 6 entry))
-	      (if (nth 1 entry)
-		  (vhdl-aput 'pack-alist key
-			     (list (nth 0 entry) (nth 1 entry) (nth 2 entry)
-				   (nth 3 entry) (nth 4 entry) (nth 5 entry)
-				   nil nil nil nil))
-		(vhdl-adelete 'pack-alist key)))
-	    (setq pack-body-list (cdr pack-body-list)))
-	  ;; instantiated entities
-	  (while inst-ent-list
-	    (setq ent-inst-list
-		  (vhdl-delete (car inst-ent-list) ent-inst-list))
-	    (setq inst-ent-list (cdr inst-ent-list)))
-	  ;; update caches
-	  (vhdl-aput-delete-if-nil 'vhdl-entity-alist cache-key ent-alist)
-	  (vhdl-aput-delete-if-nil 'vhdl-config-alist cache-key conf-alist)
-	  (vhdl-aput-delete-if-nil 'vhdl-package-alist cache-key pack-alist)
-	  (vhdl-aput-delete-if-nil 'vhdl-ent-inst-alist cache-key (list ent-inst-list))
-	  ;; scan file
-	  (vhdl-scan-directory-contents file-name project t)
-	  (when (or (and vhdl-speedbar-show-projects project)
-		    (and (not vhdl-speedbar-show-projects) (not project)))
-	    (vhdl-speedbar-refresh project))
-	  (setq updated t)))
+        (let* ((vhdl-project (nth 0 (car directory-alist)))
+               (project (vhdl-project-p))
+               (ent-alist (vhdl-aget vhdl-entity-alist
+                                     (or project dir-name)))
+               (conf-alist (vhdl-aget vhdl-config-alist
+                                      (or project dir-name)))
+               (pack-alist (vhdl-aget vhdl-package-alist
+                                      (or project dir-name)))
+               (ent-inst-list (car (vhdl-aget vhdl-ent-inst-alist
+                                         (or project dir-name))))
+               (file-alist (vhdl-aget vhdl-file-alist (or project dir-name)))
+               (file-entry (vhdl-aget file-alist file-name))
+               (ent-list (nth 0 file-entry))
+               (arch-list (nth 1 file-entry))
+               (arch-ent-list (nth 2 file-entry))
+               (conf-list (nth 3 file-entry))
+               (pack-list (nth 4 file-entry))
+               (pack-body-list (nth 5 file-entry))
+               (inst-ent-list (nth 7 file-entry))
+               (cache-key (or project dir-name))
+               arch-alist key ent-key entry)
+          ;; delete design units previously contained in this file:
+          ;; entities
+          (while ent-list
+            (setq key (car ent-list)
+                  entry (vhdl-aget ent-alist key))
+            (when (equal file-name (nth 1 entry))
+              (if (nth 3 entry)
+                  (vhdl-aput 'ent-alist key
+                             (list (nth 0 entry) nil nil (nth 3 entry) nil))
+                (vhdl-adelete 'ent-alist key)))
+            (setq ent-list (cdr ent-list)))
+          ;; architectures
+          (while arch-list
+            (setq key (car arch-list)
+                  ent-key (car arch-ent-list)
+                  entry (vhdl-aget ent-alist ent-key)
+                  arch-alist (nth 3 entry))
+            (when (equal file-name (nth 1 (vhdl-aget arch-alist key)))
+              (vhdl-adelete 'arch-alist key)
+              (if (or (nth 1 entry) arch-alist)
+                  (vhdl-aput 'ent-alist ent-key
+                             (list (nth 0 entry) (nth 1 entry) (nth 2 entry)
+                                   arch-alist (nth 4 entry) (nth 5 entry)))
+                (vhdl-adelete 'ent-alist ent-key)))
+            (setq arch-list (cdr arch-list)
+                  arch-ent-list (cdr arch-ent-list)))
+          ;; configurations
+          (while conf-list
+            (setq key (car conf-list))
+            (when (equal file-name (nth 1 (vhdl-aget conf-alist key)))
+              (vhdl-adelete 'conf-alist key))
+            (setq conf-list (cdr conf-list)))
+          ;; package declarations
+          (while pack-list
+            (setq key (car pack-list)
+                  entry (vhdl-aget pack-alist key))
+            (when (equal file-name (nth 1 entry))
+              (if (nth 6 entry)
+                  (vhdl-aput 'pack-alist key
+                             (list (nth 0 entry) nil nil nil nil nil
+                                   (nth 6 entry) (nth 7 entry) (nth 8 entry)
+                                   (nth 9 entry)))
+                (vhdl-adelete 'pack-alist key)))
+            (setq pack-list (cdr pack-list)))
+          ;; package bodies
+          (while pack-body-list
+            (setq key (car pack-body-list)
+                  entry (vhdl-aget pack-alist key))
+            (when (equal file-name (nth 6 entry))
+              (if (nth 1 entry)
+                  (vhdl-aput 'pack-alist key
+                             (list (nth 0 entry) (nth 1 entry) (nth 2 entry)
+                                   (nth 3 entry) (nth 4 entry) (nth 5 entry)
+                                   nil nil nil nil))
+                (vhdl-adelete 'pack-alist key)))
+            (setq pack-body-list (cdr pack-body-list)))
+          ;; instantiated entities
+          (while inst-ent-list
+            (setq ent-inst-list
+                  (vhdl-delete (car inst-ent-list) ent-inst-list))
+            (setq inst-ent-list (cdr inst-ent-list)))
+          ;; update caches
+          (vhdl-aput-delete-if-nil 'vhdl-entity-alist cache-key ent-alist)
+          (vhdl-aput-delete-if-nil 'vhdl-config-alist cache-key conf-alist)
+          (vhdl-aput-delete-if-nil 'vhdl-package-alist cache-key pack-alist)
+          (vhdl-aput-delete-if-nil 'vhdl-ent-inst-alist cache-key (list ent-inst-list))
+          ;; scan file
+          (vhdl-scan-directory-contents file-name project t)
+          (when (or (and vhdl-speedbar-show-projects project)
+                    (and (not vhdl-speedbar-show-projects) (not project)))
+            (vhdl-speedbar-refresh project))
+          (setq updated t)))
       (setq directory-alist (cdr directory-alist)))
     updated))
 
 (defun vhdl-update-hierarchy ()
   "Update directory and hierarchy information in speedbar."
   (let ((file-list (reverse vhdl-modified-file-list))
-	updated)
+        updated)
     (when (and vhdl-speedbar-update-on-saving file-list)
       (while file-list
-	(setq updated
-	      (or (vhdl-update-file-contents (car file-list))
-		  updated))
-	(setq file-list (cdr file-list)))
+        (setq updated
+              (or (vhdl-update-file-contents (car file-list))
+                  updated))
+        (setq file-list (cdr file-list)))
       (setq vhdl-modified-file-list nil)
       (vhdl-speedbar-update-current-unit)
       (when updated (message "Updating hierarchy...done")))))
@@ -14450,17 +14457,17 @@ of PROJECT."
 ;;  comp-arch-key comp-arch-file-marker comp-conf-key comp-conf-file-marker
 ;;  comp-lib-name level)
 (defun vhdl-get-hierarchy (ent-alist conf-alist ent-key arch-key conf-key
-				     conf-inst-alist level indent
-				     &optional include-top ent-hier)
+                                     conf-inst-alist level indent
+                                     &optional include-top ent-hier)
   "Get instantiation hierarchy beginning in architecture ARCH-KEY of
 entity ENT-KEY."
   (let* ((ent-entry (vhdl-aget ent-alist ent-key))
-	 (arch-entry (if arch-key (vhdl-aget (nth 3 ent-entry) arch-key)
-		       (cdar (last (nth 3 ent-entry)))))
-	 (inst-alist (nth 3 arch-entry))
-	 inst-entry inst-ent-entry inst-arch-entry inst-conf-entry comp-entry
-	 hier-list subcomp-list tmp-list inst-key inst-comp-name
-	 inst-ent-key inst-arch-key inst-conf-key inst-lib-key)
+         (arch-entry (if arch-key (vhdl-aget (nth 3 ent-entry) arch-key)
+                       (cdar (last (nth 3 ent-entry)))))
+         (inst-alist (nth 3 arch-entry))
+         inst-entry inst-ent-entry inst-arch-entry inst-conf-entry comp-entry
+         hier-list subcomp-list tmp-list inst-key inst-comp-name
+         inst-ent-key inst-arch-key inst-conf-key inst-lib-key)
     (when (= level 0) (message "Extract design hierarchy..."))
     (when include-top
       (setq level (1+ level)))
@@ -14469,100 +14476,100 @@ entity ENT-KEY."
     ;; process all instances
     (while inst-alist
       (setq inst-entry (car inst-alist)
-	    inst-key (nth 0 inst-entry)
-	    inst-comp-name (nth 4 inst-entry)
-	    inst-conf-key (nth 7 inst-entry))
+            inst-key (nth 0 inst-entry)
+            inst-comp-name (nth 4 inst-entry)
+            inst-conf-key (nth 7 inst-entry))
       ;; search entry in configuration's instantiations list
       (setq tmp-list conf-inst-alist)
       (while (and tmp-list
-		  (not (and (member (nth 0 (car tmp-list))
-				    (list "all" inst-key))
-			    (equal (nth 1 (car tmp-list))
-				   (downcase (or inst-comp-name ""))))))
-	(setq tmp-list (cdr tmp-list)))
+                  (not (and (member (nth 0 (car tmp-list))
+                                    (list "all" inst-key))
+                            (equal (nth 1 (car tmp-list))
+                                   (downcase (or inst-comp-name ""))))))
+        (setq tmp-list (cdr tmp-list)))
       (setq inst-conf-key (or (nth 4 (car tmp-list)) inst-conf-key))
       (setq inst-conf-entry (vhdl-aget conf-alist inst-conf-key))
       (when (and inst-conf-key (not inst-conf-entry))
-	(vhdl-warning-when-idle "Configuration not found: \"%s\"" inst-conf-key))
+        (vhdl-warning-when-idle "Configuration not found: \"%s\"" inst-conf-key))
       ;; determine entity
       (setq inst-ent-key
-	    (or (nth 2 (car tmp-list))	; from configuration
-		(nth 3 inst-conf-entry) ; from subconfiguration
-		(nth 3 (vhdl-aget conf-alist (nth 7 inst-entry)))
-					; from configuration spec.
-		(nth 5 inst-entry)))	; from direct instantiation
+            (or (nth 2 (car tmp-list))  ; from configuration
+                (nth 3 inst-conf-entry) ; from subconfiguration
+                (nth 3 (vhdl-aget conf-alist (nth 7 inst-entry)))
+                                        ; from configuration spec.
+                (nth 5 inst-entry)))    ; from direct instantiation
       (setq inst-ent-entry (vhdl-aget ent-alist inst-ent-key))
       ;; determine architecture
       (setq inst-arch-key
-	    (or (nth 3 (car tmp-list))		; from configuration
-		(nth 4 inst-conf-entry)		; from subconfiguration
-		(nth 6 inst-entry)		; from direct instantiation
-		(nth 4 (vhdl-aget conf-alist (nth 7 inst-entry)))
-						; from configuration spec.
-		(nth 4 inst-ent-entry)		; MRA
-		(caar (nth 3 inst-ent-entry))))	; first alphabetically
+            (or (nth 3 (car tmp-list))          ; from configuration
+                (nth 4 inst-conf-entry)         ; from subconfiguration
+                (nth 6 inst-entry)              ; from direct instantiation
+                (nth 4 (vhdl-aget conf-alist (nth 7 inst-entry)))
+                                                ; from configuration spec.
+                (nth 4 inst-ent-entry)          ; MRA
+                (caar (nth 3 inst-ent-entry)))) ; first alphabetically
       (setq inst-arch-entry (vhdl-aget (nth 3 inst-ent-entry) inst-arch-key))
       ;; set library
       (setq inst-lib-key
-	    (or (nth 5 (car tmp-list))		; from configuration
-		(nth 8 inst-entry)))		; from direct instantiation
+            (or (nth 5 (car tmp-list))          ; from configuration
+                (nth 8 inst-entry)))            ; from direct instantiation
       ;; gather information for this instance
       (setq comp-entry
-	    (list (nth 1 inst-entry)
-		  (cons (nth 2 inst-entry) (nth 3 inst-entry))
-		  (or (nth 0 inst-ent-entry) (nth 4 inst-entry))
-		  (cons (nth 1 inst-ent-entry) (nth 2 inst-ent-entry))
-		  (or (nth 0 inst-arch-entry) inst-arch-key)
-		  (cons (nth 1 inst-arch-entry) (nth 2 inst-arch-entry))
-		  (or (nth 0 inst-conf-entry) inst-conf-key)
-		  (cons (nth 1 inst-conf-entry) (nth 2 inst-conf-entry))
-		  inst-lib-key level))
+            (list (nth 1 inst-entry)
+                  (cons (nth 2 inst-entry) (nth 3 inst-entry))
+                  (or (nth 0 inst-ent-entry) (nth 4 inst-entry))
+                  (cons (nth 1 inst-ent-entry) (nth 2 inst-ent-entry))
+                  (or (nth 0 inst-arch-entry) inst-arch-key)
+                  (cons (nth 1 inst-arch-entry) (nth 2 inst-arch-entry))
+                  (or (nth 0 inst-conf-entry) inst-conf-key)
+                  (cons (nth 1 inst-conf-entry) (nth 2 inst-conf-entry))
+                  inst-lib-key level))
       ;; get subcomponent hierarchy
       (setq subcomp-list (vhdl-get-hierarchy
-			  ent-alist conf-alist
-			  inst-ent-key inst-arch-key inst-conf-key
-			  (nth 5 inst-conf-entry)
-			  (1+ level) indent nil (cons ent-key ent-hier)))
+                          ent-alist conf-alist
+                          inst-ent-key inst-arch-key inst-conf-key
+                          (nth 5 inst-conf-entry)
+                          (1+ level) indent nil (cons ent-key ent-hier)))
       ;; add to list
       (setq hier-list (append hier-list (list comp-entry) subcomp-list))
       (setq inst-alist (cdr inst-alist)))
     (when include-top
       (setq hier-list
-	    (cons (list nil nil (nth 0 ent-entry)
-			(cons (nth 1 ent-entry) (nth 2 ent-entry))
-			(nth 0 arch-entry)
-			(cons (nth 1 arch-entry) (nth 2 arch-entry))
-			nil nil
-			nil (1- level))
-		  hier-list)))
+            (cons (list nil nil (nth 0 ent-entry)
+                        (cons (nth 1 ent-entry) (nth 2 ent-entry))
+                        (nth 0 arch-entry)
+                        (cons (nth 1 arch-entry) (nth 2 arch-entry))
+                        nil nil
+                        nil (1- level))
+                  hier-list)))
     (when (or (= level 0) (and include-top (= level 1))) (message ""))
     hier-list))
 
 (defun vhdl-get-instantiations (ent-key indent)
   "Get all instantiations of entity ENT-KEY."
   (let ((ent-alist (vhdl-aget vhdl-entity-alist
-			      (vhdl-speedbar-line-key indent)))
-	arch-alist inst-alist ent-inst-list
-	ent-entry arch-entry inst-entry)
+                              (vhdl-speedbar-line-key indent)))
+        arch-alist inst-alist ent-inst-list
+        ent-entry arch-entry inst-entry)
     (while ent-alist
       (setq ent-entry (car ent-alist))
       (setq arch-alist (nth 4 ent-entry))
       (while arch-alist
-	(setq arch-entry (car arch-alist))
-	(setq inst-alist (nth 4 arch-entry))
-	(while inst-alist
-	  (setq inst-entry (car inst-alist))
-	  (when (equal ent-key (nth 5 inst-entry))
-	    (setq ent-inst-list
-		  (cons (list (nth 1 inst-entry)
-			      (cons (nth 2 inst-entry) (nth 3 inst-entry))
-			      (nth 1 ent-entry)
-			      (cons (nth 2 ent-entry) (nth 3 ent-entry))
-			      (nth 1 arch-entry)
-			      (cons (nth 2 arch-entry) (nth 3 arch-entry)))
-			ent-inst-list)))
-	  (setq inst-alist (cdr inst-alist)))
-	(setq arch-alist (cdr arch-alist)))
+        (setq arch-entry (car arch-alist))
+        (setq inst-alist (nth 4 arch-entry))
+        (while inst-alist
+          (setq inst-entry (car inst-alist))
+          (when (equal ent-key (nth 5 inst-entry))
+            (setq ent-inst-list
+                  (cons (list (nth 1 inst-entry)
+                              (cons (nth 2 inst-entry) (nth 3 inst-entry))
+                              (nth 1 ent-entry)
+                              (cons (nth 2 ent-entry) (nth 3 ent-entry))
+                              (nth 1 arch-entry)
+                              (cons (nth 2 arch-entry) (nth 3 arch-entry)))
+                        ent-inst-list)))
+          (setq inst-alist (cdr inst-alist)))
+        (setq arch-alist (cdr arch-alist)))
       (setq ent-alist (cdr ent-alist)))
     (nreverse ent-inst-list)))
 
@@ -14574,86 +14581,86 @@ entity ENT-KEY."
   (interactive)
   (condition-case nil
       (when vhdl-speedbar-save-cache
-	;; update hierarchy
-	(vhdl-update-hierarchy)
-	(let ((project-list vhdl-updated-project-list))
-	  (message "Saving hierarchy caches...")
-	  ;; write updated project caches
-	  (while project-list
-	    (vhdl-save-cache (car project-list))
-	    (setq project-list (cdr project-list)))
-	  (message "Saving hierarchy caches...done")))
+        ;; update hierarchy
+        (vhdl-update-hierarchy)
+        (let ((project-list vhdl-updated-project-list))
+          (message "Saving hierarchy caches...")
+          ;; write updated project caches
+          (while project-list
+            (vhdl-save-cache (car project-list))
+            (setq project-list (cdr project-list)))
+          (message "Saving hierarchy caches...done")))
     (error (progn (vhdl-warning "ERROR:  An error occurred while saving the hierarchy caches")
-		  (sit-for 2)))))
+                  (sit-for 2)))))
 
 (defun vhdl-save-cache (key)
   "Save current hierarchy cache to file."
   (let* ((orig-buffer (current-buffer))
-	 (vhdl-project key)
-	 (project (vhdl-project-p))
-	 (default-directory key)
-	 (directory (abbreviate-file-name (vhdl-default-directory)))
-	 (file-name (vhdl-resolve-env-variable
-		     (vhdl-replace-string
-		      (cons "\\(.*\\) \\(.*\\)" vhdl-speedbar-cache-file-name)
-		      (concat
-		       (subst-char-in-string ?  ?_ (or project "dir"))
-		       " " (user-login-name)))))
-	 (file-dir-name (expand-file-name file-name directory))
-	 (cache-key (or project directory))
-	 (key (if project "project" "directory")))
+         (vhdl-project key)
+         (project (vhdl-project-p))
+         (default-directory key)
+         (directory (abbreviate-file-name (vhdl-default-directory)))
+         (file-name (vhdl-resolve-env-variable
+                     (vhdl-replace-string
+                      (cons "\\(.*\\) \\(.*\\)" vhdl-speedbar-cache-file-name)
+                      (concat
+                       (subst-char-in-string ?  ?_ (or project "dir"))
+                       " " (user-login-name)))))
+         (file-dir-name (expand-file-name file-name directory))
+         (cache-key (or project directory))
+         (key (if project "project" "directory")))
     (unless (file-exists-p (file-name-directory file-dir-name))
       (make-directory (file-name-directory file-dir-name) t))
     (if (not (file-writable-p file-dir-name))
-	(progn (vhdl-warning (format "File not writable: \"%s\""
-				     (abbreviate-file-name file-dir-name)))
-	       (sit-for 2))
+        (progn (vhdl-warning (format "File not writable: \"%s\""
+                                     (abbreviate-file-name file-dir-name)))
+               (sit-for 2))
       (message "Saving cache: \"%s\"" file-dir-name)
       (set-buffer (find-file-noselect file-dir-name t t))
       (erase-buffer)
       (insert ";; -*- Emacs-Lisp -*-\n\n"
-	      ";;; " (file-name-nondirectory file-name)
-	      " - design hierarchy cache file for Emacs VHDL Mode "
-	      vhdl-version "\n")
+              ";;; " (file-name-nondirectory file-name)
+              " - design hierarchy cache file for Emacs VHDL Mode "
+              vhdl-version "\n")
       (insert "\n;; " (if project "Project  " "Directory") " : ")
       (if project (insert project) (prin1 directory (current-buffer)))
       (insert "\n;; Saved     : " (format-time-string "%Y-%m-%d %T ")
-	      (user-login-name) "\n\n"
-	      "\n;; version number\n"
-	      "(setq vhdl-cache-version \"" vhdl-version "\")\n"
-	      "\n;; " (if project "project" "directory") " name"
-	      "\n(setq " key " ")
+              (user-login-name) "\n\n"
+              "\n;; version number\n"
+              "(setq vhdl-cache-version \"" vhdl-version "\")\n"
+              "\n;; " (if project "project" "directory") " name"
+              "\n(setq " key " ")
       (prin1 (or project directory) (current-buffer))
       (insert ")\n")
       (when (member 'hierarchy vhdl-speedbar-save-cache)
-	(insert "\n;; entity and architecture cache\n"
-		"(vhdl-aput 'vhdl-entity-alist " key " '")
-	(print (vhdl-aget vhdl-entity-alist cache-key) (current-buffer))
-	(insert ")\n\n;; configuration cache\n"
-		"(vhdl-aput 'vhdl-config-alist " key " '")
-	(print (vhdl-aget vhdl-config-alist cache-key) (current-buffer))
-	(insert ")\n\n;; package cache\n"
-		"(vhdl-aput 'vhdl-package-alist " key " '")
-	(print (vhdl-aget vhdl-package-alist cache-key) (current-buffer))
-	(insert ")\n\n;; instantiated entities cache\n"
-		"(vhdl-aput 'vhdl-ent-inst-alist " key " '")
-	(print (vhdl-aget vhdl-ent-inst-alist cache-key) (current-buffer))
-	(insert ")\n\n;; design units per file cache\n"
-		"(vhdl-aput 'vhdl-file-alist " key " '")
-	(print (vhdl-aget vhdl-file-alist cache-key) (current-buffer))
-	(when project
-	  (insert ")\n\n;; source directories in project cache\n"
-		  "(vhdl-aput 'vhdl-directory-alist " key " '")
-	  (print (vhdl-aget vhdl-directory-alist cache-key) (current-buffer)))
-	(insert ")\n"))
+        (insert "\n;; entity and architecture cache\n"
+                "(vhdl-aput 'vhdl-entity-alist " key " '")
+        (print (vhdl-aget vhdl-entity-alist cache-key) (current-buffer))
+        (insert ")\n\n;; configuration cache\n"
+                "(vhdl-aput 'vhdl-config-alist " key " '")
+        (print (vhdl-aget vhdl-config-alist cache-key) (current-buffer))
+        (insert ")\n\n;; package cache\n"
+                "(vhdl-aput 'vhdl-package-alist " key " '")
+        (print (vhdl-aget vhdl-package-alist cache-key) (current-buffer))
+        (insert ")\n\n;; instantiated entities cache\n"
+                "(vhdl-aput 'vhdl-ent-inst-alist " key " '")
+        (print (vhdl-aget vhdl-ent-inst-alist cache-key) (current-buffer))
+        (insert ")\n\n;; design units per file cache\n"
+                "(vhdl-aput 'vhdl-file-alist " key " '")
+        (print (vhdl-aget vhdl-file-alist cache-key) (current-buffer))
+        (when project
+          (insert ")\n\n;; source directories in project cache\n"
+                  "(vhdl-aput 'vhdl-directory-alist " key " '")
+          (print (vhdl-aget vhdl-directory-alist cache-key) (current-buffer)))
+        (insert ")\n"))
       (when (member 'display vhdl-speedbar-save-cache)
-	(insert "\n;; shown design units cache\n"
-		"(vhdl-aput 'vhdl-speedbar-shown-unit-alist " key " '")
-	(print (vhdl-aget vhdl-speedbar-shown-unit-alist cache-key)
-	       (current-buffer))
-	(insert ")\n"))
+        (insert "\n;; shown design units cache\n"
+                "(vhdl-aput 'vhdl-speedbar-shown-unit-alist " key " '")
+        (print (vhdl-aget vhdl-speedbar-shown-unit-alist cache-key)
+               (current-buffer))
+        (insert ")\n"))
       (setq vhdl-updated-project-list
-	    (delete cache-key vhdl-updated-project-list))
+            (delete cache-key vhdl-updated-project-list))
       (save-buffer)
       (kill-buffer (current-buffer))
       (set-buffer orig-buffer))))
@@ -14661,41 +14668,41 @@ entity ENT-KEY."
 (defun vhdl-load-cache (key)
   "Load hierarchy cache information from file."
   (let* ((vhdl-project key)
-	 (default-directory key)
-	 (directory (vhdl-default-directory))
-	 (file-name (vhdl-resolve-env-variable
-		     (vhdl-replace-string
-		      (cons "\\(.*\\) \\(.*\\)" vhdl-speedbar-cache-file-name)
-		      (concat
-		       (subst-char-in-string ?  ?_ (or (vhdl-project-p) "dir"))
-		       " " (user-login-name)))))
-	 (file-dir-name (expand-file-name file-name directory))
-	 vhdl-cache-version)
+         (default-directory key)
+         (directory (vhdl-default-directory))
+         (file-name (vhdl-resolve-env-variable
+                     (vhdl-replace-string
+                      (cons "\\(.*\\) \\(.*\\)" vhdl-speedbar-cache-file-name)
+                      (concat
+                       (subst-char-in-string ?  ?_ (or (vhdl-project-p) "dir"))
+                       " " (user-login-name)))))
+         (file-dir-name (expand-file-name file-name directory))
+         vhdl-cache-version)
     (unless (memq 'vhdl-save-caches kill-emacs-hook)
       (add-hook 'kill-emacs-hook 'vhdl-save-caches))
     (when (file-exists-p file-dir-name)
       (condition-case ()
-	  (progn (load-file file-dir-name)
-		 (string< (mapconcat
-			   (lambda (a) (format "%3d" (string-to-number a)))
-			   (split-string "3.33" "\\.") "")
-			  (mapconcat
-			   (lambda (a) (format "%3d" (string-to-number a)))
-			   (split-string vhdl-cache-version "\\.") "")))
-	(error (progn (vhdl-warning (format "ERROR:  Corrupted cache file: \"%s\"" file-dir-name))
-		      nil))))))
+          (progn (load-file file-dir-name)
+                 (string< (mapconcat
+                           (lambda (a) (format "%3d" (string-to-number a)))
+                           (split-string "3.33" "\\.") "")
+                          (mapconcat
+                           (lambda (a) (format "%3d" (string-to-number a)))
+                           (split-string vhdl-cache-version "\\.") "")))
+        (error (progn (vhdl-warning (format "ERROR:  Corrupted cache file: \"%s\"" file-dir-name))
+                      nil))))))
 
 (defun vhdl-require-hierarchy-info ()
   "Make sure that hierarchy information is available.  Load cache or scan files
 if required."
   (if (vhdl-project-p)
       (unless (or (assoc vhdl-project vhdl-file-alist)
-		  (vhdl-load-cache vhdl-project))
-	(vhdl-scan-project-contents vhdl-project))
+                  (vhdl-load-cache vhdl-project))
+        (vhdl-scan-project-contents vhdl-project))
     (let ((directory (abbreviate-file-name default-directory)))
       (unless (or (assoc directory vhdl-file-alist)
-		  (vhdl-load-cache directory))
-	(vhdl-scan-directory-contents directory)))))
+                  (vhdl-load-cache directory))
+        (vhdl-scan-directory-contents directory)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Add hierarchy browser functionality to speedbar
@@ -14710,7 +14717,7 @@ if required."
 (declare-function speedbar-add-mode-functions-list "speedbar" (new-list))
 (declare-function speedbar-make-specialized-keymap "speedbar" ())
 (declare-function speedbar-change-initial-expansion-list "speedbar"
-		  (new-default))
+                  (new-default))
 (declare-function speedbar-add-expansion-list "speedbar" (new-list))
 
 (defun vhdl-speedbar-initialize ()
@@ -14720,7 +14727,7 @@ if required."
   (let ((mode-alist auto-mode-alist))
     (while mode-alist
       (when (eq (cdar mode-alist) 'vhdl-mode)
-	(speedbar-add-supported-extension (caar mode-alist)))
+        (speedbar-add-supported-extension (caar mode-alist)))
       (setq mode-alist (cdr mode-alist))))
   ;; hierarchy browser settings
   (when (boundp 'speedbar-mode-functions-list)
@@ -14750,58 +14757,58 @@ if required."
       (define-key vhdl-speedbar-mode-map "R" 'vhdl-speedbar-rescan-hierarchy)
       (define-key vhdl-speedbar-mode-map "S" 'vhdl-save-caches)
       (let ((key 0))
-	(while (<= key 9)
-	  (define-key vhdl-speedbar-mode-map (int-to-string key)
-	    `(lambda () (interactive) (vhdl-speedbar-set-depth ,key)))
-	  (setq key (1+ key)))))
+        (while (<= key 9)
+          (define-key vhdl-speedbar-mode-map (int-to-string key)
+            `(lambda () (interactive) (vhdl-speedbar-set-depth ,key)))
+          (setq key (1+ key)))))
     (define-key speedbar-mode-map "h"
       (lambda () (interactive)
-	(speedbar-change-initial-expansion-list "vhdl directory")))
+        (speedbar-change-initial-expansion-list "vhdl directory")))
     (define-key speedbar-mode-map "H"
       (lambda () (interactive)
-	(speedbar-change-initial-expansion-list "vhdl project")))
+        (speedbar-change-initial-expansion-list "vhdl project")))
     ;; menu
     (unless vhdl-speedbar-menu-items
       (setq
        vhdl-speedbar-menu-items
        `(["Edit" speedbar-edit-line t]
-	 ["Expand" speedbar-expand-line
-	  (save-excursion (beginning-of-line) (looking-at "[0-9]+: *.\\+. "))]
-	 ["Contract" vhdl-speedbar-contract-level t]
-	 ["Expand All" vhdl-speedbar-expand-all t]
-	 ["Contract All" vhdl-speedbar-contract-all t]
-	 ,(let ((key 0) (menu-list '("Hierarchy Depth")))
-	    (while (<= key 9)
-	      (setq menu-list
-		    (cons `[,(if (= key 0) "All" (int-to-string key))
-			    (vhdl-speedbar-set-depth ,key)
-			    :style radio
-			    :selected (= vhdl-speedbar-hierarchy-depth ,key)
-			    :keys ,(int-to-string key)]
-			  menu-list))
-	      (setq key (1+ key)))
-	    (nreverse menu-list))
-	 "--"
-	 ["Copy Port/Subprogram" vhdl-speedbar-port-copy
-	  (or (vhdl-speedbar-check-unit 'entity)
-	      (vhdl-speedbar-check-unit 'subprogram))]
-	 ["Place Component" vhdl-speedbar-place-component
-	  (vhdl-speedbar-check-unit 'entity)]
-	 ["Generate Configuration" vhdl-speedbar-configuration
-	  (vhdl-speedbar-check-unit 'architecture)]
-	 ["Select as MRA" vhdl-speedbar-select-mra
-	  (vhdl-speedbar-check-unit 'architecture)]
-	 ["Make" vhdl-speedbar-make-design
-	  (save-excursion (beginning-of-line) (looking-at "[0-9]+: *[[<]"))]
-	 ["Generate Makefile" vhdl-speedbar-generate-makefile
-	  (save-excursion (beginning-of-line) (looking-at "[0-9]+:"))]
-	 ["Rescan Directory" vhdl-speedbar-rescan-hierarchy
-	  :active (save-excursion (beginning-of-line) (looking-at "[0-9]+:"))
-	  ,(if (featurep 'xemacs) :active :visible) (not vhdl-speedbar-show-projects)]
-	 ["Rescan Project" vhdl-speedbar-rescan-hierarchy
-	  :active (save-excursion (beginning-of-line) (looking-at "[0-9]+:"))
-	  ,(if (featurep 'xemacs) :active :visible) vhdl-speedbar-show-projects]
-	 ["Save Caches" vhdl-save-caches vhdl-updated-project-list])))
+         ["Expand" speedbar-expand-line
+          (save-excursion (beginning-of-line) (looking-at "[0-9]+: *.\\+. "))]
+         ["Contract" vhdl-speedbar-contract-level t]
+         ["Expand All" vhdl-speedbar-expand-all t]
+         ["Contract All" vhdl-speedbar-contract-all t]
+         ,(let ((key 0) (menu-list '("Hierarchy Depth")))
+            (while (<= key 9)
+              (setq menu-list
+                    (cons `[,(if (= key 0) "All" (int-to-string key))
+                            (vhdl-speedbar-set-depth ,key)
+                            :style radio
+                            :selected (= vhdl-speedbar-hierarchy-depth ,key)
+                            :keys ,(int-to-string key)]
+                          menu-list))
+              (setq key (1+ key)))
+            (nreverse menu-list))
+         "--"
+         ["Copy Port/Subprogram" vhdl-speedbar-port-copy
+          (or (vhdl-speedbar-check-unit 'entity)
+              (vhdl-speedbar-check-unit 'subprogram))]
+         ["Place Component" vhdl-speedbar-place-component
+          (vhdl-speedbar-check-unit 'entity)]
+         ["Generate Configuration" vhdl-speedbar-configuration
+          (vhdl-speedbar-check-unit 'architecture)]
+         ["Select as MRA" vhdl-speedbar-select-mra
+          (vhdl-speedbar-check-unit 'architecture)]
+         ["Make" vhdl-speedbar-make-design
+          (save-excursion (beginning-of-line) (looking-at "[0-9]+: *[[<]"))]
+         ["Generate Makefile" vhdl-speedbar-generate-makefile
+          (save-excursion (beginning-of-line) (looking-at "[0-9]+:"))]
+         ["Rescan Directory" vhdl-speedbar-rescan-hierarchy
+          :active (save-excursion (beginning-of-line) (looking-at "[0-9]+:"))
+          ,(if (featurep 'xemacs) :active :visible) (not vhdl-speedbar-show-projects)]
+         ["Rescan Project" vhdl-speedbar-rescan-hierarchy
+          :active (save-excursion (beginning-of-line) (looking-at "[0-9]+:"))
+          ,(if (featurep 'xemacs) :active :visible) vhdl-speedbar-show-projects]
+         ["Save Caches" vhdl-save-caches vhdl-updated-project-list])))
     ;; hook-ups
     (speedbar-add-expansion-list
      '("vhdl directory" vhdl-speedbar-menu-items vhdl-speedbar-mode-map
@@ -14810,11 +14817,11 @@ if required."
      '("vhdl project" vhdl-speedbar-menu-items vhdl-speedbar-mode-map
        vhdl-speedbar-display-projects))
     (setq speedbar-stealthy-function-list
-	  (append
-	   '(("vhdl directory" vhdl-speedbar-update-current-unit)
-	     ("vhdl project" vhdl-speedbar-update-current-project
-	      vhdl-speedbar-update-current-unit))
-	   speedbar-stealthy-function-list))
+          (append
+           '(("vhdl directory" vhdl-speedbar-update-current-unit)
+             ("vhdl project" vhdl-speedbar-update-current-project
+              vhdl-speedbar-update-current-unit))
+           speedbar-stealthy-function-list))
     (when (eq vhdl-speedbar-display-mode 'directory)
       (setq speedbar-initial-expansion-list-name "vhdl directory"))
     (when (eq vhdl-speedbar-display-mode 'project)
@@ -14827,7 +14834,7 @@ if required."
   (if (not (fboundp 'speedbar))
       (error "WARNING:  Speedbar is not available or not installed")
     (condition-case ()
-	(speedbar-frame-mode arg)
+        (speedbar-frame-mode arg)
       (error (error "WARNING:  An error occurred while opening speedbar")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -14840,7 +14847,7 @@ if required."
 ;;; (defmacro speedbar-with-writable (&rest forms)
 ;;;   "Allow the buffer to be writable and evaluate FORMS."
 ;;;   (list 'let '((inhibit-read-only t))
-;;; 	(cons 'progn forms)))
+;;;     (cons 'progn forms)))
 ;;; (put 'speedbar-with-writable 'lisp-indent-function 0)
 
 (declare-function speedbar-extension-list-to-regex "speedbar" (extlist))
@@ -14851,21 +14858,21 @@ if required."
   "Display directory and hierarchy information in speedbar."
   (setq vhdl-speedbar-show-projects nil)
   (setq speedbar-ignored-directory-regexp
-	(speedbar-extension-list-to-regex speedbar-ignored-directory-expressions))
+        (speedbar-extension-list-to-regex speedbar-ignored-directory-expressions))
   (setq directory (abbreviate-file-name (file-name-as-directory directory)))
   (setq speedbar-last-selected-file nil)
   (speedbar-with-writable
     (condition-case nil
-	(progn
-	  ;; insert directory path
-	  (speedbar-directory-buttons directory depth)
-	  ;; insert subdirectories
-	  (vhdl-speedbar-insert-dirs (speedbar-file-lists directory) depth)
-	  ;; scan and insert hierarchy of current directory
-	  (vhdl-speedbar-insert-dir-hierarchy directory depth
-					      speedbar-power-click)
-	  ;; expand subdirectories
-	  (when (= depth 0) (vhdl-speedbar-expand-dirs directory)))
+        (progn
+          ;; insert directory path
+          (speedbar-directory-buttons directory depth)
+          ;; insert subdirectories
+          (vhdl-speedbar-insert-dirs (speedbar-file-lists directory) depth)
+          ;; scan and insert hierarchy of current directory
+          (vhdl-speedbar-insert-dir-hierarchy directory depth
+                                              speedbar-power-click)
+          ;; expand subdirectories
+          (when (= depth 0) (vhdl-speedbar-expand-dirs directory)))
       (error (vhdl-warning-when-idle "ERROR:  Invalid hierarchy information, unable to display correctly")))))
 
 (defun vhdl-speedbar-display-projects (project depth &optional rescan)
@@ -14876,21 +14883,21 @@ if required."
   (setq vhdl-speedbar-last-selected-project nil)
   (speedbar-with-writable
     (condition-case nil
-	;; insert projects
-	(vhdl-speedbar-insert-projects)
+        ;; insert projects
+        (vhdl-speedbar-insert-projects)
       (error (vhdl-warning-when-idle "ERROR:  Invalid hierarchy information, unable to display correctly"))))
   (setq speedbar-full-text-cache nil)) ; prevent caching
 
 (declare-function speedbar-make-tag-line "speedbar"
-		  (type char func data tag tfunc tdata tface depth))
+                  (type char func data tag tfunc tdata tface depth))
 
 (defun vhdl-speedbar-insert-projects ()
   "Insert all projects in speedbar."
   (vhdl-speedbar-make-title-line "Projects:")
   (let ((project-alist (if vhdl-project-sort
-			   (vhdl-sort-alist (copy-alist vhdl-project-alist))
-			 vhdl-project-alist))
-	(vhdl-speedbar-update-current-unit nil))
+                           (vhdl-sort-alist (copy-alist vhdl-project-alist))
+                         vhdl-project-alist))
+        (vhdl-speedbar-update-current-unit nil))
     ;; insert projects
     (while project-alist
       (speedbar-make-tag-line
@@ -14902,18 +14909,18 @@ if required."
     ;; expand projects
     (while project-alist
       (when (member (caar project-alist) vhdl-speedbar-shown-project-list)
-	(goto-char (point-min))
-	(when (re-search-forward
-	       (concat "^\\([0-9]+:\\s-*<\\)[+]>\\s-+" (caar project-alist) "$") nil t)
-	  (goto-char (match-end 1))
-	  (speedbar-do-function-pointer)))
+        (goto-char (point-min))
+        (when (re-search-forward
+               (concat "^\\([0-9]+:\\s-*<\\)[+]>\\s-+" (caar project-alist) "$") nil t)
+          (goto-char (match-end 1))
+          (speedbar-do-function-pointer)))
       (setq project-alist (cdr project-alist)))))
 
 (defun vhdl-speedbar-insert-project-hierarchy (project indent &optional rescan)
   "Insert hierarchy of PROJECT.  Rescan directories if RESCAN is non-nil,
 otherwise use cached data."
   (when (or rescan (and (not (assoc project vhdl-file-alist))
-			(not (vhdl-load-cache project))))
+                        (not (vhdl-load-cache project))))
     (vhdl-scan-project-contents project))
   ;; insert design hierarchy
   (vhdl-speedbar-insert-hierarchy
@@ -14931,7 +14938,7 @@ otherwise use cached data."
   "Insert hierarchy of DIRECTORY.  Rescan directory if RESCAN is non-nil,
 otherwise use cached data."
   (when (or rescan (and (not (assoc directory vhdl-file-alist))
-			(not (vhdl-load-cache directory))))
+                        (not (vhdl-load-cache directory))))
     (vhdl-scan-directory-contents directory))
   ;; insert design hierarchy
   (vhdl-speedbar-insert-hierarchy
@@ -14944,7 +14951,7 @@ otherwise use cached data."
   (vhdl-aput 'vhdl-directory-alist directory (list (list directory))))
 
 (defun vhdl-speedbar-insert-hierarchy (ent-alist conf-alist pack-alist
-						 ent-inst-list depth)
+                                                 ent-inst-list depth)
   "Insert hierarchy of ENT-ALIST, CONF-ALIST, and PACK-ALIST."
   (if (not (or ent-alist conf-alist pack-alist))
       (vhdl-speedbar-make-title-line "No VHDL design units!" depth)
@@ -14952,37 +14959,37 @@ otherwise use cached data."
       ;; insert entities
       (when ent-alist (vhdl-speedbar-make-title-line "Entities:" depth))
       (while ent-alist
-	(setq ent-entry (car ent-alist))
-	(speedbar-make-tag-line
-	 'bracket ?+ 'vhdl-speedbar-expand-entity (nth 0 ent-entry)
-	 (nth 1 ent-entry) 'vhdl-speedbar-find-file
-	 (cons (nth 2 ent-entry) (nth 3 ent-entry))
-	 'vhdl-speedbar-entity-face depth)
-	(unless (nth 2 ent-entry)
-	  (end-of-line 0) (insert "!") (forward-char 1))
-	(unless (member (nth 0 ent-entry) ent-inst-list)
-	  (end-of-line 0) (insert " (top)") (forward-char 1))
-	(setq ent-alist (cdr ent-alist)))
+        (setq ent-entry (car ent-alist))
+        (speedbar-make-tag-line
+         'bracket ?+ 'vhdl-speedbar-expand-entity (nth 0 ent-entry)
+         (nth 1 ent-entry) 'vhdl-speedbar-find-file
+         (cons (nth 2 ent-entry) (nth 3 ent-entry))
+         'vhdl-speedbar-entity-face depth)
+        (unless (nth 2 ent-entry)
+          (end-of-line 0) (insert "!") (forward-char 1))
+        (unless (member (nth 0 ent-entry) ent-inst-list)
+          (end-of-line 0) (insert " (top)") (forward-char 1))
+        (setq ent-alist (cdr ent-alist)))
       ;; insert configurations
       (when conf-alist (vhdl-speedbar-make-title-line "Configurations:" depth))
       (while conf-alist
-	(setq conf-entry (car conf-alist))
-	(speedbar-make-tag-line
-	 'bracket ?+ 'vhdl-speedbar-expand-config (nth 0 conf-entry)
-	 (nth 1 conf-entry) 'vhdl-speedbar-find-file
-	 (cons (nth 2 conf-entry) (nth 3 conf-entry))
-	 'vhdl-speedbar-configuration-face depth)
-	(setq conf-alist (cdr conf-alist)))
+        (setq conf-entry (car conf-alist))
+        (speedbar-make-tag-line
+         'bracket ?+ 'vhdl-speedbar-expand-config (nth 0 conf-entry)
+         (nth 1 conf-entry) 'vhdl-speedbar-find-file
+         (cons (nth 2 conf-entry) (nth 3 conf-entry))
+         'vhdl-speedbar-configuration-face depth)
+        (setq conf-alist (cdr conf-alist)))
       ;; insert packages
       (when pack-alist (vhdl-speedbar-make-title-line "Packages:" depth))
       (while pack-alist
-	(setq pack-entry (car pack-alist))
-	(vhdl-speedbar-make-pack-line
-	 (nth 0 pack-entry) (nth 1 pack-entry)
-	 (cons (nth 2 pack-entry) (nth 3 pack-entry))
-	 (cons (nth 7 pack-entry) (nth 8 pack-entry))
-	 depth)
-	(setq pack-alist (cdr pack-alist))))))
+        (setq pack-entry (car pack-alist))
+        (vhdl-speedbar-make-pack-line
+         (nth 0 pack-entry) (nth 1 pack-entry)
+         (cons (nth 2 pack-entry) (nth 3 pack-entry))
+         (cons (nth 7 pack-entry) (nth 8 pack-entry))
+         depth)
+        (setq pack-alist (cdr pack-alist))))))
 
 (declare-function speedbar-line-directory "speedbar" (&optional depth))
 
@@ -15002,9 +15009,9 @@ otherwise use cached data."
        (abbreviate-file-name (speedbar-line-directory))))
      ;; current directory
      (t (setq path (speedbar-line-directory))
-	(string-match "^\\(.+[/\\]\\)" path)
-	(vhdl-scan-directory-contents
-	 (abbreviate-file-name (match-string 1 path)))))
+        (string-match "^\\(.+[/\\]\\)" path)
+        (vhdl-scan-directory-contents
+         (abbreviate-file-name (match-string 1 path)))))
     (vhdl-speedbar-refresh key)))
 
 (declare-function speedbar-goto-this-file "speedbar" (file))
@@ -15014,15 +15021,15 @@ otherwise use cached data."
  `speedbar-shown-directories'."
   ;; (nicked from `speedbar-default-directory-list')
   (let ((sf (cdr (reverse speedbar-shown-directories)))
-	(vhdl-speedbar-update-current-unit nil))
+        (vhdl-speedbar-update-current-unit nil))
     (setq speedbar-shown-directories
-	  (list (expand-file-name default-directory)))
+          (list (expand-file-name default-directory)))
     (while sf
       (when (speedbar-goto-this-file (car sf))
-	(beginning-of-line)
-	(when (looking-at "[0-9]+:\\s-*<")
-	  (goto-char (match-end 0))
-	  (speedbar-do-function-pointer)))
+        (beginning-of-line)
+        (when (looking-at "[0-9]+:\\s-*<")
+          (goto-char (match-end 0))
+          (speedbar-do-function-pointer)))
       (setq sf (cdr sf))))
   (vhdl-speedbar-update-current-unit nil t))
 
@@ -15030,32 +15037,32 @@ otherwise use cached data."
   "Expand design units in directory/project KEY according to
 `vhdl-speedbar-shown-unit-alist'."
   (let ((unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key))
-	(vhdl-speedbar-update-current-unit nil)
-	vhdl-updated-project-list)
+        (vhdl-speedbar-update-current-unit nil)
+        vhdl-updated-project-list)
     (vhdl-adelete 'vhdl-speedbar-shown-unit-alist key)
     (vhdl-prepare-search-1
-     (while unit-alist			; expand units
+     (while unit-alist                  ; expand units
        (vhdl-speedbar-goto-this-unit key (caar unit-alist))
        (beginning-of-line)
        (let ((arch-alist (nth 1 (car unit-alist)))
-	     position)
-	 (when (looking-at "^[0-9]+:\\s-*\\[")
-	   (goto-char (match-end 0))
-	   (setq position (point))
-	   (speedbar-do-function-pointer)
-	   (select-frame speedbar-frame)
-	   (while arch-alist		; expand architectures
-	     (goto-char position)
-	     (when (re-search-forward
-		    (concat "^[0-9]+:\\s-*\\(\\[\\|{.}\\s-+"
-			    (car arch-alist) "\\>\\)") nil t)
-	       (beginning-of-line)
-	       (when (looking-at "^[0-9]+:\\s-*{")
-		 (goto-char (match-end 0))
-		 (speedbar-do-function-pointer)
-		 (select-frame speedbar-frame)))
-	     (setq arch-alist (cdr arch-alist))))
-	 (setq unit-alist (cdr unit-alist))))))
+             position)
+         (when (looking-at "^[0-9]+:\\s-*\\[")
+           (goto-char (match-end 0))
+           (setq position (point))
+           (speedbar-do-function-pointer)
+           (select-frame speedbar-frame)
+           (while arch-alist            ; expand architectures
+             (goto-char position)
+             (when (re-search-forward
+                    (concat "^[0-9]+:\\s-*\\(\\[\\|{.}\\s-+"
+                            (car arch-alist) "\\>\\)") nil t)
+               (beginning-of-line)
+               (when (looking-at "^[0-9]+:\\s-*{")
+                 (goto-char (match-end 0))
+                 (speedbar-do-function-pointer)
+                 (select-frame speedbar-frame)))
+             (setq arch-alist (cdr arch-alist))))
+         (setq unit-alist (cdr unit-alist))))))
   (vhdl-speedbar-update-current-unit nil t))
 
 (declare-function speedbar-center-buffer-smartly "speedbar" ())
@@ -15064,12 +15071,12 @@ otherwise use cached data."
   "Contract current level in current directory/project."
   (interactive)
   (when (or (save-excursion
-	      (beginning-of-line) (looking-at "^[0-9]:\\s-*[[{<]-"))
-	    (and (save-excursion
-		   (beginning-of-line) (looking-at "^\\([0-9]+\\):"))
-		 (re-search-backward
-		  (format "^[0-%d]:\\s-*[[{<]-"
-			  (max (1- (string-to-number (match-string 1))) 0)) nil t)))
+              (beginning-of-line) (looking-at "^[0-9]:\\s-*[[{<]-"))
+            (and (save-excursion
+                   (beginning-of-line) (looking-at "^\\([0-9]+\\):"))
+                 (re-search-backward
+                  (format "^[0-%d]:\\s-*[[{<]-"
+                          (max (1- (string-to-number (match-string 1))) 0)) nil t)))
     (goto-char (match-end 0))
     (speedbar-do-function-pointer)
     (speedbar-center-buffer-smartly)))
@@ -15078,30 +15085,30 @@ otherwise use cached data."
   "Contract all expanded design units in current directory/project."
   (interactive)
   (if (and vhdl-speedbar-show-projects
-	   (save-excursion (beginning-of-line) (looking-at "^0:")))
+           (save-excursion (beginning-of-line) (looking-at "^0:")))
       (progn (setq vhdl-speedbar-shown-project-list nil)
-	     (vhdl-speedbar-refresh))
+             (vhdl-speedbar-refresh))
     (let ((key (vhdl-speedbar-line-key)))
       (vhdl-adelete 'vhdl-speedbar-shown-unit-alist key)
       (vhdl-speedbar-refresh (and vhdl-speedbar-show-projects key))
       (when (memq 'display vhdl-speedbar-save-cache)
-	(add-to-list 'vhdl-updated-project-list key)))))
+        (add-to-list 'vhdl-updated-project-list key)))))
 
 (defun vhdl-speedbar-expand-all ()
   "Expand all design units in current directory/project."
   (interactive)
   (let* ((key (vhdl-speedbar-line-key))
-	 (ent-alist (vhdl-aget vhdl-entity-alist key))
-	 (conf-alist (vhdl-aget vhdl-config-alist key))
-	 (pack-alist (vhdl-aget vhdl-package-alist key))
-	 arch-alist unit-alist subunit-alist)
+         (ent-alist (vhdl-aget vhdl-entity-alist key))
+         (conf-alist (vhdl-aget vhdl-config-alist key))
+         (pack-alist (vhdl-aget vhdl-package-alist key))
+         arch-alist unit-alist subunit-alist)
     (add-to-list 'vhdl-speedbar-shown-project-list key)
     (while ent-alist
       (setq arch-alist (nth 4 (car ent-alist)))
       (setq subunit-alist nil)
       (while arch-alist
-	(push (caar arch-alist) subunit-alist)
-	(setq arch-alist (cdr arch-alist)))
+        (push (caar arch-alist) subunit-alist)
+        (setq arch-alist (cdr arch-alist)))
       (push (list (caar ent-alist) subunit-alist) unit-alist)
       (setq ent-alist (cdr ent-alist)))
     (while conf-alist
@@ -15121,20 +15128,20 @@ otherwise use cached data."
 (defun vhdl-speedbar-expand-project (text token indent)
   "Expand/contract the project under the cursor."
   (cond
-   ((string-match "+" text)		; expand project
+   ((string-match "+" text)             ; expand project
     (speedbar-change-expand-button-char ?-)
     (unless (member token vhdl-speedbar-shown-project-list)
       (setq vhdl-speedbar-shown-project-list
-	    (cons token vhdl-speedbar-shown-project-list)))
+            (cons token vhdl-speedbar-shown-project-list)))
     (speedbar-with-writable
       (save-excursion
-	(end-of-line) (forward-char 1)
-	(vhdl-speedbar-insert-project-hierarchy token (1+ indent)
-						speedbar-power-click))))
-   ((string-match "-" text)		; contract project
+        (end-of-line) (forward-char 1)
+        (vhdl-speedbar-insert-project-hierarchy token (1+ indent)
+                                                speedbar-power-click))))
+   ((string-match "-" text)             ; contract project
     (speedbar-change-expand-button-char ?+)
     (setq vhdl-speedbar-shown-project-list
-	  (delete token vhdl-speedbar-shown-project-list))
+          (delete token vhdl-speedbar-shown-project-list))
     (speedbar-delete-subblock indent))
    (t (error "Nothing to display")))
   (when (equal (selected-frame) speedbar-frame)
@@ -15143,68 +15150,68 @@ otherwise use cached data."
 (defun vhdl-speedbar-expand-entity (text token indent)
   "Expand/contract the entity under the cursor."
   (cond
-   ((string-match "+" text)		; expand entity
+   ((string-match "+" text)             ; expand entity
     (let* ((key (vhdl-speedbar-line-key indent))
-	   (ent-alist (vhdl-aget vhdl-entity-alist key))
-	   (ent-entry (vhdl-aget ent-alist token))
-	   (arch-alist (nth 3 ent-entry))
-	   (inst-alist (vhdl-get-instantiations token indent))
-	   (subpack-alist (nth 5 ent-entry))
-	   (multiple-arch (> (length arch-alist) 1))
-	   arch-entry inst-entry)
+           (ent-alist (vhdl-aget vhdl-entity-alist key))
+           (ent-entry (vhdl-aget ent-alist token))
+           (arch-alist (nth 3 ent-entry))
+           (inst-alist (vhdl-get-instantiations token indent))
+           (subpack-alist (nth 5 ent-entry))
+           (multiple-arch (> (length arch-alist) 1))
+           arch-entry inst-entry)
       (if (not (or arch-alist inst-alist subpack-alist))
-	  (speedbar-change-expand-button-char ??)
-	(speedbar-change-expand-button-char ?-)
-	;; add entity to `vhdl-speedbar-shown-unit-alist'
-	(let* ((unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key)))
-	  (vhdl-aput 'unit-alist token nil)
-	  (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist))
-	(speedbar-with-writable
-	 (save-excursion
-	   (end-of-line) (forward-char 1)
-	   ;; insert architectures
-	   (when arch-alist
-	     (vhdl-speedbar-make-title-line "Architectures:" (1+ indent)))
-	   (while arch-alist
-	     (setq arch-entry (car arch-alist))
-	     (speedbar-make-tag-line
-	      'curly ?+ 'vhdl-speedbar-expand-architecture
-	      (cons token (nth 0 arch-entry))
-	      (nth 1 arch-entry) 'vhdl-speedbar-find-file
-	      (cons (nth 2 arch-entry) (nth 3 arch-entry))
-	      'vhdl-speedbar-architecture-face (1+ indent))
-	     (when (and multiple-arch
-			(equal (nth 0 arch-entry) (nth 4 ent-entry)))
-	       (end-of-line 0) (insert " (mra)") (forward-char 1))
-	     (setq arch-alist (cdr arch-alist)))
-	   ;; insert instantiations
-	   (when inst-alist
-	     (vhdl-speedbar-make-title-line "Instantiated as:" (1+ indent)))
-	   (while inst-alist
-	     (setq inst-entry (car inst-alist))
-	     (vhdl-speedbar-make-inst-line
-	      (nth 0 inst-entry) (nth 1 inst-entry) (nth 2 inst-entry)
-	      (nth 3 inst-entry) (nth 4 inst-entry) (nth 5 inst-entry)
-	      nil nil nil (1+ indent) 0 " in ")
-	     (setq inst-alist (cdr inst-alist)))
-	   ;; insert required packages
-	   (vhdl-speedbar-insert-subpackages
-	    subpack-alist (1+ indent) indent)))
-	(when (memq 'display vhdl-speedbar-save-cache)
-	  (add-to-list 'vhdl-updated-project-list key))
-	(vhdl-speedbar-update-current-unit t t))))
-   ((string-match "-" text)		; contract entity
+          (speedbar-change-expand-button-char ??)
+        (speedbar-change-expand-button-char ?-)
+        ;; add entity to `vhdl-speedbar-shown-unit-alist'
+        (let* ((unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key)))
+          (vhdl-aput 'unit-alist token nil)
+          (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist))
+        (speedbar-with-writable
+         (save-excursion
+           (end-of-line) (forward-char 1)
+           ;; insert architectures
+           (when arch-alist
+             (vhdl-speedbar-make-title-line "Architectures:" (1+ indent)))
+           (while arch-alist
+             (setq arch-entry (car arch-alist))
+             (speedbar-make-tag-line
+              'curly ?+ 'vhdl-speedbar-expand-architecture
+              (cons token (nth 0 arch-entry))
+              (nth 1 arch-entry) 'vhdl-speedbar-find-file
+              (cons (nth 2 arch-entry) (nth 3 arch-entry))
+              'vhdl-speedbar-architecture-face (1+ indent))
+             (when (and multiple-arch
+                        (equal (nth 0 arch-entry) (nth 4 ent-entry)))
+               (end-of-line 0) (insert " (mra)") (forward-char 1))
+             (setq arch-alist (cdr arch-alist)))
+           ;; insert instantiations
+           (when inst-alist
+             (vhdl-speedbar-make-title-line "Instantiated as:" (1+ indent)))
+           (while inst-alist
+             (setq inst-entry (car inst-alist))
+             (vhdl-speedbar-make-inst-line
+              (nth 0 inst-entry) (nth 1 inst-entry) (nth 2 inst-entry)
+              (nth 3 inst-entry) (nth 4 inst-entry) (nth 5 inst-entry)
+              nil nil nil (1+ indent) 0 " in ")
+             (setq inst-alist (cdr inst-alist)))
+           ;; insert required packages
+           (vhdl-speedbar-insert-subpackages
+            subpack-alist (1+ indent) indent)))
+        (when (memq 'display vhdl-speedbar-save-cache)
+          (add-to-list 'vhdl-updated-project-list key))
+        (vhdl-speedbar-update-current-unit t t))))
+   ((string-match "-" text)             ; contract entity
     (speedbar-change-expand-button-char ?+)
     ;; remove entity from `vhdl-speedbar-shown-unit-alist'
     (let* ((key (vhdl-speedbar-line-key indent))
-	   (unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key)))
+           (unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key)))
       (vhdl-adelete 'unit-alist token)
       (if unit-alist
-	  (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist)
-	(vhdl-adelete 'vhdl-speedbar-shown-unit-alist key))
+          (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist)
+        (vhdl-adelete 'vhdl-speedbar-shown-unit-alist key))
       (speedbar-delete-subblock indent)
       (when (memq 'display vhdl-speedbar-save-cache)
-	(add-to-list 'vhdl-updated-project-list key))))
+        (add-to-list 'vhdl-updated-project-list key))))
    (t (error "Nothing to display")))
   (when (equal (selected-frame) speedbar-frame)
     (speedbar-center-buffer-smartly)))
@@ -15212,59 +15219,59 @@ otherwise use cached data."
 (defun vhdl-speedbar-expand-architecture (text token indent)
   "Expand/contract the architecture under the cursor."
   (cond
-   ((string-match "+" text)		; expand architecture
+   ((string-match "+" text)             ; expand architecture
     (let* ((key (vhdl-speedbar-line-key (1- indent)))
-	   (ent-alist (vhdl-aget vhdl-entity-alist key))
-	   (conf-alist (vhdl-aget vhdl-config-alist key))
-	   (hier-alist (vhdl-get-hierarchy
-			ent-alist conf-alist (car token) (cdr token) nil nil
-			0 (1- indent)))
-	   (ent-entry (vhdl-aget ent-alist (car token)))
-	   (arch-entry (vhdl-aget (nth 3 ent-entry) (cdr token)))
-	   (subpack-alist (nth 4 arch-entry))
-	   entry)
+           (ent-alist (vhdl-aget vhdl-entity-alist key))
+           (conf-alist (vhdl-aget vhdl-config-alist key))
+           (hier-alist (vhdl-get-hierarchy
+                        ent-alist conf-alist (car token) (cdr token) nil nil
+                        0 (1- indent)))
+           (ent-entry (vhdl-aget ent-alist (car token)))
+           (arch-entry (vhdl-aget (nth 3 ent-entry) (cdr token)))
+           (subpack-alist (nth 4 arch-entry))
+           entry)
       (if (not (or hier-alist subpack-alist))
-	  (speedbar-change-expand-button-char ??)
-	(speedbar-change-expand-button-char ?-)
-	;; add architecture to `vhdl-speedbar-shown-unit-alist'
-	(let* ((unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key))
-	       (arch-alist (nth 0 (vhdl-aget unit-alist (car token)))))
-	  (vhdl-aput 'unit-alist (car token)
-		     (list (cons (cdr token) arch-alist)))
-	  (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist))
-	(speedbar-with-writable
-	  (save-excursion
-	    (end-of-line) (forward-char 1)
-	    ;; insert instance hierarchy
-	    (when hier-alist
-	      (vhdl-speedbar-make-title-line "Subcomponent hierarchy:"
-					     (1+ indent)))
-	    (while hier-alist
-	      (setq entry (car hier-alist))
-	      (when (or (= vhdl-speedbar-hierarchy-depth 0)
-			(< (nth 9 entry) vhdl-speedbar-hierarchy-depth))
-		(vhdl-speedbar-make-inst-line
-		 (nth 0 entry) (nth 1 entry) (nth 2 entry) (nth 3 entry)
-		 (nth 4 entry) (nth 5 entry) (nth 6 entry) (nth 7 entry)
-		 (nth 8 entry) (1+ indent) (1+ (nth 9 entry)) ": "))
-	      (setq hier-alist (cdr hier-alist)))
-	    ;; insert required packages
-	    (vhdl-speedbar-insert-subpackages
-	     subpack-alist (1+ indent) (1- indent))))
-	(when (memq 'display vhdl-speedbar-save-cache)
-	  (add-to-list 'vhdl-updated-project-list key))
-	(vhdl-speedbar-update-current-unit t t))))
-   ((string-match "-" text)		; contract architecture
+          (speedbar-change-expand-button-char ??)
+        (speedbar-change-expand-button-char ?-)
+        ;; add architecture to `vhdl-speedbar-shown-unit-alist'
+        (let* ((unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key))
+               (arch-alist (nth 0 (vhdl-aget unit-alist (car token)))))
+          (vhdl-aput 'unit-alist (car token)
+                     (list (cons (cdr token) arch-alist)))
+          (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist))
+        (speedbar-with-writable
+          (save-excursion
+            (end-of-line) (forward-char 1)
+            ;; insert instance hierarchy
+            (when hier-alist
+              (vhdl-speedbar-make-title-line "Subcomponent hierarchy:"
+                                             (1+ indent)))
+            (while hier-alist
+              (setq entry (car hier-alist))
+              (when (or (= vhdl-speedbar-hierarchy-depth 0)
+                        (< (nth 9 entry) vhdl-speedbar-hierarchy-depth))
+                (vhdl-speedbar-make-inst-line
+                 (nth 0 entry) (nth 1 entry) (nth 2 entry) (nth 3 entry)
+                 (nth 4 entry) (nth 5 entry) (nth 6 entry) (nth 7 entry)
+                 (nth 8 entry) (1+ indent) (1+ (nth 9 entry)) ": "))
+              (setq hier-alist (cdr hier-alist)))
+            ;; insert required packages
+            (vhdl-speedbar-insert-subpackages
+             subpack-alist (1+ indent) (1- indent))))
+        (when (memq 'display vhdl-speedbar-save-cache)
+          (add-to-list 'vhdl-updated-project-list key))
+        (vhdl-speedbar-update-current-unit t t))))
+   ((string-match "-" text)             ; contract architecture
     (speedbar-change-expand-button-char ?+)
     ;; remove architecture from `vhdl-speedbar-shown-unit-alist'
     (let* ((key (vhdl-speedbar-line-key (1- indent)))
-	   (unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key))
-	   (arch-alist (nth 0 (vhdl-aget unit-alist (car token)))))
+           (unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key))
+           (arch-alist (nth 0 (vhdl-aget unit-alist (car token)))))
       (vhdl-aput 'unit-alist (car token) (list (delete (cdr token) arch-alist)))
       (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist)
       (speedbar-delete-subblock indent)
       (when (memq 'display vhdl-speedbar-save-cache)
-	(add-to-list 'vhdl-updated-project-list key))))
+        (add-to-list 'vhdl-updated-project-list key))))
    (t (error "Nothing to display")))
   (when (equal (selected-frame) speedbar-frame)
     (speedbar-center-buffer-smartly)))
@@ -15272,57 +15279,57 @@ otherwise use cached data."
 (defun vhdl-speedbar-expand-config (text token indent)
   "Expand/contract the configuration under the cursor."
   (cond
-   ((string-match "+" text)		; expand configuration
+   ((string-match "+" text)             ; expand configuration
     (let* ((key (vhdl-speedbar-line-key indent))
-	   (conf-alist (vhdl-aget vhdl-config-alist key))
-	   (conf-entry (vhdl-aget conf-alist token))
-	   (ent-alist (vhdl-aget vhdl-entity-alist key))
-	   (hier-alist (vhdl-get-hierarchy
-			ent-alist conf-alist (nth 3 conf-entry)
-			(nth 4 conf-entry) token (nth 5 conf-entry)
-			0 indent t))
-	   (subpack-alist (nth 6 conf-entry))
-	   entry)
+           (conf-alist (vhdl-aget vhdl-config-alist key))
+           (conf-entry (vhdl-aget conf-alist token))
+           (ent-alist (vhdl-aget vhdl-entity-alist key))
+           (hier-alist (vhdl-get-hierarchy
+                        ent-alist conf-alist (nth 3 conf-entry)
+                        (nth 4 conf-entry) token (nth 5 conf-entry)
+                        0 indent t))
+           (subpack-alist (nth 6 conf-entry))
+           entry)
       (if (not (or hier-alist subpack-alist))
-	  (speedbar-change-expand-button-char ??)
-	(speedbar-change-expand-button-char ?-)
-	;; add configuration to `vhdl-speedbar-shown-unit-alist'
-	(let* ((unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key)))
-	  (vhdl-aput 'unit-alist token nil)
-	  (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist))
-	(speedbar-with-writable
-	 (save-excursion
-	   (end-of-line) (forward-char 1)
-	   ;; insert instance hierarchy
-	   (when hier-alist
-	     (vhdl-speedbar-make-title-line "Design hierarchy:" (1+ indent)))
-	   (while hier-alist
-	     (setq entry (car hier-alist))
-	     (when (or (= vhdl-speedbar-hierarchy-depth 0)
-		       (<= (nth 9 entry) vhdl-speedbar-hierarchy-depth))
-	       (vhdl-speedbar-make-inst-line
-		(nth 0 entry) (nth 1 entry) (nth 2 entry) (nth 3 entry)
-		(nth 4 entry) (nth 5 entry) (nth 6 entry) (nth 7 entry)
-		(nth 8 entry) (1+ indent) (nth 9 entry) ": "))
-	     (setq hier-alist (cdr hier-alist)))
-	   ;; insert required packages
-	   (vhdl-speedbar-insert-subpackages
-	    subpack-alist (1+ indent) indent)))
-	(when (memq 'display vhdl-speedbar-save-cache)
-	  (add-to-list 'vhdl-updated-project-list key))
-	(vhdl-speedbar-update-current-unit t t))))
-   ((string-match "-" text)		; contract configuration
+          (speedbar-change-expand-button-char ??)
+        (speedbar-change-expand-button-char ?-)
+        ;; add configuration to `vhdl-speedbar-shown-unit-alist'
+        (let* ((unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key)))
+          (vhdl-aput 'unit-alist token nil)
+          (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist))
+        (speedbar-with-writable
+         (save-excursion
+           (end-of-line) (forward-char 1)
+           ;; insert instance hierarchy
+           (when hier-alist
+             (vhdl-speedbar-make-title-line "Design hierarchy:" (1+ indent)))
+           (while hier-alist
+             (setq entry (car hier-alist))
+             (when (or (= vhdl-speedbar-hierarchy-depth 0)
+                       (<= (nth 9 entry) vhdl-speedbar-hierarchy-depth))
+               (vhdl-speedbar-make-inst-line
+                (nth 0 entry) (nth 1 entry) (nth 2 entry) (nth 3 entry)
+                (nth 4 entry) (nth 5 entry) (nth 6 entry) (nth 7 entry)
+                (nth 8 entry) (1+ indent) (nth 9 entry) ": "))
+             (setq hier-alist (cdr hier-alist)))
+           ;; insert required packages
+           (vhdl-speedbar-insert-subpackages
+            subpack-alist (1+ indent) indent)))
+        (when (memq 'display vhdl-speedbar-save-cache)
+          (add-to-list 'vhdl-updated-project-list key))
+        (vhdl-speedbar-update-current-unit t t))))
+   ((string-match "-" text)             ; contract configuration
     (speedbar-change-expand-button-char ?+)
     ;; remove configuration from `vhdl-speedbar-shown-unit-alist'
     (let* ((key (vhdl-speedbar-line-key indent))
-	   (unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key)))
+           (unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key)))
       (vhdl-adelete 'unit-alist token)
       (if unit-alist
-	  (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist)
-	(vhdl-adelete 'vhdl-speedbar-shown-unit-alist key))
+          (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist)
+        (vhdl-adelete 'vhdl-speedbar-shown-unit-alist key))
       (speedbar-delete-subblock indent)
       (when (memq 'display vhdl-speedbar-save-cache)
-	(add-to-list 'vhdl-updated-project-list key))))
+        (add-to-list 'vhdl-updated-project-list key))))
    (t (error "Nothing to display")))
   (when (equal (selected-frame) speedbar-frame)
     (speedbar-center-buffer-smartly)))
@@ -15330,69 +15337,69 @@ otherwise use cached data."
 (defun vhdl-speedbar-expand-package (text token indent)
   "Expand/contract the package under the cursor."
   (cond
-   ((string-match "+" text)		; expand package
+   ((string-match "+" text)             ; expand package
     (let* ((key (vhdl-speedbar-line-key indent))
-	   (pack-alist (vhdl-aget vhdl-package-alist key))
-	   (pack-entry (vhdl-aget pack-alist token))
-	   (comp-alist (nth 3 pack-entry))
-	   (func-alist (nth 4 pack-entry))
-	   (func-body-alist (nth 8 pack-entry))
-	   (subpack-alist (append (nth 5 pack-entry) (nth 9 pack-entry)))
-	   comp-entry func-entry func-body-entry)
+           (pack-alist (vhdl-aget vhdl-package-alist key))
+           (pack-entry (vhdl-aget pack-alist token))
+           (comp-alist (nth 3 pack-entry))
+           (func-alist (nth 4 pack-entry))
+           (func-body-alist (nth 8 pack-entry))
+           (subpack-alist (append (nth 5 pack-entry) (nth 9 pack-entry)))
+           comp-entry func-entry func-body-entry)
       (if (not (or comp-alist func-alist subpack-alist))
-	  (speedbar-change-expand-button-char ??)
-	(speedbar-change-expand-button-char ?-)
-	;; add package to `vhdl-speedbar-shown-unit-alist'
-	(let* ((unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key)))
-	  (vhdl-aput 'unit-alist token nil)
-	  (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist))
-	(speedbar-with-writable
-	  (save-excursion
-	    (end-of-line) (forward-char 1)
-	    ;; insert components
-	    (when comp-alist
-	      (vhdl-speedbar-make-title-line "Components:" (1+ indent)))
-	    (while comp-alist
-	      (setq comp-entry (car comp-alist))
-	      (speedbar-make-tag-line
-	       nil nil nil
-	       (cons token (nth 0 comp-entry))
-	       (nth 1 comp-entry) 'vhdl-speedbar-find-file
-	       (cons (nth 2 comp-entry) (nth 3 comp-entry))
-	       'vhdl-speedbar-entity-face (1+ indent))
-	      (setq comp-alist (cdr comp-alist)))
-	    ;; insert subprograms
-	    (when func-alist
-	      (vhdl-speedbar-make-title-line "Subprograms:" (1+ indent)))
-	    (while func-alist
-	      (setq func-entry (car func-alist)
-		    func-body-entry (vhdl-aget func-body-alist
-					       (car func-entry)))
-	      (when (nth 2 func-entry)
-		(vhdl-speedbar-make-subprogram-line
-		 (nth 1 func-entry)
-		 (cons (nth 2 func-entry) (nth 3 func-entry))
-		 (cons (nth 1 func-body-entry) (nth 2 func-body-entry))
-		 (1+ indent)))
-	      (setq func-alist (cdr func-alist)))
-	   ;; insert required packages
-	   (vhdl-speedbar-insert-subpackages
-	    subpack-alist (1+ indent) indent)))
-	(when (memq 'display vhdl-speedbar-save-cache)
-	  (add-to-list 'vhdl-updated-project-list key))
-	(vhdl-speedbar-update-current-unit t t))))
-   ((string-match "-" text)		; contract package
+          (speedbar-change-expand-button-char ??)
+        (speedbar-change-expand-button-char ?-)
+        ;; add package to `vhdl-speedbar-shown-unit-alist'
+        (let* ((unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key)))
+          (vhdl-aput 'unit-alist token nil)
+          (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist))
+        (speedbar-with-writable
+          (save-excursion
+            (end-of-line) (forward-char 1)
+            ;; insert components
+            (when comp-alist
+              (vhdl-speedbar-make-title-line "Components:" (1+ indent)))
+            (while comp-alist
+              (setq comp-entry (car comp-alist))
+              (speedbar-make-tag-line
+               nil nil nil
+               (cons token (nth 0 comp-entry))
+               (nth 1 comp-entry) 'vhdl-speedbar-find-file
+               (cons (nth 2 comp-entry) (nth 3 comp-entry))
+               'vhdl-speedbar-entity-face (1+ indent))
+              (setq comp-alist (cdr comp-alist)))
+            ;; insert subprograms
+            (when func-alist
+              (vhdl-speedbar-make-title-line "Subprograms:" (1+ indent)))
+            (while func-alist
+              (setq func-entry (car func-alist)
+                    func-body-entry (vhdl-aget func-body-alist
+                                               (car func-entry)))
+              (when (nth 2 func-entry)
+                (vhdl-speedbar-make-subprogram-line
+                 (nth 1 func-entry)
+                 (cons (nth 2 func-entry) (nth 3 func-entry))
+                 (cons (nth 1 func-body-entry) (nth 2 func-body-entry))
+                 (1+ indent)))
+              (setq func-alist (cdr func-alist)))
+           ;; insert required packages
+           (vhdl-speedbar-insert-subpackages
+            subpack-alist (1+ indent) indent)))
+        (when (memq 'display vhdl-speedbar-save-cache)
+          (add-to-list 'vhdl-updated-project-list key))
+        (vhdl-speedbar-update-current-unit t t))))
+   ((string-match "-" text)             ; contract package
     (speedbar-change-expand-button-char ?+)
     ;; remove package from `vhdl-speedbar-shown-unit-alist'
     (let* ((key (vhdl-speedbar-line-key indent))
-	   (unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key)))
+           (unit-alist (vhdl-aget vhdl-speedbar-shown-unit-alist key)))
       (vhdl-adelete 'unit-alist token)
       (if unit-alist
-	  (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist)
-	(vhdl-adelete 'vhdl-speedbar-shown-unit-alist key))
+          (vhdl-aput 'vhdl-speedbar-shown-unit-alist key unit-alist)
+        (vhdl-adelete 'vhdl-speedbar-shown-unit-alist key))
       (speedbar-delete-subblock indent)
       (when (memq 'display vhdl-speedbar-save-cache)
-	(add-to-list 'vhdl-updated-project-list key))))
+        (add-to-list 'vhdl-updated-project-list key))))
    (t (error "Nothing to display")))
   (when (equal (selected-frame) speedbar-frame)
     (speedbar-center-buffer-smartly)))
@@ -15400,13 +15407,13 @@ otherwise use cached data."
 (defun vhdl-speedbar-insert-subpackages (subpack-alist indent dir-indent)
   "Insert required packages."
   (let* ((pack-alist (vhdl-aget vhdl-package-alist
-				(vhdl-speedbar-line-key dir-indent)))
-	 pack-key lib-name pack-entry)
+                                (vhdl-speedbar-line-key dir-indent)))
+         pack-key lib-name pack-entry)
     (when subpack-alist
       (vhdl-speedbar-make-title-line "Packages Used:" indent))
     (while subpack-alist
       (setq pack-key (cdar subpack-alist)
-	    lib-name (caar subpack-alist))
+            lib-name (caar subpack-alist))
       (setq pack-entry (vhdl-aget pack-alist pack-key))
       (vhdl-speedbar-make-subpack-line
        (or (nth 0 pack-entry) pack-key) lib-name
@@ -15423,26 +15430,26 @@ otherwise use cached data."
 (defun vhdl-speedbar-update-current-project ()
   "Highlight project that is currently active."
   (when (and vhdl-speedbar-show-projects
-	     (not (equal vhdl-speedbar-last-selected-project vhdl-project))
-	     (and (boundp 'speedbar-frame)
-		  (frame-live-p speedbar-frame)))
+             (not (equal vhdl-speedbar-last-selected-project vhdl-project))
+             (and (boundp 'speedbar-frame)
+                  (frame-live-p speedbar-frame)))
     (let ((last-frame (selected-frame))
-	  (project-alist vhdl-project-alist)
-	  pos)
+          (project-alist vhdl-project-alist)
+          pos)
       (select-frame speedbar-frame)
       (speedbar-with-writable
        (save-excursion
-	 (while project-alist
-	   (goto-char (point-min))
-	   (when (re-search-forward
-		  (concat "<.> \\(" (caar project-alist) "\\)$") nil t)
-	     (put-text-property (match-beginning 1) (match-end 1) 'face
-				(if (equal (caar project-alist) vhdl-project)
-				    'speedbar-selected-face
-				  'speedbar-directory-face))
-	     (when (equal (caar project-alist) vhdl-project)
-	       (setq pos (1- (match-beginning 1)))))
-	   (setq project-alist (cdr project-alist))))
+         (while project-alist
+           (goto-char (point-min))
+           (when (re-search-forward
+                  (concat "<.> \\(" (caar project-alist) "\\)$") nil t)
+             (put-text-property (match-beginning 1) (match-end 1) 'face
+                                (if (equal (caar project-alist) vhdl-project)
+                                    'speedbar-selected-face
+                                  'speedbar-directory-face))
+             (when (equal (caar project-alist) vhdl-project)
+               (setq pos (1- (match-beginning 1)))))
+           (setq project-alist (cdr project-alist))))
        (when pos (goto-char pos)))
       (select-frame last-frame)
       (setq vhdl-speedbar-last-selected-project vhdl-project)))
@@ -15454,105 +15461,105 @@ otherwise use cached data."
   "Highlight all design units that are contained in the current file.
 NO-POSITION non-nil means do not re-position cursor."
   (let ((last-frame (selected-frame))
-	(project-list vhdl-speedbar-shown-project-list)
-	file-alist pos file-name)
+        (project-list vhdl-speedbar-shown-project-list)
+        file-alist pos file-name)
     ;; get current file name
     (if (fboundp 'speedbar-select-attached-frame)
-	(speedbar-select-attached-frame)
+        (speedbar-select-attached-frame)
       (select-frame speedbar-attached-frame))
     (setq file-name (abbreviate-file-name (or (buffer-file-name) "")))
     (when (and vhdl-speedbar-update-current-unit
-	       (or always (not (equal file-name speedbar-last-selected-file))))
+               (or always (not (equal file-name speedbar-last-selected-file))))
       (if vhdl-speedbar-show-projects
-	  (while project-list
-	    (setq file-alist (append file-alist
-				     (vhdl-aget vhdl-file-alist
-						(car project-list))))
-	    (setq project-list (cdr project-list)))
-	(setq file-alist
-	      (vhdl-aget vhdl-file-alist
-			 (abbreviate-file-name default-directory))))
+          (while project-list
+            (setq file-alist (append file-alist
+                                     (vhdl-aget vhdl-file-alist
+                                                (car project-list))))
+            (setq project-list (cdr project-list)))
+        (setq file-alist
+              (vhdl-aget vhdl-file-alist
+                         (abbreviate-file-name default-directory))))
       (select-frame speedbar-frame)
       (set-buffer speedbar-buffer)
       (speedbar-with-writable
        (vhdl-prepare-search-1
-	(save-excursion
-	  ;; unhighlight last units
-	  (let* ((file-entry (vhdl-aget file-alist
-					speedbar-last-selected-file)))
-	    (vhdl-speedbar-update-units
-	     "\\[.] " (nth 0 file-entry)
-	     speedbar-last-selected-file 'vhdl-speedbar-entity-face)
-	    (vhdl-speedbar-update-units
-	     "{.} " (nth 1 file-entry)
-	     speedbar-last-selected-file 'vhdl-speedbar-architecture-face)
-	    (vhdl-speedbar-update-units
-	     "\\[.] " (nth 3 file-entry)
-	     speedbar-last-selected-file 'vhdl-speedbar-configuration-face)
-	    (vhdl-speedbar-update-units
-	     "[]>] " (nth 4 file-entry)
-	     speedbar-last-selected-file 'vhdl-speedbar-package-face)
-	    (vhdl-speedbar-update-units
-	     "\\[.].+(" '("body")
-	     speedbar-last-selected-file 'vhdl-speedbar-package-face)
-	    (vhdl-speedbar-update-units
-	     "> " (nth 6 file-entry)
-	     speedbar-last-selected-file 'vhdl-speedbar-instantiation-face))
-	  ;; highlight current units
-	  (let* ((file-entry (vhdl-aget file-alist file-name)))
-	    (setq
-	     pos (vhdl-speedbar-update-units
-		  "\\[.] " (nth 0 file-entry)
-		  file-name 'vhdl-speedbar-entity-selected-face pos)
-	     pos (vhdl-speedbar-update-units
-		  "{.} " (nth 1 file-entry)
-		  file-name 'vhdl-speedbar-architecture-selected-face pos)
-	     pos (vhdl-speedbar-update-units
-		  "\\[.] " (nth 3 file-entry)
-		  file-name 'vhdl-speedbar-configuration-selected-face pos)
-	     pos (vhdl-speedbar-update-units
-		  "[]>] " (nth 4 file-entry)
-		  file-name 'vhdl-speedbar-package-selected-face pos)
-	     pos (vhdl-speedbar-update-units
-		  "\\[.].+(" '("body")
-		  file-name 'vhdl-speedbar-package-selected-face pos)
-	     pos (vhdl-speedbar-update-units
-		  "> " (nth 6 file-entry)
-		  file-name 'vhdl-speedbar-instantiation-selected-face pos))))))
+        (save-excursion
+          ;; unhighlight last units
+          (let* ((file-entry (vhdl-aget file-alist
+                                        speedbar-last-selected-file)))
+            (vhdl-speedbar-update-units
+             "\\[.] " (nth 0 file-entry)
+             speedbar-last-selected-file 'vhdl-speedbar-entity-face)
+            (vhdl-speedbar-update-units
+             "{.} " (nth 1 file-entry)
+             speedbar-last-selected-file 'vhdl-speedbar-architecture-face)
+            (vhdl-speedbar-update-units
+             "\\[.] " (nth 3 file-entry)
+             speedbar-last-selected-file 'vhdl-speedbar-configuration-face)
+            (vhdl-speedbar-update-units
+             "[]>] " (nth 4 file-entry)
+             speedbar-last-selected-file 'vhdl-speedbar-package-face)
+            (vhdl-speedbar-update-units
+             "\\[.].+(" '("body")
+             speedbar-last-selected-file 'vhdl-speedbar-package-face)
+            (vhdl-speedbar-update-units
+             "> " (nth 6 file-entry)
+             speedbar-last-selected-file 'vhdl-speedbar-instantiation-face))
+          ;; highlight current units
+          (let* ((file-entry (vhdl-aget file-alist file-name)))
+            (setq
+             pos (vhdl-speedbar-update-units
+                  "\\[.] " (nth 0 file-entry)
+                  file-name 'vhdl-speedbar-entity-selected-face pos)
+             pos (vhdl-speedbar-update-units
+                  "{.} " (nth 1 file-entry)
+                  file-name 'vhdl-speedbar-architecture-selected-face pos)
+             pos (vhdl-speedbar-update-units
+                  "\\[.] " (nth 3 file-entry)
+                  file-name 'vhdl-speedbar-configuration-selected-face pos)
+             pos (vhdl-speedbar-update-units
+                  "[]>] " (nth 4 file-entry)
+                  file-name 'vhdl-speedbar-package-selected-face pos)
+             pos (vhdl-speedbar-update-units
+                  "\\[.].+(" '("body")
+                  file-name 'vhdl-speedbar-package-selected-face pos)
+             pos (vhdl-speedbar-update-units
+                  "> " (nth 6 file-entry)
+                  file-name 'vhdl-speedbar-instantiation-selected-face pos))))))
       ;; move speedbar so the first highlighted unit is visible
       (when (and pos (not no-position))
-	(goto-char pos)
- 	(speedbar-center-buffer-smartly)
-	(speedbar-position-cursor-on-line))
+        (goto-char pos)
+        (speedbar-center-buffer-smartly)
+        (speedbar-position-cursor-on-line))
       (setq speedbar-last-selected-file file-name))
     (select-frame last-frame)
     t))
 
 (defun vhdl-speedbar-update-units (text unit-list file-name face
-					&optional pos)
+                                        &optional pos)
   "Help function to highlight design units."
   (while unit-list
     (goto-char (point-min))
     (while (re-search-forward
-	    (concat text "\\(" (car unit-list) "\\)\\>") nil t)
+            (concat text "\\(" (car unit-list) "\\)\\>") nil t)
       (when (equal file-name (car (get-text-property
-				   (match-beginning 1) 'speedbar-token)))
-	(setq pos (or pos (point-marker)))
-	(put-text-property (match-beginning 1) (match-end 1) 'face face)))
+                                   (match-beginning 1) 'speedbar-token)))
+        (setq pos (or pos (point-marker)))
+        (put-text-property (match-beginning 1) (match-end 1) 'face face)))
     (setq unit-list (cdr unit-list)))
   pos)
 
 (declare-function speedbar-make-button "speedbar"
-		  (start end face mouse function &optional token))
+                  (start end face mouse function &optional token))
 
 (defun vhdl-speedbar-make-inst-line (inst-name inst-file-marker
-					       ent-name ent-file-marker
-					       arch-name arch-file-marker
-					       conf-name conf-file-marker
-					       lib-name depth offset delimiter)
+                                               ent-name ent-file-marker
+                                               arch-name arch-file-marker
+                                               conf-name conf-file-marker
+                                               lib-name depth offset delimiter)
   "Insert instantiation entry."
   (let ((start (point))
-	visible-start)
+        visible-start)
     (insert (int-to-string depth) ":")
     (put-text-property start (point) 'invisible t)
     (setq visible-start (point))
@@ -15569,7 +15576,7 @@ NO-POSITION non-nil means do not re-position cursor."
     (insert " ")
     (setq start (point))
     (if (not inst-name)
-	(insert "(top)")
+        (insert "(top)")
       (insert inst-name)
       (speedbar-make-button
        start (point) 'vhdl-speedbar-instantiation-face 'speedbar-highlight-face
@@ -15582,34 +15589,34 @@ NO-POSITION non-nil means do not re-position cursor."
        start (point) 'vhdl-speedbar-entity-face 'speedbar-highlight-face
        'vhdl-speedbar-find-file ent-file-marker)
       (when arch-name
-	(insert " (")
-	(setq start (point))
-	(insert arch-name)
-	(speedbar-make-button
-	 start (point) 'vhdl-speedbar-architecture-face 'speedbar-highlight-face
-	 'vhdl-speedbar-find-file arch-file-marker)
-	(insert ")"))
+        (insert " (")
+        (setq start (point))
+        (insert arch-name)
+        (speedbar-make-button
+         start (point) 'vhdl-speedbar-architecture-face 'speedbar-highlight-face
+         'vhdl-speedbar-find-file arch-file-marker)
+        (insert ")"))
       (when conf-name
-	(insert " (")
-	(setq start (point))
-	(insert conf-name)
-	(speedbar-make-button
-	 start (point) 'vhdl-speedbar-configuration-face 'speedbar-highlight-face
-	 'vhdl-speedbar-find-file conf-file-marker)
-	(insert ")")))
+        (insert " (")
+        (setq start (point))
+        (insert conf-name)
+        (speedbar-make-button
+         start (point) 'vhdl-speedbar-configuration-face 'speedbar-highlight-face
+         'vhdl-speedbar-find-file conf-file-marker)
+        (insert ")")))
     (when (and lib-name (not (equal lib-name (downcase (vhdl-work-library)))))
       (setq start (point))
       (insert " (" lib-name ")")
       (put-text-property (+ 2 start) (1- (point)) 'face
-			 'vhdl-speedbar-library-face))
+                         'vhdl-speedbar-library-face))
     (insert-char ?\n 1)
     (put-text-property visible-start (point) 'invisible nil)))
 
 (defun vhdl-speedbar-make-pack-line (pack-key pack-name pack-file-marker
-					      body-file-marker depth)
+                                              body-file-marker depth)
   "Insert package entry."
   (let ((start (point))
-	visible-start)
+        visible-start)
     (insert (int-to-string depth) ":")
     (put-text-property start (point) 'invisible t)
     (setq visible-start (point))
@@ -15641,10 +15648,10 @@ NO-POSITION non-nil means do not re-position cursor."
     (put-text-property visible-start (point) 'invisible nil)))
 
 (defun vhdl-speedbar-make-subpack-line (pack-name lib-name pack-file-marker
-						  pack-body-file-marker depth)
+                                                  pack-body-file-marker depth)
   "Insert used package entry."
   (let ((start (point))
-	visible-start)
+        visible-start)
     (insert (int-to-string depth) ":")
     (put-text-property start (point) 'invisible t)
     (setq visible-start (point))
@@ -15671,16 +15678,16 @@ NO-POSITION non-nil means do not re-position cursor."
     (setq start (point))
     (insert " (" lib-name ")")
     (put-text-property (+ 2 start) (1- (point)) 'face
-		       'vhdl-speedbar-library-face)
+                       'vhdl-speedbar-library-face)
     (insert-char ?\n 1)
     (put-text-property visible-start (point) 'invisible nil)))
 
 (defun vhdl-speedbar-make-subprogram-line (func-name func-file-marker
-						     func-body-file-marker
-						     depth)
+                                                     func-body-file-marker
+                                                     depth)
   "Insert subprogram entry."
   (let ((start (point))
-	visible-start)
+        visible-start)
     (insert (int-to-string depth) ":")
     (put-text-property start (point) 'invisible t)
     (setq visible-start (point))
@@ -15710,7 +15717,7 @@ NO-POSITION non-nil means do not re-position cursor."
 (defun vhdl-speedbar-make-title-line (text &optional depth)
   "Insert design unit title entry."
   (let ((start (point))
-	visible-start)
+        visible-start)
     (when depth
       (insert (int-to-string depth) ":")
       (put-text-property start (point) 'invisible t))
@@ -15727,48 +15734,48 @@ NO-POSITION non-nil means do not re-position cursor."
   (let ((dirs (car files)))
     (while dirs
       (speedbar-make-tag-line 'angle ?+ 'vhdl-speedbar-dired (car dirs)
-			      (car dirs) 'speedbar-dir-follow nil
-			      'speedbar-directory-face level)
+                              (car dirs) 'speedbar-dir-follow nil
+                              'speedbar-directory-face level)
       (setq dirs (cdr dirs)))))
 
 (declare-function speedbar-reset-scanners "speedbar" ())
 
 (defun vhdl-speedbar-dired (text token indent)
   "Speedbar click handler for directory expand button in hierarchy mode."
-  (cond ((string-match "+" text)	; we have to expand this dir
-	 (setq speedbar-shown-directories
-	       (cons (expand-file-name
-		      (concat (speedbar-line-directory indent) token "/"))
-		     speedbar-shown-directories))
-  	 (speedbar-change-expand-button-char ?-)
-	 (speedbar-reset-scanners)
-	 (speedbar-with-writable
-	   (save-excursion
-	     (end-of-line) (forward-char 1)
-	     (vhdl-speedbar-insert-dirs
-	      (speedbar-file-lists
-	       (concat (speedbar-line-directory indent) token "/"))
-	      (1+ indent))
-	     (speedbar-reset-scanners)
-	     (vhdl-speedbar-insert-dir-hierarchy
-	      (abbreviate-file-name
-	       (concat (speedbar-line-directory indent) token "/"))
-	      (1+ indent) speedbar-power-click)))
-	 (vhdl-speedbar-update-current-unit t t))
-	((string-match "-" text)	; we have to contract this node
-	 (speedbar-reset-scanners)
-	 (let ((oldl speedbar-shown-directories)
-	       (newl nil)
-	       (td (expand-file-name
-		    (concat (speedbar-line-directory indent) token))))
-	   (while oldl
-	     (if (not (string-match (concat "^" (regexp-quote td)) (car oldl)))
-		 (push (car oldl) newl))
-	     (setq oldl (cdr oldl)))
-	   (setq speedbar-shown-directories (nreverse newl)))
-	 (speedbar-change-expand-button-char ?+)
-	 (speedbar-delete-subblock indent))
-	(t (error "Nothing to display")))
+  (cond ((string-match "+" text)        ; we have to expand this dir
+         (setq speedbar-shown-directories
+               (cons (expand-file-name
+                      (concat (speedbar-line-directory indent) token "/"))
+                     speedbar-shown-directories))
+         (speedbar-change-expand-button-char ?-)
+         (speedbar-reset-scanners)
+         (speedbar-with-writable
+           (save-excursion
+             (end-of-line) (forward-char 1)
+             (vhdl-speedbar-insert-dirs
+              (speedbar-file-lists
+               (concat (speedbar-line-directory indent) token "/"))
+              (1+ indent))
+             (speedbar-reset-scanners)
+             (vhdl-speedbar-insert-dir-hierarchy
+              (abbreviate-file-name
+               (concat (speedbar-line-directory indent) token "/"))
+              (1+ indent) speedbar-power-click)))
+         (vhdl-speedbar-update-current-unit t t))
+        ((string-match "-" text)        ; we have to contract this node
+         (speedbar-reset-scanners)
+         (let ((oldl speedbar-shown-directories)
+               (newl nil)
+               (td (expand-file-name
+                    (concat (speedbar-line-directory indent) token))))
+           (while oldl
+             (if (not (string-match (concat "^" (regexp-quote td)) (car oldl)))
+                 (push (car oldl) newl))
+             (setq oldl (cdr oldl)))
+           (setq speedbar-shown-directories (nreverse newl)))
+         (speedbar-change-expand-button-char ?+)
+         (speedbar-delete-subblock indent))
+        (t (error "Nothing to display")))
   (when (equal (selected-frame) speedbar-frame)
     (speedbar-center-buffer-smartly)))
 
@@ -15784,42 +15791,42 @@ NO-POSITION non-nil means do not re-position cursor."
      ;; project/directory entry
      ((looking-at "\\s-*<[-+?]>\\s-+\\([^\n]+\\)$")
       (if vhdl-speedbar-show-projects
-	  (message "Project \"%s\"" (match-string-no-properties 1))
-	(speedbar-files-item-info)))
+          (message "Project \"%s\"" (match-string-no-properties 1))
+        (speedbar-files-item-info)))
      ;; design unit entry
      ((looking-at "\\(\\s-*\\([[{][-+?][]}]\\|[| -]*>\\) \\)\"?\\w")
       (goto-char (match-end 1))
       (let ((face (get-text-property (point) 'face)))
-	(message
-	 "%s \"%s\" in \"%s\""
-	 ;; design unit kind
-	 (cond ((or (eq face 'vhdl-speedbar-entity-face)
-		    (eq face 'vhdl-speedbar-entity-selected-face))
-		(if (equal (match-string 2) ">") "Component" "Entity"))
-	       ((or (eq face 'vhdl-speedbar-architecture-face)
-		    (eq face 'vhdl-speedbar-architecture-selected-face))
-		"Architecture")
-	       ((or (eq face 'vhdl-speedbar-configuration-face)
-		    (eq face 'vhdl-speedbar-configuration-selected-face))
-		"Configuration")
-	       ((or (eq face 'vhdl-speedbar-package-face)
-		    (eq face 'vhdl-speedbar-package-selected-face))
-		"Package")
-	       ((or (eq face 'vhdl-speedbar-instantiation-face)
-		    (eq face 'vhdl-speedbar-instantiation-selected-face))
-		"Instantiation")
-	       ((eq face 'vhdl-speedbar-subprogram-face)
-		"Subprogram")
-	       (t ""))
-	 ;; design unit name
-	 (buffer-substring-no-properties
-	  (progn (looking-at "\"?\\(\\(\\w\\|_\\)+\\)\"?") (match-beginning 1))
-	  (match-end 1))
-	 ;; file name
-	 (file-relative-name
-	  (or (car (get-text-property (point) 'speedbar-token))
-	      "?")
-	  (vhdl-default-directory)))))
+        (message
+         "%s \"%s\" in \"%s\""
+         ;; design unit kind
+         (cond ((or (eq face 'vhdl-speedbar-entity-face)
+                    (eq face 'vhdl-speedbar-entity-selected-face))
+                (if (equal (match-string 2) ">") "Component" "Entity"))
+               ((or (eq face 'vhdl-speedbar-architecture-face)
+                    (eq face 'vhdl-speedbar-architecture-selected-face))
+                "Architecture")
+               ((or (eq face 'vhdl-speedbar-configuration-face)
+                    (eq face 'vhdl-speedbar-configuration-selected-face))
+                "Configuration")
+               ((or (eq face 'vhdl-speedbar-package-face)
+                    (eq face 'vhdl-speedbar-package-selected-face))
+                "Package")
+               ((or (eq face 'vhdl-speedbar-instantiation-face)
+                    (eq face 'vhdl-speedbar-instantiation-selected-face))
+                "Instantiation")
+               ((eq face 'vhdl-speedbar-subprogram-face)
+                "Subprogram")
+               (t ""))
+         ;; design unit name
+         (buffer-substring-no-properties
+          (progn (looking-at "\"?\\(\\(\\w\\|_\\)+\\)\"?") (match-beginning 1))
+          (match-end 1))
+         ;; file name
+         (file-relative-name
+          (or (car (get-text-property (point) 'speedbar-token))
+              "?")
+          (vhdl-default-directory)))))
      (t (message "")))))
 
 (declare-function speedbar-line-text "speedbar" (&optional p))
@@ -15838,9 +15845,9 @@ NO-POSITION non-nil means do not re-position cursor."
       (looking-at "^\\([0-9]+\\):")
       (setq depth (string-to-number (match-string 1)))
       (when (re-search-backward (format "^%d: *[[<{][-+?][]>}] \\([^ \n]+\\)" (1- depth)) nil t)
-	(setq string (match-string 1))
-	(set-text-properties 0 (length string) nil string)
-	string))))
+        (setq string (match-string 1))
+        (set-text-properties 0 (length string) nil string)
+        string))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Help functions
@@ -15856,9 +15863,9 @@ NO-POSITION non-nil means do not re-position cursor."
   "Get currently displayed project name."
   (and vhdl-speedbar-show-projects
        (save-excursion
-	 (end-of-line)
-	 (re-search-backward "^[0-9]+:\\s-*<[-+?]>\\s-+\\([^\n]+\\)$" nil t)
-	 (match-string-no-properties 1))))
+         (end-of-line)
+         (re-search-backward "^[0-9]+:\\s-*<[-+?]>\\s-+\\([^\n]+\\)$" nil t)
+         (match-string-no-properties 1))))
 
 (defun vhdl-add-modified-file ()
   "Add file to `vhdl-modified-file-list'."
@@ -15874,47 +15881,47 @@ NO-POSITION non-nil means do not re-position cursor."
       (setq dir (car path-list))
       (string-match "\\(-r \\)?\\(\\([^?*]*[/\\]\\)*\\)" dir)
       (if (file-directory-p (match-string 2 dir))
-	  (push dir path-list-1)
-	(vhdl-warning-when-idle "No such directory: \"%s\"" (match-string 2 dir)))
+          (push dir path-list-1)
+        (vhdl-warning-when-idle "No such directory: \"%s\"" (match-string 2 dir)))
       (setq path-list (cdr path-list)))
     ;; resolve path wildcards
     (while path-list-1
       (setq dir (car path-list-1))
       (if (string-match "\\(-r \\)?\\(\\([^?*]*[/\\]\\)*\\)\\([^/\\]*[?*][^/\\]*\\)\\([/\\].*\\)" dir)
-	  (progn
-	    (setq path-beg (match-string 1 dir)
-		  path-end (match-string 5 dir))
-	    (setq path-list-1
-		  (append
-		   (mapcar
-		    (function
-		     (lambda (var) (concat path-beg var path-end)))
-		    (let ((all-list (vhdl-directory-files
-				     (match-string 2 dir) t
-				     (concat "\\<" (wildcard-to-regexp
-						    (match-string 4 dir)))))
-			  dir-list)
-		      (while all-list
-			(when (file-directory-p (car all-list))
-			  (push (car all-list) dir-list))
-			(setq all-list (cdr all-list)))
-		      dir-list))
-		   (cdr path-list-1))))
-	(string-match "\\(-r \\)?\\(.*\\)[/\\].*" dir)
-	(when (file-directory-p (match-string 2 dir))
-	  (push dir path-list-2))
-	(setq path-list-1 (cdr path-list-1))))
+          (progn
+            (setq path-beg (match-string 1 dir)
+                  path-end (match-string 5 dir))
+            (setq path-list-1
+                  (append
+                   (mapcar
+                    (function
+                     (lambda (var) (concat path-beg var path-end)))
+                    (let ((all-list (vhdl-directory-files
+                                     (match-string 2 dir) t
+                                     (concat "\\<" (wildcard-to-regexp
+                                                    (match-string 4 dir)))))
+                          dir-list)
+                      (while all-list
+                        (when (file-directory-p (car all-list))
+                          (push (car all-list) dir-list))
+                        (setq all-list (cdr all-list)))
+                      dir-list))
+                   (cdr path-list-1))))
+        (string-match "\\(-r \\)?\\(.*\\)[/\\].*" dir)
+        (when (file-directory-p (match-string 2 dir))
+          (push dir path-list-2))
+        (setq path-list-1 (cdr path-list-1))))
     (nreverse path-list-2)))
 
 (defun vhdl-speedbar-goto-this-unit (directory unit)
   "If UNIT is displayed in DIRECTORY, goto this line and return t, else nil."
   (let ((dest (point)))
     (if (and (if vhdl-speedbar-show-projects
-		 (progn (goto-char (point-min)) t)
-	       (speedbar-goto-this-file directory))
-	     (re-search-forward (concat "[]}] " unit "\\>") nil t))
-	(progn (speedbar-position-cursor-on-line)
-	       t)
+                 (progn (goto-char (point-min)) t)
+               (speedbar-goto-this-file directory))
+             (re-search-forward (concat "[]}] " unit "\\>") nil t))
+        (progn (speedbar-position-cursor-on-line)
+               t)
       (goto-char dest)
       nil)))
 
@@ -15932,9 +15939,9 @@ is already shown in a buffer."
     (let ((buffer (get-file-buffer (car token))))
       (speedbar-find-file-in-frame (car token))
       (when (or vhdl-speedbar-jump-to-unit buffer)
-	(goto-char (point-min))
-	(forward-line (1- (cdr token)))
-	(recenter))
+        (goto-char (point-min))
+        (forward-line (1- (cdr token)))
+        (recenter))
       (vhdl-speedbar-update-current-unit t t)
       (speedbar-set-timer dframe-update-speed)
       (dframe-maybee-jump-to-attached-frame))))
@@ -15944,22 +15951,22 @@ is already shown in a buffer."
   (interactive)
   (let ((is-entity (vhdl-speedbar-check-unit 'entity)))
     (if (not (or is-entity (vhdl-speedbar-check-unit 'subprogram)))
-	(error "ERROR:  No entity/component or subprogram under cursor")
+        (error "ERROR:  No entity/component or subprogram under cursor")
       (beginning-of-line)
       (if (looking-at "\\([0-9]\\)+:\\s-*\\(\\[[-+?]]\\|>\\) \\(\\(\\w\\|\\s_\\)+\\)")
-	  (condition-case info
-	      (let ((token (get-text-property
-			    (match-beginning 3) 'speedbar-token)))
-		(vhdl-visit-file (car token) t
-				 (progn (goto-char (point-min))
-					(forward-line (1- (cdr token)))
-					(end-of-line)
-					(if is-entity
-					    (vhdl-port-copy)
-					  (vhdl-subprog-copy)))))
-	    (error (error "ERROR:  %s not scanned successfully\n  (%s)"
-			  (if is-entity "Port" "Interface") (cadr info))))
-	(error "ERROR:  No entity/component or subprogram on current line")))))
+          (condition-case info
+              (let ((token (get-text-property
+                            (match-beginning 3) 'speedbar-token)))
+                (vhdl-visit-file (car token) t
+                                 (progn (goto-char (point-min))
+                                        (forward-line (1- (cdr token)))
+                                        (end-of-line)
+                                        (if is-entity
+                                            (vhdl-port-copy)
+                                          (vhdl-subprog-copy)))))
+            (error (error "ERROR:  %s not scanned successfully\n  (%s)"
+                          (if is-entity "Port" "Interface") (cadr info))))
+        (error "ERROR:  No entity/component or subprogram on current line")))))
 
 (defun vhdl-speedbar-place-component ()
   "Place the entity/component under the cursor as component."
@@ -15968,7 +15975,7 @@ is already shown in a buffer."
       (error "ERROR:  No entity/component under cursor")
     (vhdl-speedbar-port-copy)
     (if (fboundp 'speedbar-select-attached-frame)
-	(speedbar-select-attached-frame)
+        (speedbar-select-attached-frame)
       (select-frame speedbar-attached-frame))
     (vhdl-compose-place-component)
     (select-frame speedbar-frame)))
@@ -15979,10 +15986,10 @@ is already shown in a buffer."
   (if (not (vhdl-speedbar-check-unit 'architecture))
       (error "ERROR:  No architecture under cursor")
     (let ((arch-name (vhdl-speedbar-line-text))
-	  (ent-name (vhdl-speedbar-higher-text)))
+          (ent-name (vhdl-speedbar-higher-text)))
       (if (fboundp 'speedbar-select-attached-frame)
-	  (speedbar-select-attached-frame)
-	(select-frame speedbar-attached-frame))
+          (speedbar-select-attached-frame)
+        (select-frame speedbar-attached-frame))
       (vhdl-compose-configuration ent-name arch-name))))
 
 (defun vhdl-speedbar-select-mra ()
@@ -15991,12 +15998,12 @@ is already shown in a buffer."
   (if (not (vhdl-speedbar-check-unit 'architecture))
       (error "ERROR:  No architecture under cursor")
     (let* ((arch-key (downcase (vhdl-speedbar-line-text)))
-	   (ent-key (downcase (vhdl-speedbar-higher-text)))
-	   (ent-alist (vhdl-aget
-		       vhdl-entity-alist
-		       (or (vhdl-project-p)
-			   (abbreviate-file-name default-directory))))
-	   (ent-entry (vhdl-aget ent-alist ent-key)))
+           (ent-key (downcase (vhdl-speedbar-higher-text)))
+           (ent-alist (vhdl-aget
+                       vhdl-entity-alist
+                       (or (vhdl-project-p)
+                           (abbreviate-file-name default-directory))))
+           (ent-entry (vhdl-aget ent-alist ent-key)))
       (setcar (cddr (cddr ent-entry)) arch-key) ; (nth 4 ent-entry)
       (speedbar-refresh))))
 
@@ -16006,25 +16013,25 @@ is already shown in a buffer."
   "Make (compile) design unit or directory/project under the cursor."
   (interactive)
   (if (not (save-excursion (beginning-of-line)
-			   (looking-at "[0-9]+: *\\(\\(\\[\\)\\|<\\)")))
+                           (looking-at "[0-9]+: *\\(\\(\\[\\)\\|<\\)")))
       (error "ERROR:  No primary design unit or directory/project under cursor")
     (let ((is-unit (match-string 2))
-	  (unit-name (vhdl-speedbar-line-text))
-	  (vhdl-project (vhdl-speedbar-line-project))
-	  (directory (file-name-as-directory
-		      (or (speedbar-line-file) (speedbar-line-directory)))))
+          (unit-name (vhdl-speedbar-line-text))
+          (vhdl-project (vhdl-speedbar-line-project))
+          (directory (file-name-as-directory
+                      (or (speedbar-line-file) (speedbar-line-directory)))))
       (if (fboundp 'speedbar-select-attached-frame)
-	  (speedbar-select-attached-frame)
-	(select-frame speedbar-attached-frame))
+          (speedbar-select-attached-frame)
+        (select-frame speedbar-attached-frame))
       (let ((default-directory directory))
-	(vhdl-make (and is-unit unit-name))))))
+        (vhdl-make (and is-unit unit-name))))))
 
 (defun vhdl-speedbar-generate-makefile ()
   "Generate Makefile for directory/project under the cursor."
   (interactive)
   (let ((vhdl-project (vhdl-speedbar-line-project))
-	(default-directory (file-name-as-directory
-			    (or (speedbar-line-file) (speedbar-line-directory)))))
+        (default-directory (file-name-as-directory
+                            (or (speedbar-line-file) (speedbar-line-directory)))))
     (vhdl-generate-makefile)))
 
 (defun vhdl-speedbar-check-unit (design-unit)
@@ -16033,17 +16040,17 @@ expansion function)."
     (save-excursion
       (speedbar-position-cursor-on-line)
       (cond ((eq design-unit 'entity)
-	     (memq (get-text-property (match-end 0) 'face)
-		   '(vhdl-speedbar-entity-face
-		     vhdl-speedbar-entity-selected-face)))
-	    ((eq design-unit 'architecture)
-	     (memq (get-text-property (match-end 0) 'face)
-		   '(vhdl-speedbar-architecture-face
-		     vhdl-speedbar-architecture-selected-face)))
-	    ((eq design-unit 'subprogram)
-	     (eq (get-text-property (match-end 0) 'face)
-		 'vhdl-speedbar-subprogram-face))
-	    (t nil))))
+             (memq (get-text-property (match-end 0) 'face)
+                   '(vhdl-speedbar-entity-face
+                     vhdl-speedbar-entity-selected-face)))
+            ((eq design-unit 'architecture)
+             (memq (get-text-property (match-end 0) 'face)
+                   '(vhdl-speedbar-architecture-face
+                     vhdl-speedbar-architecture-selected-face)))
+            ((eq design-unit 'subprogram)
+             (eq (get-text-property (match-end 0) 'face)
+                 'vhdl-speedbar-subprogram-face))
+            (t nil))))
 
 (defun vhdl-speedbar-set-depth (depth)
   "Set hierarchy display depth to DEPTH and refresh speedbar."
@@ -16137,10 +16144,10 @@ expansion function)."
 (when (fboundp 'speedbar)
   (let ((current-frame (selected-frame)))
     (condition-case ()
-	(when (and vhdl-speedbar-auto-open
-		   (not (and (boundp 'speedbar-frame)
-			     (frame-live-p speedbar-frame))))
-	  (speedbar-frame-mode 1))
+        (when (and vhdl-speedbar-auto-open
+                   (not (and (boundp 'speedbar-frame)
+                             (frame-live-p speedbar-frame))))
+          (speedbar-frame-mode 1))
       (error (vhdl-warning-when-idle "ERROR:  An error occurred while opening speedbar")))
     (select-frame current-frame)))
 
@@ -16159,47 +16166,47 @@ expansion function)."
   "Return the name of the components package."
   (let ((project (vhdl-project-p)))
     (if project
-	(vhdl-replace-string (car vhdl-components-package-name)
-			     (subst-char-in-string ?  ?_ project))
+        (vhdl-replace-string (car vhdl-components-package-name)
+                             (subst-char-in-string ?  ?_ project))
       (cdr vhdl-components-package-name))))
 
 (defun vhdl-compose-new-component ()
   "Create entity and architecture for new component."
   (interactive)
   (let* ((case-fold-search t)
-	 (ent-name (read-from-minibuffer "entity name: "
-					 nil vhdl-minibuffer-local-map))
-	 (arch-name
-	  (if (equal (cdr vhdl-compose-architecture-name) "")
-	      (read-from-minibuffer "architecture name: "
-				    nil vhdl-minibuffer-local-map)
-	    (vhdl-replace-string vhdl-compose-architecture-name ent-name)))
-	 ent-file-name arch-file-name ent-buffer arch-buffer project end-pos)
+         (ent-name (read-from-minibuffer "entity name: "
+                                         nil vhdl-minibuffer-local-map))
+         (arch-name
+          (if (equal (cdr vhdl-compose-architecture-name) "")
+              (read-from-minibuffer "architecture name: "
+                                    nil vhdl-minibuffer-local-map)
+            (vhdl-replace-string vhdl-compose-architecture-name ent-name)))
+         ent-file-name arch-file-name ent-buffer arch-buffer project end-pos)
     (message "Creating component \"%s(%s)\"..." ent-name arch-name)
     ;; open entity file
     (unless (eq vhdl-compose-create-files 'none)
       (setq ent-file-name
-	    (concat (vhdl-replace-string vhdl-entity-file-name ent-name t)
-		    "." (file-name-extension (buffer-file-name))))
+            (concat (vhdl-replace-string vhdl-entity-file-name ent-name t)
+                    "." (file-name-extension (buffer-file-name))))
       (when (and (file-exists-p ent-file-name)
-		 (not (y-or-n-p (concat "File \"" ent-file-name
-					"\" exists; overwrite? "))))
-	(error "ERROR:  Creating component...aborted"))
+                 (not (y-or-n-p (concat "File \"" ent-file-name
+                                        "\" exists; overwrite? "))))
+        (error "ERROR:  Creating component...aborted"))
       (find-file ent-file-name)
       (erase-buffer)
       (set-buffer-modified-p nil))
     ;; insert header
     (if vhdl-compose-include-header
-	(progn (vhdl-template-header)
-	       (setq end-pos (point))
-	       (goto-char (point-max)))
+        (progn (vhdl-template-header)
+               (setq end-pos (point))
+               (goto-char (point-max)))
       (vhdl-comment-display-line) (insert "\n\n"))
     ;; insert library clause
     (vhdl-template-package-std-logic-1164)
     (when vhdl-use-components-package
       (insert "\n")
       (vhdl-template-standard-package (vhdl-work-library)
-				      (vhdl-get-components-package-name)))
+                                      (vhdl-get-components-package-name)))
     (insert "\n\n") (vhdl-comment-display-line) (insert "\n\n")
     ;; insert entity declaration
     (vhdl-insert-keyword "ENTITY ") (insert ent-name)
@@ -16217,25 +16224,25 @@ expansion function)."
     (vhdl-comment-display-line) (insert "\n")
     ;; open architecture file
     (if (not (eq vhdl-compose-create-files 'separate))
-	(insert "\n")
+        (insert "\n")
       (goto-char (or end-pos (point-min)))
       (setq ent-buffer (current-buffer))
       (setq arch-file-name
-	    (concat (vhdl-replace-string vhdl-architecture-file-name
-					 (concat ent-name " " arch-name) t)
-		    "." (file-name-extension (buffer-file-name))))
+            (concat (vhdl-replace-string vhdl-architecture-file-name
+                                         (concat ent-name " " arch-name) t)
+                    "." (file-name-extension (buffer-file-name))))
       (when (and (file-exists-p arch-file-name)
-		 (not (y-or-n-p (concat "File \"" arch-file-name
-					"\" exists; overwrite? "))))
-	(error "ERROR:  Creating component...aborted"))
+                 (not (y-or-n-p (concat "File \"" arch-file-name
+                                        "\" exists; overwrite? "))))
+        (error "ERROR:  Creating component...aborted"))
       (find-file arch-file-name)
       (erase-buffer)
       (set-buffer-modified-p nil)
       ;; insert header
       (if vhdl-compose-include-header
-	  (progn (vhdl-template-header)
-		 (goto-char (point-max)))
-	(vhdl-comment-display-line) (insert "\n\n")))
+          (progn (vhdl-template-header)
+                 (goto-char (point-max)))
+        (vhdl-comment-display-line) (insert "\n\n")))
     ;; insert architecture body
     (vhdl-insert-keyword "ARCHITECTURE ") (insert arch-name)
     (vhdl-insert-keyword " OF ") (insert ent-name)
@@ -16261,7 +16268,7 @@ expansion function)."
     (insert arch-name ";\n\n")
     ;; insert footer and save
     (if (and vhdl-compose-include-header (not (equal vhdl-file-footer "")))
-	(vhdl-template-footer)
+        (vhdl-template-footer)
       (vhdl-comment-display-line) (insert "\n"))
     (goto-char (or end-pos (point-min)))
     (setq arch-buffer (current-buffer))
@@ -16269,10 +16276,10 @@ expansion function)."
     (set-buffer arch-buffer) (save-buffer)
     (message "%s"
      (concat (format "Creating component \"%s(%s)\"...done" ent-name arch-name)
-	     (and ent-file-name
-		  (format "\n  File created: \"%s\"" ent-file-name))
-	     (and arch-file-name
-		  (format "\n  File created: \"%s\"" arch-file-name))))))
+             (and ent-file-name
+                  (format "\n  File created: \"%s\"" ent-file-name))
+             (and arch-file-name
+                  (format "\n  File created: \"%s\"" arch-file-name))))))
 
 (defun vhdl-compose-place-component ()
   "Place new component by pasting current port as component declaration and
@@ -16283,51 +16290,51 @@ component instantiation."
     (save-excursion
       (vhdl-prepare-search-2
        (unless (or (re-search-backward "^architecture[ \t\n\r\f]+\\w+[ \t\n\r\f]+of[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t)
-		   (re-search-forward "^architecture[ \t\n\r\f]+\\w+[ \t\n\r\f]+of[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t))
-	 (error "ERROR:  No architecture found"))
+                   (re-search-forward "^architecture[ \t\n\r\f]+\\w+[ \t\n\r\f]+of[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t))
+         (error "ERROR:  No architecture found"))
        (let* ((ent-name (match-string 1))
-	      (ent-file-name
-	       (concat (vhdl-replace-string vhdl-entity-file-name ent-name t)
-		       "." (file-name-extension (buffer-file-name))))
-	      (orig-buffer (current-buffer)))
-	 (message "Placing component \"%s\"..." (nth 0 vhdl-port-list))
-	 ;; place component declaration
-	 (unless (or vhdl-use-components-package
-		     (vhdl-use-direct-instantiation)
-		     (save-excursion
-		       (re-search-forward
-			(concat "^\\s-*component\\s-+"
-				(car vhdl-port-list) "\\>") nil t)))
-	   (re-search-forward "^begin\\>" nil)
-	   (beginning-of-line)
-	   (skip-chars-backward " \t\n\r\f")
-	   (insert "\n\n") (indent-to vhdl-basic-offset)
-	   (vhdl-port-paste-component t))
-	 ;; place component instantiation
-	 (re-search-forward "^end\\>" nil)
-	 (beginning-of-line)
-	 (skip-chars-backward " \t\n\r\f")
-	 (insert "\n\n") (indent-to vhdl-basic-offset)
-	 (vhdl-port-paste-instance nil t t)
-	 ;; place use clause for used packages
-	 (when (nth 3 vhdl-port-list)
-	   ;; open entity file
-	   (when (file-exists-p ent-file-name)
-	     (find-file ent-file-name))
-	   (goto-char (point-min))
-	   (unless (re-search-forward (concat "^entity[ \t\n\r\f]+" ent-name "[ \t\n\r\f]+is\\>") nil t)
-	     (error "ERROR:  Entity not found: \"%s\"" ent-name))
-	   (goto-char (match-beginning 0))
-	   (if (and (save-excursion
-		      (re-search-backward "^\\(library\\|use\\)\\|end\\>" nil t))
-		    (match-string 1))
-	       (progn (goto-char (match-end 0))
-		      (beginning-of-line 2))
-	     (insert "\n")
-	     (backward-char))
-	   (vhdl-port-paste-context-clause)
-	   (switch-to-buffer orig-buffer))
-	 (message "Placing component \"%s\"...done" (nth 0 vhdl-port-list)))))))
+              (ent-file-name
+               (concat (vhdl-replace-string vhdl-entity-file-name ent-name t)
+                       "." (file-name-extension (buffer-file-name))))
+              (orig-buffer (current-buffer)))
+         (message "Placing component \"%s\"..." (nth 0 vhdl-port-list))
+         ;; place component declaration
+         (unless (or vhdl-use-components-package
+                     (vhdl-use-direct-instantiation)
+                     (save-excursion
+                       (re-search-forward
+                        (concat "^\\s-*component\\s-+"
+                                (car vhdl-port-list) "\\>") nil t)))
+           (re-search-forward "^begin\\>" nil)
+           (beginning-of-line)
+           (skip-chars-backward " \t\n\r\f")
+           (insert "\n\n") (indent-to vhdl-basic-offset)
+           (vhdl-port-paste-component t))
+         ;; place component instantiation
+         (re-search-forward "^end\\>" nil)
+         (beginning-of-line)
+         (skip-chars-backward " \t\n\r\f")
+         (insert "\n\n") (indent-to vhdl-basic-offset)
+         (vhdl-port-paste-instance nil t t)
+         ;; place use clause for used packages
+         (when (nth 3 vhdl-port-list)
+           ;; open entity file
+           (when (file-exists-p ent-file-name)
+             (find-file ent-file-name))
+           (goto-char (point-min))
+           (unless (re-search-forward (concat "^entity[ \t\n\r\f]+" ent-name "[ \t\n\r\f]+is\\>") nil t)
+             (error "ERROR:  Entity not found: \"%s\"" ent-name))
+           (goto-char (match-beginning 0))
+           (if (and (save-excursion
+                      (re-search-backward "^\\(library\\|use\\)\\|end\\>" nil t))
+                    (match-string 1))
+               (progn (goto-char (match-end 0))
+                      (beginning-of-line 2))
+             (insert "\n")
+             (backward-char))
+           (vhdl-port-paste-context-clause)
+           (switch-to-buffer orig-buffer))
+         (message "Placing component \"%s\"...done" (nth 0 vhdl-port-list)))))))
 
 (defun vhdl-compose-wire-components ()
   "Connect components."
@@ -16335,136 +16342,136 @@ component instantiation."
   (save-excursion
     (vhdl-prepare-search-2
      (unless (or (re-search-backward "^architecture[ \t\n\r\f]+\\w+[ \t\n\r\f]+of[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t)
-		 (re-search-forward "^architecture[ \t\n\r\f]+\\w+[ \t\n\r\f]+of[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t))
+                 (re-search-forward "^architecture[ \t\n\r\f]+\\w+[ \t\n\r\f]+of[ \t\n\r\f]+\\(\\w+\\)[ \t\n\r\f]+is\\>" nil t))
        (error "ERROR:  No architecture found"))
      (let* ((ent-name (match-string 1))
-	    (ent-file-name
-	     (concat (vhdl-replace-string vhdl-entity-file-name ent-name t)
-		     "." (file-name-extension (buffer-file-name))))
-	    (arch-decl-pos (point-marker))
-	    (arch-stat-pos (re-search-forward "^begin\\>" nil))
-	    (arch-end-pos (re-search-forward "^end\\>" nil))
-	    (pack-name (vhdl-get-components-package-name))
-	    (pack-file-name
-	     (concat (vhdl-replace-string vhdl-package-file-name pack-name t)
-		     "." (file-name-extension (buffer-file-name))))
-	    inst-name comp-name comp-ent-name comp-ent-file-name has-generic
-	    port-alist generic-alist inst-alist
-	    signal-name signal-entry signal-alist local-list written-list
-	    single-in-list multi-in-list single-out-list multi-out-list
-	    constant-name constant-entry constant-alist single-list multi-list
-	    port-beg-pos port-in-pos port-out-pos port-inst-pos port-end-pos
-	    generic-beg-pos generic-pos generic-inst-pos generic-end-pos
-	    signal-beg-pos signal-pos
-	    constant-temp-pos port-temp-pos signal-temp-pos)
+            (ent-file-name
+             (concat (vhdl-replace-string vhdl-entity-file-name ent-name t)
+                     "." (file-name-extension (buffer-file-name))))
+            (arch-decl-pos (point-marker))
+            (arch-stat-pos (re-search-forward "^begin\\>" nil))
+            (arch-end-pos (re-search-forward "^end\\>" nil))
+            (pack-name (vhdl-get-components-package-name))
+            (pack-file-name
+             (concat (vhdl-replace-string vhdl-package-file-name pack-name t)
+                     "." (file-name-extension (buffer-file-name))))
+            inst-name comp-name comp-ent-name comp-ent-file-name has-generic
+            port-alist generic-alist inst-alist
+            signal-name signal-entry signal-alist local-list written-list
+            single-in-list multi-in-list single-out-list multi-out-list
+            constant-name constant-entry constant-alist single-list multi-list
+            port-beg-pos port-in-pos port-out-pos port-inst-pos port-end-pos
+            generic-beg-pos generic-pos generic-inst-pos generic-end-pos
+            signal-beg-pos signal-pos
+            constant-temp-pos port-temp-pos signal-temp-pos)
        (message "Wiring components...")
        ;; process all instances
        (goto-char arch-stat-pos)
        (while (re-search-forward
-	       (concat "^[ \t]*\\(\\w+\\)[ \t\n\r\f]*:[ \t\n\r\f]*\\("
-		       "\\(component[ \t\n\r\f]+\\)?\\(\\w+\\)"
-		       "[ \t\n\r\f]+\\(--[^\n]*\n[ \t\n\r\f]*\\)*\\(\\(generic\\)\\|port\\)[ \t\n\r\f]+map\\|"
-		       "\\(\\(entity\\)\\|configuration\\)[ \t\n\r\f]+\\(\\(\\w+\\)\\.\\)?\\(\\w+\\)\\([ \t\n\r\f]*(\\(\\w+\\))\\)?"
-		       "[ \t\n\r\f]+\\(--[^\n]*\n[ \t\n\r\f]*\\)*\\(\\(generic\\)\\|port\\)[ \t\n\r\f]+map\\)[ \t\n\r\f]*(") arch-end-pos t)
-	 (setq inst-name (match-string-no-properties 1)
-	       comp-name (match-string-no-properties 4)
-	       comp-ent-name (match-string-no-properties 12)
-	       has-generic (or (match-string 7) (match-string 17)))
-	 ;; get port ...
-	 (if comp-name
-	     ;; ... from component declaration
-	     (vhdl-visit-file
-	      (when vhdl-use-components-package pack-file-name) t
-	      (save-excursion
-		(goto-char (point-min))
-		(unless (re-search-forward (concat "^\\s-*component[ \t\n\r\f]+" comp-name "\\>") nil t)
-		  (error "ERROR:  Component declaration not found: \"%s\"" comp-name))
-		(vhdl-port-copy)))
-	   ;; ... from entity declaration (direct instantiation)
-	   (setq comp-ent-file-name
-		 (concat (vhdl-replace-string vhdl-entity-file-name comp-ent-name t)
-			 "." (file-name-extension (buffer-file-name))))
-	   (vhdl-visit-file
-	    comp-ent-file-name t
-	    (save-excursion
-	      (goto-char (point-min))
-	      (unless (re-search-forward (concat "^\\s-*entity[ \t\n\r\f]+" comp-ent-name "\\>") nil t)
-		(error "ERROR:  Entity declaration not found: \"%s\"" comp-ent-name))
-	      (vhdl-port-copy))))
-	 (vhdl-port-flatten t)
-	 (setq generic-alist (nth 1 vhdl-port-list)
-	       port-alist (nth 2 vhdl-port-list)
-	       vhdl-port-list nil)
-	 (setq constant-alist nil
-	       signal-alist nil)
-	 (when has-generic
-	   ;; process all constants in generic map
-	   (vhdl-forward-syntactic-ws)
-	   (while (vhdl-parse-string "\\(\\(\\w+\\)[ \t\n\r\f]*=>[ \t\n\r\f]*\\)?\\(\\w+\\),?" t)
-	     (setq constant-name (match-string-no-properties 3))
-	     (setq constant-entry
-		   (cons constant-name
-			 (if (match-string 1)
-			     (or (vhdl-aget generic-alist (match-string 2))
-				 (error "ERROR:  Formal generic \"%s\" mismatch for instance \"%s\"" (match-string 2) inst-name))
-			   (cdar generic-alist))))
-	     (push constant-entry constant-alist)
-	     (setq constant-name (downcase constant-name))
-	     (if (or (member constant-name single-list)
-		     (member constant-name multi-list))
-		 (progn (setq single-list (delete constant-name single-list))
-			(pushnew constant-name multi-list :test #'equal))
-	       (pushnew constant-name single-list :test #'equal))
-	     (unless (match-string 1)
-	       (setq generic-alist (cdr generic-alist)))
-	     (vhdl-forward-syntactic-ws))
-	   (vhdl-re-search-forward "\\<port\\s-+map[ \t\n\r\f]*(" nil t))
-	 ;; process all signals in port map
-	 (vhdl-forward-syntactic-ws)
-	 (while (vhdl-parse-string "\\(\\(\\w+\\)[ \t\n\r\f]*=>[ \t\n\r\f]*\\)?\\(\\w+\\),?" t)
-	   (setq signal-name (match-string-no-properties 3))
-	   (setq signal-entry
-		 (cons signal-name
-		       (if (match-string 1)
-			   (or (vhdl-aget port-alist (match-string 2))
-			       (error "ERROR:  Formal port \"%s\" mismatch for instance \"%s\"" (match-string 2) inst-name))
-			 (cdar port-alist))))
-	   (push signal-entry signal-alist)
-	   (setq signal-name (downcase signal-name))
-	   (if (equal (upcase (nth 2 signal-entry)) "IN")
-	       ;; input signal
-	       (cond
-		((member signal-name local-list)
-		 nil)
-		((or (member signal-name single-out-list)
-		     (member signal-name multi-out-list))
-		 (setq single-out-list (delete signal-name single-out-list))
-		 (setq multi-out-list (delete signal-name multi-out-list))
-		 (pushnew signal-name local-list :test #'equal))
-		((member signal-name single-in-list)
-		 (setq single-in-list (delete signal-name single-in-list))
-		 (pushnew signal-name multi-in-list :test #'equal))
-		((not (member signal-name multi-in-list))
-		 (pushnew signal-name single-in-list :test #'equal)))
-	     ;; output signal
-	     (cond
-	      ((member signal-name local-list)
-	       nil)
-	      ((or (member signal-name single-in-list)
-		   (member signal-name multi-in-list))
-	       (setq single-in-list (delete signal-name single-in-list))
-	       (setq multi-in-list (delete signal-name multi-in-list))
-	       (pushnew signal-name local-list :test #'equal))
-	      ((member signal-name single-out-list)
-	       (setq single-out-list (delete signal-name single-out-list))
-	       (pushnew signal-name multi-out-list :test #'equal))
-	      ((not (member signal-name multi-out-list))
-	       (pushnew signal-name single-out-list :test #'equal))))
-	   (unless (match-string 1)
-	     (setq port-alist (cdr port-alist)))
-	   (vhdl-forward-syntactic-ws))
-	 (push (list inst-name (nreverse constant-alist)
-		     (nreverse signal-alist))
+               (concat "^[ \t]*\\(\\w+\\)[ \t\n\r\f]*:[ \t\n\r\f]*\\("
+                       "\\(component[ \t\n\r\f]+\\)?\\(\\w+\\)"
+                       "[ \t\n\r\f]+\\(--[^\n]*\n[ \t\n\r\f]*\\)*\\(\\(generic\\)\\|port\\)[ \t\n\r\f]+map\\|"
+                       "\\(\\(entity\\)\\|configuration\\)[ \t\n\r\f]+\\(\\(\\w+\\)\\.\\)?\\(\\w+\\)\\([ \t\n\r\f]*(\\(\\w+\\))\\)?"
+                       "[ \t\n\r\f]+\\(--[^\n]*\n[ \t\n\r\f]*\\)*\\(\\(generic\\)\\|port\\)[ \t\n\r\f]+map\\)[ \t\n\r\f]*(") arch-end-pos t)
+         (setq inst-name (match-string-no-properties 1)
+               comp-name (match-string-no-properties 4)
+               comp-ent-name (match-string-no-properties 12)
+               has-generic (or (match-string 7) (match-string 17)))
+         ;; get port ...
+         (if comp-name
+             ;; ... from component declaration
+             (vhdl-visit-file
+              (when vhdl-use-components-package pack-file-name) t
+              (save-excursion
+                (goto-char (point-min))
+                (unless (re-search-forward (concat "^\\s-*component[ \t\n\r\f]+" comp-name "\\>") nil t)
+                  (error "ERROR:  Component declaration not found: \"%s\"" comp-name))
+                (vhdl-port-copy)))
+           ;; ... from entity declaration (direct instantiation)
+           (setq comp-ent-file-name
+                 (concat (vhdl-replace-string vhdl-entity-file-name comp-ent-name t)
+                         "." (file-name-extension (buffer-file-name))))
+           (vhdl-visit-file
+            comp-ent-file-name t
+            (save-excursion
+              (goto-char (point-min))
+              (unless (re-search-forward (concat "^\\s-*entity[ \t\n\r\f]+" comp-ent-name "\\>") nil t)
+                (error "ERROR:  Entity declaration not found: \"%s\"" comp-ent-name))
+              (vhdl-port-copy))))
+         (vhdl-port-flatten t)
+         (setq generic-alist (nth 1 vhdl-port-list)
+               port-alist (nth 2 vhdl-port-list)
+               vhdl-port-list nil)
+         (setq constant-alist nil
+               signal-alist nil)
+         (when has-generic
+           ;; process all constants in generic map
+           (vhdl-forward-syntactic-ws)
+           (while (vhdl-parse-string "\\(\\(\\w+\\)[ \t\n\r\f]*=>[ \t\n\r\f]*\\)?\\(\\w+\\),?" t)
+             (setq constant-name (match-string-no-properties 3))
+             (setq constant-entry
+                   (cons constant-name
+                         (if (match-string 1)
+                             (or (vhdl-aget generic-alist (match-string 2))
+                                 (error "ERROR:  Formal generic \"%s\" mismatch for instance \"%s\"" (match-string 2) inst-name))
+                           (cdar generic-alist))))
+             (push constant-entry constant-alist)
+             (setq constant-name (downcase constant-name))
+             (if (or (member constant-name single-list)
+                     (member constant-name multi-list))
+                 (progn (setq single-list (delete constant-name single-list))
+                        (pushnew constant-name multi-list :test #'equal))
+               (pushnew constant-name single-list :test #'equal))
+             (unless (match-string 1)
+               (setq generic-alist (cdr generic-alist)))
+             (vhdl-forward-syntactic-ws))
+           (vhdl-re-search-forward "\\<port\\s-+map[ \t\n\r\f]*(" nil t))
+         ;; process all signals in port map
+         (vhdl-forward-syntactic-ws)
+         (while (vhdl-parse-string "\\(\\(\\w+\\)[ \t\n\r\f]*=>[ \t\n\r\f]*\\)?\\(\\w+\\),?" t)
+           (setq signal-name (match-string-no-properties 3))
+           (setq signal-entry
+                 (cons signal-name
+                       (if (match-string 1)
+                           (or (vhdl-aget port-alist (match-string 2))
+                               (error "ERROR:  Formal port \"%s\" mismatch for instance \"%s\"" (match-string 2) inst-name))
+                         (cdar port-alist))))
+           (push signal-entry signal-alist)
+           (setq signal-name (downcase signal-name))
+           (if (equal (upcase (nth 2 signal-entry)) "IN")
+               ;; input signal
+               (cond
+                ((member signal-name local-list)
+                 nil)
+                ((or (member signal-name single-out-list)
+                     (member signal-name multi-out-list))
+                 (setq single-out-list (delete signal-name single-out-list))
+                 (setq multi-out-list (delete signal-name multi-out-list))
+                 (pushnew signal-name local-list :test #'equal))
+                ((member signal-name single-in-list)
+                 (setq single-in-list (delete signal-name single-in-list))
+                 (pushnew signal-name multi-in-list :test #'equal))
+                ((not (member signal-name multi-in-list))
+                 (pushnew signal-name single-in-list :test #'equal)))
+             ;; output signal
+             (cond
+              ((member signal-name local-list)
+               nil)
+              ((or (member signal-name single-in-list)
+                   (member signal-name multi-in-list))
+               (setq single-in-list (delete signal-name single-in-list))
+               (setq multi-in-list (delete signal-name multi-in-list))
+               (pushnew signal-name local-list :test #'equal))
+              ((member signal-name single-out-list)
+               (setq single-out-list (delete signal-name single-out-list))
+               (pushnew signal-name multi-out-list :test #'equal))
+              ((not (member signal-name multi-out-list))
+               (pushnew signal-name single-out-list :test #'equal))))
+           (unless (match-string 1)
+             (setq port-alist (cdr port-alist)))
+           (vhdl-forward-syntactic-ws))
+         (push (list inst-name (nreverse constant-alist)
+                     (nreverse signal-alist))
                inst-alist))
        ;; prepare signal insertion
        (vhdl-goto-marker arch-decl-pos)
@@ -16472,156 +16479,156 @@ component instantiation."
        (re-search-forward "^\\s-*-- Internal signal declarations[ \t\n\r\f]*-*\n" arch-stat-pos t)
        (setq signal-pos (point-marker))
        (while (progn (vhdl-forward-syntactic-ws)
-		     (looking-at "signal\\>"))
-	 (beginning-of-line 2)
-	 (delete-region signal-pos (point)))
+                     (looking-at "signal\\>"))
+         (beginning-of-line 2)
+         (delete-region signal-pos (point)))
        (setq signal-beg-pos signal-pos)
        ;; open entity file
        (when (file-exists-p ent-file-name)
-	 (find-file ent-file-name))
+         (find-file ent-file-name))
        (goto-char (point-min))
        (unless (re-search-forward (concat "^entity[ \t\n\r\f]+" ent-name "[ \t\n\r\f]+is\\>") nil t)
-	 (error "ERROR:  Entity not found: \"%s\"" ent-name))
+         (error "ERROR:  Entity not found: \"%s\"" ent-name))
        ;; prepare generic clause insertion
        (unless (and (re-search-forward "\\(^\\s-*generic[ \t\n\r\f]*(\\)\\|^end\\>" nil t)
-		    (match-string 1))
-	 (goto-char (match-beginning 0))
-	 (indent-to vhdl-basic-offset)
-	 (insert "generic ();\n\n")
-	 (backward-char 4))
+                    (match-string 1))
+         (goto-char (match-beginning 0))
+         (indent-to vhdl-basic-offset)
+         (insert "generic ();\n\n")
+         (backward-char 4))
        (backward-char)
        (setq generic-pos (point-marker))
        (forward-sexp) (end-of-line)
        (delete-region generic-pos (point)) (delete-char 1)
        (insert "(\n")
        (when multi-list
-	 (insert "\n")
-	 (indent-to (* 2 vhdl-basic-offset))
-	 (insert "-- global generics\n"))
+         (insert "\n")
+         (indent-to (* 2 vhdl-basic-offset))
+         (insert "-- global generics\n"))
        (setq generic-beg-pos (point-marker) generic-pos (point-marker)
-	     generic-inst-pos (point-marker) generic-end-pos (point-marker))
+             generic-inst-pos (point-marker) generic-end-pos (point-marker))
        ;; prepare port clause insertion
        (unless (and (re-search-forward "\\(^\\s-*port[ \t\n\r\f]*(\\)\\|^end\\>" nil t)
-		    (match-string 1))
-	 (goto-char (match-beginning 0))
-	 (indent-to vhdl-basic-offset)
-	 (insert "port ();\n\n")
-	 (backward-char 4))
+                    (match-string 1))
+         (goto-char (match-beginning 0))
+         (indent-to vhdl-basic-offset)
+         (insert "port ();\n\n")
+         (backward-char 4))
        (backward-char)
        (setq port-in-pos (point-marker))
        (forward-sexp) (end-of-line)
        (delete-region port-in-pos (point)) (delete-char 1)
        (insert "(\n")
        (when (or multi-in-list multi-out-list)
-	 (insert "\n")
-	 (indent-to (* 2 vhdl-basic-offset))
-	 (insert "-- global ports\n"))
+         (insert "\n")
+         (indent-to (* 2 vhdl-basic-offset))
+         (insert "-- global ports\n"))
        (setq port-beg-pos (point-marker) port-in-pos (point-marker)
-	     port-out-pos (point-marker) port-inst-pos (point-marker)
-	     port-end-pos (point-marker))
+             port-out-pos (point-marker) port-inst-pos (point-marker)
+             port-end-pos (point-marker))
        ;; insert generics, ports and signals
        (setq inst-alist (nreverse inst-alist))
        (while inst-alist
-	 (setq inst-name (nth 0 (car inst-alist))
-	       constant-alist (nth 1 (car inst-alist))
-	       signal-alist (nth 2 (car inst-alist))
-	       constant-temp-pos generic-inst-pos
-	       port-temp-pos port-inst-pos
-	       signal-temp-pos signal-pos)
-	 ;; generics
-	 (while constant-alist
-	   (setq constant-name (downcase (caar constant-alist))
-		 constant-entry (car constant-alist))
-	   (unless (string-match "^[0-9]+" constant-name)
-	   (cond ((member constant-name written-list)
-		  nil)
-		 ((member constant-name multi-list)
-		  (vhdl-goto-marker generic-pos)
-		  (setq generic-end-pos
-			(vhdl-max-marker
-			 generic-end-pos
-			 (vhdl-compose-insert-generic constant-entry)))
-		  (setq generic-pos (point-marker))
-		  (pushnew constant-name written-list :test #'equal))
-		 (t
-		  (vhdl-goto-marker
-		   (vhdl-max-marker generic-inst-pos generic-pos))
-		  (setq generic-end-pos
-			(vhdl-compose-insert-generic constant-entry))
-		  (setq generic-inst-pos (point-marker))
-		    (pushnew constant-name written-list :test #'equal))))
-	   (setq constant-alist (cdr constant-alist)))
-	 (when (/= constant-temp-pos generic-inst-pos)
-	   (vhdl-goto-marker (vhdl-max-marker constant-temp-pos generic-pos))
-	   (insert "\n") (indent-to (* 2 vhdl-basic-offset))
-	   (insert "-- generics for \"" inst-name "\"\n")
-	   (vhdl-goto-marker generic-inst-pos))
-	 ;; ports and signals
-	 (while signal-alist
-	   (setq signal-name (downcase (caar signal-alist))
-		 signal-entry (car signal-alist))
-	   (cond ((member signal-name written-list)
-		  nil)
-		 ((member signal-name multi-in-list)
-		  (vhdl-goto-marker port-in-pos)
-		  (setq port-end-pos
-			(vhdl-max-marker
-			 port-end-pos (vhdl-compose-insert-port signal-entry)))
-		  (setq port-in-pos (point-marker))
-		  (pushnew signal-name written-list :test #'equal))
-		 ((member signal-name multi-out-list)
-		  (vhdl-goto-marker (vhdl-max-marker port-out-pos port-in-pos))
-		  (setq port-end-pos
-			(vhdl-max-marker
-			 port-end-pos (vhdl-compose-insert-port signal-entry)))
-		  (setq port-out-pos (point-marker))
-		  (pushnew signal-name written-list :test #'equal))
-		 ((or (member signal-name single-in-list)
-		      (member signal-name single-out-list))
-		  (vhdl-goto-marker
-		   (vhdl-max-marker
-		    port-inst-pos
-		    (vhdl-max-marker port-out-pos port-in-pos)))
-		  (setq port-end-pos (vhdl-compose-insert-port signal-entry))
-		  (setq port-inst-pos (point-marker))
-		  (pushnew signal-name written-list :test #'equal))
-		 ((equal (upcase (nth 2 signal-entry)) "OUT")
-		  (vhdl-goto-marker signal-pos)
-		  (vhdl-compose-insert-signal signal-entry)
-		  (setq signal-pos (point-marker))
-		  (pushnew signal-name written-list :test #'equal)))
-	   (setq signal-alist (cdr signal-alist)))
-	 (when (/= port-temp-pos port-inst-pos)
-	   (vhdl-goto-marker
-	    (vhdl-max-marker port-temp-pos
-			     (vhdl-max-marker port-in-pos port-out-pos)))
-	   (insert "\n") (indent-to (* 2 vhdl-basic-offset))
-	   (insert "-- ports to \"" inst-name "\"\n")
-	   (vhdl-goto-marker port-inst-pos))
-	 (when (/= signal-temp-pos signal-pos)
-	   (vhdl-goto-marker signal-temp-pos)
-	   (insert "\n") (indent-to vhdl-basic-offset)
-	   (insert "-- outputs of \"" inst-name "\"\n")
-	   (vhdl-goto-marker signal-pos))
-	 (setq inst-alist (cdr inst-alist)))
+         (setq inst-name (nth 0 (car inst-alist))
+               constant-alist (nth 1 (car inst-alist))
+               signal-alist (nth 2 (car inst-alist))
+               constant-temp-pos generic-inst-pos
+               port-temp-pos port-inst-pos
+               signal-temp-pos signal-pos)
+         ;; generics
+         (while constant-alist
+           (setq constant-name (downcase (caar constant-alist))
+                 constant-entry (car constant-alist))
+           (unless (string-match "^[0-9]+" constant-name)
+           (cond ((member constant-name written-list)
+                  nil)
+                 ((member constant-name multi-list)
+                  (vhdl-goto-marker generic-pos)
+                  (setq generic-end-pos
+                        (vhdl-max-marker
+                         generic-end-pos
+                         (vhdl-compose-insert-generic constant-entry)))
+                  (setq generic-pos (point-marker))
+                  (pushnew constant-name written-list :test #'equal))
+                 (t
+                  (vhdl-goto-marker
+                   (vhdl-max-marker generic-inst-pos generic-pos))
+                  (setq generic-end-pos
+                        (vhdl-compose-insert-generic constant-entry))
+                  (setq generic-inst-pos (point-marker))
+                    (pushnew constant-name written-list :test #'equal))))
+           (setq constant-alist (cdr constant-alist)))
+         (when (/= constant-temp-pos generic-inst-pos)
+           (vhdl-goto-marker (vhdl-max-marker constant-temp-pos generic-pos))
+           (insert "\n") (indent-to (* 2 vhdl-basic-offset))
+           (insert "-- generics for \"" inst-name "\"\n")
+           (vhdl-goto-marker generic-inst-pos))
+         ;; ports and signals
+         (while signal-alist
+           (setq signal-name (downcase (caar signal-alist))
+                 signal-entry (car signal-alist))
+           (cond ((member signal-name written-list)
+                  nil)
+                 ((member signal-name multi-in-list)
+                  (vhdl-goto-marker port-in-pos)
+                  (setq port-end-pos
+                        (vhdl-max-marker
+                         port-end-pos (vhdl-compose-insert-port signal-entry)))
+                  (setq port-in-pos (point-marker))
+                  (pushnew signal-name written-list :test #'equal))
+                 ((member signal-name multi-out-list)
+                  (vhdl-goto-marker (vhdl-max-marker port-out-pos port-in-pos))
+                  (setq port-end-pos
+                        (vhdl-max-marker
+                         port-end-pos (vhdl-compose-insert-port signal-entry)))
+                  (setq port-out-pos (point-marker))
+                  (pushnew signal-name written-list :test #'equal))
+                 ((or (member signal-name single-in-list)
+                      (member signal-name single-out-list))
+                  (vhdl-goto-marker
+                   (vhdl-max-marker
+                    port-inst-pos
+                    (vhdl-max-marker port-out-pos port-in-pos)))
+                  (setq port-end-pos (vhdl-compose-insert-port signal-entry))
+                  (setq port-inst-pos (point-marker))
+                  (pushnew signal-name written-list :test #'equal))
+                 ((equal (upcase (nth 2 signal-entry)) "OUT")
+                  (vhdl-goto-marker signal-pos)
+                  (vhdl-compose-insert-signal signal-entry)
+                  (setq signal-pos (point-marker))
+                  (pushnew signal-name written-list :test #'equal)))
+           (setq signal-alist (cdr signal-alist)))
+         (when (/= port-temp-pos port-inst-pos)
+           (vhdl-goto-marker
+            (vhdl-max-marker port-temp-pos
+                             (vhdl-max-marker port-in-pos port-out-pos)))
+           (insert "\n") (indent-to (* 2 vhdl-basic-offset))
+           (insert "-- ports to \"" inst-name "\"\n")
+           (vhdl-goto-marker port-inst-pos))
+         (when (/= signal-temp-pos signal-pos)
+           (vhdl-goto-marker signal-temp-pos)
+           (insert "\n") (indent-to vhdl-basic-offset)
+           (insert "-- outputs of \"" inst-name "\"\n")
+           (vhdl-goto-marker signal-pos))
+         (setq inst-alist (cdr inst-alist)))
        ;; finalize generic/port clause
        (vhdl-goto-marker generic-end-pos) (backward-char)
        (when (= generic-beg-pos generic-end-pos)
-	 (insert "\n") (indent-to (* 2 vhdl-basic-offset))
-	 (insert ";") (backward-char))
+         (insert "\n") (indent-to (* 2 vhdl-basic-offset))
+         (insert ";") (backward-char))
        (insert ")")
        (vhdl-goto-marker port-end-pos) (backward-char)
        (when (= port-beg-pos port-end-pos)
-	 (insert "\n") (indent-to (* 2 vhdl-basic-offset))
-	 (insert ";") (backward-char))
+         (insert "\n") (indent-to (* 2 vhdl-basic-offset))
+         (insert ";") (backward-char))
        (insert ")")
        ;; align everything
        (when vhdl-auto-align
-	 (vhdl-goto-marker generic-beg-pos)
-	 (vhdl-align-region-groups generic-beg-pos generic-end-pos 1)
-	 (vhdl-align-region-groups port-beg-pos port-end-pos 1)
-	 (vhdl-goto-marker signal-beg-pos)
-	 (vhdl-align-region-groups signal-beg-pos signal-pos))
+         (vhdl-goto-marker generic-beg-pos)
+         (vhdl-align-region-groups generic-beg-pos generic-end-pos 1)
+         (vhdl-align-region-groups port-beg-pos port-end-pos 1)
+         (vhdl-goto-marker signal-beg-pos)
+         (vhdl-align-region-groups signal-beg-pos signal-pos))
        (switch-to-buffer (marker-buffer signal-beg-pos))
        (message "Wiring components...done")))))
 
@@ -16664,29 +16671,29 @@ current project/directory."
   (interactive)
   (vhdl-require-hierarchy-info)
   (let* ((project (vhdl-project-p))
-	 (pack-name (vhdl-get-components-package-name))
-	 (pack-file-name
-	  (concat (vhdl-replace-string vhdl-package-file-name pack-name t)
-		  "." (file-name-extension (buffer-file-name))))
-	 (ent-alist (vhdl-aget vhdl-entity-alist
-			       (or project
-				   (abbreviate-file-name default-directory))))
-	 (lazy-lock-minimum-size 0)
-	 clause-pos component-pos)
+         (pack-name (vhdl-get-components-package-name))
+         (pack-file-name
+          (concat (vhdl-replace-string vhdl-package-file-name pack-name t)
+                  "." (file-name-extension (buffer-file-name))))
+         (ent-alist (vhdl-aget vhdl-entity-alist
+                               (or project
+                                   (abbreviate-file-name default-directory))))
+         (lazy-lock-minimum-size 0)
+         clause-pos component-pos)
     (message "Generating components package \"%s\"..." pack-name)
     ;; open package file
     (when (and (file-exists-p pack-file-name)
-	       (not (y-or-n-p (concat "File \"" pack-file-name
-				      "\" exists; overwrite? "))))
+               (not (y-or-n-p (concat "File \"" pack-file-name
+                                      "\" exists; overwrite? "))))
       (error "ERROR:  Generating components package...aborted"))
     (find-file pack-file-name)
     (erase-buffer)
     ;; insert header
     (if vhdl-compose-include-header
-	(progn (vhdl-template-header
-		(concat "Components package (generated by Emacs VHDL Mode "
-			vhdl-version ")"))
-	       (goto-char (point-max)))
+        (progn (vhdl-template-header
+                (concat "Components package (generated by Emacs VHDL Mode "
+                        vhdl-version ")"))
+               (goto-char (point-max)))
       (vhdl-comment-display-line) (insert "\n\n"))
     ;; insert std_logic_1164 package
     (vhdl-template-package-std-logic-1164)
@@ -16705,15 +16712,15 @@ current project/directory."
     (insert pack-name ";\n\n")
     ;; insert footer
     (if (and vhdl-compose-include-header (not (equal vhdl-file-footer "")))
-	(vhdl-template-footer)
+        (vhdl-template-footer)
       (vhdl-comment-display-line) (insert "\n"))
     ;; insert component declarations
     (while ent-alist
       (vhdl-visit-file (nth 2 (car ent-alist)) nil
-		       (progn (goto-char (point-min))
-			      (forward-line (1- (nth 3 (car ent-alist))))
-			      (end-of-line)
-			      (vhdl-port-copy)))
+                       (progn (goto-char (point-min))
+                              (forward-line (1- (nth 3 (car ent-alist))))
+                              (end-of-line)
+                              (vhdl-port-copy)))
       (goto-char component-pos)
       (vhdl-port-paste-component t)
       (when (cdr ent-alist) (insert "\n\n") (indent-to vhdl-basic-offset))
@@ -16725,15 +16732,15 @@ current project/directory."
     (goto-char (point-min))
     (save-buffer)
     (message "Generating components package \"%s\"...done\n  File created: \"%s\""
-	     pack-name pack-file-name)))
+             pack-name pack-file-name)))
 
 (defun vhdl-compose-configuration-architecture (ent-name arch-name ent-alist
-							 conf-alist inst-alist
-							 &optional insert-conf)
+                                                         conf-alist inst-alist
+                                                         &optional insert-conf)
   "Generate block configuration for architecture."
   (let ((margin (current-indentation))
-	(beg (point-at-bol))
-	ent-entry inst-entry inst-path inst-prev-path cons-key tmp-alist)
+        (beg (point-at-bol))
+        ent-entry inst-entry inst-path inst-prev-path cons-key tmp-alist)
     ;; insert block configuration (for architecture)
     (vhdl-insert-keyword "FOR ") (insert arch-name "\n")
     (setq margin (+ margin vhdl-basic-offset))
@@ -16742,74 +16749,74 @@ current project/directory."
       (setq inst-entry (car inst-alist))
       ;; is component?
       (when (nth 4 inst-entry)
-	(setq insert-conf t)
-	(setq inst-path (nth 9 inst-entry))
-	;; skip common path with previous instance
-	(while (and inst-path (equal (car inst-path) (car inst-prev-path)))
-	  (setq inst-path (cdr inst-path)
-		inst-prev-path (cdr inst-prev-path)))
-	;; insert block configuration end (for previous block/generate)
-	(while inst-prev-path
-	  (setq margin (- margin vhdl-basic-offset))
-	  (indent-to margin)
-	  (vhdl-insert-keyword "END FOR;\n")
-	  (setq inst-prev-path (cdr inst-prev-path)))
-	;; insert block configuration beginning (for current block/generate)
-	(indent-to margin)
-	(while inst-path
-	  (setq margin (+ margin vhdl-basic-offset))
-	  (vhdl-insert-keyword "FOR ")
-	  (insert (car inst-path) "\n")
-	  (indent-to margin)
-	  (setq inst-path (cdr inst-path)))
-	;; insert component configuration beginning
-	(vhdl-insert-keyword "FOR ")
-	(insert (nth 1 inst-entry) " : " (nth 4 inst-entry) "\n")
-	;; find subconfiguration
-	(setq conf-key (nth 7 inst-entry))
-	(setq tmp-alist conf-alist)
-	;; use first configuration found for instance's entity
-	(while (and tmp-alist (null conf-key))
-	  (when (equal (nth 5 inst-entry) (nth 4 (car tmp-alist)))
-	    (setq conf-key (nth 0 (car tmp-alist))))
-	  (setq tmp-alist (cdr tmp-alist)))
-	(setq conf-entry (vhdl-aget conf-alist conf-key))
-	;; insert binding indication ...
-	;; ... with subconfiguration (if exists)
-	(if (and vhdl-compose-configuration-use-subconfiguration conf-entry)
-	    (progn
-	      (indent-to (+ margin vhdl-basic-offset))
-	      (vhdl-insert-keyword "USE CONFIGURATION ")
-	      (insert (vhdl-work-library) "." (nth 0 conf-entry))
-	      (insert ";\n"))
-	  ;; ... with entity (if exists)
-	  (setq ent-entry (vhdl-aget ent-alist (nth 5 inst-entry)))
-	  (when ent-entry
-	    (indent-to (+ margin vhdl-basic-offset))
-	    (vhdl-insert-keyword "USE ENTITY ")
-	    (insert (vhdl-work-library) "." (nth 0 ent-entry))
-	    ;; insert architecture name (if architecture exists)
-	    (when (nth 3 ent-entry)
-	      (setq arch-name
-		    ;; choose architecture name a) from configuration,
-		    ;; b) from mra, or c) from first architecture
-		    (or (nth 0 (vhdl-aget (nth 3 ent-entry)
-					  (or (nth 6 inst-entry)
-					      (nth 4 ent-entry))))
-			(nth 1 (car (nth 3 ent-entry)))))
-	      (insert "(" arch-name ")"))
-	    (insert ";\n")
-	    ;; insert block configuration (for architecture of subcomponent)
-	    (when (and vhdl-compose-configuration-hierarchical
-		       (nth 3 ent-entry))
-	      (indent-to (+ margin vhdl-basic-offset))
-	      (vhdl-compose-configuration-architecture
-	       (nth 0 ent-entry) arch-name ent-alist conf-alist
-	       (nth 3 (vhdl-aget (nth 3 ent-entry) (downcase arch-name)))))))
-	;; insert component configuration end
-	(indent-to margin)
-	(vhdl-insert-keyword "END FOR;\n")
-	(setq inst-prev-path (nth 9 inst-entry)))
+        (setq insert-conf t)
+        (setq inst-path (nth 9 inst-entry))
+        ;; skip common path with previous instance
+        (while (and inst-path (equal (car inst-path) (car inst-prev-path)))
+          (setq inst-path (cdr inst-path)
+                inst-prev-path (cdr inst-prev-path)))
+        ;; insert block configuration end (for previous block/generate)
+        (while inst-prev-path
+          (setq margin (- margin vhdl-basic-offset))
+          (indent-to margin)
+          (vhdl-insert-keyword "END FOR;\n")
+          (setq inst-prev-path (cdr inst-prev-path)))
+        ;; insert block configuration beginning (for current block/generate)
+        (indent-to margin)
+        (while inst-path
+          (setq margin (+ margin vhdl-basic-offset))
+          (vhdl-insert-keyword "FOR ")
+          (insert (car inst-path) "\n")
+          (indent-to margin)
+          (setq inst-path (cdr inst-path)))
+        ;; insert component configuration beginning
+        (vhdl-insert-keyword "FOR ")
+        (insert (nth 1 inst-entry) " : " (nth 4 inst-entry) "\n")
+        ;; find subconfiguration
+        (setq conf-key (nth 7 inst-entry))
+        (setq tmp-alist conf-alist)
+        ;; use first configuration found for instance's entity
+        (while (and tmp-alist (null conf-key))
+          (when (equal (nth 5 inst-entry) (nth 4 (car tmp-alist)))
+            (setq conf-key (nth 0 (car tmp-alist))))
+          (setq tmp-alist (cdr tmp-alist)))
+        (setq conf-entry (vhdl-aget conf-alist conf-key))
+        ;; insert binding indication ...
+        ;; ... with subconfiguration (if exists)
+        (if (and vhdl-compose-configuration-use-subconfiguration conf-entry)
+            (progn
+              (indent-to (+ margin vhdl-basic-offset))
+              (vhdl-insert-keyword "USE CONFIGURATION ")
+              (insert (vhdl-work-library) "." (nth 0 conf-entry))
+              (insert ";\n"))
+          ;; ... with entity (if exists)
+          (setq ent-entry (vhdl-aget ent-alist (nth 5 inst-entry)))
+          (when ent-entry
+            (indent-to (+ margin vhdl-basic-offset))
+            (vhdl-insert-keyword "USE ENTITY ")
+            (insert (vhdl-work-library) "." (nth 0 ent-entry))
+            ;; insert architecture name (if architecture exists)
+            (when (nth 3 ent-entry)
+              (setq arch-name
+                    ;; choose architecture name a) from configuration,
+                    ;; b) from mra, or c) from first architecture
+                    (or (nth 0 (vhdl-aget (nth 3 ent-entry)
+                                          (or (nth 6 inst-entry)
+                                              (nth 4 ent-entry))))
+                        (nth 1 (car (nth 3 ent-entry)))))
+              (insert "(" arch-name ")"))
+            (insert ";\n")
+            ;; insert block configuration (for architecture of subcomponent)
+            (when (and vhdl-compose-configuration-hierarchical
+                       (nth 3 ent-entry))
+              (indent-to (+ margin vhdl-basic-offset))
+              (vhdl-compose-configuration-architecture
+               (nth 0 ent-entry) arch-name ent-alist conf-alist
+               (nth 3 (vhdl-aget (nth 3 ent-entry) (downcase arch-name)))))))
+        ;; insert component configuration end
+        (indent-to margin)
+        (vhdl-insert-keyword "END FOR;\n")
+        (setq inst-prev-path (nth 9 inst-entry)))
       (setq inst-alist (cdr inst-alist)))
     ;; insert block configuration end (for block/generate)
     (while inst-prev-path
@@ -16820,7 +16827,7 @@ current project/directory."
     (indent-to (- margin vhdl-basic-offset))
     ;; insert block configuration end or remove beginning (for architecture)
     (if insert-conf
-	(vhdl-insert-keyword "END FOR;\n")
+        (vhdl-insert-keyword "END FOR;\n")
       (delete-region beg (point)))))
 
 (defun vhdl-compose-configuration (&optional ent-name arch-name)
@@ -16828,55 +16835,55 @@ current project/directory."
   (interactive)
   (vhdl-require-hierarchy-info)
   (let ((ent-alist (vhdl-aget vhdl-entity-alist
-			      (or (vhdl-project-p)
-				  (abbreviate-file-name default-directory))))
-	(conf-alist (vhdl-aget vhdl-config-alist
-			       (or (vhdl-project-p)
-				   (abbreviate-file-name default-directory))))
-	(from-speedbar ent-name)
-	inst-alist conf-name conf-file-name pos)
+                              (or (vhdl-project-p)
+                                  (abbreviate-file-name default-directory))))
+        (conf-alist (vhdl-aget vhdl-config-alist
+                               (or (vhdl-project-p)
+                                   (abbreviate-file-name default-directory))))
+        (from-speedbar ent-name)
+        inst-alist conf-name conf-file-name pos)
     (vhdl-prepare-search-2
      ;; get entity and architecture name
      (unless ent-name
        (save-excursion
-	 (unless (and (re-search-backward "^\\(architecture\\s-+\\(\\w+\\)\\s-+of\\s-+\\(\\w+\\)\\|end\\)\\>" nil t)
-		      (not (equal "END" (upcase (match-string 1))))
-		      (setq ent-name (match-string-no-properties 3))
-		      (setq arch-name (match-string-no-properties 2)))
-	   (error "ERROR:  Not within an architecture"))))
+         (unless (and (re-search-backward "^\\(architecture\\s-+\\(\\w+\\)\\s-+of\\s-+\\(\\w+\\)\\|end\\)\\>" nil t)
+                      (not (equal "END" (upcase (match-string 1))))
+                      (setq ent-name (match-string-no-properties 3))
+                      (setq arch-name (match-string-no-properties 2)))
+           (error "ERROR:  Not within an architecture"))))
      (setq conf-name (vhdl-replace-string
-		      vhdl-compose-configuration-name
-		      (concat ent-name " " arch-name)))
+                      vhdl-compose-configuration-name
+                      (concat ent-name " " arch-name)))
      (setq inst-alist
-	   (nth 3 (vhdl-aget (nth 3 (vhdl-aget ent-alist (downcase ent-name)))
-			     (downcase arch-name)))))
+           (nth 3 (vhdl-aget (nth 3 (vhdl-aget ent-alist (downcase ent-name)))
+                             (downcase arch-name)))))
      (message "Generating configuration \"%s\"..." conf-name)
      (if vhdl-compose-configuration-create-file
-	 ;; open configuration file
-	 (progn
-	   (setq conf-file-name
-		 (concat (vhdl-replace-string vhdl-configuration-file-name
-					      conf-name t)
-			 "." (file-name-extension (buffer-file-name))))
-	   (when (and (file-exists-p conf-file-name)
-		      (not (y-or-n-p (concat "File \"" conf-file-name
-					     "\" exists; overwrite? "))))
-	     (error "ERROR:  Creating configuration...aborted"))
-	   (find-file conf-file-name)
-	   (erase-buffer)
-	   (set-buffer-modified-p nil)
-	   ;; insert header
-	   (if vhdl-compose-include-header
-	       (progn (vhdl-template-header
-		       (concat "Configuration declaration for design \""
-			       ent-name "(" arch-name ")\""))
-		      (goto-char (point-max)))
-	     (vhdl-comment-display-line) (insert "\n\n")))
+         ;; open configuration file
+         (progn
+           (setq conf-file-name
+                 (concat (vhdl-replace-string vhdl-configuration-file-name
+                                              conf-name t)
+                         "." (file-name-extension (buffer-file-name))))
+           (when (and (file-exists-p conf-file-name)
+                      (not (y-or-n-p (concat "File \"" conf-file-name
+                                             "\" exists; overwrite? "))))
+             (error "ERROR:  Creating configuration...aborted"))
+           (find-file conf-file-name)
+           (erase-buffer)
+           (set-buffer-modified-p nil)
+           ;; insert header
+           (if vhdl-compose-include-header
+               (progn (vhdl-template-header
+                       (concat "Configuration declaration for design \""
+                               ent-name "(" arch-name ")\""))
+                      (goto-char (point-max)))
+             (vhdl-comment-display-line) (insert "\n\n")))
        ;; goto end of architecture
        (unless from-speedbar
-	 (re-search-forward "^end\\>" nil)
-	 (end-of-line) (insert "\n\n")
-	 (vhdl-comment-display-line) (insert "\n\n")))
+         (re-search-forward "^end\\>" nil)
+         (end-of-line) (insert "\n\n")
+         (vhdl-comment-display-line) (insert "\n\n")))
      ;; insert library clause
      (setq pos (point))
      (vhdl-template-standard-package (vhdl-work-library) nil)
@@ -16895,13 +16902,13 @@ current project/directory."
        ;; insert footer and save
        (insert "\n\n")
        (if (and vhdl-compose-include-header (not (equal vhdl-file-footer "")))
-	   (vhdl-template-footer)
-	 (vhdl-comment-display-line) (insert "\n"))
+           (vhdl-template-footer)
+         (vhdl-comment-display-line) (insert "\n"))
        (save-buffer))
      (message "%s"
       (concat (format "Generating configuration \"%s\"...done" conf-name)
-	      (and conf-file-name
-		   (format "\n  File created: \"%s\"" conf-file-name))))))
+              (and conf-file-name
+                   (format "\n  File created: \"%s\"" conf-file-name))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -16916,24 +16923,24 @@ current project/directory."
   "Return the Makefile name of the current project or the current compiler if
 no project is defined."
   (let ((project-alist (vhdl-aget vhdl-project-alist vhdl-project))
-	(compiler-alist (vhdl-aget vhdl-compiler-alist vhdl-compiler)))
+        (compiler-alist (vhdl-aget vhdl-compiler-alist vhdl-compiler)))
     (vhdl-replace-string
      (cons "\\(.*\\)\n\\(.*\\)"
-	   (or (nth 8 project-alist) (nth 8 compiler-alist)))
+           (or (nth 8 project-alist) (nth 8 compiler-alist)))
      (concat (nth 9 compiler-alist) "\n" (nth 6 project-alist)))))
 
 (defun vhdl-compile-directory ()
   "Return the directory where compilation/make should be run."
   (let* ((project (vhdl-aget vhdl-project-alist (vhdl-project-p t)))
-	 (compiler (vhdl-aget vhdl-compiler-alist vhdl-compiler))
-	 (directory (vhdl-resolve-env-variable
-		     (if project
-			 (vhdl-replace-string
-			  (cons "\\(.*\\)" (nth 5 project)) (nth 9 compiler))
-		       (nth 6 compiler)))))
+         (compiler (vhdl-aget vhdl-compiler-alist vhdl-compiler))
+         (directory (vhdl-resolve-env-variable
+                     (if project
+                         (vhdl-replace-string
+                          (cons "\\(.*\\)" (nth 5 project)) (nth 9 compiler))
+                       (nth 6 compiler)))))
     (file-name-as-directory
      (if (file-name-absolute-p directory)
-	 directory
+         directory
        (expand-file-name directory (vhdl-default-directory))))))
 
 (defun vhdl-uniquify (in-list)
@@ -16948,10 +16955,10 @@ no project is defined."
   "Set current compiler to NAME."
   (interactive
    (list (let ((completion-ignore-case t))
-	   (completing-read "Compiler name: " vhdl-compiler-alist nil t))))
+           (completing-read "Compiler name: " vhdl-compiler-alist nil t))))
   (if (assoc name vhdl-compiler-alist)
       (progn (setq vhdl-compiler name)
-	     (message "Current compiler: \"%s\"" vhdl-compiler))
+             (message "Current compiler: \"%s\"" vhdl-compiler))
     (vhdl-warning (format "Unknown compiler: \"%s\"" name))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -16960,38 +16967,38 @@ no project is defined."
 (defun vhdl-compile-init ()
   "Initialize for compilation."
   (when (and (not vhdl-emacs-22)
-	     (or (null compilation-error-regexp-alist)
-		 (not (assoc (car (nth 11 (car vhdl-compiler-alist)))
-			     compilation-error-regexp-alist))))
+             (or (null compilation-error-regexp-alist)
+                 (not (assoc (car (nth 11 (car vhdl-compiler-alist)))
+                             compilation-error-regexp-alist))))
     ;; `compilation-error-regexp-alist'
     (let ((commands-alist vhdl-compiler-alist)
-	  regexp-alist sublist)
+          regexp-alist sublist)
       (while commands-alist
-	(setq sublist (nth 11 (car commands-alist)))
-	(unless (or (equal "" (car sublist))
-		    (assoc (car sublist) regexp-alist))
-	  (push (list (nth 0 sublist)
-		      (if (and (featurep 'xemacs) (not (nth 1 sublist)))
-			  9
-					   (nth 1 sublist))
-					 (nth 2 sublist) (nth 3 sublist))
-		regexp-alist))
-	(setq commands-alist (cdr commands-alist)))
+        (setq sublist (nth 11 (car commands-alist)))
+        (unless (or (equal "" (car sublist))
+                    (assoc (car sublist) regexp-alist))
+          (push (list (nth 0 sublist)
+                      (if (and (featurep 'xemacs) (not (nth 1 sublist)))
+                          9
+                                           (nth 1 sublist))
+                                         (nth 2 sublist) (nth 3 sublist))
+                regexp-alist))
+        (setq commands-alist (cdr commands-alist)))
       (setq compilation-error-regexp-alist
-	    (append compilation-error-regexp-alist (nreverse regexp-alist))))
+            (append compilation-error-regexp-alist (nreverse regexp-alist))))
     ;; `compilation-file-regexp-alist'
     (let ((commands-alist vhdl-compiler-alist)
-	  regexp-alist sublist)
+          regexp-alist sublist)
       ;; matches vhdl-mode file name output
       (setq regexp-alist '(("^Compiling \"\\(.+\\)\"" 1)))
       (while commands-alist
-	(setq sublist (nth 12 (car commands-alist)))
-	(unless (or (equal "" (car sublist))
-		    (assoc (car sublist) regexp-alist))
-	  (push sublist regexp-alist))
-	(setq commands-alist (cdr commands-alist)))
+        (setq sublist (nth 12 (car commands-alist)))
+        (unless (or (equal "" (car sublist))
+                    (assoc (car sublist) regexp-alist))
+          (push sublist regexp-alist))
+        (setq commands-alist (cdr commands-alist)))
       (setq compilation-file-regexp-alist
-	    (append compilation-file-regexp-alist (nreverse regexp-alist))))))
+            (append compilation-file-regexp-alist (nreverse regexp-alist))))))
 
 (defvar vhdl-compile-file-name nil
   "Name of file to be compiled.")
@@ -17002,59 +17009,59 @@ do not print any file names."
   (insert "Compiling \"" vhdl-compile-file-name "\"\n"))
 
 (defun vhdl-get-compile-options (project compiler file-name
-					 &optional file-options-only)
+                                         &optional file-options-only)
   "Get compiler options.  Returning nil means do not compile this file."
   (let* ((compiler-options (nth 1 compiler))
-	 (project-entry (vhdl-aget (nth 4 project) vhdl-compiler))
-	 (project-options (nth 0 project-entry))
-	 (exception-list (and file-name (nth 2 project-entry)))
-	 (work-library (vhdl-work-library))
-	 (case-fold-search nil)
-	 file-options)
+         (project-entry (vhdl-aget (nth 4 project) vhdl-compiler))
+         (project-options (nth 0 project-entry))
+         (exception-list (and file-name (nth 2 project-entry)))
+         (work-library (vhdl-work-library))
+         (case-fold-search nil)
+         file-options)
     (while (and exception-list
-		(not (string-match (caar exception-list) file-name)))
+                (not (string-match (caar exception-list) file-name)))
       (setq exception-list (cdr exception-list)))
     (if (and exception-list (not (cdar exception-list)))
-	nil
+        nil
       (if (and file-options-only (not exception-list))
-	  'default
-	(setq file-options (cdar exception-list))
-	;; insert library name in compiler-specific options
-	(setq compiler-options
-	      (vhdl-replace-string (cons "\\(.*\\)" compiler-options)
-				   work-library))
-	;; insert compiler-specific options in project-specific options
-	(when project-options
-	  (setq project-options
-		(vhdl-replace-string
-		 (cons "\\(.*\\)\n\\(.*\\)" project-options)
-		 (concat work-library "\n" compiler-options))))
-	;; insert project-specific options in file-specific options
-	(when file-options
-	  (setq file-options
-		(vhdl-replace-string
-		 (cons "\\(.*\\)\n\\(.*\\)\n\\(.*\\)" file-options)
-		 (concat work-library "\n" compiler-options "\n"
-			 project-options))))
-	;; return options
-	(or file-options project-options compiler-options)))))
+          'default
+        (setq file-options (cdar exception-list))
+        ;; insert library name in compiler-specific options
+        (setq compiler-options
+              (vhdl-replace-string (cons "\\(.*\\)" compiler-options)
+                                   work-library))
+        ;; insert compiler-specific options in project-specific options
+        (when project-options
+          (setq project-options
+                (vhdl-replace-string
+                 (cons "\\(.*\\)\n\\(.*\\)" project-options)
+                 (concat work-library "\n" compiler-options))))
+        ;; insert project-specific options in file-specific options
+        (when file-options
+          (setq file-options
+                (vhdl-replace-string
+                 (cons "\\(.*\\)\n\\(.*\\)\n\\(.*\\)" file-options)
+                 (concat work-library "\n" compiler-options "\n"
+                         project-options))))
+        ;; return options
+        (or file-options project-options compiler-options)))))
 
 (defun vhdl-get-make-options (project compiler)
   "Get make options."
   (let* ((compiler-options (nth 3 compiler))
-	 (project-entry (vhdl-aget (nth 4 project) vhdl-compiler))
-	 (project-options (nth 1 project-entry))
-	 (makefile-name (vhdl-makefile-name)))
+         (project-entry (vhdl-aget (nth 4 project) vhdl-compiler))
+         (project-options (nth 1 project-entry))
+         (makefile-name (vhdl-makefile-name)))
     ;; insert Makefile name in compiler-specific options
     (setq compiler-options
-	  (vhdl-replace-string (cons "\\(.*\\)" (nth 3 compiler))
-			       makefile-name))
+          (vhdl-replace-string (cons "\\(.*\\)" (nth 3 compiler))
+                               makefile-name))
     ;; insert compiler-specific options in project-specific options
     (when project-options
       (setq project-options
-	    (vhdl-replace-string
-	     (cons "\\(.*\\)\n\\(.*\\)" project-options)
-	     (concat makefile-name "\n" compiler-options))))
+            (vhdl-replace-string
+             (cons "\\(.*\\)\n\\(.*\\)" project-options)
+             (concat makefile-name "\n" compiler-options))))
     ;; return options
     (or project-options compiler-options)))
 
@@ -17064,15 +17071,15 @@ do not print any file names."
   (interactive)
   (vhdl-compile-init)
   (let* ((project (vhdl-aget vhdl-project-alist vhdl-project))
-	 (compiler (or (vhdl-aget vhdl-compiler-alist vhdl-compiler)
-		       (error "ERROR:  No such compiler: \"%s\"" vhdl-compiler)))
-	 (command (nth 0 compiler))
-	 (default-directory (vhdl-compile-directory))
-	 (file-name (if vhdl-compile-absolute-path
-			(buffer-file-name)
-		      (file-relative-name (buffer-file-name))))
-	 (options (vhdl-get-compile-options project compiler file-name))
-	 compilation-process-setup-function)
+         (compiler (or (vhdl-aget vhdl-compiler-alist vhdl-compiler)
+                       (error "ERROR:  No such compiler: \"%s\"" vhdl-compiler)))
+         (command (nth 0 compiler))
+         (default-directory (vhdl-compile-directory))
+         (file-name (if vhdl-compile-absolute-path
+                        (buffer-file-name)
+                      (file-relative-name (buffer-file-name))))
+         (options (vhdl-get-compile-options project compiler file-name))
+         compilation-process-setup-function)
     (unless (file-directory-p default-directory)
       (error "ERROR:  Compile directory does not exist: \"%s\"" default-directory))
     ;; put file name into quotes if it contains spaces
@@ -17080,17 +17087,17 @@ do not print any file names."
       (setq file-name (concat "\"" file-name "\"")))
     ;; print out file name if compiler does not
     (setq vhdl-compile-file-name (if vhdl-compile-absolute-path
-				     (buffer-file-name)
-				   (file-relative-name (buffer-file-name))))
+                                     (buffer-file-name)
+                                   (file-relative-name (buffer-file-name))))
     (when (and (= 0 (nth 1 (nth 10 compiler)))
-	       (= 0 (nth 1 (nth 11 compiler))))
+               (= 0 (nth 1 (nth 11 compiler))))
       (setq compilation-process-setup-function 'vhdl-compile-print-file-name))
     ;; run compilation
     (if options
-	(when command
-	  (compile (concat command " " options " " file-name
-			   (unless (equal vhdl-compile-post-command "")
-			     (concat " " vhdl-compile-post-command)))))
+        (when command
+          (compile (concat command " " options " " file-name
+                           (unless (equal vhdl-compile-post-command "")
+                             (concat " " vhdl-compile-post-command)))))
       (vhdl-warning "Your project settings tell me not to compile this file"))))
 
 (defvar vhdl-make-target "all"
@@ -17102,41 +17109,41 @@ do not print any file names."
 specified by a target."
   (interactive)
   (setq vhdl-make-target
-	(or target (read-from-minibuffer "Target: " vhdl-make-target
-					 vhdl-minibuffer-local-map)))
+        (or target (read-from-minibuffer "Target: " vhdl-make-target
+                                         vhdl-minibuffer-local-map)))
   (vhdl-compile-init)
   (let* ((project (vhdl-aget vhdl-project-alist vhdl-project))
-	 (compiler (or (vhdl-aget vhdl-compiler-alist vhdl-compiler)
-		       (error "ERROR:  No such compiler: \"%s\"" vhdl-compiler)))
-	 (command (nth 2 compiler))
-	 (options (vhdl-get-make-options project compiler))
-	 (default-directory (vhdl-compile-directory)))
+         (compiler (or (vhdl-aget vhdl-compiler-alist vhdl-compiler)
+                       (error "ERROR:  No such compiler: \"%s\"" vhdl-compiler)))
+         (command (nth 2 compiler))
+         (options (vhdl-get-make-options project compiler))
+         (default-directory (vhdl-compile-directory)))
     (unless (file-directory-p default-directory)
       (error "ERROR:  Compile directory does not exist: \"%s\"" default-directory))
     ;; run make
     (compile (concat (if (equal command "") "make" command)
-		     " " options " " vhdl-make-target))))
+                     " " options " " vhdl-make-target))))
 
 ;; Emacs 22+ setup
 (defvar vhdl-error-regexp-emacs-alist
   ;; Get regexps from `vhdl-compiler-alist'
   (let ((compiler-alist vhdl-compiler-alist)
-	(error-regexp-alist '((vhdl-directory "^ *Compiling \"\\(.+\\)\"" 1))))
+        (error-regexp-alist '((vhdl-directory "^ *Compiling \"\\(.+\\)\"" 1))))
    (while compiler-alist
      ;; only add regexps for currently selected compiler
      (when (or (not vhdl-compile-use-local-error-regexp)
-	       (equal vhdl-compiler (nth 0 (car compiler-alist))))
+               (equal vhdl-compiler (nth 0 (car compiler-alist))))
        ;; add error message regexps
        (setq error-regexp-alist
-	     (cons (append (list (make-symbol (concat "vhdl-" (subst-char-in-string ?  ?- (downcase (nth 0 (car compiler-alist)))))))
-			   (nth 11 (car compiler-alist)))
-		   error-regexp-alist))
+             (cons (append (list (make-symbol (concat "vhdl-" (subst-char-in-string ?  ?- (downcase (nth 0 (car compiler-alist)))))))
+                           (nth 11 (car compiler-alist)))
+                   error-regexp-alist))
        ;; add filename regexps
        (when (/= 0 (nth 1 (nth 12 (car compiler-alist))))
-	 (setq error-regexp-alist
-	       (cons (append (list (make-symbol (concat "vhdl-" (subst-char-in-string ?  ?- (downcase (nth 0 (car compiler-alist)))) "-file")))
-			     (nth 12 (car compiler-alist)))
-		     error-regexp-alist))))
+         (setq error-regexp-alist
+               (cons (append (list (make-symbol (concat "vhdl-" (subst-char-in-string ?  ?- (downcase (nth 0 (car compiler-alist)))) "-file")))
+                             (nth 12 (car compiler-alist)))
+                     error-regexp-alist))))
      (setq compiler-alist (cdr compiler-alist)))
    error-regexp-alist)
   "List of regexps for VHDL compilers.  For Emacs 22+.")
@@ -17146,7 +17153,7 @@ specified by a target."
   "Set up Emacs compile for VHDL."
   (interactive)
   (when (and (boundp 'compilation-error-regexp-alist-alist)
-	     (not (assoc 'vhdl-modelsim compilation-error-regexp-alist-alist)))
+             (not (assoc 'vhdl-modelsim compilation-error-regexp-alist-alist)))
     ;; remove all other compilers
     (when vhdl-compile-use-local-error-regexp
       (setq compilation-error-regexp-alist nil))
@@ -17167,14 +17174,14 @@ specified by a target."
   "Generate `Makefile'."
   (interactive)
   (let* ((compiler (or (vhdl-aget vhdl-compiler-alist vhdl-compiler)
-		       (error "ERROR:  No such compiler: \"%s\"" vhdl-compiler)))
-	 (command (nth 4 compiler)))
+                       (error "ERROR:  No such compiler: \"%s\"" vhdl-compiler)))
+         (command (nth 4 compiler)))
     ;; generate makefile
     (if command
-	(let ((default-directory (vhdl-compile-directory)))
-	  (compile (vhdl-replace-string
-		    (cons "\\(.*\\) \\(.*\\)" command)
-		    (concat (vhdl-makefile-name) " " (vhdl-work-library)))))
+        (let ((default-directory (vhdl-compile-directory)))
+          (compile (vhdl-replace-string
+                    (cons "\\(.*\\) \\(.*\\)" command)
+                    (concat (vhdl-makefile-name) " " (vhdl-work-library)))))
       (vhdl-generate-makefile-1))))
 
 (defun vhdl-get-packages (lib-alist work-library)
@@ -17182,7 +17189,7 @@ specified by a target."
   (let (pack-list)
     (while lib-alist
       (when (equal (downcase (caar lib-alist)) (downcase work-library))
-	(push (cdar lib-alist) pack-list))
+        (push (cdar lib-alist) pack-list))
       (setq lib-alist (cdr lib-alist)))
     pack-list))
 
@@ -17191,168 +17198,168 @@ specified by a target."
   ;; scan hierarchy if required
   (if (vhdl-project-p)
       (unless (or (assoc vhdl-project vhdl-file-alist)
-		  (vhdl-load-cache vhdl-project))
-	(vhdl-scan-project-contents vhdl-project))
+                  (vhdl-load-cache vhdl-project))
+        (vhdl-scan-project-contents vhdl-project))
     (let ((directory (abbreviate-file-name default-directory)))
       (unless (or (assoc directory vhdl-file-alist)
-		  (vhdl-load-cache directory))
-	(vhdl-scan-directory-contents directory))))
+                  (vhdl-load-cache directory))
+        (vhdl-scan-directory-contents directory))))
   (let* ((directory (abbreviate-file-name (vhdl-default-directory)))
-	 (project (vhdl-project-p))
-	 (ent-alist (vhdl-aget vhdl-entity-alist (or project directory)))
-	 (conf-alist (vhdl-aget vhdl-config-alist (or project directory)))
-	 (pack-alist (vhdl-aget vhdl-package-alist (or project directory)))
-	 (regexp-list (or (nth 12 (vhdl-aget vhdl-compiler-alist vhdl-compiler))
-			  '("\\1.vhd" "\\2_\\1.vhd" "\\1.vhd"
-			    "\\1.vhd" "\\1_body.vhd" identity)))
-	 (mapping-exist
-	  (if (nth 12 (vhdl-aget vhdl-compiler-alist vhdl-compiler)) t nil))
-	 (ent-regexp (cons "\\(.*\\) \\(.*\\) \\(.*\\)" (nth 0 regexp-list)))
-	 (arch-regexp (cons "\\(.*\\) \\(.*\\) \\(.*\\)" (nth 1 regexp-list)))
-	 (conf-regexp (cons "\\(.*\\) \\(.*\\) \\(.*\\)" (nth 2 regexp-list)))
-	 (pack-regexp (cons "\\(.*\\) \\(.*\\) \\(.*\\)" (nth 3 regexp-list)))
-	 (pack-body-regexp (cons "\\(.*\\) \\(.*\\) \\(.*\\)" (nth 4 regexp-list)))
-	 (adjust-case (nth 5 regexp-list))
-	 (work-library (downcase (vhdl-work-library)))
-	 (compile-directory (expand-file-name (vhdl-compile-directory)
-					      default-directory))
-	 (makefile-name (vhdl-makefile-name))
-	 rule-alist arch-alist inst-alist
-	 target-list depend-list unit-list prim-list second-list subcomp-list
-	 lib-alist lib-body-alist pack-list all-pack-list
-	 ent-key ent-file-name arch-key arch-file-name ent-arch-key
-	 conf-key conf-file-name pack-key pack-file-name
-	 ent-entry arch-entry conf-entry pack-entry inst-entry
-	 pack-body-key pack-body-file-name inst-ent-key inst-conf-key
-	 tmp-key tmp-list rule)
+         (project (vhdl-project-p))
+         (ent-alist (vhdl-aget vhdl-entity-alist (or project directory)))
+         (conf-alist (vhdl-aget vhdl-config-alist (or project directory)))
+         (pack-alist (vhdl-aget vhdl-package-alist (or project directory)))
+         (regexp-list (or (nth 12 (vhdl-aget vhdl-compiler-alist vhdl-compiler))
+                          '("\\1.vhd" "\\2_\\1.vhd" "\\1.vhd"
+                            "\\1.vhd" "\\1_body.vhd" identity)))
+         (mapping-exist
+          (if (nth 12 (vhdl-aget vhdl-compiler-alist vhdl-compiler)) t nil))
+         (ent-regexp (cons "\\(.*\\) \\(.*\\) \\(.*\\)" (nth 0 regexp-list)))
+         (arch-regexp (cons "\\(.*\\) \\(.*\\) \\(.*\\)" (nth 1 regexp-list)))
+         (conf-regexp (cons "\\(.*\\) \\(.*\\) \\(.*\\)" (nth 2 regexp-list)))
+         (pack-regexp (cons "\\(.*\\) \\(.*\\) \\(.*\\)" (nth 3 regexp-list)))
+         (pack-body-regexp (cons "\\(.*\\) \\(.*\\) \\(.*\\)" (nth 4 regexp-list)))
+         (adjust-case (nth 5 regexp-list))
+         (work-library (downcase (vhdl-work-library)))
+         (compile-directory (expand-file-name (vhdl-compile-directory)
+                                              default-directory))
+         (makefile-name (vhdl-makefile-name))
+         rule-alist arch-alist inst-alist
+         target-list depend-list unit-list prim-list second-list subcomp-list
+         lib-alist lib-body-alist pack-list all-pack-list
+         ent-key ent-file-name arch-key arch-file-name ent-arch-key
+         conf-key conf-file-name pack-key pack-file-name
+         ent-entry arch-entry conf-entry pack-entry inst-entry
+         pack-body-key pack-body-file-name inst-ent-key inst-conf-key
+         tmp-key tmp-list rule)
     ;; check prerequisites
     (unless (file-exists-p compile-directory)
       (make-directory compile-directory t))
     (unless mapping-exist
       (vhdl-warning
        (format "No unit-to-file name mapping found for compiler \"%s\".\n  Directory of dummy files is created instead (to be used as dependencies).\n  Please contact the VHDL Mode maintainer for full support of \"%s\""
-	       vhdl-compiler vhdl-compiler) t))
+               vhdl-compiler vhdl-compiler) t))
     (message "Generating makefile \"%s\"..." makefile-name)
     ;; rules for all entities
     (setq tmp-list ent-alist)
     (while ent-alist
       (setq ent-entry (car ent-alist)
-	    ent-key (nth 0 ent-entry))
+            ent-key (nth 0 ent-entry))
       (when (nth 2 ent-entry)
-	(setq ent-file-name (if vhdl-compile-absolute-path
-				(nth 2 ent-entry)
-			      (file-relative-name (nth 2 ent-entry)
-						  compile-directory))
-	      arch-alist (nth 4 ent-entry)
-	      lib-alist (nth 6 ent-entry)
-	      rule (vhdl-aget rule-alist ent-file-name)
-	      target-list (nth 0 rule)
-	      depend-list (nth 1 rule)
-	      second-list nil
-	      subcomp-list nil)
-	(setq tmp-key (vhdl-replace-string
-		       ent-regexp
-		       (funcall adjust-case
-				(concat ent-key "  " work-library))))
-	(push (cons ent-key tmp-key) unit-list)
-	;; rule target for this entity
-	(push ent-key target-list)
-	;; rule dependencies for all used packages
-	(setq pack-list (vhdl-get-packages lib-alist work-library))
-	(setq depend-list (append depend-list pack-list))
-	(setq all-pack-list pack-list)
-	;; add rule
-	(vhdl-aput 'rule-alist ent-file-name (list target-list depend-list))
-	;; rules for all corresponding architectures
-	(while arch-alist
-	  (setq arch-entry (car arch-alist)
-		arch-key (nth 0 arch-entry)
-		ent-arch-key (concat ent-key "-" arch-key)
-		arch-file-name (if vhdl-compile-absolute-path
-				   (nth 2 arch-entry)
-				 (file-relative-name (nth 2 arch-entry)
-						     compile-directory))
-		inst-alist (nth 4 arch-entry)
-		lib-alist (nth 5 arch-entry)
-		rule (vhdl-aget rule-alist arch-file-name)
-		target-list (nth 0 rule)
-		depend-list (nth 1 rule))
-	  (setq tmp-key (vhdl-replace-string
-			 arch-regexp
-			 (funcall adjust-case
-				  (concat arch-key " " ent-key " "
-					  work-library))))
-	  (setq unit-list
-		(cons (cons ent-arch-key tmp-key) unit-list))
-	  (push ent-arch-key second-list)
-	  ;; rule target for this architecture
-	  (push ent-arch-key target-list)
-	  ;; rule dependency for corresponding entity
-	  (push ent-key depend-list)
-	  ;; rule dependencies for contained component instantiations
-	  (while inst-alist
-	    (setq inst-entry (car inst-alist))
-	    (when (or (null (nth 8 inst-entry))
-		      (equal (downcase (nth 8 inst-entry)) work-library))
-	      (setq inst-ent-key (or (nth 7 inst-entry)
-				     (nth 5 inst-entry)))
-	      (setq depend-list (cons inst-ent-key depend-list)
-		    subcomp-list (cons inst-ent-key subcomp-list)))
-	    (setq inst-alist (cdr inst-alist)))
-	  ;; rule dependencies for all used packages
-	  (setq pack-list (vhdl-get-packages lib-alist work-library))
-	  (setq depend-list (append depend-list pack-list))
-	  (setq all-pack-list (append all-pack-list pack-list))
-	  ;; add rule
-	  (vhdl-aput 'rule-alist arch-file-name (list target-list depend-list))
-	  (setq arch-alist (cdr arch-alist)))
-	(push (list ent-key second-list (append subcomp-list all-pack-list))
-	      prim-list))
+        (setq ent-file-name (if vhdl-compile-absolute-path
+                                (nth 2 ent-entry)
+                              (file-relative-name (nth 2 ent-entry)
+                                                  compile-directory))
+              arch-alist (nth 4 ent-entry)
+              lib-alist (nth 6 ent-entry)
+              rule (vhdl-aget rule-alist ent-file-name)
+              target-list (nth 0 rule)
+              depend-list (nth 1 rule)
+              second-list nil
+              subcomp-list nil)
+        (setq tmp-key (vhdl-replace-string
+                       ent-regexp
+                       (funcall adjust-case
+                                (concat ent-key "  " work-library))))
+        (push (cons ent-key tmp-key) unit-list)
+        ;; rule target for this entity
+        (push ent-key target-list)
+        ;; rule dependencies for all used packages
+        (setq pack-list (vhdl-get-packages lib-alist work-library))
+        (setq depend-list (append depend-list pack-list))
+        (setq all-pack-list pack-list)
+        ;; add rule
+        (vhdl-aput 'rule-alist ent-file-name (list target-list depend-list))
+        ;; rules for all corresponding architectures
+        (while arch-alist
+          (setq arch-entry (car arch-alist)
+                arch-key (nth 0 arch-entry)
+                ent-arch-key (concat ent-key "-" arch-key)
+                arch-file-name (if vhdl-compile-absolute-path
+                                   (nth 2 arch-entry)
+                                 (file-relative-name (nth 2 arch-entry)
+                                                     compile-directory))
+                inst-alist (nth 4 arch-entry)
+                lib-alist (nth 5 arch-entry)
+                rule (vhdl-aget rule-alist arch-file-name)
+                target-list (nth 0 rule)
+                depend-list (nth 1 rule))
+          (setq tmp-key (vhdl-replace-string
+                         arch-regexp
+                         (funcall adjust-case
+                                  (concat arch-key " " ent-key " "
+                                          work-library))))
+          (setq unit-list
+                (cons (cons ent-arch-key tmp-key) unit-list))
+          (push ent-arch-key second-list)
+          ;; rule target for this architecture
+          (push ent-arch-key target-list)
+          ;; rule dependency for corresponding entity
+          (push ent-key depend-list)
+          ;; rule dependencies for contained component instantiations
+          (while inst-alist
+            (setq inst-entry (car inst-alist))
+            (when (or (null (nth 8 inst-entry))
+                      (equal (downcase (nth 8 inst-entry)) work-library))
+              (setq inst-ent-key (or (nth 7 inst-entry)
+                                     (nth 5 inst-entry)))
+              (setq depend-list (cons inst-ent-key depend-list)
+                    subcomp-list (cons inst-ent-key subcomp-list)))
+            (setq inst-alist (cdr inst-alist)))
+          ;; rule dependencies for all used packages
+          (setq pack-list (vhdl-get-packages lib-alist work-library))
+          (setq depend-list (append depend-list pack-list))
+          (setq all-pack-list (append all-pack-list pack-list))
+          ;; add rule
+          (vhdl-aput 'rule-alist arch-file-name (list target-list depend-list))
+          (setq arch-alist (cdr arch-alist)))
+        (push (list ent-key second-list (append subcomp-list all-pack-list))
+              prim-list))
       (setq ent-alist (cdr ent-alist)))
     (setq ent-alist tmp-list)
     ;; rules for all configurations
     (setq tmp-list conf-alist)
     (while conf-alist
       (setq conf-entry (car conf-alist)
-	    conf-key (nth 0 conf-entry)
-	    conf-file-name (if vhdl-compile-absolute-path
-			       (nth 2 conf-entry)
-			     (file-relative-name (nth 2 conf-entry)
-						 compile-directory))
-	    ent-key (nth 4 conf-entry)
-	    arch-key (nth 5 conf-entry)
-	    inst-alist (nth 6 conf-entry)
-	    lib-alist (nth 7 conf-entry)
-	    rule (vhdl-aget rule-alist conf-file-name)
-	    target-list (nth 0 rule)
-	    depend-list (nth 1 rule)
-	    subcomp-list (list ent-key))
+            conf-key (nth 0 conf-entry)
+            conf-file-name (if vhdl-compile-absolute-path
+                               (nth 2 conf-entry)
+                             (file-relative-name (nth 2 conf-entry)
+                                                 compile-directory))
+            ent-key (nth 4 conf-entry)
+            arch-key (nth 5 conf-entry)
+            inst-alist (nth 6 conf-entry)
+            lib-alist (nth 7 conf-entry)
+            rule (vhdl-aget rule-alist conf-file-name)
+            target-list (nth 0 rule)
+            depend-list (nth 1 rule)
+            subcomp-list (list ent-key))
       (setq tmp-key (vhdl-replace-string
-		     conf-regexp
-		     (funcall adjust-case
-			      (concat conf-key "  " work-library))))
+                     conf-regexp
+                     (funcall adjust-case
+                              (concat conf-key "  " work-library))))
       (push (cons conf-key tmp-key) unit-list)
       ;; rule target for this configuration
       (push conf-key target-list)
       ;; rule dependency for corresponding entity and architecture
       (setq depend-list
-	    (cons ent-key (cons (concat ent-key "-" arch-key) depend-list)))
+            (cons ent-key (cons (concat ent-key "-" arch-key) depend-list)))
       ;; rule dependencies for used packages
       (setq pack-list (vhdl-get-packages lib-alist work-library))
       (setq depend-list (append depend-list pack-list))
       ;; rule dependencies for contained component configurations
       (while inst-alist
-	(setq inst-entry (car inst-alist))
-	(setq inst-ent-key (nth 2 inst-entry)
-	      inst-conf-key (nth 4 inst-entry))
-	(when (equal (downcase (nth 5 inst-entry)) work-library)
-	  (when inst-ent-key
-	    (setq depend-list (cons inst-ent-key depend-list)
-		  subcomp-list (cons inst-ent-key subcomp-list)))
-	  (when inst-conf-key
-	    (setq depend-list (cons inst-conf-key depend-list)
-		  subcomp-list (cons inst-conf-key subcomp-list))))
-	(setq inst-alist (cdr inst-alist)))
+        (setq inst-entry (car inst-alist))
+        (setq inst-ent-key (nth 2 inst-entry)
+              inst-conf-key (nth 4 inst-entry))
+        (when (equal (downcase (nth 5 inst-entry)) work-library)
+          (when inst-ent-key
+            (setq depend-list (cons inst-ent-key depend-list)
+                  subcomp-list (cons inst-ent-key subcomp-list)))
+          (when inst-conf-key
+            (setq depend-list (cons inst-conf-key depend-list)
+                  subcomp-list (cons inst-conf-key subcomp-list))))
+        (setq inst-alist (cdr inst-alist)))
       ;; add rule
       (vhdl-aput 'rule-alist conf-file-name (list target-list depend-list))
       (push (list conf-key nil (append subcomp-list pack-list)) prim-list)
@@ -17362,235 +17369,235 @@ specified by a target."
     (setq tmp-list pack-alist)
     (while pack-alist
       (setq pack-entry (car pack-alist)
-	    pack-key (nth 0 pack-entry)
-	    pack-body-key nil)
+            pack-key (nth 0 pack-entry)
+            pack-body-key nil)
       (when (nth 2 pack-entry)
-	(setq pack-file-name (if vhdl-compile-absolute-path
-				 (nth 2 pack-entry)
-			       (file-relative-name (nth 2 pack-entry)
-						   compile-directory))
-	      lib-alist (nth 6 pack-entry) lib-body-alist (nth 10 pack-entry)
-	      rule (vhdl-aget rule-alist pack-file-name)
-	      target-list (nth 0 rule) depend-list (nth 1 rule))
-	(setq tmp-key (vhdl-replace-string
-		       pack-regexp
-		       (funcall adjust-case
-				(concat pack-key "  " work-library))))
-	(push (cons pack-key tmp-key) unit-list)
-	;; rule target for this package
-	(push pack-key target-list)
-	;; rule dependencies for all used packages
-	(setq pack-list (vhdl-get-packages lib-alist work-library))
-	(setq depend-list (append depend-list pack-list))
-	(setq all-pack-list pack-list)
-	;; add rule
-	(vhdl-aput 'rule-alist pack-file-name (list target-list depend-list))
-	;; rules for this package's body
-	(when (nth 7 pack-entry)
-	  (setq pack-body-key (concat pack-key "-body")
-		pack-body-file-name (if vhdl-compile-absolute-path
-					(nth 7 pack-entry)
-				      (file-relative-name (nth 7 pack-entry)
-							  compile-directory))
-		rule (vhdl-aget rule-alist pack-body-file-name)
-		target-list (nth 0 rule)
-		depend-list (nth 1 rule))
-	  (setq tmp-key (vhdl-replace-string
-			 pack-body-regexp
-			 (funcall adjust-case
-				  (concat pack-key "  " work-library))))
-	  (setq unit-list
-		(cons (cons pack-body-key tmp-key) unit-list))
-	  ;; rule target for this package's body
-	  (push pack-body-key target-list)
-	  ;; rule dependency for corresponding package declaration
-	  (push pack-key depend-list)
-	  ;; rule dependencies for all used packages
-	  (setq pack-list (vhdl-get-packages lib-body-alist work-library))
-	  (setq depend-list (append depend-list pack-list))
-	  (setq all-pack-list (append all-pack-list pack-list))
-	  ;; add rule
-	  (vhdl-aput 'rule-alist pack-body-file-name
-		     (list target-list depend-list)))
-	(setq prim-list
-	      (cons (list pack-key (when pack-body-key (list pack-body-key))
-			  all-pack-list)
-		    prim-list)))
+        (setq pack-file-name (if vhdl-compile-absolute-path
+                                 (nth 2 pack-entry)
+                               (file-relative-name (nth 2 pack-entry)
+                                                   compile-directory))
+              lib-alist (nth 6 pack-entry) lib-body-alist (nth 10 pack-entry)
+              rule (vhdl-aget rule-alist pack-file-name)
+              target-list (nth 0 rule) depend-list (nth 1 rule))
+        (setq tmp-key (vhdl-replace-string
+                       pack-regexp
+                       (funcall adjust-case
+                                (concat pack-key "  " work-library))))
+        (push (cons pack-key tmp-key) unit-list)
+        ;; rule target for this package
+        (push pack-key target-list)
+        ;; rule dependencies for all used packages
+        (setq pack-list (vhdl-get-packages lib-alist work-library))
+        (setq depend-list (append depend-list pack-list))
+        (setq all-pack-list pack-list)
+        ;; add rule
+        (vhdl-aput 'rule-alist pack-file-name (list target-list depend-list))
+        ;; rules for this package's body
+        (when (nth 7 pack-entry)
+          (setq pack-body-key (concat pack-key "-body")
+                pack-body-file-name (if vhdl-compile-absolute-path
+                                        (nth 7 pack-entry)
+                                      (file-relative-name (nth 7 pack-entry)
+                                                          compile-directory))
+                rule (vhdl-aget rule-alist pack-body-file-name)
+                target-list (nth 0 rule)
+                depend-list (nth 1 rule))
+          (setq tmp-key (vhdl-replace-string
+                         pack-body-regexp
+                         (funcall adjust-case
+                                  (concat pack-key "  " work-library))))
+          (setq unit-list
+                (cons (cons pack-body-key tmp-key) unit-list))
+          ;; rule target for this package's body
+          (push pack-body-key target-list)
+          ;; rule dependency for corresponding package declaration
+          (push pack-key depend-list)
+          ;; rule dependencies for all used packages
+          (setq pack-list (vhdl-get-packages lib-body-alist work-library))
+          (setq depend-list (append depend-list pack-list))
+          (setq all-pack-list (append all-pack-list pack-list))
+          ;; add rule
+          (vhdl-aput 'rule-alist pack-body-file-name
+                     (list target-list depend-list)))
+        (setq prim-list
+              (cons (list pack-key (when pack-body-key (list pack-body-key))
+                          all-pack-list)
+                    prim-list)))
       (setq pack-alist (cdr pack-alist)))
     (setq pack-alist tmp-list)
     ;; generate Makefile
     (let* ((project (vhdl-aget vhdl-project-alist project))
-	   (compiler (vhdl-aget vhdl-compiler-alist vhdl-compiler))
-	   (compiler-id (nth 9 compiler))
-	   (library-directory
-	    (vhdl-resolve-env-variable
-	     (vhdl-replace-string
-	      (cons "\\(.*\\)" (or (nth 7 project) (nth 7 compiler)))
-	      compiler-id)))
-	   (makefile-path-name (expand-file-name
-				makefile-name compile-directory))
-	   (orig-buffer (current-buffer))
-	   cell second-list subcomp-list options unit-key unit-name)
+           (compiler (vhdl-aget vhdl-compiler-alist vhdl-compiler))
+           (compiler-id (nth 9 compiler))
+           (library-directory
+            (vhdl-resolve-env-variable
+             (vhdl-replace-string
+              (cons "\\(.*\\)" (or (nth 7 project) (nth 7 compiler)))
+              compiler-id)))
+           (makefile-path-name (expand-file-name
+                                makefile-name compile-directory))
+           (orig-buffer (current-buffer))
+           cell second-list subcomp-list options unit-key unit-name)
       ;; sort lists
       (setq unit-list (vhdl-sort-alist unit-list))
       (setq prim-list (vhdl-sort-alist prim-list))
       (setq tmp-list rule-alist)
-      (while tmp-list			; pre-sort rule targets
-	(setq cell (cdar tmp-list))
-	(setcar cell (sort (car cell) 'string<))
-	(setq tmp-list (cdr tmp-list)))
-      (setq rule-alist			; sort by first rule target
-	    (sort rule-alist
-		  (function (lambda (a b)
-			      (string< (car (cadr a)) (car (cadr b)))))))
+      (while tmp-list                   ; pre-sort rule targets
+        (setq cell (cdar tmp-list))
+        (setcar cell (sort (car cell) 'string<))
+        (setq tmp-list (cdr tmp-list)))
+      (setq rule-alist                  ; sort by first rule target
+            (sort rule-alist
+                  (function (lambda (a b)
+                              (string< (car (cadr a)) (car (cadr b)))))))
       ;; open and clear Makefile
       (set-buffer (find-file-noselect makefile-path-name t t))
       (erase-buffer)
       (insert "# -*- Makefile -*-\n"
-	      "### " (file-name-nondirectory makefile-name)
-	      " - VHDL Makefile generated by Emacs VHDL Mode " vhdl-version
-	      "\n")
+              "### " (file-name-nondirectory makefile-name)
+              " - VHDL Makefile generated by Emacs VHDL Mode " vhdl-version
+              "\n")
       (if project
-	  (insert "\n# Project   : " (nth 0 project))
-	(insert "\n# Directory : \"" directory "\""))
+          (insert "\n# Project   : " (nth 0 project))
+        (insert "\n# Directory : \"" directory "\""))
       (insert "\n# Platform  : " vhdl-compiler
-	      "\n# Generated : " (format-time-string "%Y-%m-%d %T ")
-	      (user-login-name) "\n")
+              "\n# Generated : " (format-time-string "%Y-%m-%d %T ")
+              (user-login-name) "\n")
       ;; insert compile and option variable settings
       (insert "\n\n# Define compilation command and options\n"
-	      "\nCOMPILE = " (nth 0 compiler)
-	      "\nOPTIONS = " (vhdl-get-compile-options project compiler nil)
-	      (if (equal vhdl-compile-post-command "") ""
-		(concat "\nPOST-COMPILE = " vhdl-compile-post-command))
-	      "\n")
+              "\nCOMPILE = " (nth 0 compiler)
+              "\nOPTIONS = " (vhdl-get-compile-options project compiler nil)
+              (if (equal vhdl-compile-post-command "") ""
+                (concat "\nPOST-COMPILE = " vhdl-compile-post-command))
+              "\n")
       ;; insert library paths
       (setq library-directory
-	    (directory-file-name
-	     (if (file-name-absolute-p library-directory)
-		 library-directory
-	       (file-relative-name
-		(expand-file-name library-directory directory)
-		compile-directory))))
+            (directory-file-name
+             (if (file-name-absolute-p library-directory)
+                 library-directory
+               (file-relative-name
+                (expand-file-name library-directory directory)
+                compile-directory))))
       (insert "\n\n# Define library paths\n"
-	      "\nLIBRARY-" work-library " = " library-directory "\n")
+              "\nLIBRARY-" work-library " = " library-directory "\n")
       (unless mapping-exist
-	(insert "LIBRARY-" work-library "-make = " "$(LIBRARY-" work-library
-		")/make" "\n"))
+        (insert "LIBRARY-" work-library "-make = " "$(LIBRARY-" work-library
+                ")/make" "\n"))
       ;; insert variable definitions for all library unit files
       (insert "\n\n# Define library unit files\n")
       (setq tmp-list unit-list)
       (while unit-list
-	(insert "\nUNIT-" work-library "-" (caar unit-list)
-		" = \\\n\t$(LIBRARY-" work-library
-		(if mapping-exist "" "-make") ")/" (cdar unit-list))
-	(setq unit-list (cdr unit-list)))
+        (insert "\nUNIT-" work-library "-" (caar unit-list)
+                " = \\\n\t$(LIBRARY-" work-library
+                (if mapping-exist "" "-make") ")/" (cdar unit-list))
+        (setq unit-list (cdr unit-list)))
       ;; insert variable definition for list of all library unit files
       (insert "\n\n\n# Define list of all library unit files\n"
-	      "\nALL_UNITS =")
+              "\nALL_UNITS =")
       (setq unit-list tmp-list)
       (while unit-list
-	(insert " \\\n\t" "$(UNIT-" work-library "-" (caar unit-list) ")")
-	(setq unit-list (cdr unit-list)))
+        (insert " \\\n\t" "$(UNIT-" work-library "-" (caar unit-list) ")")
+        (setq unit-list (cdr unit-list)))
       (insert "\n")
       (setq unit-list tmp-list)
       ;; insert `make all' rule
       (insert "\n\n\n# Rule for compiling entire design\n"
-	      "\n" (nth 0 vhdl-makefile-default-targets) " :"
-	      " \\\n\t\t" (nth 2 vhdl-makefile-default-targets)
-	      " \\\n\t\t$(ALL_UNITS)\n")
+              "\n" (nth 0 vhdl-makefile-default-targets) " :"
+              " \\\n\t\t" (nth 2 vhdl-makefile-default-targets)
+              " \\\n\t\t$(ALL_UNITS)\n")
       ;; insert `make clean' rule
       (insert "\n\n# Rule for cleaning entire design\n"
-	      "\n" (nth 1 vhdl-makefile-default-targets) " : "
-	      "\n\t-rm -f $(ALL_UNITS)\n")
+              "\n" (nth 1 vhdl-makefile-default-targets) " : "
+              "\n\t-rm -f $(ALL_UNITS)\n")
       ;; insert `make library' rule
       (insert "\n\n# Rule for creating library directory\n"
-	      "\n" (nth 2 vhdl-makefile-default-targets) " :"
-	      " \\\n\t\t$(LIBRARY-" work-library ")"
-	      (if mapping-exist ""
-		(concat " \\\n\t\t$(LIBRARY-" work-library "-make)\n"))
-	      "\n"
-	      "\n$(LIBRARY-" work-library ") :"
-	      "\n\t"
-	      (vhdl-replace-string
-	       (cons "\\(.*\\)\n\\(.*\\)" (nth 5 compiler))
-	       (concat "$(LIBRARY-" work-library ")\n" (vhdl-work-library)))
-	      "\n")
+              "\n" (nth 2 vhdl-makefile-default-targets) " :"
+              " \\\n\t\t$(LIBRARY-" work-library ")"
+              (if mapping-exist ""
+                (concat " \\\n\t\t$(LIBRARY-" work-library "-make)\n"))
+              "\n"
+              "\n$(LIBRARY-" work-library ") :"
+              "\n\t"
+              (vhdl-replace-string
+               (cons "\\(.*\\)\n\\(.*\\)" (nth 5 compiler))
+               (concat "$(LIBRARY-" work-library ")\n" (vhdl-work-library)))
+              "\n")
       (unless mapping-exist
-	(insert "\n$(LIBRARY-" work-library "-make) :"
-		"\n\t"
-		"mkdir -p $(LIBRARY-" work-library "-make)\n"))
+        (insert "\n$(LIBRARY-" work-library "-make) :"
+                "\n\t"
+                "mkdir -p $(LIBRARY-" work-library "-make)\n"))
       ;; insert '.PHONY' declaration
       (insert "\n\n.PHONY : "
-	      (nth 0 vhdl-makefile-default-targets) " "
-	      (nth 1 vhdl-makefile-default-targets) " "
-	      (nth 2 vhdl-makefile-default-targets) "\n")
+              (nth 0 vhdl-makefile-default-targets) " "
+              (nth 1 vhdl-makefile-default-targets) " "
+              (nth 2 vhdl-makefile-default-targets) "\n")
       ;; insert rule for each library unit
       (insert "\n\n# Rules for compiling single library units and their subhierarchy\n")
       (while prim-list
-	(setq second-list (sort (nth 1 (car prim-list)) 'string<))
-	(setq subcomp-list
-	      (sort (vhdl-uniquify (nth 2 (car prim-list))) 'string<))
-	(setq unit-key (caar prim-list)
-	      unit-name (or (nth 0 (vhdl-aget ent-alist unit-key))
-			    (nth 0 (vhdl-aget conf-alist unit-key))
-			    (nth 0 (vhdl-aget pack-alist unit-key))))
-	(insert "\n" unit-key)
-	(unless (equal unit-key unit-name)
-	  (insert " \\\n" unit-name))
-	(insert " :"
-		" \\\n\t\t" (nth 2 vhdl-makefile-default-targets))
-	(while subcomp-list
-	  (when (and (assoc (car subcomp-list) unit-list)
-		     (not (equal unit-key (car subcomp-list))))
-	    (insert " \\\n\t\t" (car subcomp-list)))
-	  (setq subcomp-list (cdr subcomp-list)))
-	(insert " \\\n\t\t$(UNIT-" work-library "-" unit-key ")")
-	(while second-list
-	  (insert " \\\n\t\t$(UNIT-" work-library "-" (car second-list) ")")
-	  (setq second-list (cdr second-list)))
-	(insert "\n")
-	(setq prim-list (cdr prim-list)))
+        (setq second-list (sort (nth 1 (car prim-list)) 'string<))
+        (setq subcomp-list
+              (sort (vhdl-uniquify (nth 2 (car prim-list))) 'string<))
+        (setq unit-key (caar prim-list)
+              unit-name (or (nth 0 (vhdl-aget ent-alist unit-key))
+                            (nth 0 (vhdl-aget conf-alist unit-key))
+                            (nth 0 (vhdl-aget pack-alist unit-key))))
+        (insert "\n" unit-key)
+        (unless (equal unit-key unit-name)
+          (insert " \\\n" unit-name))
+        (insert " :"
+                " \\\n\t\t" (nth 2 vhdl-makefile-default-targets))
+        (while subcomp-list
+          (when (and (assoc (car subcomp-list) unit-list)
+                     (not (equal unit-key (car subcomp-list))))
+            (insert " \\\n\t\t" (car subcomp-list)))
+          (setq subcomp-list (cdr subcomp-list)))
+        (insert " \\\n\t\t$(UNIT-" work-library "-" unit-key ")")
+        (while second-list
+          (insert " \\\n\t\t$(UNIT-" work-library "-" (car second-list) ")")
+          (setq second-list (cdr second-list)))
+        (insert "\n")
+        (setq prim-list (cdr prim-list)))
       ;; insert rule for each library unit file
       (insert "\n\n# Rules for compiling single library unit files\n")
       (while rule-alist
-	(setq rule (car rule-alist))
-	;; get compiler options for this file
-	(setq options
-	      (vhdl-get-compile-options project compiler (nth 0 rule) t))
-	;; insert rule if file is supposed to be compiled
-	(setq target-list (nth 1 rule)
-	      depend-list (sort (vhdl-uniquify (nth 2 rule)) 'string<))
-	;; insert targets
-	(setq tmp-list target-list)
-	(while target-list
-	  (insert "\n$(UNIT-" work-library "-" (car target-list) ")"
-		  (if (cdr target-list) " \\" " :"))
-	  (setq target-list (cdr target-list)))
-	(setq target-list tmp-list)
-	;; insert file name as first dependency
-	(insert " \\\n\t\t" (nth 0 rule))
-	;; insert dependencies (except if also target or unit does not exist)
-	(while depend-list
-	  (when (and (not (member (car depend-list) target-list))
-		     (assoc (car depend-list) unit-list))
-	    (insert " \\\n\t\t"
-		    "$(UNIT-" work-library "-" (car depend-list) ")"))
-	  (setq depend-list (cdr depend-list)))
-	;; insert compile command
-	(if options
-	    (insert "\n\t$(COMPILE) "
-		    (if (eq options 'default) "$(OPTIONS)" options) " "
-		    (nth 0 rule)
-		    (if (equal vhdl-compile-post-command "") ""
-		      " $(POST-COMPILE)") "\n")
-	  (insert "\n"))
-	(unless (and options mapping-exist)
-	  (setq tmp-list target-list)
-	  (while target-list
-	    (insert "\t@touch $(UNIT-" work-library "-" (car target-list) ")\n")
-	    (setq target-list (cdr target-list)))
-	  (setq target-list tmp-list))
-	(setq rule-alist (cdr rule-alist)))
+        (setq rule (car rule-alist))
+        ;; get compiler options for this file
+        (setq options
+              (vhdl-get-compile-options project compiler (nth 0 rule) t))
+        ;; insert rule if file is supposed to be compiled
+        (setq target-list (nth 1 rule)
+              depend-list (sort (vhdl-uniquify (nth 2 rule)) 'string<))
+        ;; insert targets
+        (setq tmp-list target-list)
+        (while target-list
+          (insert "\n$(UNIT-" work-library "-" (car target-list) ")"
+                  (if (cdr target-list) " \\" " :"))
+          (setq target-list (cdr target-list)))
+        (setq target-list tmp-list)
+        ;; insert file name as first dependency
+        (insert " \\\n\t\t" (nth 0 rule))
+        ;; insert dependencies (except if also target or unit does not exist)
+        (while depend-list
+          (when (and (not (member (car depend-list) target-list))
+                     (assoc (car depend-list) unit-list))
+            (insert " \\\n\t\t"
+                    "$(UNIT-" work-library "-" (car depend-list) ")"))
+          (setq depend-list (cdr depend-list)))
+        ;; insert compile command
+        (if options
+            (insert "\n\t$(COMPILE) "
+                    (if (eq options 'default) "$(OPTIONS)" options) " "
+                    (nth 0 rule)
+                    (if (equal vhdl-compile-post-command "") ""
+                      " $(POST-COMPILE)") "\n")
+          (insert "\n"))
+        (unless (and options mapping-exist)
+          (setq tmp-list target-list)
+          (while target-list
+            (insert "\t@touch $(UNIT-" work-library "-" (car target-list) ")\n")
+            (setq target-list (cdr target-list)))
+          (setq target-list tmp-list))
+        (setq rule-alist (cdr rule-alist)))
 
       (insert "\n\n### " makefile-name " ends here\n")
       ;; run Makefile generation hook
@@ -17598,15 +17605,15 @@ specified by a target."
       (message "Generating makefile \"%s\"...done" makefile-name)
       ;; save and close file
       (if (file-writable-p makefile-path-name)
-	  (progn (save-buffer)
-		 (kill-buffer (current-buffer))
-		 (set-buffer orig-buffer)
-		 (when (fboundp 'add-to-history)
-		   (add-to-history 'file-name-history makefile-path-name)))
-	(vhdl-warning-when-idle
-	 (format "File not writable: \"%s\""
-		 (abbreviate-file-name makefile-path-name)))
-	(switch-to-buffer (current-buffer))))))
+          (progn (save-buffer)
+                 (kill-buffer (current-buffer))
+                 (set-buffer orig-buffer)
+                 (when (fboundp 'add-to-history)
+                   (add-to-history 'file-name-history makefile-path-name)))
+        (vhdl-warning-when-idle
+         (format "File not writable: \"%s\""
+                 (abbreviate-file-name makefile-path-name)))
+        (switch-to-buffer (current-buffer))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -17755,14 +17762,14 @@ specified by a target."
        'vhdl-mode-hook)
       (function
        (lambda ()
-	 (insert
-	  (if vhdl-special-indent-hook
-	      (concat "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n"
-		      "vhdl-special-indent-hook is set to '"
-		      (format "%s" vhdl-special-indent-hook)
-		      ".\nPerhaps this is your problem?\n"
-		      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n\n")
-	    "\n"))))
+         (insert
+          (if vhdl-special-indent-hook
+              (concat "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n"
+                      "vhdl-special-indent-hook is set to '"
+                      (format "%s" vhdl-special-indent-hook)
+                      ".\nPerhaps this is your problem?\n"
+                      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n\n")
+            "\n"))))
       nil
       "Hi Reto,"))))
 
@@ -17914,7 +17921,7 @@ to visually support naming conventions.")
   (interactive)
   (unless (featurep 'xemacs)
     (help-setup-xref (list #'vhdl-doc-variable variable)
-		     (called-interactively-p 'interactive)))
+                     (called-interactively-p 'interactive)))
   (with-output-to-temp-buffer
       (if (fboundp 'help-buffer) (help-buffer) "*Help*")
     (princ (documentation-property variable 'variable-documentation))
@@ -17927,7 +17934,7 @@ to visually support naming conventions.")
   (interactive)
   (unless (featurep 'xemacs)
     (help-setup-xref (list #'vhdl-doc-mode)
-		     (called-interactively-p 'interactive)))
+                     (called-interactively-p 'interactive)))
   (with-output-to-temp-buffer
       (if (fboundp 'help-buffer) (help-buffer) "*Help*")
     (princ mode-name)
