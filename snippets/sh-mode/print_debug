@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: print_debug
+# key: pd
+# --
+printf '${1:VAR} = ${2:0x%X\n}' $$1
+$0

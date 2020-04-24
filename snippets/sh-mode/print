@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: print
+# key: pr
+# --
+printf "${1:Hello world\n}"
+$0

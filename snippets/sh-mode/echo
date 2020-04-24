@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: echo
+# key: e
+# --
+echo "${1:Hello world}"
+$0

@@ -172,7 +172,7 @@
   :diminish yasnippet yas-minor-mode
   :config
   (use-package yasnippet-snippets)                      ; Install MELPA snippets database
-  (add-to-list 'yas-snippet-dirs "~/.elisp/snippets" t) ; Add snippets fetched from GitHub and customized
+  (add-to-list 'yas-snippet-dirs "~/.elisp/snippets")   ; Add snippets fetched from GitHub and customized ones. DO NOT Append to give them more precendence in case of collision
   (yas-reload-all)
   )
 

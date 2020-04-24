@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: forc
+# key: forc
+# --
+
+for (( ${1:i=0}; ${2:i<10}; ${3:i++} )); do
+    $0
+done

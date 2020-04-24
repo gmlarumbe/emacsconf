@@ -98,31 +98,32 @@
 
 (defhydra hydra-sh-template (:color blue
                                     :hint nil)
-  "
-for s_e_quence           _i_f            _p_rintf            _a_rgs
-for a_r_ithmetic         _c_ase          ec_h_o              _b_ang
-for si_m_ple             _f_unction      printf _d_ebug      safe ba_n_g
-_u_ntil                  _+_ add
-_w_hile                  _s_elect
-while inde_x_ed          _p_rint
+"
+for si_m_ple           _i_f            _p_rintf            _a_rgs
+fo_r_ c-style          if-e_l_se       printf _d_ebug      _b_ang
+_u_ntil                _c_ase          _e_cho              safe ba_n_g
+_w_hile                _f_unction
+while inde_x_ed        _+_ add
+^^                     _s_elect
+^^
 ^^
 ^^
 "
 
-  ("e"   (larumbe/hydra-yasnippet "for-seq"))
-  ("r"   (larumbe/hydra-yasnippet "for-ar"))
-  ("m"   (larumbe/hydra-yasnippet "for-simple"))
+  ("r"   (larumbe/hydra-yasnippet "forc"))
+  ("m"   (larumbe/hydra-yasnippet "for"))
   ("u"   (larumbe/hydra-yasnippet "until"))
   ("w"   (larumbe/hydra-yasnippet "while"))
   ("f"   (larumbe/hydra-yasnippet "f"))
   ("p"   (larumbe/hydra-yasnippet "pr"))
-  ("h"   (larumbe/hydra-yasnippet "e"))
+  ("e"   (larumbe/hydra-yasnippet "e"))
   ("d"   (larumbe/hydra-yasnippet "pd"))
   ("a"   (larumbe/hydra-yasnippet "args"))
   ("b"   (larumbe/hydra-yasnippet "!"))
   ("n"   (larumbe/hydra-yasnippet "s!"))
   ("x"   (sh-indexed-loop))
-  ("i"   (sh-if))
+  ("i"   (larumbe/hydra-yasnippet "if"))
+  ("l"   (sh-if)) ;;  if - elif - else
   ("c"   (sh-case))
   ("+"   (call-interactively 'sh-add))
   ("s"   (sh-select))
