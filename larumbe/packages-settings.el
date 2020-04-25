@@ -354,7 +354,9 @@
   :diminish
   :bind (("C-x c /" . helm-find) ; Enable C-x c prefix commands
          ("C-x c p" . helm-list-emacs-process)
-         ("C-x c t" . helm-top))
+         ("C-x c t" . helm-top)
+         ("M-s o"   . larumbe/helm-occur)
+         )
 
   :config
   (setq helm-completing-read-handlers-alist
@@ -384,6 +386,47 @@
   (helm-autoresize-mode 1)
   (ido-mode 1) ; Enable, so that commands like `ido-kill-buffer-at-head' can be performed
   )
+
+(defun larumbe/helm-occur (&optional prefix)
+  "Copied from `helm-occur' and slightly modified to allow searching symbols.
+If called without prefix argument search for symbol and case-sensitive.
+If called with prefix, search for string and no case sensitive."
+  (interactive "P")
+  ;; DANGER: Added to do a case-sensitive search
+  (let ((case-fold-search prefix))
+    ;; End of DANGER
+    (setq helm-source-occur
+          (car (helm-occur-build-sources (list (current-buffer)) "Helm occur")))
+    (helm-set-local-variable 'helm-occur--buffer-list (list (current-buffer))
+                             'helm-occur--buffer-tick
+                             (list (buffer-chars-modified-tick (current-buffer))))
+    (save-restriction
+      (let (def pos)
+        (when (use-region-p)
+          ;; When user mark defun with `mark-defun' with intention of
+          ;; using helm-occur on this region, it is relevant to use the
+          ;; thing-at-point located at previous position which have been
+          ;; pushed to `mark-ring'.
+          (setq def (save-excursion
+                      (goto-char (setq pos (car mark-ring)))
+                      (helm-aif (thing-at-point 'symbol) (regexp-quote it))))
+          (narrow-to-region (region-beginning) (region-end)))
+        (unwind-protect
+            (helm :sources 'helm-source-occur
+                  :buffer "*helm occur*"
+                  :default (or def (helm-aif (thing-at-point 'symbol)
+                                       ;; DANGER: Modified at this point
+                                       (if (not prefix)
+                                           (concat "\\_<" (regexp-quote it) "\\_>")
+                                         (regexp-quote it))
+                                     ;; End of DANGER
+                                     ))
+                  :preselect (and (memq 'helm-source-occur
+                                        helm-sources-using-default-as-input)
+                                  (format "^%d:" (line-number-at-pos
+                                                  (or pos (point)))))
+                  :truncate-lines helm-occur-truncate-lines)
+          (deactivate-mark t))))))
 
 
 ;;;; Projectile + Helm-Projectile + Helm AG

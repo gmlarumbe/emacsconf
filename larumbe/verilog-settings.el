@@ -15,7 +15,6 @@
               ("C-s"      . larumbe/verilog-isearch-forward)
               ("C-r"      . larumbe/verilog-isearch-backward)
               ("M-s ."    . larumbe/verilog-isearch-forward-symbol-at-point)
-              ("M-s o"    . larumbe/verilog-helm-occur)
               ("M-f"      . larumbe/verilog-forward-word)
               ("M-b"      . larumbe/verilog-backward-word)
               ("TAB"      . larumbe/electric-verilog-tab)
@@ -66,7 +65,6 @@
   (setq verilog-align-ifelse                  nil)
   (setq verilog-minimum-comment-distance       10)
 
-  (setq larumbe/verilog-helm-occur-search-symbols t)
   ;; Fontify
   (setq larumbe/verilog-use-own-custom-fontify  t)
   ;; In case no custom schema is used, take following settings into account:
@@ -1450,48 +1448,6 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
     (modify-syntax-entry ?` "w" table)
     (with-syntax-table table
       (electric-verilog-tab))))
-
-
-(defun larumbe/verilog-helm-occur ()
-  "Copied from `helm-occur' and slightly modified to allow searching symbols.
-
-Variable `larumbe/verilog-helm-occur-search-symbols' determines if searching for symbol or string."
-  (interactive)
-  ;; DANGER: Added to do a case-sensitive search
-  (let ((case-fold-search verilog-case-fold))
-    ;; End of DANGER
-    (setq helm-source-occur
-          (car (helm-occur-build-sources (list (current-buffer)) "Helm occur")))
-    (helm-set-local-variable 'helm-occur--buffer-list (list (current-buffer))
-                             'helm-occur--buffer-tick
-                             (list (buffer-chars-modified-tick (current-buffer))))
-    (save-restriction
-      (let (def pos)
-        (when (use-region-p)
-          ;; When user mark defun with `mark-defun' with intention of
-          ;; using helm-occur on this region, it is relevant to use the
-          ;; thing-at-point located at previous position which have been
-          ;; pushed to `mark-ring'.
-          (setq def (save-excursion
-                      (goto-char (setq pos (car mark-ring)))
-                      (helm-aif (thing-at-point 'symbol) (regexp-quote it))))
-          (narrow-to-region (region-beginning) (region-end)))
-        (unwind-protect
-            (helm :sources 'helm-source-occur
-                  :buffer "*helm occur*"
-                  :default (or def (helm-aif (thing-at-point 'symbol)
-                                       ;; DANGER: Modified at this point
-                                       (if larumbe/verilog-helm-occur-search-symbols
-                                           (concat "\\_<" (regexp-quote it) "\\_>")
-                                         (regexp-quote it))
-                                     ;; End of DANGER
-                                     ))
-                  :preselect (and (memq 'helm-source-occur
-                                        helm-sources-using-default-as-input)
-                                  (format "^%d:" (line-number-at-pos
-                                                  (or pos (point)))))
-                  :truncate-lines helm-occur-truncate-lines)
-          (deactivate-mark t))))))
 
 
 (defun larumbe/electric-verilog-terminate-line ()
