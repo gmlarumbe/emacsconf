@@ -17,14 +17,14 @@
 (defface larumbe/font-lock-punctuation-face
   '((t (:foreground "burlywood")))
   "Face for punctuation symbols: !,;:?'=<>* "
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-punctuation-bold-face 'larumbe/font-lock-punctuation-bold-face)
 (defface larumbe/font-lock-punctuation-bold-face
   '((t (:inherit larumbe/font-lock-punctuation-face :weight extra-bold)))
   "Face for bold punctuation symbols, such as &^~+-/|. "
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-port-connection-face 'larumbe/font-lock-port-connection-face)
@@ -36,7 +36,7 @@
 .portB (signalB)
 );
  "
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-dot-expression-face 'larumbe/font-lock-dot-expression-face)
@@ -47,35 +47,35 @@
 axi_if.Ready <= 1'b1;
 obj.method();
 "
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-braces-content-face 'larumbe/font-lock-braces-content-face)
 (defface larumbe/font-lock-braces-content-face
   '((t (:foreground "yellow green")))
   "Face for content between braces: bit vector width and indexing "
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-braces-face 'larumbe/font-lock-braces-face)
 (defface larumbe/font-lock-braces-face
   '((t (:foreground "goldenrod")))
   "Face for braces []"
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-brackets-face 'larumbe/font-lock-brackets-face)
 (defface larumbe/font-lock-brackets-face
   '((t (:foreground "dark goldenrod")))
   "Face for brackets ()"
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-curly-brackets-face 'larumbe/font-lock-curly-brackets-face)
 (defface larumbe/font-lock-curly-brackets-face
   '((t (:foreground "DarkGoldenrod2")))
   "Face for curly brackets {}"
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-width-num-face 'larumbe/font-lock-width-num-face)
@@ -86,7 +86,7 @@ obj.method();
 {4}'hF,
 {3}'o7,
 "
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-width-type-face 'larumbe/font-lock-width-type-face)
@@ -97,77 +97,77 @@ obj.method();
 4'{h}F,
 3'{o}7,
 "
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-module-face 'larumbe/font-lock-module-face)
 (defface larumbe/font-lock-module-face
   '((t (:foreground "green1")))
   "Face for module names."
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-instance-face 'larumbe/font-lock-instance-face)
 (defface larumbe/font-lock-instance-face
   '((t (:foreground "medium spring green")))
   "Face for instance names."
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-time-event-face 'larumbe/font-lock-time-event-face)
 (defface larumbe/font-lock-time-event-face
   '((t (:foreground "deep sky blue" :weight bold)))
   "Face for time-events: @ and #"
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-time-unit-face 'larumbe/font-lock-time-unit-face)
 (defface larumbe/font-lock-time-unit-face
   '((t (:foreground "light steel blue")))
   "Face for time-units: ms, us, ns, ps, fs (used by delays and timescale/timeprecision)"
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-preprocessor-face 'larumbe/font-lock-preprocessor-face)
 (defface larumbe/font-lock-preprocessor-face
   '((t (:foreground "pale goldenrod")))
   "Face for preprocessor compiler directives (`include, `define...)"
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-variable-type-face 'larumbe/font-lock-variable-type-face)
 (defface larumbe/font-lock-variable-type-face
   '((t (:foreground "powder blue")))
   "Face for variables types (i.e. Verilog typedef types, defined `larumbe/verilog-variable-re-1', `larumbe/verilog-variable-re-2' and `larumbe/verilog-variable-re-3'"
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-variable-name-face 'larumbe/font-lock-variable-name-face)
 (defface larumbe/font-lock-variable-name-face
   '((t (:foreground "DarkSeaGreen1")))
   "Face for variables names (i.e. Verilog typedef names, defined `larumbe/verilog-variable-re-1', `larumbe/verilog-variable-re-2' and `larumbe/verilog-variable-re-3'"
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/xilinx-attributes-face 'larumbe/xilinx-attributes-face)
 (defface larumbe/xilinx-attributes-face
   '((t (:foreground "orange1")))
   "Face for Xilinx Vivado RTL synthesis attributes."
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-grouping-keywords-face 'larumbe/font-lock-grouping-keywords-face)
 (defface larumbe/font-lock-grouping-keywords-face
   '((t (:foreground "dark olive green")))
   "Face for overriding grouping keywords (begin/end)"
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 (defvar larumbe/font-lock-translate-off-face 'larumbe/font-lock-translate-off-face)
 (defface larumbe/font-lock-translate-off-face
   '((t (:background "gray20" :slant italic)))
   "Face for pragmas between comments: * translate_off / * translate_on"
-  :group 'font-lock-highlighting-faces)
+  :group 'hdl-font-lock-highlighting-faces)
 
 
 ;;; Common
@@ -182,7 +182,7 @@ obj.method();
 ;;;; Variables
 ;; Some regexps come from evaluated `(concat larumbe/verilog-identifier-re "\\s-+" larumbe/verilog-identifier-re)' with capture groups and additions depending on what they might detect.
 (defvar larumbe/verilog-system-task-regex "\\$[a-zA-Z][a-zA-Z0-9_\\$]*")
-(defvar larumbe/verilog-port-connection-regex "[( ]\\.\\([0-9a-zA-Z*_-]*\\)")
+(defvar larumbe/verilog-port-connection-regex "[([:blank:]]\\.\\([0-9a-zA-Z*_-]*\\)")
 (defvar larumbe/verilog-dot-itf-struct-regex "\\([a-zA-Z*_-][0-9a-zA-Z*_-]+\\)\\.\\([0-9a-zA-Z*_-]+\\)")
 (defvar larumbe/verilog-braces-content-regex "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
 (defvar larumbe/verilog-width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xz]+\\)")
@@ -526,8 +526,8 @@ these both have precedence over custom fontify."
 ;;;; Variables
 (defvar larumbe/vhdl-brackets-content-range-regex "\\(?1:(\\)\\(?2:[ )+*/$0-9a-zA-Z:_-]*\\)\\s-+\\(?3:\\(down\\)?to\\)\\s-+\\(?4:[ (+*/$0-9a-zA-Z:_-]*\\)\\(?5:)\\)")
 (defvar larumbe/vhdl-brackets-content-index-regex "\\(?1:(\\)\\s-*\\(?2:[0-9]+\\)\\s-*\\(?3:)\\)")
-
 (defvar larumbe/vhdl-directive-keywords-regex (regexp-opt '("psl" "pragma" "synopsys" "synthesis") 'symbols))
+(defvar larumbe/vhdl-highlight-variable-declaration-names nil)
 
 ;;;; Functions
 (defun larumbe/vhdl-font-lock-init ()
