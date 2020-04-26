@@ -20,7 +20,8 @@
 (defun my-prog-mode-hook ()
   (local-set-key (kbd "C-<tab>") 'hs-toggle-hiding)
   (local-set-key (kbd "C-c C-n") 'align-regexp)
-  (local-set-key (kbd "C-c <C-f5>") 'flycheck-mode)
+  (unless (string-equal major-mode "verilog-mode")
+    (local-set-key (kbd "C-c C-f") 'flycheck-mode))
   )
 (add-hook 'prog-mode-hook 'my-prog-mode-hook)
 

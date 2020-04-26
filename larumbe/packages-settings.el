@@ -35,6 +35,9 @@
 
 
 ;;; Basic Packages
+(use-package flycheck
+  :diminish)
+
 (use-package quelpa-use-package)
 
 (use-package so-long

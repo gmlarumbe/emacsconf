@@ -36,6 +36,7 @@
               ("C-c C-c"  . larumbe/verilog-connect-ports-recursively)
               ("C-c C-p"  . larumbe/verilog-preprocess)
               ("<f8>"     . larumbe/verilog-vhier-current-file)
+              ("C-c C-f"  . larumbe/verilog-flycheck-mode)
               )
   :demand ; INFO: Avoid deferring to properly load modi settings
   :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
@@ -103,6 +104,10 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
   (setq larumbe/verilog-open-dirs (larumbe/verilog-list-directories-of-open-buffers))
   (setq verilog-library-directories larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
   (setq flycheck-verilator-include-path larumbe/verilog-open-dirs)
+  (setq larumbe/flycheck-iverilog-include-path larumbe/verilog-open-dirs)
+  ;; TODO: What to do with this?
+  (setq larumbe/verilog-command-flags (split-string (verilog-expand-command "__FLAGS__")))
+  ;; End of TODO:
   (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
   (key-chord-mode 1)
   (larumbe/verilog-find-semicolon-in-instance-comments)
@@ -125,12 +130,16 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
 ;;;; Preprocessor
 (defun larumbe/verilog-preprocess ()
   "Wrapper for `verilog-preprocess' that allows to choose between `verilator' and Verilog-Perl `vppreproc'.
-Seems that all the libraries/incdirs are computed internally at verilog-mode"
+All the libraries/incdirs are computed internally at `verilog-mode' via `verilog-expand'.
+INFO: `iverilog' command syntax requires writing to an output file (defaults to a.out)."
   (interactive)
-  (pcase (completing-read "Select tool: " '("verilator" "vppreproc"))
-    ("verilator" (setq verilog-preprocessor "verilator -E __FLAGS__ __FILE__"))
-    ("vppreproc" (setq verilog-preprocessor "vppreproc __FLAGS__ __FILE__")))
-  (verilog-preprocess))
+  (let (iver-out-file)
+    (pcase (completing-read "Select tool: " '("verilator" "vppreproc" "iverilog"))
+      ("verilator" (setq verilog-preprocessor "verilator -E __FLAGS__ __FILE__"))
+      ("vppreproc" (setq verilog-preprocessor "vppreproc __FLAGS__ __FILE__"))
+      ("iverilog"  (progn (setq iver-out-file (read-string "Output filename: " (concat (file-title) "_pp.sv")))
+                          (setq verilog-preprocessor (concat "iverilog -E -o" iver-out-file " __FILE__ __FLAGS__")))))
+    (verilog-preprocess)))
 
 
 ;;;; Iverilog/verilator Makefile development
@@ -2083,3 +2092,76 @@ Prompt for a file of with the following format:
     (vhier-outline-mode)
     (setq buffer-read-only t)))
 
+
+
+;;; Flycheck
+(defun larumbe/verilog-flycheck-mode (&optional uarg)
+  "Flycheck-mode Verilog wrapper function.
+If called with universal argument, select among available linters."
+  (interactive "P")
+  (let ((linters '("verilator" "iverilog"))
+        (active-linter))
+    (if uarg
+        (progn
+          (pcase (completing-read "Select linter: " linters)
+            ("verilator" (setq active-linter 'verilog-verilator))
+            ("iverilog"  (setq active-linter 'verilog-iverilog)))
+          (flycheck-select-checker active-linter))
+      (call-interactively 'flycheck-mode))))
+
+
+;;;; Verilator override
+;; INFO: Verilator overriden to add possibility of adding a list of packages
+;; as a source to avoid 'import pkg::*' linting errors
+(defvar larumbe/flycheck-verilator-pkg-list
+  '("/home/martigon/Repos/legacy/ucontroller/src/pkg/global_pkg.sv"
+    ))
+
+(flycheck-define-checker verilog-verilator
+  "A Verilog syntax checker using the Verilator Verilog HDL simulator.
+
+See URL `https://www.veripool.org/wiki/verilator'."
+  :command ("verilator" "--lint-only" "-Wall"
+            (option-list "-I" flycheck-verilator-include-path concat)
+            (option-list "" larumbe/flycheck-verilator-pkg-list concat)
+            source)
+  :error-patterns
+  ((warning line-start "%Warning-" (zero-or-more not-newline) ": "
+            (file-name) ":" line ": " (message) line-end)
+   (error line-start "%Error: " (file-name) ":"
+          line ": " (message) line-end))
+  :modes verilog-mode)
+
+
+;;;; Iverilog
+(defvar larumbe/flycheck-iverilog-pkg-list
+  '("/home/martigon/Repos/legacy/ucontroller/src/pkg/global_pkg.sv"
+    ))
+
+
+(flycheck-def-option-var larumbe/flycheck-iverilog-include-path nil verilog-iverilog
+  "A list of include directories for Iverilog.
+
+The value of this variable is a list of strings, where each
+string is a directory to add to the include path of Verilator.
+Relative paths are relative to the file being checked."
+  :type '(repeat (directory :tag "Include directory"))
+  :safe #'flycheck-string-list-p
+  :package-version '(flycheck . "0.24"))
+
+
+(flycheck-define-checker verilog-iverilog
+  "A Verilog syntax checker using Icarus Verilog.
+
+See URL `http://iverilog.icarus.com/'"
+  :command ("iverilog" "-g2012" "-Wall" "-gassertions" "-t" "null"
+            (option-list "-I" larumbe/flycheck-iverilog-include-path concat)
+            (option-list "" larumbe/flycheck-iverilog-pkg-list concat)
+            source)
+  :error-patterns
+  ((warning (file-name) ":" line ":" (zero-or-more not-newline) "warning:" (message) line-end)
+   (error   (file-name) ":" line ":" (zero-or-more not-newline) "error:"   (message) line-end)
+   (error   (file-name) ":" line ":" (message) line-end) ; syntax error message (missing package)
+   )
+
+  :modes verilog-mode)

@@ -33,11 +33,10 @@
   (setq vhdl-speedbar-auto-open nil)
   (setq vhdl-standard '(08 nil))
   (setq vhdl-project "AXI Interface Converter")
-
+  ;; Indentation
   (setq vhdl-basic-offset 4)
   (setq tab-width 4)                    ; TAB Width for indentation
   (setq indent-tabs-mode nil)           ; Replace TAB with Spaces when indenting
-
   ;; GHDL custom linter setup
   (setq vhdl-custom-ghdl-list
         '("GHDL-custom" "ghdl" "-i --ieee=synopsys -fexplicit -fno-color-diagnostics" "make" "-f \\1" nil "mkdir \\1" "./" "work/" "Makefile" "ghdl"
@@ -49,7 +48,7 @@
   (add-to-list 'vhdl-compiler-alist vhdl-custom-ghdl-list)
   (vhdl-set-compiler "GHDL-custom")
   (vhdl-electric-mode 1)
-
+  ;; Bind chords
   (bind-chord "\\\\" #'larumbe/vhdl-jump-to-module-at-point vhdl-mode-map)
   (when (executable-find "ag")
     (bind-chord "\|\|" #'larumbe/vhdl-find-parent-module vhdl-mode-map))
@@ -60,6 +59,12 @@
 ;;; Hooks
 (defun my-vhdl-hook ()
   (set 'ac-sources '(ac-source-gtags))
+  ;; Flycheck
+  (setq flycheck-ghdl-include-path (larumbe/vhdl-list-directories-of-open-buffers))
+  (setq flycheck-ghdl-language-standard "08")
+  (setq flycheck-ghdl-work-lib vhdl-default-library) ; "xil_defaultlib"
+  (setq flycheck-ghdl-workdir (concat (projectile-project-root) "library/" vhdl-default-library)) ; Used @ axi_if_converter
+  (setq flycheck-ghdl-ieee-library "synopsys")
   )
 (add-hook 'vhdl-mode-hook 'my-vhdl-hook)
 
@@ -229,3 +234,54 @@ Fetched from `modi/verilog-find-parent-module'"
       ;; See "ag --list-file-types".
       (add-to-list 'ag-arguments "--vhdl" :append)
       (ag-regexp module-instance-pcre (projectile-project-root)))))
+
+
+;;; Flycheck
+;; Fetched and adapted from Flycheck Verilator
+;; INFO: Configured @ my-vhdl-hook previously on this file.
+(flycheck-def-option-var flycheck-ghdl-include-path nil vhdl-ghdl
+  "A list of include directories for GHDL
+
+The value of this variable is a list of strings, where each
+string is a directory to add to the include path of GHDL. "
+  :type '(repeat (directory :tag "Include directory"))
+  :safe #'flycheck-string-list-p
+  :package-version '(flycheck . "32"))
+
+
+;; Created to adapt GHDL to Xilinx libraries
+(flycheck-def-option-var flycheck-ghdl-work-lib nil vhdl-ghdl
+  "Work library name to be used for GHDL."
+  :type '(choice (const :tag "Work library" nil)
+                 (string :tag "Work library to be used (work, xil_defaultlib, etc...)"))
+  :safe #'stringp
+  :package-version '(flycheck . "32"))
+
+
+;; Overrides the default @ flycheck.el
+(flycheck-define-checker vhdl-ghdl
+  "A VHDL syntax checker using GHDL.
+See URL `https://github.com/ghdl/ghdl'."
+  :command ("ghdl"
+            "-s" ; only do the syntax checking
+            (option "--std=" flycheck-ghdl-language-standard concat)
+            (option "--workdir=" flycheck-ghdl-workdir concat)
+            (option "--ieee=" flycheck-ghdl-ieee-library concat)
+            (option "--work=" flycheck-ghdl-work-lib concat)
+            (option-list "-P" flycheck-ghdl-include-path concat)
+            source)
+  :error-patterns
+  ((error line-start (file-name) ":" line ":" column ": " (message) line-end))
+  :modes vhdl-mode)
+
+
+;;; Other custom functions
+(defun larumbe/vhdl-list-directories-of-open-buffers ()
+  "Base content fetched from: https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
+Returns a list of directories from current VHDL opened files. Useful for `ghdl' linter flycheck include directories"
+  (let (vhdl-opened-dirs)
+    (dolist ($buf (buffer-list (current-buffer)))
+      (with-current-buffer $buf
+        (when (string-equal major-mode "vhdl-mode")
+          (add-to-list 'vhdl-opened-dirs default-directory))))
+    (eval 'vhdl-opened-dirs)))
