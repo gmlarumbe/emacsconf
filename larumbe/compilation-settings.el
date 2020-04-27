@@ -165,7 +165,7 @@
 
 ;;;; Iverilog
 (setq iverilog-error-regexp-emacs-alist-alist
-      '((iverilog-unsupported  "\\(?1:.*\\):\\(?2:[0-9]+\\):.*sorry:"            1 2 nil 1 nil (1 compilation-warning-face) (2 compilation-line-face))
+      '((iverilog-unsupported  "\\(?1:.*\\):\\(?2:[0-9]+\\):.*sorry:"            1 2 nil 0 nil (1 compilation-info-face) (2 compilation-line-face))
         (iverilog-warning      "\\(?1:.*\\):\\(?2:[0-9]+\\):.*warning:"          1 2 nil 1 nil (1 compilation-warning-face) (2 compilation-line-face))
         (iverilog-warning2     "^\\(warning\\):"                                 nil nil nil 1 nil (1 compilation-warning-face))
         (iverilog-error        "\\(?1:.*\\):\\(?2:[0-9]+\\):.*error:  "          1 2 nil 2 nil (1 compilation-error-face)   (2 compilation-line-face))

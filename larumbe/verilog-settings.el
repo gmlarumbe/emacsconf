@@ -40,7 +40,6 @@
               )
   :demand ; INFO: Avoid deferring to properly load modi settings
   :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
-
   (setq larumbe/verilog-indent-level 4)
 
   (setq verilog-indent-level             larumbe/verilog-indent-level)
@@ -97,17 +96,19 @@
 (defvar larumbe/verilog-open-dirs nil
   "List with directories of current opened `verilog-mode' buffers.
 Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
+(defvar larumbe/verilog-open-pkgs nil
+  "List of currently opened SystemVerilog packages")
+(defvar larumbe/verilog-project-pkg-list nil
+  "List of current open packages at projectile project.")
 
 
 (defun my-verilog-hook ()
   (set 'ac-sources '(ac-source-verilog ac-source-gtags)) ; Auto-complete verilog-sources
-  (setq larumbe/verilog-open-dirs (larumbe/verilog-list-directories-of-open-buffers))
-  (setq verilog-library-directories larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
-  (setq flycheck-verilator-include-path larumbe/verilog-open-dirs)
-  (setq larumbe/flycheck-iverilog-include-path larumbe/verilog-open-dirs)
-  ;; TODO: What to do with this?
-  (setq larumbe/verilog-command-flags (split-string (verilog-expand-command "__FLAGS__")))
-  ;; End of TODO:
+  (setq larumbe/verilog-open-dirs (nth 0 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
+  (setq larumbe/verilog-open-pkgs (nth 1 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
+  (setq verilog-library-directories             larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
+  (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs)
+  (setq larumbe/flycheck-iverilog-include-path  larumbe/verilog-open-dirs)
   (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
   (key-chord-mode 1)
   (larumbe/verilog-find-semicolon-in-instance-comments)
@@ -1918,15 +1919,22 @@ DANGER: It may wrongly detect some `old-end' regexp matches, but seems too compl
         (query-replace-regexp old-end   new-end   nil (point-min) (point-max))))))
 
 
-(defun larumbe/verilog-list-directories-of-open-buffers ()
+(defun larumbe/verilog-dirs-and-pkgs-of-open-buffers ()
   "Base content fetched from: https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
-Returns a list of directories from current verilog opened files. Useful for `verilator' flycheck include directories"
-  (let (verilog-opened-dirs)
+Returns a list of directories from current verilog opened files.
+It also updates currently opened SystemVerilog packages."
+  (let ((verilog-opened-dirs)
+        (verilog-opened-pkgs)
+        (pkg-regexp "^\\s-*\\(?1:package\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)"))
     (dolist ($buf (buffer-list (current-buffer)))
       (with-current-buffer $buf
         (when (string-equal major-mode "verilog-mode")
-          (add-to-list 'verilog-opened-dirs default-directory))))
-    (eval 'verilog-opened-dirs)))  ; Return list of -I directories
+          (add-to-list 'verilog-opened-dirs default-directory)
+          (save-excursion
+            (beginning-of-buffer)
+            (when (re-search-forward pkg-regexp nil t)
+              (add-to-list 'verilog-opened-pkgs (buffer-file-name)))))))
+    `(,verilog-opened-dirs ,verilog-opened-pkgs)))  ; Return list of dirs and packages
 
 
 
@@ -2054,27 +2062,18 @@ Make an outline/outshine accessible view for use with Gtags)"
   (setq buffer-read-only t))
 
 
-(defun larumbe/verilog-vhier-current-file (&optional extra-files)
+(defun larumbe/verilog-vhier-current-file ()
   "Extract hierarchy of current file module using Verilog-Perl backend.
 To handle packages that require being sourced before the rest of the files, use universal argument.
-Prompt for a file of with the following format:
-
-/path/to/package/pkg1.sv
-/path/to/package/pkg2.sv
-"
-  (interactive "P")
-  (let* ((library-args (mapconcat
-                        (lambda (x) (concat "-y " x))
-                        larumbe/verilog-open-dirs
-                        " "))
-         (pkg-files (when extra-files
-                      (concat "-f " (read-file-name "Pkg file:") " ")))
+Prompt for a file of with the following format: "
+  (interactive)
+  (let* ((library-args (verilog-expand-command "__FLAGS__"))
+         (pkg-files (mapconcat 'identity (larumbe/verilog-update-project-pkg-list) " "))
          (top-module (file-title))
          (cmd (concat
                "vhier "
-               pkg-files
+               pkg-files " "
                buffer-file-name " "
-               "+libext+.sv+.svh" " "
                library-args " "
                "--cells" " "
                "--no-missing" " "
@@ -2095,6 +2094,20 @@ Prompt for a file of with the following format:
 
 
 ;;; Flycheck
+(defun larumbe/verilog-update-project-pkg-list ()
+  "Update `larumbe/verilog-project-pkg-list' variable with current verilog open packages
+of current projectile project. To be used with vhier/flycheck.
+INFO: Limitations are that packages included as sources might not be in the proper order.
+TODO: Some sorting method could be used in the future, such as extracting them from buffer file but in the order they have been opened and reverse sorting, for example..."
+  (setq larumbe/verilog-project-pkg-list nil) ; Reset list
+  (mapcar
+   (lambda (pkg)
+     (when (string-prefix-p (projectile-project-root) pkg)
+       (add-to-list 'larumbe/verilog-project-pkg-list pkg)))
+   larumbe/verilog-open-pkgs)
+  larumbe/verilog-project-pkg-list)     ; Return pkg-list
+
+
 (defun larumbe/verilog-flycheck-mode (&optional uarg)
   "Flycheck-mode Verilog wrapper function.
 If called with universal argument, select among available linters."
@@ -2107,23 +2120,19 @@ If called with universal argument, select among available linters."
             ("verilator" (setq active-linter 'verilog-verilator))
             ("iverilog"  (setq active-linter 'verilog-iverilog)))
           (flycheck-select-checker active-linter))
-      (call-interactively 'flycheck-mode))))
+      (progn
+        (larumbe/verilog-update-project-pkg-list)
+        (call-interactively 'flycheck-mode)))))
 
 
 ;;;; Verilator override
-;; INFO: Verilator overriden to add possibility of adding a list of packages
-;; as a source to avoid 'import pkg::*' linting errors
-(defvar larumbe/flycheck-verilator-pkg-list
-  '("/home/martigon/Repos/legacy/ucontroller/src/pkg/global_pkg.sv"
-    ))
-
 (flycheck-define-checker verilog-verilator
   "A Verilog syntax checker using the Verilator Verilog HDL simulator.
 
 See URL `https://www.veripool.org/wiki/verilator'."
   :command ("verilator" "--lint-only" "-Wall"
-            (option-list "-I" flycheck-verilator-include-path concat)
-            (option-list "" larumbe/flycheck-verilator-pkg-list concat)
+            (option-list "-I" larumbe/flycheck-verilator-include-path concat)
+            (option-list "" larumbe/verilog-project-pkg-list concat)
             source)
   :error-patterns
   ((warning line-start "%Warning-" (zero-or-more not-newline) ": "
@@ -2134,10 +2143,6 @@ See URL `https://www.veripool.org/wiki/verilator'."
 
 
 ;;;; Iverilog
-(defvar larumbe/flycheck-iverilog-pkg-list
-  '("/home/martigon/Repos/legacy/ucontroller/src/pkg/global_pkg.sv"
-    ))
-
 
 (flycheck-def-option-var larumbe/flycheck-iverilog-include-path nil verilog-iverilog
   "A list of include directories for Iverilog.
@@ -2156,12 +2161,13 @@ Relative paths are relative to the file being checked."
 See URL `http://iverilog.icarus.com/'"
   :command ("iverilog" "-g2012" "-Wall" "-gassertions" "-t" "null"
             (option-list "-I" larumbe/flycheck-iverilog-include-path concat)
-            (option-list "" larumbe/flycheck-iverilog-pkg-list concat)
+            (option-list "" larumbe/verilog-project-pkg-list concat)
             source)
   :error-patterns
-  ((warning (file-name) ":" line ":" (zero-or-more not-newline) "warning:" (message) line-end)
+  ((info    (file-name) ":" line ":" (zero-or-more not-newline) "sorry:" (message) line-end) ; Unsupported
+   (warning (file-name) ":" line ":" (zero-or-more not-newline) "warning:" (message) line-end)
    (error   (file-name) ":" line ":" (zero-or-more not-newline) "error:"   (message) line-end)
-   (error   (file-name) ":" line ":" (message) line-end) ; syntax error message (missing package)
+   (error   (file-name) ":" line ":" (message) line-end) ; 'syntax error' message (missing package)
    )
 
   :modes verilog-mode)
