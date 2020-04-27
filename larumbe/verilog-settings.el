@@ -1798,8 +1798,8 @@ It will only align ports, i.e., between instance name and end of instantiation."
     (larumbe/verilog-align-parameters-current-module)))
 
 
-(defvar larumbe/connect-disconnect-port-re "\\.\\(?1:[a-zA-Z0-9_-]+\\)\\(?2:[[:blank:]]*\\)")
-(defvar larumbe/connect-disconnect-conn-re "(\\(?3:.*\\))")
+(defvar larumbe/connect-disconnect-port-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)")
+(defvar larumbe/connect-disconnect-conn-re "\\(?4:(\\(?5:.*\\))\\)?")
 (defvar larumbe/connect-disconnect-not-found "No port detected at current line")
 
 (defun larumbe/verilog-toggle-connect-port (force-connect)
@@ -1817,14 +1817,14 @@ If called with universal arg, `force-connect' parameter will force connection of
     (beginning-of-line)
     (if (re-search-forward line-regex (point-at-eol) t)
         (progn
-          (setq port (substring-no-properties (match-string 1)))
-          (setq conn (substring-no-properties (match-string 3)))
+          (setq port (match-string-no-properties 2))
+          (setq conn (match-string-no-properties 5))
           (if (or (string-equal conn "") force-connect) ; If it is disconnected or connection is forced via parameter...
               (progn ; Connect
-                (setq sig (read-string (concat "Connect [" port "] to: ") conn))
-                (replace-match (concat ".\\1\\2\(" sig "\)") t))
+                (setq sig (read-string (concat "Connect [" port "] to: ") port))
+                (replace-match (concat "\\1.\\2\\3\(" sig "\)") t))
             (progn ; Else disconnect
-              (replace-match (concat ".\\1\\2()") t)))
+              (replace-match (concat "\\1.\\2\\3\(" sig "\)") t)))
           (goto-char start)
           (next-line 1))
       (progn ; No port found
