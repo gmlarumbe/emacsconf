@@ -1116,7 +1116,7 @@ _as_: assign                   _fn_: fork-join none              _if_: if       
 _FS_: FSM sync                 _rn_: rand/constraint             _ei_: else if          _D_: Define signal
 _IS_: Inst simple              _cb_: clocking block              _el_: else             _hd_: HP Header
 _IP_: Inst w/params            _d_:  display                     _wh_: while            ^^
-^^                             _ai_: assert immediate            _wd_: do-while^^
+^^                             _ai_: assert immediate            _wd_: do-while         ^^
 ^^                             _ap_: assert property             ^^
 ^^                             _pr_: property                    ^^
 ^^                             _sq_: sequence                    ^^
