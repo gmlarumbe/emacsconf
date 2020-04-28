@@ -42,7 +42,7 @@
   (set 'ac-sources '(ac-source-gtags
                      ac-source-symbols))
   (local-set-key (kbd "C-x C-.") 'larumbe/load-file-current-buffer) ; Own function useful to debug elisp (rudimentary)
-  (local-set-key (kbd "C-c .") 'ffap)
+  (local-set-key (kbd "C-c .") 'larumbe/find-file-at-point)
   (local-set-key (kbd "C-c C-e") 'edebug-defun)
   (local-set-key (kbd "C-M-z") 'eval-region)
   )

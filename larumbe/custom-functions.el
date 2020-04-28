@@ -664,8 +664,13 @@ If Universal Argument is provided, then do not preview file"
 (defun larumbe/load-file-current-buffer ()
   "Load current buffer .el file "
   (interactive)
-  (load-file buffer-file-name)
-  )
+  (load-file buffer-file-name))
+
+
+(defun larumbe/find-file-at-point ()
+  "Wrapper for `ffap' without asking for the file."
+  (interactive)
+  (ffap (thing-at-point 'filename)))
 
 
 ;; Copy current pwd to kill-ring (useful to deal with files without the need of switching to dired)
