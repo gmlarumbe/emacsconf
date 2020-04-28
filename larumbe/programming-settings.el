@@ -198,6 +198,12 @@ while inde_x_ed        _+_ add
   (add-hook 'nxml-mode-hook 'projectile-mode))
 
 
+
+;;;; DOCBOOK
+(use-package docbook-mode
+  :load-path "~/.elisp/larumbe/own-modes/majors/"
+  :mode (("\\.docbook\\.xml" . docbook-mode)))
+
 ;;;; VIVADO
 (use-package vivado-mode
   :load-path "~/elisp/download/"

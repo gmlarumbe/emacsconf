@@ -39,6 +39,8 @@
 ;;;; Load Path
 (add-to-list 'load-path (expand-file-name "~/.elisp"))
 (add-to-list 'load-path (expand-file-name "~/.elisp/download"))
+(add-to-list 'load-path (expand-file-name "~/.elisp/larumbe/own-modes/majors/"))
+(add-to-list 'load-path (expand-file-name "~/.elisp/larumbe/own-modes/minors/"))
 (add-to-list 'load-path (expand-file-name "~/.elisp/larumbe/own-modes/override/"))
 
 
