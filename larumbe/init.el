@@ -10,14 +10,17 @@
 ;; Emacs Basic config setup
 (load "~/.elisp/larumbe/config-basic.el")
 
+;; Custom functions
+(load "~/.elisp/larumbe/custom-functions.el")
+
 ;; Emacs Packages setup
 (load "~/.elisp/larumbe/packages-settings.el")
 
 ;; Emacs Packages setup
 (load "~/.elisp/larumbe/ggtags-settings.el")
 
-;; Custom functions
-(load "~/.elisp/larumbe/custom-functions.el")
+;; Git/SVN/repo
+(load "~/.elisp/larumbe/version-control-settings.el")
 
 ;; Custom Macros as functions
 (load "~/.elisp/larumbe/macros.el")
