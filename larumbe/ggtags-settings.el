@@ -11,6 +11,8 @@
               ("C-c C-k" . nil)         ; EXWM character mode
               ("M->"     . nil)
               ("M-<"     . nil))
+  :bind (:map ggtags-mode-map
+              ("M-."     . larumbe/ggtags-find-tag-dwim))
 
   :config
   (setq ggtags-sort-by-nearness nil) ; Enabling nearness requires global 6.5+
@@ -23,6 +25,16 @@
   (setq ggtags-oversize-limit 1)      ; If set to nil it seems that there is no limit...
   (setq ggtags-update-on-save nil)   ;; Try to avoid the `global -u in progress...'
 
+
+  (defun larumbe/ggtags-find-tag-dwim ()
+    "Wrapper of `ggtags-find-tag-dwim' to visit a tags/files depending
+on where the point is."
+    (interactive)
+    (if (file-exists-p (thing-at-point 'filename))
+        (larumbe/find-file-at-point)
+      (call-interactively 'ggtags-find-tag-dwim)))
+
+  ;; INFO: SystemVerilog Tweak!
   ;; Don't consider ` (back quote) as part of `tag' when looking for a Verilog macro definition
   (defun ggtags-tag-at-point ()
     (pcase (funcall ggtags-bounds-of-tag-function)
@@ -37,12 +49,12 @@
 
 
 ;;; Custom ggtags-hook
-(defun larumbe/ggtags-mode-hook ()
+(defun larumbe/ggtags-mode (&optional enable)
   "Enable `ggtags-mode' depending on programming MAJOR-MODE of current buffer.
 Initially written to be added to every programming mode but avoiding being loaded to emacs-lisp-mode"
   (interactive)
   (unless (string-match "emacs-lisp-mode" (format "%s" major-mode)) ; Do not use ggtags @ `emacs-lisp-mode'
-    (ggtags-mode)))
+    (ggtags-mode enable)))
 
 
 
@@ -55,19 +67,19 @@ Initially written to be added to every programming mode but avoiding being loade
 ;; 4) Name of the file that will be read by global to generate GTAGS (e.g. verilog files)
 
 ;; Init variables for GTAGS generation to nil (this should work as ASSOC list with project name only has 1 element)
-(setq larumbe/vivado-projects nil)
-(setq larumbe/project-xpr-dir              (nth 1 (car larumbe/vivado-projects)))
-(setq larumbe/project-xpr-file             (nth 2 (car larumbe/vivado-projects)))
-(setq larumbe/project-gtags-dirs-directory (nth 3 (car larumbe/vivado-projects)))
-(setq larumbe/project-gtags-dirs-file      (nth 4 (car larumbe/vivado-projects)))
-(setq larumbe/project-gtags-file           (concat larumbe/project-gtags-dirs-directory "/" larumbe/project-gtags-dirs-file))
+(defvar larumbe/vivado-projects nil)
+(defvar larumbe/project-xpr-dir              (nth 1 (car larumbe/vivado-projects)))
+(defvar larumbe/project-xpr-file             (nth 2 (car larumbe/vivado-projects)))
+(defvar larumbe/project-gtags-dirs-directory (nth 3 (car larumbe/vivado-projects)))
+(defvar larumbe/project-gtags-dirs-file      (nth 4 (car larumbe/vivado-projects)))
+(defvar larumbe/project-gtags-file           (concat larumbe/project-gtags-dirs-directory "/" larumbe/project-gtags-dirs-file))
 ;; AG Variable files
-(setq larumbe/project-gtags-ag-files-filename "ag-files") ; Default, not a need to parameterize.
+(defvar larumbe/project-gtags-ag-files-filename "ag-files") ; Default, not a need to parameterize.
 
 ; INFO: Seems that will eventually deprecate, since is not scalable (assumes files are regexps, and freezes emacs for more than a few files)
 ; If set to true, will use files in `ag-files' as regexps to parse instantiations. It was a first attempt of making that work in a sandbox with many projects.
-(setq larumbe/ag-use-input-regexps nil)
-(setq larumbe/hdl-source-extension-regex "\\(.sv$\\|.v$\\|.svh$\\|.vh$\\|.vhd$\\)")
+(defvar larumbe/ag-use-input-regexps nil)
+(defvar larumbe/hdl-source-extension-regex "\\(.sv$\\|.v$\\|.svh$\\|.vh$\\|.vhd$\\)")
 
 ;; Retrieve project list and set variables accordingly
 (defun larumbe/project-set-active-project ()
@@ -136,19 +148,19 @@ Avoid creating GTAGS for every project included inside a repo folder"
 
 
 ;;; Quartus
-(setq larumbe/quartus-projects nil)
-(setq larumbe/project-altera-dir                  (nth 1 (car larumbe/quartus-projects)))
-(setq larumbe/project-altera-file                 (nth 2 (car larumbe/quartus-projects)))
-(setq larumbe/project-altera-gtags-dirs-directory (nth 3 (car larumbe/quartus-projects)))
-(setq larumbe/project-altera-gtags-dirs-file      (nth 4 (car larumbe/quartus-projects)))
+(defvar larumbe/quartus-projects nil)
+(defvar larumbe/project-altera-dir                  (nth 1 (car larumbe/quartus-projects)))
+(defvar larumbe/project-altera-file                 (nth 2 (car larumbe/quartus-projects)))
+(defvar larumbe/project-altera-gtags-dirs-directory (nth 3 (car larumbe/quartus-projects)))
+(defvar larumbe/project-altera-gtags-dirs-file      (nth 4 (car larumbe/quartus-projects)))
 
-(setq altera-tcl-file-regexp "\\(.*_FILE\\|SEARCH_PATH\\) ")
-(setq altera-tcl-file-regexp-file "\\(.*_FILE\\) ")
-(setq altera-tcl-file-regexp-dir "\\(.*SEARCH_PATH\\) ")
+(defvar altera-tcl-file-regexp "\\(.*_FILE\\|SEARCH_PATH\\) ")
+(defvar altera-tcl-file-regexp-file "\\(.*_FILE\\) ")
+(defvar altera-tcl-file-regexp-dir "\\(.*SEARCH_PATH\\) ")
 
 ;; Functions and variables for directory expansion (retrieve files from a dir on each line for gtags processing)
-(setq altera-tcl-env-archons-path "/home/martigon/Repos/svn/obelix/archons/3.0")
-(setq altera-tcl-env-archons-regex "$env(ARCHONS_PATH)")
+(defvar altera-tcl-env-archons-path "/home/martigon/Repos/svn/obelix/archons/3.0")
+(defvar altera-tcl-env-archons-regex "$env(ARCHONS_PATH)")
 ;; Output of `echo $ARCHONS_PATH' at LFP CEE obelix environment
 ;; Copied from CEE (it was needed to switch to Gigatron environment, something strange with SCP)
 

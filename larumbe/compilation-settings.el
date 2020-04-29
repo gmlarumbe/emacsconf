@@ -4,25 +4,28 @@
 ;; - Allows for process output parsing     - ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Variable settings
-(setq compilation-skip-threshold 1) ; Compilation error jumping settings
-    ;; Compilation motion commands skip less important messages. The value can be either
-    ;; 2 -- skip anything less than error,
-    ;; 1 -- skip anything less than warning or
-    ;; 0 -- don't skip any messages.
+(use-package compile
+  :ensure nil
+  :bind (:map compilation-mode-map
+              ("r"   . rename-buffer)
+              ("j"   . larumbe/recompile-with-regexp-alist)
+              ("C-(" . larumbe/show-only-vivado-warnings))
+  :bind (:map comint-mode-map
+              ("C-j" . larumbe/shell-compilation-recompile)) ; sandbox oriented
+  :config
 
+  ;; Compilation motion commands skip less important messages. The value can be either
+  ;; 2 -- skip anything less than error,
+  ;; 1 -- skip anything less than warning or
+  ;; 0 -- don't skip any messages.
+  (setq compilation-skip-threshold 1) ; Compilation error jumping settings
+  (add-hook 'compilation-mode-hook 'my-compilation-hook)
+  )
 
 ;;; Hooks
 ;; INFO: Do not enable linum-mode since it slows down large compilation buffers
 (defun my-compilation-hook ()
-  (setq truncate-lines t)
-  )
-(add-hook 'compilation-mode-hook 'my-compilation-hook)
-(define-key compilation-mode-map (kbd "r") 'rename-buffer)
-(define-key compilation-mode-map (kbd "j") 'larumbe/recompile-with-regexp-alist)
-(define-key compilation-mode-map (kbd "C-(") 'larumbe/show-only-vivado-warnings)
-
-;; Comint (sandbox oriented)
-(define-key comint-mode-map (kbd "C-j") 'larumbe/shell-compilation-recompile)
+  (setq truncate-lines t))
 
 
 ;;; Compilation-mode related functions
@@ -46,8 +49,7 @@
   (other-window 1)
   (switch-to-buffer "*compilation*")
   (end-of-buffer)
-  (shrink-window 18)
-  )
+  (shrink-window 18))
 
 (defun show-custom-compilation-buffers-vivado()
   (interactive)
@@ -57,8 +59,7 @@
   (switch-to-buffer "*compilation*")
   (larumbe/vivado-error-regexp-set-emacs) ; Sets compilation-error-regexp-alist-alist temporarily for the current compilation buffer
   (end-of-buffer)
-  (shrink-window 10)
-  )
+  (shrink-window 10))
 
 (defun show-custom-compilation-buffers-verilator()
   (interactive)
@@ -68,14 +69,13 @@
   (switch-to-buffer "*compilation*")
   (larumbe/verilator-error-regexp-set-emacs) ; Sets compilation-error-regexp-alist-alist temporarily for the current compilation buffer
   (end-of-buffer)
-  (shrink-window 10)
-  )
+  (shrink-window 10))
 
 
 ;;; Compilation error regexp alist
 ;;;; Common
-(setq larumbe/custom-compilation-regexp-sets '("verilog-make" "vivado" "irun" "verilator" "iverilog" "scons")) ; Used for custom recompile (edited by hand)
-(setq larumbe/custom-compilation-regexp-active nil)                                  ; Current active compilation regexp
+(defvar larumbe/custom-compilation-regexp-sets '("verilog-make" "vivado" "irun" "verilator" "iverilog" "scons")) ; Used for custom recompile (edited by hand)
+(defvar larumbe/custom-compilation-regexp-active nil)                                  ; Current active compilation regexp
 
 ;; Recompiling with regexp (active profile needs to be modified manually once set... this should be changed somehow in the future)
 (defun larumbe/recompile-set-active-regexp-alist ()
@@ -119,7 +119,7 @@
 
 ;;;; Vivado
 ;; Variable to parse regexps with vivado info/warning/errors
-(setq vivado-error-regexp-emacs-alist-alist
+(defvar vivado-error-regexp-emacs-alist-alist
       '(
         (vivado-error    "^\\(ERROR\\)\\(.*\\[\\(.*\\):\\([0-9]+\\)\\]\\)*"            3 4 nil 2 nil (1 compilation-error-face))
         (vivado-critical "^\\(CRITICAL WARNING\\)\\(.*\\[\\(.*\\):\\([0-9]+\\)\\]\\)*" 3 4 nil 2 nil (1 compilation-error-face))
@@ -136,7 +136,7 @@
 
 ;;;; IES
 ;; Fetched from verilog-mode (verilog-IES: Incisive Enterprise Simulator) and improved to fit Emacs
-(setq irun-error-regexp-emacs-alist-alist
+(defvar irun-error-regexp-emacs-alist-alist
       '(
         (verilog-IES-error   ".*\\(?1:\\*E\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)?" 2 3 nil 2 nil (1 compilation-error-face))
         (verilog-IES-warning ".*\\(?1:\\*W\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)?" 2 3 nil 1 nil (1 compilation-warning-face))
@@ -151,7 +151,7 @@
 
 ;;;; Verilator
 ;; Fetched from verilog-mode variable: `verilog-error-regexp-emacs-alist'
-(setq verilator-error-regexp-emacs-alist-alist
+(defvar verilator-error-regexp-emacs-alist-alist
       '((verilator-warning "%?\\(Error\\)\\(-[^:]+\\|\\):[\n ]*\\([^ \t:]+\\):\\([0-9]+\\):"    3 4 nil 2 nil (1 compilation-error-face) (2 compilation-line-face))
         (verilator-error   "%?\\(Warning\\)\\(-[^:]+\\|\\):[\n ]*\\([^ \t:]+\\):\\([0-9]+\\):"  3 4 nil 1 nil (1 compilation-warning-face) (2 compilation-line-face)))
       )
@@ -164,7 +164,7 @@
 
 
 ;;;; Iverilog
-(setq iverilog-error-regexp-emacs-alist-alist
+(defvar iverilog-error-regexp-emacs-alist-alist
       '((iverilog-unsupported  "\\(?1:.*\\):\\(?2:[0-9]+\\):.*sorry:"            1 2 nil 0 nil (1 compilation-info-face) (2 compilation-line-face))
         (iverilog-warning      "\\(?1:.*\\):\\(?2:[0-9]+\\):.*warning:"          1 2 nil 1 nil (1 compilation-warning-face) (2 compilation-line-face))
         (iverilog-warning2     "^\\(warning\\):"                                 nil nil nil 1 nil (1 compilation-warning-face))
@@ -183,7 +183,7 @@
 
 ;;;; SCons
 ;; Irun + Vivado + SCons targets + Python
-(setq scons-error-regexp-emacs-alist-alist
+(defvar scons-error-regexp-emacs-alist-alist
       '(
         (verilog-IES-error   ".*\\(?1:\\*E\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)?" 2 3 nil 2 nil (1 compilation-error-face))
         (verilog-IES-warning ".*\\(?1:\\*W\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)?" 2 3 nil 1 nil (1 compilation-warning-face))
@@ -217,7 +217,7 @@
 ;;;; Ableton MIDI Remote Scripts Regexps
 ;; INFO: To be used with: `C-u M-x compile RET tail -f Log.txt'
 ;; Or just make a wrapper function to set up this debug config
-(setq ableton-error-regexp-emacs-alist-alist
+(defvar ableton-error-regexp-emacs-alist-alist
       '(
         ;; Taken from scons functions present back in the file
         (python-tracebacks-and-caml "File \\(\"?\\)\\([^,\" \n\t<>]+\\)\\1, lines? \\([0-9]+\\)-?\\([0-9]+\\)?\\(?:$\\|, \\(?: characters? \\([0-9]+\\)-?\\([0-9]+\\)?:\\)?\\([ \n]Warning\\(?: [0-9]+\\)?:\\)?\\)?" 2 (3 . 4) (5 . 6) (7)) ; Some regexps where not detected on some SCons errors
@@ -238,9 +238,9 @@
 
 ;;; FPGA compilation functions
 ;;;; Vivado Synthesis
-(setq vivado-batch-project-path nil)
-(setq vivado-batch-project-name nil)
-(setq vivado-batch-compilation-command nil)
+(defvar vivado-batch-project-path nil)
+(defvar vivado-batch-project-name nil)
+(defvar vivado-batch-compilation-command nil)
 
 
 (defun larumbe/lfp-compile-vivado-set-active-project ()
@@ -270,7 +270,7 @@
 
 ;;;; Vivado Simulation (XSim)
 ;; INFO: It is required to create the simulation first with Vivado GUI, and then run the script
-(setq vivado-sim-project-path nil)
+(defvar vivado-sim-project-path nil)
 
 (defun larumbe/lfp-sim-elab-vivado-set-active-project ()
   (interactive)
@@ -297,10 +297,10 @@
 
 
 ;;;; Irun
-(setq larumbe/irun-sources-file       nil)
-(setq larumbe/irun-top-module         nil)
-(setq larumbe/irun-compilation-dir    nil)
-(setq larumbe/irun-opts
+(defvar larumbe/irun-sources-file       nil)
+(defvar larumbe/irun-top-module         nil)
+(defvar larumbe/irun-compilation-dir    nil)
+(defvar larumbe/irun-opts
       (concat
        "-64bit "
        "-v93 "
@@ -353,9 +353,9 @@ If universal-arg is given, then elaborate the design instead."
 ;; If that is not possible because it is used as a source (e.g. a SystemVerilog interface with a clocking block), then tweak/comment temporarily files by hand.
 ;;
 ;; INFO: This is useful while developing small IPs
-(setq verilator-compile-lint-files nil)
-(setq verilator-compile-lint-top   nil)
-(setq verilator-compile-lint-cmd   nil)
+(defvar verilator-compile-lint-files nil)
+(defvar verilator-compile-lint-top   nil)
+(defvar verilator-compile-lint-cmd   nil)
 
 (defun larumbe/verilator-lint-set-active-project ()
   (interactive)
@@ -386,7 +386,7 @@ It's faster than Vivado elaboration since it does not elaborate design"
 ;; 3) Name of address map
 ;; 4) Output directory
 
-(setq larumbe-reggen-template-types
+(defvar larumbe-reggen-template-types
       '("c_header"
         "docbook"
         "verilog_header"
@@ -474,7 +474,7 @@ Useful to spawn a *tcl-shell* with Vivado regexps, or to init sandbox modules."
 
 
 ;;;; Vivado-TCL shell
-(setq larumbe/vivado-tcl-shell-buffer "*vivado-tcl*")
+(defvar larumbe/vivado-tcl-shell-buffer "*vivado-tcl*")
 ;; Fake TCL Shell based on compilation/comint modes to allow for regexps
 ;; Advantages over `inferior-tcl': Can parse Regexps
 ;; Drawbacks over `inferior-tcl': Requires custom function to send lines/regions from a .tcl buffer

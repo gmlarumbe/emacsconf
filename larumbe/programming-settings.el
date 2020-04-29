@@ -3,28 +3,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Common configuration
-;;;; Common Programming modes hooks
-(add-hook 'prog-mode-hook 'show-paren-mode)
-(add-hook 'prog-mode-hook 'linum-mode)
-(add-hook 'prog-mode-hook '(lambda () (setq truncate-lines t)))
-(add-hook 'prog-mode-hook 'hs-minor-mode)
-(add-hook 'prog-mode-hook 'outshine-mode)
-(add-hook 'prog-mode-hook 'yas-minor-mode)
-(add-hook 'prog-mode-hook 'fic-mode)
-(add-hook 'prog-mode-hook 'larumbe/ggtags-mode-hook)
-(unless (string-equal (system-name) "vl159.plano.hpicorp.net")
-  (add-hook 'prog-mode-hook 'auto-complete-mode)
-  (add-hook 'prog-mode-hook 'projectile-mode))
+(use-package prog-mode
+  :ensure nil
+  :bind (:map prog-mode-map
+              ("C-<tab>" . hs-toggle-hiding)
+              ("C-c C-n" . align-regexp))
+  :config
+  (add-hook 'prog-mode-hook 'my-prog-mode-hook))
 
-;;;; Keymapping
 (defun my-prog-mode-hook ()
-  (local-set-key (kbd "C-<tab>") 'hs-toggle-hiding)
-  (local-set-key (kbd "C-c C-n") 'align-regexp)
+  ;; Verilog has its own flycheck-mode wrapper function
   (unless (string-equal major-mode "verilog-mode")
     (local-set-key (kbd "C-c C-f") 'flycheck-mode))
-  )
-(add-hook 'prog-mode-hook 'my-prog-mode-hook)
-
+  ;; Customizations
+  (show-paren-mode     1)
+  (linum-mode          1)
+  (hs-minor-mode       1)
+  (outshine-mode       1)
+  (yas-minor-mode      1)
+  (fic-mode            1)
+  (larumbe/ggtags-mode 1)
+  (auto-complete-mode  1)
+  (projectile-mode     1)
+  (setq truncate-lines t))
 
 
 ;;; Programming Languages Setups
@@ -36,72 +37,62 @@
 (load "~/.elisp/larumbe/hdl-font-lock.el")
 
 
+;;;; PYTHON
+(load "~/.elisp/larumbe/python-settings.el")
+
+
 ;;;; ELISP
-;;;;; Hooks
+(use-package elisp-mode
+  :ensure nil
+  :bind (:map emacs-lisp-mode-map
+         ("C-x C-." . larumbe/load-file-current-buffer)
+         ("C-c C-e" . edebug-defun)
+         ("C-M-z"   . eval-region)
+         ("M-."     . larumbe/xref-find-definitions)
+         ("M-?"     . larumbe/xref-find-reference-at-point))
+  :config
+  (add-hook 'emacs-lisp-mode-hook 'my-elisp-hook))
+
 (defun my-elisp-hook ()
   (set 'ac-sources '(ac-source-gtags
-                     ac-source-symbols))
-  (local-set-key (kbd "C-x C-.") 'larumbe/load-file-current-buffer) ; Own function useful to debug elisp (rudimentary)
-  (local-set-key (kbd "C-c .") 'larumbe/find-file-at-point)
-  (local-set-key (kbd "C-c C-e") 'edebug-defun)
-  (local-set-key (kbd "C-M-z") 'eval-region)
-  )
-(add-hook 'emacs-lisp-mode-hook 'my-elisp-hook)
+                     ac-source-symbols)))
 
 
+(defun larumbe/xref-find-definitions ()
+    "Wrapper of `xref-find-definitions' to visit a tags/files depending
+on where the point is (similar to `larumbe/ggtags-find-tag-dwim')"
+    (interactive)
+    (if (file-exists-p (thing-at-point 'filename))
+        (larumbe/find-file-at-point)
+      (xref-find-definitions (thing-at-point 'symbol))))
 
-;;;; PYTHON
-(use-package python-mode
-  :mode (("\\SConstruct\\'"      . python-mode)
-         ("\\SConstruct.repo\\'" . python-mode))
 
-  :bind (:map python-mode-map
-              ("C-c C-p"     . python-send-line-or-region-and-step) ; Overrides `run-python'
-              ("C-c C-c"     . run-python)                          ; Overrides `python-shell-send-buffer'
-              ("C-M-n"       . forward-same-indent)
-              ("C-M-p"       . backward-same-indent)
-              ("C-c RET"     . ac-complete-jedi-direct)
-              ;; Send text to an *ansi-term* running a Python interpreter (that may run in a remote machine)
-              ("C-c C-k"     . larumbe/python-send-line-or-region-and-step-remote-from-host)
-              ;; Ignore indentation and send to an *ansi-term* running a Python interpretera Python term individual statements (that may run in a remote machine).
-              ("C-c C-l"     . larumbe/python-send-line-and-step-ansi-no-indent) ; Overrides `python-shell-send-file'
-              )
-  :bind (:map jedi-mode-map ("<C-tab>" . nil)) ; Let C-tab to HideShow
+(defun larumbe/xref-find-reference-at-point ()
+  "Find reference of symbol at point"
+  (interactive)
+  (xref-find-references (thing-at-point 'symbol)))
 
-  :config
-  (setq py-number-face           font-lock-doc-face)
-  (setq py-object-reference-face larumbe/font-lock-grouping-keywords-face)
-  (setq py-pseudo-keyword-face   font-lock-constant-face) ; True/False/None
-  (setq py-try-if-face           font-lock-doc-face)
-  (setq py-variable-name-face    font-lock-variable-name-face)
-  (setq py-use-font-lock-doc-face-p t)
-  (define-key python-mode-map "\C-c@\C-\M-h" 'larumbe/python-hs-hide-all) ; Overrides `hs-hide-all' (Error if declaring with use-package :bind - Key sequence C-c @  starts with non-prefix key C-c @
-  (larumbe/python-fix-hs-special-modes-alist) ; BUG Fix (check function docstring for more info)
-  )
-
-;;;;; Variables
-(setq python-check-command "pylint")
-
-;;;;; Hooks
-(unless (string-equal (system-name) "vl159.plano.hpicorp.net")
-  (use-package jedi-core)
-  (add-hook 'python-mode-hook 'jedi:setup))
 
 
 ;;;; SHELL-SCRIPT
+(use-package sh-script
+  :ensure nil
+  :bind (:map sh-mode-map
+              ("C-c C-j" . sh-switch-to-process-buffer)
+              ("C-c C-k" . sh-send-line-or-region-and-step)
+              ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)
+              ("C-c C-t" . hydra-sh-template/body))
+  :config
+  (add-hook 'sh-mode-hook 'my-sh-mode-hook))
+
 (defun my-sh-mode-hook ()
-  (local-set-key (kbd "C-c C-j") 'sh-switch-to-process-buffer)
-  (local-set-key (kbd "C-c C-k") 'sh-send-line-or-region-and-step)
-  (local-set-key (kbd "C-c C-p") 'larumbe/sh-send-line-or-region-and-step-ansi)
-  (local-set-key (kbd "C-c C-t") 'hydra-sh-template/body)
   (set 'ac-sources '(ac-source-gtags
                      ac-source-symbols)))
-(add-hook 'sh-mode-hook 'my-sh-mode-hook)
 
 
 (defhydra hydra-sh-template (:color blue
                                     :hint nil)
-"
+  "
 for si_m_ple           _i_f            _p_rintf            _a_rgs
 fo_r_ c-style          if-e_l_se       printf _d_ebug      _b_ang
 _u_ntil                _c_ase          _e_cho              safe ba_n_g
@@ -134,69 +125,95 @@ while inde_x_ed        _+_ add
   ("C-g" nil nil :color blue))
 
 
+;; Fetched from: /usr/share/emacs/25.1/lisp/progmodes/sh-script.el.gz:1551
+(defun larumbe/sh-send-line-or-region-and-step-ansi ()
+  "Same as `sh-send-line-or-region-and-step' but for *ansi-term* process"
+  (interactive)
+  (let (from to end)
+    (if (use-region-p)
+        (setq from (region-beginning)
+              to (region-end)
+              end to)
+      (setq from (line-beginning-position)
+            to (line-end-position)
+            end (1+ to)))
+    ;; DANGER: Changes went here
+    (comint-send-string (get-buffer-process "*ansi-term*")
+                        (concat (buffer-substring-no-properties from to) "\n"))
+    ;; End of DANGER
+    (goto-char end)))
+
+(defun sh-switch-to-process-buffer ()
+  (interactive)
+  (pop-to-buffer (process-buffer (get-process "shell")) t))
+
+
+
 ;;;; C/C++
+(use-package cc-mode
+  :mode (("\\.ino\\'" . c-or-c++-mode))
+  :bind (:map c-mode-map ; Also inherited by c++ buffers, not in the other direction!
+              ("C-c f"        . semantic-ia-show-summary)
+              ("C-c ."        . semantic-ia-fast-jump)
+              ("C-c ,"        . pop-global-mark) ; Requires unbinding of <C-c ,> at semantic-mode-map
+              )
+  :config
+  (setq c-default-style "linux" c-basic-offset 4) ; Indent and style
+  (add-hook 'c-mode-common-hook 'my-cc-mode-hook)
+
+  (use-package semantic
+    :bind (:map semantic-mode-map
+                ("C-c ," . nil)) ; INFO: Unbinds ALL semantic commands, since C-c , is the prefix
+    :config
+    (add-hook 'c-mode-common-hook 'semantic-mode))
+  )
+
 (defun my-cc-mode-hook ()
-  (setq c-default-style "linux"         ; Indent and style
-        c-basic-offset 4)
-
-  (local-set-key (kbd "C-c .") 'semantic-ia-fast-jump)
-  (local-set-key (kbd "C-c ,") 'pop-global-mark)
-  (local-set-key (kbd "C-c C-.") 'semantic-complete-jump)
-  (local-set-key (kbd "C-c f") 'semantic-ia-show-summary)
-  (local-set-key (kbd "C-c <return>") 'semantic-analyze-possible-completions)
-
   (set 'ac-sources '(ac-source-semantic-raw
                      ac-source-gtags)))
 
-(add-hook 'c-mode-common-hook 'my-cc-mode-hook)
-(add-to-list 'auto-mode-alist '("\\.ino\\'" . c++-mode)) ;; Arduino Files in C-mode
-
-
 
 ;;;; TCL
+(use-package tcl
+  :bind (:map tcl-mode-map
+              ("C-c C-p" . larumbe/tcl-send-line-or-region-and-step)
+              ("C-c C-k" . larumbe/tcl-send-line-or-region-and-step-vivado-shell))
+  :config
+  (add-hook 'tcl-mode-hook 'my-tcl-hook))
+
 (defun my-tcl-hook ()
-  (local-set-key (kbd "C-c C-p") 'larumbe/tcl-send-line-or-region-and-step)
-  (local-set-key (kbd "C-c C-k") 'larumbe/tcl-send-line-or-region-and-step-vivado-shell)
-
-  (modify-syntax-entry ?$ ".")
-  )
-(add-hook 'tcl-mode-hook 'my-tcl-hook)
+  (modify-syntax-entry ?$ "."))
 
 
-
-;;;; PERL
-(defalias 'perl-mode 'cperl-mode)
+;; Copied from sh-send-line-or-regin-and-step for SH Shell scripting
+(defun larumbe/tcl-send-line-or-region-and-step ()
+  "Send the current line to the inferior shell and step to the next line.
+When the region is active, send the region instead."
+  (interactive)
+  (let (from to end (proc (inferior-tcl-proc)))
+    (if (use-region-p)
+        (setq from (region-beginning)
+              to (region-end)
+              end to)
+      (setq from (line-beginning-position)
+            to (line-end-position)
+            end (1+ to)))
+    (tcl-send-string proc (buffer-substring-no-properties from to))
+    (tcl-send-string proc "\n")
+    (goto-char end)))
 
 
 ;;;; XML
-;;;;; Variables
-(setq nxml-child-indent 4)
-;;;;; Hooks
-(defun my-xml-mode-hook ()
-  (local-set-key (kbd "C-c C-p") 'larumbe/docbook-to-pdf-current-buffer)
-  (local-set-key (kbd "C-c C-k") 'larumbe/docbook-to-pdf-current-buffer-no-preview)
-  (local-set-key (kbd "C-c C-t") 'hydra-nxml-docbook-template/body)
+(use-package nxml-mode
+  :ensure nil
+  :config
+  (setq nxml-child-indent 4)
+  (add-hook 'nxml-mode-hook 'my-xml-mode-hook)
+  (add-hook 'nxml-mode-hook 'my-prog-mode-hook)) ;; INFO: Since it is not a childe of prog-mode, requires common configuration settings
 
+(defun my-xml-mode-hook ()
   (set 'ac-sources '(ac-source-gtags
                      ac-source-symbols)))
-
-(add-hook 'nxml-mode-hook 'my-xml-mode-hook)
-;; INFO: Since it is not a childe of prog-mode, requires common configuration settings
-(add-hook 'nxml-mode-hook 'show-paren-mode)
-(add-hook 'nxml-mode-hook 'linum-mode)
-(add-hook 'nxml-mode-hook '(lambda () (setq truncate-lines t)))
-(add-hook 'nxml-mode-hook 'hs-minor-mode)
-(add-hook 'nxml-mode-hook 'outshine-mode)
-(add-hook 'nxml-mode-hook 'yas-minor-mode)
-(add-hook 'nxml-mode-hook 'fic-mode)
-(add-hook 'nxml-mode-hook 'ggtags-mode)
-;; Prog-mode hook keybindings
-(add-hook 'nxml-mode-hook 'my-prog-mode-hook)
-
-(unless (string-equal (system-name) "vl159.plano.hpicorp.net")
-  (add-hook 'nxml-mode-hook 'auto-complete-mode)
-  (add-hook 'nxml-mode-hook 'projectile-mode))
-
 
 
 ;;;; DOCBOOK
@@ -204,9 +221,10 @@ while inde_x_ed        _+_ add
   :load-path "~/.elisp/larumbe/own-modes/majors/"
   :mode (("\\.docbook\\.xml" . docbook-mode)))
 
+
 ;;;; VIVADO
 (use-package vivado-mode
-  :load-path "~/elisp/download/"
+  :load-path "~/.elisp/download/"
   :mode (("\\.xdc\\'" . vivado-mode))
   :hook ((vivado-mode . my-vivado-mode-hook))
   :config
@@ -241,18 +259,15 @@ while inde_x_ed        _+_ add
          ("\\rc\\'"       . conf-mode)
          ("\\.sby\\'"     . conf-mode))
   :config
-  ;; INFO: Since it is not a childe of prog-mode, requires common configuration settings
-  (add-hook 'conf-mode-hook 'show-paren-mode)
-  (add-hook 'conf-mode-hook 'linum-mode)
-  (add-hook 'conf-mode-hook '(lambda () (setq truncate-lines t)))
-  (add-hook 'conf-mode-hook 'hs-minor-mode)
-  (add-hook 'conf-mode-hook 'outshine-mode)
-  (add-hook 'conf-mode-hook 'yas-minor-mode)
-  (add-hook 'conf-mode-hook 'fic-mode)
-  (add-hook 'conf-mode-hook 'ggtags-mode)
-  ;; Prog-mode keybindings
-  (add-hook 'conf-mode-hook 'my-prog-mode-hook)
-  )
+  (add-hook 'conf-mode-hook 'my-prog-mode-hook)) ;; INFO: Since it is not a childe of prog-mode, requires common configuration settings
+
+
+;;;; MAKEFILE
+(use-package make-mode
+  :ensure nil)
+
+;;;; PERL
+(defalias 'perl-mode 'cperl-mode)
 
 ;;;; JSON
 (use-package json-mode)
@@ -261,8 +276,12 @@ while inde_x_ed        _+_ add
 (use-package go-mode)
 
 ;;;; MATLAB
-;; BUG: use-package installs it properly but cannot load matlab-mode...
-;; (use-package matlab-mode)
+(use-package matlab
+  :ensure matlab-mode
+  :mode (("\\.m\\'" . matlab-mode))
+  :config
+  (setq matlab-indent-function t)
+  (setq matlab-shell-command "matlab"))
 
 ;;;; NASL
 (use-package nasl-mode
@@ -272,5 +291,3 @@ while inde_x_ed        _+_ add
 (use-package rdl-mode
   :load-path "~/.elisp/download/")
 
-;;;; MAKEFILE
-(require 'make-mode)

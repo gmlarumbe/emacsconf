@@ -13,17 +13,17 @@
 ;; Custom functions
 (load "~/.elisp/larumbe/custom-functions.el")
 
+;; Custom macros as functions
+(load "~/.elisp/larumbe/macros.el")
+
 ;; Emacs Packages setup
 (load "~/.elisp/larumbe/packages-settings.el")
 
-;; Emacs Packages setup
+;; Global/ggtags setup
 (load "~/.elisp/larumbe/ggtags-settings.el")
 
 ;; Git/SVN/repo
 (load "~/.elisp/larumbe/version-control-settings.el")
-
-;; Custom Macros as functions
-(load "~/.elisp/larumbe/macros.el")
 
 ;; Process/Compilation buffers config
 (load "~/.elisp/larumbe/compilation-settings.el")

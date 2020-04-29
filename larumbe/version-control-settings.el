@@ -55,6 +55,27 @@
 
 
 ;;;;; Manual/Ediff Merging
+;;;;;; Variables
+;; INFO: Needs to be tested after erasing `repohome.el'
+;; Ediff/Merge 2 branches manually by doing checkouts
+;; This is based on old .repohome sync example. Fill with current development repo branches
+;;;;;;; Variables to check which repos must get synced
+(defvar larumbe/git-available-branches '("hp" "cee" "master"))
+(defvar larumbe/git-branch-a "origin/master")
+(defvar larumbe/git-branch-b "origin/hp")
+
+;;;;;;; Variables to set which files must be excluded from ediff/merging
+(defvar larumbe/git-branch-files-to-exclude-from-merge
+      '(".elisp/larumbe/hp-settings.el"
+        ".elisp/larumbe/cee-settings.el"
+        ".bashrc"
+        ".ctags"
+        ".gitconfig"
+        ".xinitrc"
+        ".globalrc"
+        "TODO.org"))
+
+
 ;;;;;; Aux functions
 (defun larumbe/git-find-changed-files-between-branches ()
   "Returns a list of strings with changed files"
@@ -96,26 +117,6 @@ It is the same as solution 1 but using delete instead of delq, and printing the 
 
 
 ;;;;;; Interactive functions
-;; INFO: Needs to be tested after erasing `repohome.el'
-;; Ediff/Merge 2 branches manually by doing checkouts
-;; This is based on old .repohome sync example. Fill with current development repo branches
-;;;;;;; Variables to check which repos must get synced
-(defvar larumbe/git-available-branches '("hp" "cee" "master"))
-(defvar larumbe/git-branch-a "origin/master")
-(defvar larumbe/git-branch-b "origin/hp")
-
-;;;;;;; Variables to set which files must be excluded from ediff/merging
-(defvar larumbe/git-branch-files-to-exclude-from-merge
-      '(".elisp/larumbe/hp-settings.el"
-        ".elisp/larumbe/cee-settings.el"
-        ".bashrc"
-        ".ctags"
-        ".gitconfig"
-        ".xinitrc"
-        ".globalrc"
-        "TODO.org"))
-
-
 (defun larumbe/git-checkout-file-from-another-branch ()
   "Used when an override needs to be performed."
   (interactive)
@@ -157,17 +158,19 @@ It is the same as solution 1 but using delete instead of delq, and printing the 
 
 ;;;; Repohome
 (defun larumbe/repohome-magit-status ()
-  "Perform magit-status with `git-dir' and `work-tree' changed accordingly"
+  "Perform magit-status with `git-dir' and `work-tree' changed accordingly.
+INFO: Is not possible to use `magit-git-global-arguments' as a local variable,
+since it needs to be set for the whole magit session, not only for the command."
   (interactive)
   (larumbe/repohome-reset-git-args)
   (setq magit-git-global-arguments (append magit-git-global-arguments (split-string larumbe/gite-args))) ; Append `gite' args
-  (message "gite arguments set...")
-  (magit-status larumbe/gite-work-tree))
+  (magit-status larumbe/gite-work-tree)
+  (message "Gite arguments set..."))
 
 
 ;; https://emacs.stackexchange.com/questions/3022/reset-custom-variable-to-default-value-programmatically
 (defun larumbe/repohome-reset-git-args ()
   "Resets git global arguments to switch between `gite' workspace and the rest"
   (interactive)
-  (message "Git arguments reset!")
-  (setq magit-git-global-arguments (eval (car (get 'magit-git-global-arguments 'standard-value)))))
+  (setq magit-git-global-arguments (eval (car (get 'magit-git-global-arguments 'standard-value))))
+  (message "Git arguments reset!"))

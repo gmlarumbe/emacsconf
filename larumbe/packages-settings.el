@@ -2,26 +2,6 @@
 ;; PACKAGES SETUP ;;
 ;;;;;;;;;;;;;;;;;;;;
 
-;;; Package management setup for use-package
-(require 'package)
-(setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa"        . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
-(add-to-list 'package-archives '("gnu"          . "http://elpa.gnu.org/packages/"))
-(package-initialize)
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-;; use-package.el is no longer needed at runtime
-;; This means you should put the following at the top of your Emacs, to further reduce load time:
-(eval-when-compile
-  (require 'use-package))
-
-(setq use-package-always-ensure t) ; Force download if not available
-
-
 (use-package diminish
   :ensure
   :config
@@ -30,13 +10,190 @@
   (diminish 'eldoc-mode)
   )
 
+;; TODO: Where to place it?
 (use-package bind-key)
+
+
+(use-package isearch
+  :ensure nil
+  :config
+  (add-hook 'isearch-mode-hook
+            (lambda ()
+              "Activate my customized Isearch word yank command."
+              (substitute-key-definition 'isearch-yank-word-or-char
+                                         'my-isearch-yank-word-or-char-from-beginning
+                                         isearch-mode-map))))
+
+(use-package untabify-trailing-ws
+  :load-path "~/.elisp/larumbe/own-modes/minors/"
+  :config
+  (untabify-trailing-ws 1)) ; Enabled
+
+
+;;; Built-in modes config
+;;;; Variables
+(use-package man
+  :ensure nil
+  :config
+  (setq Man-notify-method 'pushy))
+
+
+(use-package align
+  :ensure nil
+  :config
+  (setq align-default-spacing 1) ; Align to 1 space
+  (setq align-to-tab-stop nil))
+
+
+;;;; Generic
+(use-package elec-pair ; Automatically write closing matching parenthesis/brackets
+  :ensure nil
+  :config
+  (electric-pair-mode 1))
+
+
+(use-package winner
+  :ensure nil
+  :config
+  (winner-mode 1))
+
+
+;;;; Org-Mode
+(use-package org
+  :ensure nil
+  :bind (:map org-mode-map
+              ("C-c l" . org-store-link)
+              ("C-c a" . org-agenda)
+              ("C-c c" . org-capture)
+              ("C-c b" . org-iswitchb)
+              ("C-,"   . nil) ; Unamps org-cycle-agenda-files to free `larumbe/ansi-term'
+              )
+  :config
+  (setq org-log-done 'time)
+  (setq org-agenda-files (list "~/TODO.org"))
+  (setq org-todo-keywords
+        '((sequence "TODO" "IN PROGRESS" "|" "DONE" "CANCELED" "POSTPONED")
+          (sequence "|" "INFO")))
+  (setq org-todo-keyword-faces
+        '(("TODO"        . org-warning)
+          ("IN PROGRESS" . "yellow")
+          ("CANCELED"    . (:foreground "blue" :weight bold))
+          ("POSTPONED"   . "cyan")
+          ("INFO"        . "light blue")
+          )))
+
+
+(defun larumbe/org-show-todos-agenda ()
+  "Show org-mode TODOs and agenda."
+  (interactive)
+  (let* ((buf  "TODO.org")
+         (file (concat "~/" buf)))
+    (when (not (get-buffer buf))
+      (find-file file))
+    (switch-to-buffer buf)
+    (call-interactively 'org-agenda-list)))
+
+
+
+;;;; dired
+(use-package dired
+  :ensure nil
+  :bind (:map dired-mode-map
+              ("b" . dired-up-directory)
+              ("J" . dired-goto-file)                             ; Switch from 'j' to 'J'
+              ("j" . larumbe/dired-do-async-shell-command-okular) ; Open file-at-point directly with Okular if is a PDF and delete async process window. Otherwise it will ask for default program
+              ("," . larumbe/toggle-dired-deletion-confirmer)     ; https://superuser.com/questions/332590/how-to-prevent-delete-confirmation-in-emacs-dired
+              )
+  :config
+  (add-hook 'dired-mode-hook '(lambda ()
+                                (interactive)
+                                (dired-hide-details-mode 1))))
+
+
+(use-package dired-x
+  :ensure nil
+  :bind (:map dired-mode-map
+              ("I" . dired-kill-subdir)) ; Replaces `dired-info' when dired-x is enabled
+  :config
+  (setq dired-guess-shell-alist-user ; Program mappings to dired-do-shell-command (overrides `dired-guess-shell-alist-default')
+        '(
+          ("\\.pdf\\'" "okular")
+          ))
+  (setq dired-bind-info nil))
+
+
+(use-package dired-quick-sort
+  :config
+  (dired-quick-sort-setup)) ; This will bind the key S in `dired-mode' to run `hydra-dired-quick-sort/body', and automatically run the sorting criteria after entering `dired-mode'.
+
+
+(use-package dired-narrow
+  :bind (:map dired-mode-map
+              ("/" . dired-narrow-regexp)))
+
+
+
+(defun larumbe/toggle-dired-deletion-confirmer ()
+  "Toggles deletion confirmer for dired from (y-or-n) to nil and viceversa"
+  (interactive)
+  (if (equal dired-deletion-confirmer 'yes-or-no-p)
+      (progn
+        (setq dired-deletion-confirmer '(lambda (x) t))
+        (message "Dired deletion confirmation: FALSE"))
+    (progn
+      (setq dired-deletion-confirmer 'yes-or-no-p)
+      (message "Dired deletion confirmation: TRUE"))))
+
+
+(defun larumbe/dired-do-async-shell-command-okular ()
+  "Same as `dired-do-async-shell-command' but if on a PDF will open Okular directly"
+  (interactive)
+  (when (not (string-equal major-mode "dired-mode"))
+    (error "Needs to be executed in dired...! "))
+  (let ((program "okular")
+        (filename (thing-at-point 'filename t)))
+    (if (string-equal (file-name-extension filename) "pdf")
+        (progn
+          (dired-do-async-shell-command program filename (list filename))
+          (delete-window (get-buffer-window "*Async Shell Command*")))
+      (call-interactively 'dired-do-async-shell-command))))
+
+
+
+
+;;; Mode-line
+(use-package smart-mode-line
+  :config
+  (setq sml/theme 'dark) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
+  (sml/setup)            ; Enable smart-mode-line
+  (which-function-mode)
+  (set-face-attribute 'which-func nil :foreground "green")
+  (setq line-number-mode nil) ; Hide current line number from mode-line
+  (setq display-time-default-load-average nil) ; Display time on the status bar
+  (display-time-mode t)
+  )
 
 
 
 ;;; Basic Packages
 (use-package flycheck
   :diminish)
+
+
+(use-package flyspell
+  :ensure nil
+  :config
+  (defun flyspell-toggle ()
+    "Toggle flyspell mode on current buffer."
+    (interactive)
+    (if (bound-and-true-p flyspell-mode)
+        (call-interactively 'flyspell-mode nil)
+      (progn
+        (call-interactively 'flyspell-mode 1)
+        (call-interactively 'flyspell-prog-mode 1)
+        (call-interactively 'flyspell-buffer))))
+  )
+
 
 (use-package quelpa-use-package)
 
@@ -84,7 +241,15 @@
   )
 
 
-(use-package hydra)
+(use-package hydra
+  :config
+  (defun larumbe/hydra-yasnippet (snippet)
+    "Function/Macro to integrate YASnippet within Hydra"
+    (interactive)
+    (progn
+      (insert snippet)
+      (yas-expand))))
+
 
 
 (use-package coin-ticker)
@@ -104,10 +269,7 @@
     )
   )
 
-(use-package magit
-  :config
-  (setq magit-diff-refine-hunk t) ; Highlight differences of selected hunk
-  )
+
 
 (use-package bind-chord)
 
@@ -141,14 +303,6 @@
   (popwin-mode 1)
   )
 
-
-(use-package dired-narrow)
-
-
-(use-package dired-quick-sort
-  :config
-  (dired-quick-sort-setup)
-  )
 
 
 
@@ -192,22 +346,6 @@
   )
 
 
-(use-package dsvn
-  :config
-  (autoload 'svn-status "dsvn" "Run `svn status'." t)
-  (autoload 'svn-update "dsvn" "Run `svn update'." t)
-
-  (define-obsolete-function-alias 'string-to-int 'string-to-number "22.1")
-  )
-
-
-(use-package smart-mode-line
-  :config
-  (setq sml/theme 'dark) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
-  (sml/setup)            ; Enable smart-mode-line
-  (which-function-mode)
-  (set-face-attribute 'which-func nil :foreground "green")
-  )
 
 
 
@@ -237,6 +375,17 @@
               ("M-<" . beginning-of-buffer))
   :config
   (setq comint-process-echoes t)
+
+  (defun larumbe/ansi-term ()
+    "Checks if there is an existing *ansi-term* buffer and pops to it (if not visible open on the same window).
+Otherwise create it"
+    (interactive)
+    (let ((buf "*ansi-term*"))
+      (if (get-buffer buf)
+          (if (get-buffer-window buf)
+              (pop-to-buffer buf)
+            (switch-to-buffer buf))
+        (ansi-term "/bin/bash"))))
   )
 
 
@@ -246,6 +395,32 @@
   (setq fic-activated-faces '(font-lock-doc-face  font-lock-comment-face))
   (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "DANGER" "INFO"))
   )
+
+;; Fetched from /home/martigon/.elisp/larumbe/lang/verilog-settings.el -> larumbe/lfp-clean-project-fic-keywords-ag-files
+;; Generalizes to a directory and certain files
+(defun larumbe/clean-fic-keywords-dir ()
+  "Perform a `ag-regexp' of `fic-mode' highlighted keywords in order to check pending project actions. "
+  (interactive)
+  (let ((kwd)
+        (path)
+        (ag-arguments ag-arguments) ; Save the global value of `ag-arguments' (copied from modi)
+        (regex)
+        (files)
+        )
+    (setq kwd (completing-read "Select keyword: " 'fic-highlighted-words))
+    (setq path (read-directory-name "Directory: "))
+    ;; (setq regex (completing-read "Select file regex: " 'regex))
+    (setq files (completing-read "Select file regex: " '("(System)Verilog" "Python" "elisp")))
+    (pcase files
+      ("(System)Verilog" (setq regex ".[s]?v[h]?$")) ; +Headers
+      ("Python"          (setq regex ".py$"))
+      ("elisp"           (setq regex ".el$"))
+      )
+    ;; Copied from AG for `modi/verilog-find-parent-module'
+    (add-to-list 'ag-arguments "-G" :append)
+    (add-to-list 'ag-arguments regex :append)
+    (ag-regexp kwd path)))
+
 
 
 (use-package auto-complete
@@ -430,6 +605,19 @@ If called with prefix, search for string and no case sensitive."
                                                   (or pos (point)))))
                   :truncate-lines helm-occur-truncate-lines)
           (deactivate-mark t))))))
+
+
+(defun larumbe/helm-help-major-mode ()
+  "Get helm M-x commands list and shortcuts for the last time it was used (before a C-g)
+It is assumed to be used after a `M-x' then e.g. `org-', then `C-g' and finally this function for window arrangement."
+  (interactive)
+  (delete-other-windows)
+  (split-window-right)
+  (other-window 1)
+  (shrink-window 40 t)
+  (switch-to-buffer "*helm M-x*")
+  (other-window 1))
+
 
 
 ;;;; Projectile + Helm-Projectile + Helm AG
