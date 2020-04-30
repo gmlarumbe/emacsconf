@@ -18,8 +18,8 @@
   ;; 2 -- skip anything less than error,
   ;; 1 -- skip anything less than warning or
   ;; 0 -- don't skip any messages.
-  (setq compilation-skip-threshold 1) ; Compilation error jumping settings
-  (add-hook 'compilation-mode-hook 'my-compilation-hook)
+  (setq compilation-skip-threshold 2) ; Compilation error jumping settings
+  (add-hook 'compilation-mode-hook #'my-compilation-hook)
   )
 
 ;;; Hooks
@@ -168,7 +168,7 @@
       '((iverilog-unsupported  "\\(?1:.*\\):\\(?2:[0-9]+\\):.*sorry:"            1 2 nil 0 nil (1 compilation-info-face) (2 compilation-line-face))
         (iverilog-warning      "\\(?1:.*\\):\\(?2:[0-9]+\\):.*warning:"          1 2 nil 1 nil (1 compilation-warning-face) (2 compilation-line-face))
         (iverilog-warning2     "^\\(warning\\):"                                 nil nil nil 1 nil (1 compilation-warning-face))
-        (iverilog-error        "\\(?1:.*\\):\\(?2:[0-9]+\\):.*error:  "          1 2 nil 2 nil (1 compilation-error-face)   (2 compilation-line-face))
+        (iverilog-error        "\\(?1:.*\\):\\(?2:[0-9]+\\):.*error:"            1 2 nil 2 nil (1 compilation-error-face)   (2 compilation-line-face))
         (vvp-warning           "^\\(?1:WARNING\\): \\(?2:.*\\):\\(?3:[0-9]+\\):" 2 3 nil 1 nil (1 compilation-warning-face) (2 compilation-warning-face) (3 compilation-line-face))
         (vvp-error             "^\\(?1:ERROR\\): \\(?2:.*\\):\\(?3:[0-9]+\\):"   2 3 nil 2 nil (1 compilation-warning-face) (2 compilation-warning-face) (3 compilation-line-face))
         (vvp-info              "^\\(?1:LXT2 info\\):"                            nil nil nil 0 nil (1 compilation-info-face))

@@ -20,11 +20,11 @@
   (if untabify-trailing-ws
       (progn   ;; Enable
         (setq untabify-delete-trailing-whitespace t)
-        (add-hook 'write-file-functions 'larumbe/untabify-trailing-whitespace)
+        (add-hook 'write-file-functions #'larumbe/untabify-trailing-whitespace)
         (message "Untabify set to: %s" untabify-delete-trailing-whitespace))
     (progn ;; Disable
       (setq untabify-delete-trailing-whitespace nil)
-      (remove-hook 'write-file-functions 'larumbe/untabify-trailing-whitespace)
+      (remove-hook 'write-file-functions #'larumbe/untabify-trailing-whitespace)
       (message "Untabify set to: %s" untabify-delete-trailing-whitespace))))
 
 
@@ -43,11 +43,11 @@ Meant to be used as a wrapper for write-file-functions hook."
   (if untabify-delete-trailing-whitespace
       (progn ;; Disable
         (setq untabify-delete-trailing-whitespace nil)
-        (remove-hook 'write-file-functions 'larumbe/untabify-trailing-whitespace)
+        (remove-hook 'write-file-functions #'larumbe/untabify-trailing-whitespace)
         (message "Untabify set to: %s" untabify-delete-trailing-whitespace))
     (progn   ;; Enable
       (setq untabify-delete-trailing-whitespace t)
-      (add-hook 'write-file-functions 'larumbe/untabify-trailing-whitespace)
+      (add-hook 'write-file-functions #'larumbe/untabify-trailing-whitespace)
       (message "Untabify set to: %s" untabify-delete-trailing-whitespace))))
 
 

@@ -7,8 +7,8 @@
 
 (define-derived-mode docbook-mode nxml-mode "Docbook"
   "Docbook minor mode."
-  (define-key docbook-mode-map (kbd "C-c C-p") 'larumbe/docbook-to-pdf-current-buffer)
-  (define-key docbook-mode-map (kbd "C-c C-t") 'hydra-nxml-docbook-template/body))
+  (define-key docbook-mode-map (kbd "C-c C-p") #'larumbe/docbook-to-pdf-current-buffer)
+  (define-key docbook-mode-map (kbd "C-c C-t") #'hydra-nxml-docbook-template/body))
 
 
 ;; https://stackoverflow.com/questions/2615002/how-to-generate-pdf-from-docbook-5-0/2651158

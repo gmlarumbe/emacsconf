@@ -24,12 +24,12 @@
 (defun close-all-buffers ()
   "Kill all buffers"
   (interactive)
-  (mapc 'kill-buffer (buffer-list)))
+  (mapc #'kill-buffer (buffer-list)))
 
 (defun only-current-buffer ()
   "Kill all buffers except active one."
   (interactive)
-  (mapc 'kill-buffer (cdr (buffer-list (current-buffer)))))
+  (mapc #'kill-buffer (cdr (buffer-list (current-buffer)))))
 
 (defun buffer-mode (&optional buffer)
   "Returns the major mode associated with a buffer."
@@ -117,8 +117,8 @@ C-s C-w [C-w] [C-w]... behaviour. "
       (beginning-of-thing 'word))
   (isearch-yank-word-or-char)
   ;; Revert to 'isearch-yank-word-or-char for subsequent calls
-  (substitute-key-definition 'my-isearch-yank-word-or-char-from-beginning
-                             'isearch-yank-word-or-char
+  (substitute-key-definition #'my-isearch-yank-word-or-char-from-beginning
+                             #'isearch-yank-word-or-char
                              isearch-mode-map))
 
 
@@ -191,7 +191,7 @@ DANGER: Comment needs to be substituted from '--' to  mode-specific comment."
   (interactive)
   (let ((symbol (thing-at-point 'symbol t)))
     (if (use-region-p)
-        (call-interactively 'kill-ring-save)
+        (call-interactively #'kill-ring-save)
       (progn
         (kill-new symbol)
         (message symbol)))))
@@ -300,7 +300,7 @@ If optional EXCLUDE-RE is set, delete paths with that regexp from generated file
     (save-window-excursion
       (with-temp-buffer
         (mapc
-         (lambda (dir) (insert (mapconcat 'identity (directory-files-recursively dir re) "\n")))
+         (lambda (dir) (insert (mapconcat #'identity (directory-files-recursively dir re) "\n")))
          (list base-dir))
         ;; Append to existing file
         (when (and (file-exists-p (concat base-dir file))

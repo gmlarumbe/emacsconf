@@ -115,7 +115,7 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
   )
 
 ;; Verilog Hooks
-(add-hook 'verilog-mode-hook 'my-verilog-hook)
+(add-hook 'verilog-mode-hook #'my-verilog-hook)
 (add-hook 'verilog-mode-hook #'modi/verilog-mode-customization) ; Modi: block comments to names
 
 
@@ -168,6 +168,7 @@ and the Makefile does not already exist."
       (error "%s does not exist!" makefile))
     (with-temp-buffer
       (insert-file-contents makefile)
+      (setq makefile-need-target-pickup t)
       (makefile-pickup-targets)
       (setq target (completing-read "Target: " makefile-target-table)))
     ;; INFO: Tried with `projectile-compile-project' but without sucess.
@@ -746,7 +747,7 @@ endmodule // tb_<module_name>
       (replace-regexp "logic[[:blank:]]+" "localparam " nil (point) (search-forward "// End of /*AUTOINOUTPARAM*/")))
     (save-excursion
       (replace-regexp "\\(localparam [a-zA-Z0-9_-]+\\);" "\\1 = 0;" nil (point) (search-forward "// End of /*AUTOINOUTPARAM*/")))
-    (call-interactively 'larumbe/verilog-header-hp)
+    (call-interactively #'larumbe/verilog-header-hp)
     (goto-char start)
     ;; Beautify declarations and initialize values
     (save-excursion
@@ -1142,8 +1143,8 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ;; FSM
   ("FS"  (larumbe/verilog-state-machine-sync-custom)) ; Sync FSM
   ;; Instances from file
-  ("IS"  (call-interactively 'larumbe/verilog-insert-instance-from-file))             ; Simple (no params)
-  ("IP"  (call-interactively 'larumbe/verilog-insert-instance-from-file-with-params)) ; With params
+  ("IS"  (call-interactively #'larumbe/verilog-insert-instance-from-file))             ; Simple (no params)
+  ("IP"  (call-interactively #'larumbe/verilog-insert-instance-from-file-with-params)) ; With params
 
   ;;;;;;;;;;;;;;;
   ;; TestBench ;;
@@ -1169,8 +1170,8 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ("pg"  (larumbe/hydra-yasnippet "pg")) ; Program
   ("cg"  (larumbe/hydra-yasnippet "cg")) ; Covergroup
   ;; Testbench from DUT file
-  ("TS"   (call-interactively 'larumbe/verilog-testbench-insert-template-simple))
-  ("TE"   (call-interactively 'larumbe/verilog-testbench-environment))
+  ("TS"   (call-interactively #'larumbe/verilog-testbench-insert-template-simple))
+  ("TE"   (call-interactively #'larumbe/verilog-testbench-environment))
   ;;  TODO: Coverage at some point?
   ;;      : More constraints, rand and randc
   ;;         - Distribution templates?
@@ -1202,7 +1203,7 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ("/"   (larumbe/hydra-yasnippet "/"))  ; Star comment
   ("B"   (larumbe/verilog-add-block-comment))
   ("D"   (larumbe/verilog-define-signal))
-  ("hd"  (call-interactively 'larumbe/verilog-header-hp)) ; header for HP
+  ("hd"  (call-interactively #'larumbe/verilog-header-hp)) ; header for HP
 
   ;;;;;;;;;
   ;; UVM ;;
@@ -1297,7 +1298,7 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
 (defun larumbe/verilog-imenu-class-put-parent (type name pos tree &optional add)
   "Create parent tag with TYPE and NAME.
 If optional ADD, add the parent with TYPE, NAME and POS to the TREE."
-  (let* ((label      (funcall 'larumbe/verilog-imenu-format-class-item-label type name))
+  (let* ((label      (funcall #'larumbe/verilog-imenu-format-class-item-label type name))
          (jump-label label))
     (if (not tree)
         (cons label pos)
@@ -1324,7 +1325,7 @@ Adapted from `python-mode' imenu build-tree function."
                    (setq type (match-string-no-properties 1))
                    (match-string-no-properties 2)))
            (label (when name
-                    (funcall 'larumbe/verilog-imenu-format-class-item-label type name))))
+                    (funcall #'larumbe/verilog-imenu-format-class-item-label type name))))
       (cond ((not pos)
              nil)
             ((looking-at larumbe/verilog-class-re)
@@ -1369,7 +1370,7 @@ Afterwards it appends the contents of the list obtained by using the imenu gener
 Checks if there is an instance with semicolon in mutiline comments of parameters."
   (interactive)
   (let (issue)
-    (setq imenu-create-index-function 'larumbe/verilog-imenu-index)
+    (setq imenu-create-index-function #'larumbe/verilog-imenu-index)
     (setq issue (larumbe/verilog-find-semicolon-in-instance-comments))
     (imenu-list)
     (larumbe/verilog-imenu-hide-all t)
@@ -2068,7 +2069,7 @@ To handle packages that require being sourced before the rest of the files, use 
 Prompt for a file of with the following format: "
   (interactive)
   (let* ((library-args (verilog-expand-command "__FLAGS__"))
-         (pkg-files (mapconcat 'identity (larumbe/verilog-update-project-pkg-list) " "))
+         (pkg-files (mapconcat #'identity (larumbe/verilog-update-project-pkg-list) " "))
          (top-module (file-title))
          (cmd (concat
                "vhier "
@@ -2122,7 +2123,7 @@ If called with universal argument, select among available linters."
           (flycheck-select-checker active-linter))
       (progn
         (larumbe/verilog-update-project-pkg-list)
-        (call-interactively 'flycheck-mode)))))
+        (call-interactively #'flycheck-mode)))))
 
 
 ;;;; Verilator override

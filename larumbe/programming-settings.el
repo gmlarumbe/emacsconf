@@ -9,12 +9,12 @@
               ("C-<tab>" . hs-toggle-hiding)
               ("C-c C-n" . align-regexp))
   :config
-  (add-hook 'prog-mode-hook 'my-prog-mode-hook))
+  (add-hook 'prog-mode-hook #'my-prog-mode-hook))
 
 (defun my-prog-mode-hook ()
   ;; Verilog has its own flycheck-mode wrapper function
   (unless (string-equal major-mode "verilog-mode")
-    (local-set-key (kbd "C-c C-f") 'flycheck-mode))
+    (local-set-key (kbd "C-c C-f") #'flycheck-mode))
   ;; Customizations
   (show-paren-mode     1)
   (linum-mode          1)
@@ -51,7 +51,7 @@
          ("M-."     . larumbe/xref-find-definitions)
          ("M-?"     . larumbe/xref-find-reference-at-point))
   :config
-  (add-hook 'emacs-lisp-mode-hook 'my-elisp-hook))
+  (add-hook 'emacs-lisp-mode-hook #'my-elisp-hook))
 
 (defun my-elisp-hook ()
   (set 'ac-sources '(ac-source-gtags
@@ -83,7 +83,7 @@ on where the point is (similar to `larumbe/ggtags-find-tag-dwim')"
               ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)
               ("C-c C-t" . hydra-sh-template/body))
   :config
-  (add-hook 'sh-mode-hook 'my-sh-mode-hook))
+  (add-hook 'sh-mode-hook #'my-sh-mode-hook))
 
 (defun my-sh-mode-hook ()
   (set 'ac-sources '(ac-source-gtags
@@ -119,7 +119,7 @@ while inde_x_ed        _+_ add
   ("i"   (larumbe/hydra-yasnippet "if"))
   ("l"   (sh-if)) ;;  if - elif - else
   ("c"   (sh-case))
-  ("+"   (call-interactively 'sh-add))
+  ("+"   (call-interactively #'sh-add))
   ("s"   (sh-select))
   ("q"   nil nil :color blue)
   ("C-g" nil nil :color blue))
@@ -159,13 +159,13 @@ while inde_x_ed        _+_ add
               )
   :config
   (setq c-default-style "linux" c-basic-offset 4) ; Indent and style
-  (add-hook 'c-mode-common-hook 'my-cc-mode-hook)
+  (add-hook 'c-mode-common-hook #'my-cc-mode-hook)
 
   (use-package semantic
     :bind (:map semantic-mode-map
                 ("C-c ," . nil)) ; INFO: Unbinds ALL semantic commands, since C-c , is the prefix
     :config
-    (add-hook 'c-mode-common-hook 'semantic-mode))
+    (add-hook 'c-mode-common-hook #'semantic-mode))
   )
 
 (defun my-cc-mode-hook ()
@@ -179,7 +179,7 @@ while inde_x_ed        _+_ add
               ("C-c C-p" . larumbe/tcl-send-line-or-region-and-step)
               ("C-c C-k" . larumbe/tcl-send-line-or-region-and-step-vivado-shell))
   :config
-  (add-hook 'tcl-mode-hook 'my-tcl-hook))
+  (add-hook 'tcl-mode-hook #'my-tcl-hook))
 
 (defun my-tcl-hook ()
   (modify-syntax-entry ?$ "."))
@@ -208,8 +208,8 @@ When the region is active, send the region instead."
   :ensure nil
   :config
   (setq nxml-child-indent 4)
-  (add-hook 'nxml-mode-hook 'my-xml-mode-hook)
-  (add-hook 'nxml-mode-hook 'my-prog-mode-hook)) ;; INFO: Since it is not a childe of prog-mode, requires common configuration settings
+  (add-hook 'nxml-mode-hook #'my-xml-mode-hook)
+  (add-hook 'nxml-mode-hook #'my-prog-mode-hook)) ;; INFO: Since it is not a childe of prog-mode, requires common configuration settings
 
 (defun my-xml-mode-hook ()
   (set 'ac-sources '(ac-source-gtags
@@ -244,7 +244,7 @@ When the region is active, send the region instead."
     (set 'ac-sources
          '(ac-source-gtags
            ac-source-symbols)))
-  (add-hook 'mhtml-mode-hook 'my-mhtml-mode-hook))
+  (add-hook 'mhtml-mode-hook #'my-mhtml-mode-hook))
 
 
 ;;;; MARKDOWN
@@ -259,7 +259,7 @@ When the region is active, send the region instead."
          ("\\rc\\'"       . conf-mode)
          ("\\.sby\\'"     . conf-mode))
   :config
-  (add-hook 'conf-mode-hook 'my-prog-mode-hook)) ;; INFO: Since it is not a childe of prog-mode, requires common configuration settings
+  (add-hook 'conf-mode-hook #'my-prog-mode-hook)) ;; INFO: Since it is not a childe of prog-mode, requires common configuration settings
 
 
 ;;;; MAKEFILE

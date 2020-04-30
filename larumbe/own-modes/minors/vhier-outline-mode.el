@@ -53,35 +53,35 @@
 (defun vhier-previous-visible-heading ()
   "Move through headings and point at the beginning of the tag so that gtags can be easily used"
   (interactive)
-  (call-interactively 'outline-previous-visible-heading)
+  (call-interactively #'outline-previous-visible-heading)
   (skip-chars-forward "/ *"))
 
 
 (defun vhier-next-visible-heading ()
   "Move through headings and point at the beginning of the tag so that gtags can be easily used"
   (interactive)
-  (call-interactively 'outline-next-visible-heading)
+  (call-interactively #'outline-next-visible-heading)
   (skip-chars-forward "/ *"))
 
 
 (defun vhier-up-heading ()
   "Move through headings and point at the beginning of the tag so that gtags can be easily used"
   (interactive)
-  (call-interactively 'outline-up-heading)
+  (call-interactively #'outline-up-heading)
   (skip-chars-forward "/ *"))
 
 
 (defun vhier-forward-same-level ()
   "Move through headings and point at the beginning of the tag so that gtags can be easily used"
   (interactive)
-  (call-interactively 'outline-forward-same-level)
+  (call-interactively #'outline-forward-same-level)
   (skip-chars-forward "/ *"))
 
 
 (defun vhier-backward-same-level ()
   "Move through headings and point at the beginning of the tag so that gtags can be easily used"
   (interactive)
-  (call-interactively 'outline-backward-same-level)
+  (call-interactively #'outline-backward-same-level)
   (skip-chars-forward "/ *"))
 
 
@@ -89,7 +89,7 @@
   "Move through headings and point at the beginning of the tag so that gtags can be easily used"
   (interactive)
   (beginning-of-line)
-  (call-interactively 'outline-hide-sublevels)
+  (call-interactively #'outline-hide-sublevels)
   (skip-chars-forward "/ *"))
 
 

@@ -26,12 +26,12 @@
   (setq py-try-if-face           font-lock-doc-face)
   (setq py-variable-name-face    font-lock-variable-name-face)
   (setq py-use-font-lock-doc-face-p t)
-  (define-key python-mode-map "\C-c@\C-\M-h" 'larumbe/python-hs-hide-all) ; Overrides `hs-hide-all' (Error if declaring with use-package :bind - Key sequence C-c @  starts with non-prefix key C-c @
+  (define-key python-mode-map "\C-c@\C-\M-h" #'larumbe/python-hs-hide-all) ; Overrides `hs-hide-all' (Error if declaring with use-package :bind - Key sequence C-c @  starts with non-prefix key C-c @
   (larumbe/python-fix-hs-special-modes-alist) ; BUG Fix (check function docstring for more info)
 
   (use-package jedi-core
     :config
-    (add-hook 'python-mode-hook 'jedi:setup))
+    (add-hook 'python-mode-hook #'jedi:setup))
   )
 
 

@@ -67,7 +67,7 @@
   (setq flycheck-ghdl-workdir (concat (projectile-project-root) "library/" vhdl-default-library)) ; Used @ axi_if_converter
   (setq flycheck-ghdl-ieee-library "synopsys")
   )
-(add-hook 'vhdl-mode-hook 'my-vhdl-hook)
+(add-hook 'vhdl-mode-hook #'my-vhdl-hook)
 
 
 ;;; Gtags
@@ -352,7 +352,7 @@ _IS_: Instance          ^^                      _al_: alias
   ("gn"  (vhdl-template-generate))
   ("cp"  (vhdl-template-component))
   ("at"  (vhdl-template-attribute))
-  ("IS"  (call-interactively 'larumbe/vhdl-insert-instance-from-file))
+  ("IS"  (call-interactively #'larumbe/vhdl-insert-instance-from-file))
 
   ;;;;;;;;;;;;;;;
   ;; TestBench ;;
@@ -362,7 +362,7 @@ _IS_: Instance          ^^                      _al_: alias
   ("rp" (vhdl-template-report))
   ("as" (vhdl-template-assert))
   ("fl" (vhdl-template-file))
-  ("TS"  (call-interactively 'larumbe/vhdl-insert-testbench-from-file))
+  ("TS"  (call-interactively #'larumbe/vhdl-insert-testbench-from-file))
 
   ;;;;;;;;;;;;
   ;; Common ;;
@@ -382,7 +382,7 @@ _IS_: Instance          ^^                      _al_: alias
 
   ("pb"  (vhdl-template-package-body))
   ("pd"  (vhdl-template-package-decl))
-  ("pkg" (call-interactively 'vhdl-template-insert-package))
+  ("pkg" (call-interactively #'vhdl-template-insert-package))
 
   ;;;;;;;;;;;;
   ;; Others ;;

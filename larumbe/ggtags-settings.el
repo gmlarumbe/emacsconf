@@ -32,7 +32,7 @@ on where the point is."
     (interactive)
     (if (file-exists-p (thing-at-point 'filename))
         (larumbe/find-file-at-point)
-      (call-interactively 'ggtags-find-tag-dwim)))
+      (call-interactively #'ggtags-find-tag-dwim)))
 
   ;; INFO: SystemVerilog Tweak!
   ;; Don't consider ` (back quote) as part of `tag' when looking for a Verilog macro definition

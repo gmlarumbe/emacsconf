@@ -6,7 +6,7 @@
   :ensure
   :config
   ;; Emacs built-in modes
-  (add-hook 'hs-minor-mode-hook '(lambda () (diminish 'hs-minor-mode)))
+  (add-hook 'hs-minor-mode-hook #'(lambda () (diminish 'hs-minor-mode)))
   (diminish 'eldoc-mode)
   )
 
@@ -20,8 +20,8 @@
   (add-hook 'isearch-mode-hook
             (lambda ()
               "Activate my customized Isearch word yank command."
-              (substitute-key-definition 'isearch-yank-word-or-char
-                                         'my-isearch-yank-word-or-char-from-beginning
+              (substitute-key-definition #'isearch-yank-word-or-char
+                                         #'my-isearch-yank-word-or-char-from-beginning
                                          isearch-mode-map))))
 
 (use-package untabify-trailing-ws
@@ -91,7 +91,7 @@
     (when (not (get-buffer buf))
       (find-file file))
     (switch-to-buffer buf)
-    (call-interactively 'org-agenda-list)))
+    (call-interactively #'org-agenda-list)))
 
 
 
@@ -156,7 +156,7 @@
         (progn
           (dired-do-async-shell-command program filename (list filename))
           (delete-window (get-buffer-window "*Async Shell Command*")))
-      (call-interactively 'dired-do-async-shell-command))))
+      (call-interactively #'dired-do-async-shell-command))))
 
 
 
@@ -187,11 +187,11 @@
     "Toggle flyspell mode on current buffer."
     (interactive)
     (if (bound-and-true-p flyspell-mode)
-        (call-interactively 'flyspell-mode nil)
+        (call-interactively #'flyspell-mode nil)
       (progn
-        (call-interactively 'flyspell-mode 1)
-        (call-interactively 'flyspell-prog-mode 1)
-        (call-interactively 'flyspell-buffer))))
+        (call-interactively #'flyspell-mode 1)
+        (call-interactively #'flyspell-prog-mode 1)
+        (call-interactively #'flyspell-buffer))))
   )
 
 
@@ -341,8 +341,8 @@
   :hook ((diff-mode . (lambda () (setq truncate-lines t)))
          (diff-mode . linum-mode))
   :config
-  (setq ediff-split-window-function 'split-window-horizontally)
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+  (setq ediff-split-window-function #'split-window-horizontally)
+  (setq ediff-window-setup-function #'ediff-setup-windows-plain)
   )
 
 
@@ -471,7 +471,7 @@ Otherwise create it"
   (autoload 'unison-mode "unison-mode" "my unison mode" t)
   (setq auto-mode-alist (append '(("\\.prf$" . unison-mode)) auto-mode-alist))
   (setq unison-command-name "unison")   ;; Override unison command
-  (add-hook 'unison-mode-hook 'unison-sync-minor-mode)
+  (add-hook 'unison-mode-hook #'unison-sync-minor-mode)
   )
 
 
@@ -518,8 +518,8 @@ Otherwise create it"
       (setq truncate-lines t)))
 
   ;; Redefine Keys for Jenkins-job-view
-  (define-key jenkins-job-view-mode-map (kbd "n") 'next-line)
-  (define-key jenkins-job-view-mode-map (kbd "p") 'previous-line)
+  (define-key jenkins-job-view-mode-map (kbd "n") #'next-line)
+  (define-key jenkins-job-view-mode-map (kbd "p") #'previous-line)
   )
 
 
@@ -643,7 +643,7 @@ It is assumed to be used after a `M-x' then e.g. `org-', then `C-g' and finally 
               projectile-mode-line-prefix
               (or project-name "-")
               )))
-  (setq projectile-mode-line-function 'larumbe/projectile-custom-mode-line) ; Replaces `projectile-default-mode-line' that also showed ":generic" type of project
+  (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line) ; Replaces `projectile-default-mode-line' that also showed ":generic" type of project
   )
 
 
