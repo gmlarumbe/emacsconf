@@ -27,6 +27,121 @@
     (setq truncate-lines t)))
 
 
+(use-package flycheck
+  :diminish)
+
+
+(use-package flyspell
+  :ensure nil
+  :config
+  (defun flyspell-toggle ()
+    "Toggle flyspell mode on current buffer."
+    (interactive)
+    (if (bound-and-true-p flyspell-mode)
+        (call-interactively #'flyspell-mode nil)
+      (progn
+        (call-interactively #'flyspell-mode 1)
+        (call-interactively #'flyspell-prog-mode 1)
+        (call-interactively #'flyspell-buffer)))))
+
+
+(use-package hydra
+  :config
+  (defun larumbe/hydra-yasnippet (snippet)
+    "Function/Macro to integrate YASnippet within Hydra"
+    (interactive)
+    (progn
+      (insert snippet)
+      (yas-expand))))
+
+
+(use-package yasnippet
+  :diminish yasnippet yas-minor-mode
+  :config
+  (use-package yasnippet-snippets)                      ; Install MELPA snippets database
+  (add-to-list 'yas-snippet-dirs "~/.elisp/snippets")   ; Add snippets fetched from GitHub and customized ones. DO NOT Append to give them more precendence in case of collision
+  (yas-reload-all))
+
+
+(use-package diff-mode
+  :bind (:map diff-mode-map
+              ("M-o" . other-window)) ; Remove `M-o' binding (Overrides 'diff-goto-source, which is defined by `o' as well)
+  :hook ((diff-mode . (lambda () (setq truncate-lines t)))
+         (diff-mode . linum-mode))
+  :config
+  (setq ediff-split-window-function #'split-window-horizontally)
+  (setq ediff-window-setup-function #'ediff-setup-windows-plain))
+
+
+(use-package fic-mode
+  :config
+  (setq fic-activated-faces '(font-lock-doc-face  font-lock-comment-face))
+  (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "DANGER" "INFO"))
+
+  (defun larumbe/clean-fic-keywords-dir ()
+    "Perform an `ag-regexp' of `fic-mode' highlighted keywords in selected DIR
+in order to check pending project actions. "
+    (interactive)
+    (let ((kwd)
+          (path)
+          (ag-arguments ag-arguments) ; Save the global value of `ag-arguments' (copied from modi)
+          (regex)
+          (files)
+          )
+      (setq kwd (completing-read "Select keyword: " 'fic-highlighted-words))
+      (setq path (read-directory-name "Directory: "))
+      ;; (setq regex (completing-read "Select file regex: " 'regex))
+      (setq files (completing-read "Select file regex: " '("(System)Verilog" "Python" "elisp")))
+      (pcase files
+        ("(System)Verilog" (setq regex ".[s]?v[h]?$")) ; +Headers
+        ("Python"          (setq regex ".py$"))
+        ("elisp"           (setq regex ".el$"))
+        )
+      ;; Copied from AG for `modi/verilog-find-parent-module'
+      (add-to-list 'ag-arguments "-G" :append)
+      (add-to-list 'ag-arguments regex :append)
+      (ag-regexp kwd path))))
+
+
+(use-package auto-complete
+  :diminish
+  :bind (:map ac-completing-map
+              ("C-n" . ac-next)
+              ("C-p" . ac-previous)
+              ("C-j" . ac-complete)
+              ("RET" . ac-complete))
+  :config
+  (setq ac-delay 1.3)
+  (setq ac-etags-requires 1)
+  ;; INFO: Auto-complete has 3 mode-maps: https://emacs.stackexchange.com/questions/3958/remove-tab-trigger-from-auto-complete
+  (define-key ac-mode-map       (kbd "TAB") nil)
+  (define-key ac-completing-map (kbd "TAB") nil)
+  (define-key ac-completing-map [tab] nil)
+
+  ;; Default sources will be `ac-source-words-in-same-mode-buffers'
+
+  ;; Provides `ac-source-gtags'
+  (use-package auto-complete-gtags
+    :load-path "~/.elisp/download"
+    :config
+    (setq ac-gtags-modes '(c-mode cc-mode c++-mode verilog-mode emacs-lisp-mode vhdl-mode sh-mode python-mode tcl-mode)))
+
+  ;; Provides `ac-source-verilog'
+  (use-package auto-complete-verilog
+    :load-path "~/.elisp/download/"))
+
+
+(use-package imenu-list
+  :config
+  (setq imenu-list-size 0.15)
+  (setq imenu-auto-rescan t))
+
+
+(use-package hide-comnt
+  :load-path "~/.elisp/download/")
+
+
+
 ;;; Programming Languages Setups
 ;;;; Verilog / SystemVerilog
 (load "~/.elisp/larumbe/verilog-settings.el")
@@ -271,4 +386,3 @@ Copied from `sh-send-line-or-regin-and-step' for SH Shell scripting "
 ;;;; RDL
 (use-package rdl-mode
   :load-path "~/.elisp/download/")
-

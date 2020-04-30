@@ -1935,6 +1935,9 @@ It also updates currently opened SystemVerilog packages."
 
 
 ;;; Verilog-Perl hierarchy
+(use-package vhier-outline-mode
+  :load-path "~/.elisp/larumbe/own-modes/minors/") ; Navigate hierarchy files easily
+
 (defvar larumbe-verilog-perl-buffer-name "Verilog-Perl"
   "Initial buffer name to use for the hierarchy file")
 

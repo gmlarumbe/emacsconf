@@ -19,11 +19,17 @@
 ;; Helm/IDO setup
 (load "~/.elisp/larumbe/helm-settings.el")
 
-;; Emacs Packages setup
-(load "~/.elisp/larumbe/packages-settings.el")
+;; Dired setup
+(load "~/.elisp/larumbe/dired-settings.el")
+
+;; Org-mode setup
+(load "~/.elisp/larumbe/org-settings.el")
 
 ;; Global/ggtags setup
 (load "~/.elisp/larumbe/ggtags-settings.el")
+
+;; Other packages setup
+(load "~/.elisp/larumbe/packages-settings.el")
 
 ;; Git/SVN/repo
 (load "~/.elisp/larumbe/version-control-settings.el")

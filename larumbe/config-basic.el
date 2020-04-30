@@ -25,6 +25,7 @@
 (add-to-list 'load-path (expand-file-name "~/.elisp/larumbe/own-modes/minors/"))
 (add-to-list 'load-path (expand-file-name "~/.elisp/larumbe/own-modes/override/"))
 
+
 ;;; Package management setup for use-package
 (require 'package)
 (setq package-enable-at-startup nil)
@@ -42,3 +43,15 @@
 (eval-when-compile
   (require 'use-package))
 (setq use-package-always-ensure t) ; Force download if not available. INFO: Set to nil for built-in packages.
+
+
+;;; Mode-line
+(use-package smart-mode-line
+  :config
+  (setq sml/theme 'dark) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
+  (sml/setup)            ; Enable smart-mode-line
+  (which-function-mode)
+  (set-face-attribute 'which-func nil :foreground "green")
+  (setq line-number-mode nil) ; Hide current line number from mode-line
+  (setq display-time-default-load-average nil) ; Display time on the status bar
+  (display-time-mode t))

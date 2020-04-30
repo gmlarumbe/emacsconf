@@ -24,6 +24,8 @@
 (defvar larumbe/unison-sync-hook-active nil)
 (defvar larumbe/unison-folder "/home/martigon/.unison/")
 (defvar larumbe/unison-buffer "*unison*")
+(defvar larumbe/unison-command-name "unison")
+
 
 (defun unison-set-active-profile ()
   "Set active profile after checking availability at previously set unison folder"
@@ -92,7 +94,7 @@ Otherwise, it will depend on buffer local selected profile."
         (setq unison-active-profile (file-relative-name (buffer-file-name))))
     (if (not (bound-and-true-p unison-active-profile))
         (unison-set-active-profile))
-    (setq proc (start-process larumbe/unison-buffer larumbe/unison-buffer unison-command-name unison-active-profile "-auto" "-batch"))
+    (setq proc (start-process larumbe/unison-buffer larumbe/unison-buffer larumbe/unison-command-name unison-active-profile "-auto" "-batch"))
     (message "Synchronizing...")
     (when (bound-and-true-p larumbe/unison-show-process-window)
       (unison-show-process-window))
@@ -125,7 +127,7 @@ User will have to choose which of the repos has priority on the synchronization"
       (if (y-or-n-p "Override with remote's data? [y->remote] [n->local]")
           (setq choice remote)
         (setq choice local))
-      (start-process larumbe/unison-buffer larumbe/unison-buffer unison-command-name unison-active-profile "-auto" "-batch" "-force" choice))))
+      (start-process larumbe/unison-buffer larumbe/unison-buffer larumbe/unison-command-name unison-active-profile "-auto" "-batch" "-force" choice))))
 
 
 ;;;; Pending

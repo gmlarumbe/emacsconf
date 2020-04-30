@@ -3,7 +3,7 @@
 ;;                                           ;;
 ;; - Allows for process output parsing     - ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Variable settings
+;;; Use-package setup
 (use-package compile
   :ensure nil
   :bind (:map compilation-mode-map
@@ -22,6 +22,27 @@
 
   (defun my-compilation-hook ()
     (setq truncate-lines t))) ; Do not enable linum-mode since it slows down large compilation buffers
+
+
+(use-package term
+  :bind (:map term-raw-map
+              ("M-o" . other-window)
+              ("M-x" . helm-M-x)
+              ("M->" . end-of-buffer)
+              ("M-<" . beginning-of-buffer))
+  :config
+  (setq comint-process-echoes t)
+
+  (defun larumbe/ansi-term ()
+    "Checks if there is an existing *ansi-term* buffer and pops to it (if not visible open on the same window).
+Otherwise create it"
+    (interactive)
+    (let ((buf "*ansi-term*"))
+      (if (get-buffer buf)
+          (if (get-buffer-window buf)
+              (pop-to-buffer buf)
+            (switch-to-buffer buf))
+        (ansi-term "/bin/bash")))))
 
 
 ;;; Compilation-mode related functions

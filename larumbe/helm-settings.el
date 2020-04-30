@@ -2,24 +2,13 @@
 ;; HELM SETUP  ;;
 ;;;;;;;;;;;;;;;;;
 
-;;; HELM + Ido
-;;;; Helm Support
-(use-package ido
-  :config
-  ;; Do not enable (ido-mode) since compatibility with helm is managed by `helm-completing-read-handlers-alist'
-  (setq ido-default-buffer-method "selected-window")
-  )
-
-(use-package helm-org)
-
+;;; Helm
 (use-package helm
   :diminish
   :bind (("C-x c /" . helm-find) ; Enable C-x c prefix commands
          ("C-x c p" . helm-list-emacs-process)
          ("C-x c t" . helm-top)
-         ("M-s o"   . larumbe/helm-occur)
-         )
-
+         ("M-s o"   . larumbe/helm-occur))
   :config
   (setq helm-completing-read-handlers-alist
         '((describe-function         . helm-completing-read-symbols)
@@ -40,14 +29,15 @@
           (find-file-at-point        . helm-completing-read-sync-default-handler)
           (ffap                      . helm-completing-read-sync-default-handler)
           (execute-extended-command)
-          ;; IDO support without enabling ido-mode
+          ;; IDO support, theoretically without enabling ido-mode, but `ido-buffer-completion-map'
+          ;; does not get loaded if ido-mode is not enabled, and therefore its not
+          ;; possible to make use of buffer killing while switching.
           (switch-to-buffer . ido)
           (kill-buffer      . ido)
           ))
   (helm-mode 1)
-  (helm-autoresize-mode 1)
-  (ido-mode 1) ; Enable, so that commands like `ido-kill-buffer-at-head' can be performed
-  )
+  (helm-autoresize-mode 1))
+
 
 (defun larumbe/helm-occur (&optional prefix)
   "Copied from `helm-occur' and slightly modified to allow searching symbols.
@@ -104,41 +94,51 @@ It is assumed to be used after a `M-x' then e.g. `org-', then `C-g' and finally 
 
 
 
-;;;; Projectile + Helm-Projectile + Helm AG
-(use-package helm-ag)
-(use-package helm-projectile :diminish)
+;;; Projectile + Helm-Projectile + Helm AG
 (use-package projectile
   :bind (:map projectile-mode-map ; Projectile 2.0 removes automatic keybindings
               ("C-c p j" . projectile-find-tag)
               ("C-c p r" . projectile-regenerate-tags)
-              ("C-c p a" . helm-projectile-ag)
-              ("C-c p g" . helm-projectile-grep)
               ("C-c p c" . projectile-compile-project)
               ("C-c p f" . projectile-find-file)
-              )
+              ("C-c p a" . helm-projectile-ag)
+              ("C-c p g" . helm-projectile-grep))
   :config
+  (use-package helm-projectile
+    :diminish
+    :config
+    (use-package helm-ag))
+
   (add-to-list 'projectile-project-root-files-bottom-up ".repo") ; Detect `repo' Git sandboxes (Sandbox preference over IP)
   (setq projectile-completion-system 'helm)
   (setq projectile-mode-line-prefix " P") ; Modeline
+
   (defun larumbe/projectile-custom-mode-line ()
-    "Report ONLY project name (without type) in the modeline."
+    "Report ONLY project name (without type) in the modeline.
+Replaces `projectile-default-mode-line' that also showed ':generic' type of project"
     (let ((project-name (projectile-project-name)))
       (format "%s[%s]"
               projectile-mode-line-prefix
               (or project-name "-")
               )))
-  (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line) ; Replaces `projectile-default-mode-line' that also showed ":generic" type of project
+  (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line))
+
+
+
+;;; Helm-Navi + Outshine
+(use-package outshine
+  :config
+  (setq outshine-imenu-show-headlines-p nil) ; Do not include outshine tags at imenu
   )
 
 
-
-
-
-;;;; Helm-Navi + Outshine
 ;; `helm-navi' loads `navi-mode', and this last one loads `outshine'
 (use-package helm-navi
   :diminish outshine-mode outline-minor-mode
   :config
+  (use-package helm-org) ; Required by helm-havi
+
+;;;; Function overriding
   ;; BUG: Issue with helm-navi in last MELPA package
   ;; https://github.com/emacs-helm/helm-navi/pull/3
   ;; These functions needs to be redefined and:
@@ -158,7 +158,7 @@ function to return a regular expression, or
                                ((pred stringp) regexp)
                                ((pred null) (concat "^\\("
                                                     (mapconcat (lambda (s)                                     ;; DANGER: Modified to fix issue with // * headings,
-                                                               (replace-in-string "*" "\\*" (s-trim (car s)))) ;; asterisk is wrongly inserted into the regexp
+                                                                 (replace-in-string "*" "\\*" (s-trim (car s)))) ;; asterisk is wrongly inserted into the regexp
                                                                outshine-promotion-headings
                                                                "\\|")
                                                     "\\)"
@@ -200,13 +200,5 @@ function to return a regular expression, or
                           (s-trim (car s)))
                         outshine-promotion-headings
                         "\\|"))
-            ".*$"))
-  )
-
-
-(use-package outshine
-  :config
-  (setq outshine-imenu-show-headlines-p nil) ; Do not include outshine tags at imenu
-  )
-
+            ".*$")))
 
