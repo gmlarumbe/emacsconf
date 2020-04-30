@@ -4,7 +4,6 @@
 (use-package python-mode
   :mode (("\\SConstruct\\'"      . python-mode)
          ("\\SConstruct.repo\\'" . python-mode))
-
   :bind (:map python-mode-map
               ("C-c C-p"     . python-send-line-or-region-and-step) ; Overrides `run-python'
               ("C-c C-c"     . run-python)                          ; Overrides `python-shell-send-buffer'
@@ -17,9 +16,8 @@
               ("C-c C-l"     . larumbe/python-send-line-and-step-ansi-no-indent) ; Overrides `python-shell-send-file'
               )
   :bind (:map jedi-mode-map ("<C-tab>" . nil)) ; Let C-tab to HideShow
-
   :config
-  (setq python-check-command "pylint")
+  (setq python-check-command     "pylint")
   (setq py-number-face           font-lock-doc-face)
   (setq py-object-reference-face larumbe/font-lock-grouping-keywords-face)
   (setq py-pseudo-keyword-face   font-lock-constant-face) ; True/False/None
@@ -31,14 +29,13 @@
 
   (use-package jedi-core
     :config
-    (add-hook 'python-mode-hook #'jedi:setup))
-  )
+    (add-hook 'python-mode-hook #'jedi:setup)))
 
 
-;; Copied from sh-send-line-or-region-and-step for SH Shell scripting
 (defun python-send-line-or-region-and-step ()
   "Send the current line to the inferior shell and step to the next line.
-When the region is active, send the region instead."
+When the region is active, send the region instead.
+Adapted from `sh-send-line-or-region-and-step' for SH Shell scripting "
   (interactive)
   (let (from to end (proc (python-shell-get-process-or-error)))
     (if (use-region-p)
@@ -53,11 +50,13 @@ When the region is active, send the region instead."
     (goto-char end)))
 
 
-;; INFO: These two latter functions were created for development in Python setup (for remote targets)
+
 (defun larumbe/python-send-line-or-region-and-step-remote-from-host ()
   "Similar to previous one but sends data to *ansi-term* and when a region needs to be sent, instead of creating
 a temp file that is later deleted through Python interpreter, is instead parsed in a temp-buffer
-and newlines are erased. That was the main issue when sending text, as a newline is interpreted as Enter "
+and newlines are erased. That was the main issue when sending text, as a newline is interpreted as Enter
+
+INFO: This function was created for development in Python setup (for remote targets)."
   (interactive)
   (let (from to end string)
     (if (use-region-p)
@@ -82,7 +81,9 @@ and newlines are erased. That was the main issue when sending text, as a newline
 
 (defun larumbe/python-send-line-and-step-ansi-no-indent ()
   "Similar to `larumbe/sh-send-line-or-region-and-step-ansi', but useful for python individual
-statements to avoid indentation errors when testing"
+statements to avoid indentation errors when testing.
+
+INFO: This function was created for development in Python setup (for remote targets) "
   (interactive)
   (let (from to end string)
     (if (use-region-p)
@@ -139,7 +140,6 @@ didn't work as expected either (only worked with a hook and not at Emacs startup
            nil) hs-special-modes-alist)))
 
 
-
 (defun larumbe/python-hs-hide-all (&optional hideall)
   "If called normally hide only defs at file (not classes)
 If called witih prefix argument, execute `hs-hide-all' (including classes)"
@@ -153,7 +153,6 @@ If called witih prefix argument, execute `hs-hide-all' (including classes)"
     (hs-hide-all)))
 
 
-;; Global Tags functions (copied from the ones of verilog)
 (defun larumbe/gtags-python-files-pwd-recursive ()
   "Generate gtags.files for current directory. Purpose is to be used with dired mode for small projects, to save the regexp"
   (interactive)
