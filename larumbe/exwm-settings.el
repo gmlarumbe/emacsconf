@@ -56,9 +56,6 @@
 
 
 ;;; Global KeyBindings
-;;;;;;;;;;;;;;;;;;;;;;;;;
-;; GLOBAL KEY-BINDINGS ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; `exwm-input-set-key' allows you to set a global key binding (available in
 ;; any case). Following are a few examples.
 ;; + We always need a way to go back to line-mode from char-mode
@@ -113,8 +110,21 @@
 (global-set-key (kbd "C-x d") #'duplicate-line) ; Replaces Dired (C-x C-j works better)
 (global-set-key (kbd "C-w") #'whole-line-or-region-kill-region)
 (global-set-key (kbd "M-w") #'larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
+(global-set-key (kbd "C-M-<backspace>") #'xah-delete-backward-char-or-bracket-text)
+
+(global-set-key (kbd "<C-return>") #'completion-at-point)
+(global-set-key (kbd "<S-return>") #'auto-complete)
+(global-set-key (kbd "<C-M-return>") #'yas-expand)          ; Outline-minor mode replaces this yas keybinding
 (global-set-key [remap dabbrev-expand] #'hippie-expand)
-;;;;; Helm/IDO
+
+(global-set-key (kbd "C-\\")  #'highlight-symbol-at-point)
+(global-set-key (kbd "C-'")  #'unhighlight-regexp)
+
+(global-set-key (kbd "C-<f12>") #'auto-fill-mode)           ;  Auto-fill mode
+(global-set-key [f12] #'toggle-truncate-lines)              ;  Truncate lines
+
+
+;;;;; Navigation
 (global-set-key (kbd "M-x") #'helm-M-x)
 (global-set-key (kbd "C-x C-f") #'helm-find-files)
 (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
@@ -122,11 +132,23 @@
 ;;    - To do so, M-x customize-group RET helm-mode RET and then:
 ;;    - Check Helm Completing Read Handlers Alist:
 ;;    - Find all the 'ido' occurences (now are set to switch-to-buffer and find-alternate-file)
+
 (global-set-key (kbd "M-s o") #'helm-occur)
 (global-set-key (kbd "M-g a") #'helm-do-grep-ag) ; Avoid `C-x c' prefix
-;;;;; Imenu
+(global-set-key (kbd "C-#")  #'helm-navi-headings)
+(global-set-key (kbd "M-#")  #'helm-navi)
+(global-set-key (kbd "C-x C-j") #'dired-jump)
+
 (global-set-key (kbd "M-I") #'helm-imenu)
 (global-set-key (kbd "M-i") #'imenu-list)
+
+(global-set-key (kbd "C-z") #'larumbe/pop-to-previous-mark) ; Unmaps suspending frame
+(global-set-key (kbd "C-x C-z") #'larumbe/pop-to-previous-mark) ; Unmaps suspending frame
+
+(global-set-key (kbd "C-x C-/") #'larumbe/pwd-to-kill-ring)
+(global-set-key (kbd "C-x C-,") #'revert-buffer) ; Bind to `larumbe/revert-buffer-no-confirm' to avoid asking
+
+
 ;;;;; Version Control
 (global-set-key (kbd "C-x g") #'magit-status)
 (global-set-key (kbd "C-x M-g") #'magit-dispatch)
@@ -136,49 +158,29 @@
                                  (setq truncate-lines t))) ; Setting a hook for `svn-status-mode' did not seem to work
 (global-set-key (kbd "C-x t") #'larumbe/repohome-magit-status)
 (global-set-key (kbd "C-x y") #'larumbe/repohome-reset-git-args)
-;;;;; Own-Custom function mappings
-(global-set-key (kbd "C-<f12>") #'auto-fill-mode)           ;  Auto-fill mode
-(global-set-key [f12] #'toggle-truncate-lines)              ;  Truncate lines
-(global-set-key (kbd "C-,") #'larumbe/ansi-term)
-(global-set-key (kbd "C-.") '(lambda ()
-                               (interactive)
-                               (ansi-term "/bin/bash")))
-(global-set-key (kbd "C-x C-/") #'larumbe/pwd-to-kill-ring)
-(global-set-key (kbd "C-x C-,") #'revert-buffer)            ; Bind to `larumbe/revert-buffer-no-confirm' to avoid asking
-(global-set-key (kbd "<C-return>") #'completion-at-point)
-(global-set-key (kbd "<S-return>") #'auto-complete)
-(global-set-key (kbd "<C-M-return>") #'yas-expand)          ; Outline-minor mode replaces this yas keybinding
-(global-set-key (kbd "C-c / y") #'helm-youtube)             ; Analogous to google-this mode keybindings
-(global-set-key (kbd "C-x l") #'larumbe/org-show-todos-agenda)
-;;;;;; Dired
-(global-set-key (kbd "C-x C-j") #'dired-jump)
-;;;;;; Compilation
+
+
+;;;;; Compilation
 ;; M-n and M-p are already overwritten at mode-line.el. This mapping allows to step through errors in a non-compilation buffer
 (global-set-key (kbd "M-n") #'next-error)
 (global-set-key (kbd "M-p") #'previous-error)
 (global-set-key [f5] #'compile)
 (global-set-key (kbd "C-*") #'show-custom-compilation-buffers)
-;;;;;; Highlight
-(global-set-key (kbd "C-\\")  #'highlight-symbol-at-point)
-(global-set-key (kbd "C-'")  #'unhighlight-regexp)
-;;;;;; Navi for outshine
-(global-set-key (kbd "C-#")  #'helm-navi-headings)
-(global-set-key (kbd "M-#")  #'helm-navi)
-;;;;;; Screenshot
+
+
+;;;;; Misc
+(global-set-key (kbd "C-,") #'larumbe/ansi-term)
+(global-set-key (kbd "C-.") '(lambda ()
+                               (interactive)
+                               (ansi-term "/bin/bash")))
 (global-set-key (kbd "<print>")  #'screenshot-take)
-;;;;;; Help (from Helm-commands)
 (global-set-key (kbd "C-x C-h") #'larumbe/helm-help-major-mode)
-;;;;;; Unmappings of suspended frames
-(global-set-key (kbd "C-z") #'larumbe/pop-to-previous-mark)
-(global-set-key (kbd "C-x C-z") #'larumbe/pop-to-previous-mark)
-;;;;; Xah Lee Mappings
-(global-set-key (kbd "C-M-<backspace>") #'xah-delete-backward-char-or-bracket-text)
+(global-set-key (kbd "C-x l") #'larumbe/org-show-todos-agenda)
+(global-set-key (kbd "C-c / y") #'helm-youtube)             ; Analogous to google-this mode keybindings
+
 
 
 ;;; Local KeyBindings
-;;;;;;;;;;;;;;;;;;;;;;;;
-;; LOCAL KEY-BINDINGS ;;
-;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The following example demonstrates how to set a key binding only available
 ;; in line mode. It's simply done by first push the prefix key to
 ;; `exwm-input-prefix-keys' and then add the key sequence to `exwm-mode-map'.
@@ -190,6 +192,7 @@
 (push 'f3 exwm-input-prefix-keys)
 (push 'f4 exwm-input-prefix-keys)
 ;; Ansi-term
+(push '?\C-, exwm-input-prefix-keys)
 (push '?\C-. exwm-input-prefix-keys)
 ;; Screenshot
 (push '\print exwm-input-prefix-keys)
@@ -198,9 +201,6 @@
 
 
 ;;; Common Simulation Key-Bindings
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; COMMON SIMULATION KEY-BINDINGS ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The following example demonstrates how to use simulation keys to mimic the
 ;; behavior of Emacs. The argument to `exwm-input-set-simulation-keys' is a
 ;; list of cons cells (SRC . DEST), where SRC is the key sequence you press and
@@ -235,9 +235,6 @@
 
 
 ;;; Firefox Local Key-Bindings
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; FIREFOX LOCAL KEY-BINDINGS ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Local Key-bindings
 ;; (add-hook 'exwm-manage-finish-hook
 ;;           (lambda ()
@@ -292,9 +289,6 @@
 
 
 ;;; Okular Local Key-Bindings
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; OKULAR LOCAL KEY-BINDINGS ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Local Key-bindings
 ;; (add-hook 'exwm-manage-finish-hook
 ;;           (lambda ()
@@ -340,9 +334,6 @@
 
 
 ;;; Vivado Local Key-Bindings
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; VIVADO LOCAL KEY-BINDINGS ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Local Key-bindings
 ;; (add-hook 'exwm-manage-finish-hook
 ;;           (lambda ()
@@ -383,9 +374,6 @@
 
 
 ;;; Gtkwave Local Key-Bindings
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; GTKWAVE LOCAL KEY-BINDINGS ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; Local Key-bindings
 ;; (add-hook 'exwm-manage-finish-hook
 ;;           (lambda ()
@@ -431,9 +419,6 @@
 
 
 ;;; Novas Local Key-Bindings
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; NOVAS LOCAL KEY-BINDINGS ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; Local Key-bindings
 ;; (add-hook 'exwm-manage-finish-hook
 ;;           (lambda ()
