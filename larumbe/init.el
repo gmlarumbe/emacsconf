@@ -16,6 +16,9 @@
 ;; Custom macros as functions
 (load "~/.elisp/larumbe/macros.el")
 
+;; Helm/IDO setup
+(load "~/.elisp/larumbe/helm-settings.el")
+
 ;; Emacs Packages setup
 (load "~/.elisp/larumbe/packages-settings.el")
 
@@ -37,4 +40,4 @@
 ;; Machine specific settings files:
 ;;   - This file will not be present in the repo
 ;;   - It will have specific content to the machine (e.g. EXWM enabling)
-(load "~/.emacs.d/.elisp_private/machine/machine-config.el" t)
+(load "~/.elisp_private/machine/machine-config.el" t)
