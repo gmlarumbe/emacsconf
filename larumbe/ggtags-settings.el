@@ -5,7 +5,6 @@
 ;;; Use-package config
 (use-package ggtags
   :diminish
-
   :bind (:map ggtags-navigation-map
               ("M-o"     . nil)
               ("C-c C-k" . nil)         ; EXWM character mode
@@ -13,7 +12,6 @@
               ("M-<"     . nil))
   :bind (:map ggtags-mode-map
               ("M-."     . larumbe/ggtags-find-tag-dwim))
-
   :config
   (setq ggtags-sort-by-nearness nil) ; Enabling nearness requires global 6.5+
   (setq ggtags-navigation-mode-lighter nil)
@@ -26,15 +24,7 @@
   (setq ggtags-update-on-save nil)   ;; Try to avoid the `global -u in progress...'
 
 
-  (defun larumbe/ggtags-find-tag-dwim ()
-    "Wrapper of `ggtags-find-tag-dwim' to visit a tags/files depending
-on where the point is."
-    (interactive)
-    (if (file-exists-p (thing-at-point 'filename))
-        (larumbe/find-file-at-point)
-      (call-interactively #'ggtags-find-tag-dwim)))
-
-  ;; INFO: SystemVerilog Tweak!
+;;;; Function overriding/wrapping
   ;; Don't consider ` (back quote) as part of `tag' when looking for a Verilog macro definition
   (defun ggtags-tag-at-point ()
     (pcase (funcall ggtags-bounds-of-tag-function)
@@ -45,17 +35,22 @@ on where the point is."
            (buffer-substring (1+ beg) end)
          ;; else return the whole `(buffer-substring beg end)'
          (buffer-substring beg end)))))
-  )
+
+  (defun larumbe/ggtags-find-tag-dwim ()
+    "Wrapper of `ggtags-find-tag-dwim' to visit a tags/files depending
+on where the point is."
+    (interactive)
+    (if (file-exists-p (thing-at-point 'filename))
+        (larumbe/find-file-at-point)
+      (call-interactively #'ggtags-find-tag-dwim)))
 
 
-;;; Custom ggtags-hook
-(defun larumbe/ggtags-mode (&optional enable)
-  "Enable `ggtags-mode' depending on programming MAJOR-MODE of current buffer.
-Initially written to be added to every programming mode but avoiding being loaded to emacs-lisp-mode"
-  (interactive)
-  (unless (string-match "emacs-lisp-mode" (format "%s" major-mode)) ; Do not use ggtags @ `emacs-lisp-mode'
-    (ggtags-mode enable)))
-
+  (defun larumbe/ggtags-mode (&optional enable)
+    "Enable `ggtags-mode' depending on programming MAJOR-MODE of current buffer.
+Written to be added as a hook every prog-mode derived but avoiding being loaded to emacs-lisp-mode"
+    (interactive)
+    (unless (string-match "emacs-lisp-mode" (format "%s" major-mode)) ; Do not use ggtags @ `emacs-lisp-mode'
+      (ggtags-mode enable))))
 
 
 ;;; Vivado
