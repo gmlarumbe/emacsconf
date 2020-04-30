@@ -5,6 +5,7 @@
 ;;; Basic settings
 (use-package vhdl-mode
   :load-path "~/.elisp/larumbe/own-modes/override"
+  :hook ((vhdl-mode . my-vhdl-mode-hook))
   :bind (:map vhdl-mode-map
               ("C-M-a"           . vhdl-beginning-of-defun)
               ("C-M-e"           . vhdl-end-of-defun)
@@ -53,28 +54,22 @@
   (bind-chord "\\\\" #'larumbe/vhdl-jump-to-module-at-point vhdl-mode-map)
   (when (executable-find "ag")
     (bind-chord "\|\|" #'larumbe/vhdl-find-parent-module vhdl-mode-map))
-  )
 
+  (defun my-vhdl-mode-hook ()
+    (set 'ac-sources '(ac-source-gtags))
+    ;; Flycheck
+    (setq flycheck-ghdl-include-path (larumbe/vhdl-list-directories-of-open-buffers))
+    (setq flycheck-ghdl-language-standard "08")
+    (setq flycheck-ghdl-work-lib vhdl-default-library) ; "xil_defaultlib"
+    (setq flycheck-ghdl-workdir (concat (projectile-project-root) "library/" vhdl-default-library)) ; Used @ axi_if_converter
+    (setq flycheck-ghdl-ieee-library "synopsys")))
 
-
-;;; Hooks
-(defun my-vhdl-hook ()
-  (set 'ac-sources '(ac-source-gtags))
-  ;; Flycheck
-  (setq flycheck-ghdl-include-path (larumbe/vhdl-list-directories-of-open-buffers))
-  (setq flycheck-ghdl-language-standard "08")
-  (setq flycheck-ghdl-work-lib vhdl-default-library) ; "xil_defaultlib"
-  (setq flycheck-ghdl-workdir (concat (projectile-project-root) "library/" vhdl-default-library)) ; Used @ axi_if_converter
-  (setq flycheck-ghdl-ieee-library "synopsys")
-  )
-(add-hook 'vhdl-mode-hook #'my-vhdl-hook)
 
 
 ;;; Gtags
 (defun larumbe/gtags-vhdl-files-pwd-recursive ()
   "Generate gtags.files for current directory. Purpose is to be used with dired mode for small projects, to save the regexp"
-  (larumbe/directory-files-recursively-to-file default-directory "gtags.files" ".vhd[l]?$")
-  )
+  (larumbe/directory-files-recursively-to-file default-directory "gtags.files" ".vhd[l]?$"))
 
 
 (defun larumbe/ggtags-create-vhdl-tags-recursive ()

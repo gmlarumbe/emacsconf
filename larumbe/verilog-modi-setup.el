@@ -642,7 +642,7 @@ for all the `included files."
                              1))
                           verilog-imenu-generic-expression))))
 
-  ;; INFO: Commented out, since `helm-navi' seems to do the trick in a much cleaner manner
+  ;; INFO: Larumbe: Commented out, since `helm-navi' seems to do the trick in a much cleaner manner
   ;; (advice-add 'outshine-mode :after #'modi/verilog-outshine-imenu-generic-expression)
   ;; (advice-remove 'outshine-hook-function #'modi/verilog-outshine-imenu-generic-expression)
   )
@@ -662,8 +662,7 @@ for all the `included files."
                          (string-match-p "veripool/verilog-mode" git-repo-remote))))) ;Upstream URL has to match this.
     (add-hook 'before-save-hook #'modi/verilog-block-end-comments-to-block-names nil :local))
 
-  ;; TODO: How is outshine alignment working?
-  ;; INFO: Larumbe: Seems it is overriden by own indentation functions
+  ;; INFO: Larumbe: Seems outshine alignment it is being overriden by own indentation functions
   (with-eval-after-load 'outshine
     ;; Do not require the "// *" style comments used by `outshine' to
     ;; start at column 0 just for this major mode.

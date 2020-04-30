@@ -10,6 +10,8 @@
          ("\\.vams\\'"        . verilog-mode)
          ("\\.vinc\\'"        . verilog-mode)
          ("\\.vsrc\\'"        . verilog-mode)) ; Custom, for Gigatron vsrc files
+  :hook ((verilog-mode . my-verilog-hook)
+         (verilog-mode . modi/verilog-mode-customization))
   :bind (:map verilog-mode-map
               ("<return>" . larumbe/electric-verilog-terminate-line)
               ("C-s"      . larumbe/verilog-isearch-forward)
@@ -89,7 +91,17 @@
   ;; Modi multi-line defines (and allegedly outshine) indentation advice: DANGER: Still issues with following lines after multiline defines!
   (advice-add 'verilog-indent-line-relative :before-until #'modi/verilog-selective-indent) ;; Advise the indentation behavior of `indent-region' done using `C-M-\'
   (advice-add 'verilog-indent-line :before-until #'modi/verilog-selective-indent)          ;; Advise the indentation done by hitting `TAB' (modi multi-line defines)
-  )
+
+  (defun my-verilog-hook ()
+    (set 'ac-sources '(ac-source-verilog ac-source-gtags)) ; Auto-complete verilog-sources
+    (setq larumbe/verilog-open-dirs (nth 0 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
+    (setq larumbe/verilog-open-pkgs (nth 1 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
+    (setq verilog-library-directories             larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
+    (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs)
+    (setq larumbe/flycheck-iverilog-include-path  larumbe/verilog-open-dirs)
+    (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
+    (key-chord-mode 1)
+    (larumbe/verilog-find-semicolon-in-instance-comments)))
 
 
 ;;; Common settings and hooks
@@ -100,23 +112,6 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
   "List of currently opened SystemVerilog packages")
 (defvar larumbe/verilog-project-pkg-list nil
   "List of current open packages at projectile project.")
-
-
-(defun my-verilog-hook ()
-  (set 'ac-sources '(ac-source-verilog ac-source-gtags)) ; Auto-complete verilog-sources
-  (setq larumbe/verilog-open-dirs (nth 0 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
-  (setq larumbe/verilog-open-pkgs (nth 1 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
-  (setq verilog-library-directories             larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
-  (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs)
-  (setq larumbe/flycheck-iverilog-include-path  larumbe/verilog-open-dirs)
-  (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
-  (key-chord-mode 1)
-  (larumbe/verilog-find-semicolon-in-instance-comments)
-  )
-
-;; Verilog Hooks
-(add-hook 'verilog-mode-hook #'my-verilog-hook)
-(add-hook 'verilog-mode-hook #'modi/verilog-mode-customization) ; Modi: block comments to names
 
 
 ;;; Lint, Compilation and Simulation Tools
@@ -2170,5 +2165,4 @@ See URL `http://iverilog.icarus.com/'"
    (error   (file-name) ":" line ":" (zero-or-more not-newline) "error:"   (message) line-end)
    (error   (file-name) ":" line ":" (message) line-end) ; 'syntax error' message (missing package)
    )
-
   :modes verilog-mode)

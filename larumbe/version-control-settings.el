@@ -27,8 +27,7 @@
   (autoload 'svn-status "dsvn" "Run `svn status'." t)
   (autoload 'svn-update "dsvn" "Run `svn update'." t)
 
-  (define-obsolete-function-alias 'string-to-int 'string-to-number "22.1")
-  )
+  (define-obsolete-function-alias 'string-to-int 'string-to-number "22.1"))
 
 
 ;;; Custom functions
