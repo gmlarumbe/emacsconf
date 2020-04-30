@@ -42,15 +42,16 @@ on where the point is."
     (interactive)
     (if (file-exists-p (thing-at-point 'filename))
         (larumbe/find-file-at-point)
-      (call-interactively #'ggtags-find-tag-dwim)))
+      (call-interactively #'ggtags-find-tag-dwim))))
 
 
-  (defun larumbe/ggtags-mode (&optional enable)
-    "Enable `ggtags-mode' depending on programming MAJOR-MODE of current buffer.
+;;; Overriding
+(defun larumbe/ggtags-mode (&optional enable)
+  "Enable `ggtags-mode' depending on programming MAJOR-MODE of current buffer.
 Written to be added as a hook every prog-mode derived but avoiding being loaded to emacs-lisp-mode"
-    (interactive)
-    (unless (string-match "emacs-lisp-mode" (format "%s" major-mode)) ; Do not use ggtags @ `emacs-lisp-mode'
-      (ggtags-mode enable))))
+  (interactive)
+  (unless (string-match "emacs-lisp-mode" (format "%s" major-mode)) ; Do not use ggtags @ `emacs-lisp-mode'
+    (ggtags-mode enable)))
 
 
 ;;; Vivado
