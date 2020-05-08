@@ -43,7 +43,7 @@
 (eval-when-compile
   (require 'use-package))
 (setq use-package-always-ensure t) ; Force download if not available. INFO: Set to nil for built-in packages.
-
+(use-package gnu-elpa-keyring-update) ; Update elpa keys to avoid signature issues
 
 ;;; Mode-line
 (use-package smart-mode-line

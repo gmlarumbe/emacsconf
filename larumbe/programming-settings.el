@@ -341,7 +341,16 @@ Copied from `sh-send-line-or-regin-and-step' for SH Shell scripting "
   (defun my-mhtml-mode-hook ()
     (set 'ac-sources
          '(ac-source-gtags
-           ac-source-symbols))))
+           ac-source-symbols)))
+
+  (use-package web-beautify
+    ;; Requires 'js-beautify' binary installed from npm (nodejs)
+    :bind (:map mhtml-mode-map
+                ("C-c b h" . web-beautify-html)
+                ("C-c b j" . web-beautify-js)
+                ("C-c b c" . web-beautify-css))))
+
+
 
 
 ;;;; MARKDOWN
@@ -386,3 +395,10 @@ Copied from `sh-send-line-or-regin-and-step' for SH Shell scripting "
 ;;;; RDL
 (use-package rdl-mode
   :load-path "~/.elisp/download/")
+
+;;;; Yocto
+(use-package mmm-mode) ; Multi-major-mode
+(use-package bitbake)  ; Recipes
+(use-package dts-mode) ; Device tree
+
+
