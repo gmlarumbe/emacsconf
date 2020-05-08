@@ -175,8 +175,9 @@ obj.method();
 (defvar larumbe/curly-brackets-regex "[{}]")
 (defvar larumbe/braces-regex "\\(\\[\\|\\]\\)")
 (defvar larumbe/punctuation-regex "\\([!,;:?'=<>]\\|\\*\\)")
-(defvar larumbe/punctuation-bold-regex "\\([&^~+-/]\\||\\|\\.\\)")
-
+(defvar larumbe/punctuation-bold-regex "\\([&^~+-]\\||\\|\\.\\)") ; Does not include / nor - for Verilog/VHDL comments
+(defvar larumbe/slash-not-verilog-comments-regex "[^/]\\(/\\)[^/]")
+(defvar larumbe/dash-not-vhdl-comments-regex "[^-]\\(-\\)[^-]")
 
 ;;; SystemVerilog
 ;;;; Variables
@@ -471,16 +472,18 @@ these both have precedence over custom fontify."
   (setq larumbe/verilog-font-lock-keywords-3
         (append larumbe/verilog-font-lock-keywords-2
                 (list
-                 (list larumbe/verilog-time-unit-regex       2 larumbe/font-lock-time-unit-face)
-                 (list larumbe/verilog-time-event-regex      0 larumbe/font-lock-time-event-face)
-                 (list larumbe/verilog-port-connection-regex 1 larumbe/font-lock-port-connection-face)
-                 (list larumbe/verilog-dot-itf-struct-regex  1 larumbe/font-lock-dot-expression-face)
-                 (list larumbe/verilog-braces-content-regex  1 larumbe/font-lock-braces-content-face)   ; Bit-range
-                 (list larumbe/punctuation-regex             0 larumbe/font-lock-punctuation-face)      ; Overrides bracket range
-                 (list larumbe/punctuation-bold-regex        0 larumbe/font-lock-punctuation-bold-face) ; Overrides bracket range
-                 (list larumbe/braces-regex                  0 larumbe/font-lock-braces-face)
-                 (list larumbe/brackets-regex                0 larumbe/font-lock-brackets-face)
-                 (list larumbe/curly-brackets-regex          0 larumbe/font-lock-curly-brackets-face)
+                 (list larumbe/verilog-time-unit-regex          2 larumbe/font-lock-time-unit-face)
+                 (list larumbe/verilog-time-event-regex         0 larumbe/font-lock-time-event-face)
+                 (list larumbe/verilog-port-connection-regex    1 larumbe/font-lock-port-connection-face)
+                 (list larumbe/verilog-dot-itf-struct-regex     1 larumbe/font-lock-dot-expression-face)
+                 (list larumbe/verilog-braces-content-regex     1 larumbe/font-lock-braces-content-face)
+                 (list larumbe/punctuation-regex                0 larumbe/font-lock-punctuation-face)
+                 (list larumbe/punctuation-bold-regex           0 larumbe/font-lock-punctuation-bold-face)
+                 (list larumbe/slash-not-verilog-comments-regex 0 larumbe/font-lock-punctuation-bold-face)
+                 (list larumbe/dash-not-vhdl-comments-regex     0 larumbe/font-lock-punctuation-bold-face)
+                 (list larumbe/braces-regex                     0 larumbe/font-lock-braces-face)
+                 (list larumbe/brackets-regex                   0 larumbe/font-lock-brackets-face)
+                 (list larumbe/curly-brackets-regex             0 larumbe/font-lock-curly-brackets-face)
                  (list larumbe/verilog-width-signal-regex
                        '(1 larumbe/font-lock-width-num-face)
                        '(2 larumbe/font-lock-width-type-face))
@@ -679,8 +682,10 @@ INFO: Executed once while loading `vhdl-mode'."
 
 
           ;; Own Verilog-based customization
-          (list larumbe/punctuation-regex             0 larumbe/font-lock-punctuation-face)
-          (list larumbe/punctuation-bold-regex        0 larumbe/font-lock-punctuation-bold-face)
+          (list larumbe/punctuation-regex                0 larumbe/font-lock-punctuation-face)
+          (list larumbe/punctuation-bold-regex           0 larumbe/font-lock-punctuation-bold-face)
+          (list larumbe/slash-not-verilog-comments-regex 0 larumbe/font-lock-punctuation-bold-face)
+          (list larumbe/dash-not-vhdl-comments-regex     0 larumbe/font-lock-punctuation-bold-face)
           (list larumbe/vhdl-brackets-content-range-regex ; Bit range
                 '(1 larumbe/font-lock-curly-brackets-face prepend)
                 '(5 larumbe/font-lock-curly-brackets-face prepend)
