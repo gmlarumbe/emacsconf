@@ -31,18 +31,18 @@
               ("M->" . end-of-buffer)
               ("M-<" . beginning-of-buffer))
   :config
-  (setq comint-process-echoes t)
+  (setq comint-process-echoes t))
 
-  (defun larumbe/ansi-term ()
-    "Checks if there is an existing *ansi-term* buffer and pops to it (if not visible open on the same window).
+(defun larumbe/ansi-term ()
+  "Checks if there is an existing *ansi-term* buffer and pops to it (if not visible open on the same window).
 Otherwise create it"
-    (interactive)
-    (let ((buf "*ansi-term*"))
-      (if (get-buffer buf)
-          (if (get-buffer-window buf)
-              (pop-to-buffer buf)
-            (switch-to-buffer buf))
-        (ansi-term "/bin/bash")))))
+  (interactive)
+  (let ((buf "*ansi-term*"))
+    (if (get-buffer buf)
+        (if (get-buffer-window buf)
+            (pop-to-buffer buf)
+          (switch-to-buffer buf))
+      (ansi-term "/bin/bash"))))
 
 
 ;;; Compilation-mode related functions
