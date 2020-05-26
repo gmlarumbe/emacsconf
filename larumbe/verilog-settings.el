@@ -13,6 +13,8 @@
   :hook ((verilog-mode . my-verilog-hook)
          (verilog-mode . modi/verilog-mode-customization))
   :bind (:map verilog-mode-map
+              ("C-M-a"    . verilog-beg-of-defun)
+              ("C-M-e"    . verilog-end-of-defun)
               ("<return>" . larumbe/electric-verilog-terminate-line)
               ("C-s"      . larumbe/verilog-isearch-forward)
               ("C-r"      . larumbe/verilog-isearch-backward)

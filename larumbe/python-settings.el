@@ -14,6 +14,7 @@
               ("C-c C-k"     . larumbe/python-send-line-or-region-and-step-remote-from-host)
               ;; Ignore indentation and send to an *ansi-term* running a Python interpretera Python term individual statements (that may run in a remote machine).
               ("C-c C-l"     . larumbe/python-send-line-and-step-ansi-no-indent) ; Overrides `python-shell-send-file'
+              ("C-c C-n"     . align-regexp) ; Unmaps `py-forward-statement' to allow `align-regexp'
               )
   :bind (:map jedi-mode-map ("<C-tab>" . nil)) ; Let C-tab to HideShow
   :config

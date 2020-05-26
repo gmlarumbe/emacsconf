@@ -7,8 +7,7 @@
   :diminish
   :bind (("C-x c /" . helm-find) ; Enable C-x c prefix commands
          ("C-x c p" . helm-list-emacs-process)
-         ("C-x c t" . helm-top)
-         ("M-s o"   . larumbe/helm-occur))
+         ("C-x c t" . helm-top))
   :config
   (setq helm-completing-read-handlers-alist
         '((describe-function         . helm-completing-read-symbols)

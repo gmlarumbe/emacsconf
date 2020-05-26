@@ -134,6 +134,9 @@
   (setq ag-reuse-window t))
 
 
+(use-package pdf-tools
+  :config
+  (pdf-tools-install))
 
 ;;; Editing
 (use-package untabify-trailing-ws
