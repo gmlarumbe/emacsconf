@@ -279,7 +279,14 @@ while inde_x_ed        _+_ add
   :hook ((tcl-mode . my-tcl-hook))
   :config
   (defun my-tcl-hook ()
-    (modify-syntax-entry ?$ "."))
+    (modify-syntax-entry ?$ ".")
+    ;; Reuse hdl font-lock faces
+    (setq larumbe/tcl-font-lock-additional-keywords
+          (list
+           (list larumbe/braces-regex         0 larumbe/font-lock-braces-face)
+           (list larumbe/brackets-regex       0 larumbe/font-lock-brackets-face)
+           ))
+    (font-lock-add-keywords 'tcl-mode larumbe/tcl-font-lock-additional-keywords))
 
   (defun larumbe/tcl-send-line-or-region-and-step ()
     "Send the current line to the inferior shell and step to the next line.
@@ -320,10 +327,11 @@ Copied from `sh-send-line-or-regin-and-step' for SH Shell scripting "
 
 
 ;;;; VIVADO
-(use-package vivado-mode
-  :load-path "~/.elisp/download/"
-  :mode (("\\.xdc\\'" . vivado-mode))
+(use-package vivado-utils
+  :load-path "~/.elisp/larumbe/own-modes/majors/"
+  :mode (("\\.xdc\\'" . vivado-xdc-mode))
   :hook ((vivado-mode . my-vivado-mode-hook))
+  :demand t ; INFO: Force loading of all the functions in the file
   :config
   (defun my-vivado-mode-hook ()
     (set 'ac-sources '(ac-source-gtags
