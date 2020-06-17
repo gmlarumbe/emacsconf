@@ -99,8 +99,8 @@
     (setq larumbe/verilog-open-dirs (nth 0 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
     (setq larumbe/verilog-open-pkgs (nth 1 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
     (setq verilog-library-directories             larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
+    (flycheck-select-checker 'verilog-iverilog)  ; Default checker
     (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs)
-    (setq larumbe/flycheck-iverilog-include-path  larumbe/verilog-open-dirs)
     (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
     (key-chord-mode 1)
     (larumbe/verilog-find-semicolon-in-instance-comments)))
@@ -2144,24 +2144,19 @@ See URL `https://www.veripool.org/wiki/verilator'."
 
 
 ;;;; Iverilog
-
-(flycheck-def-option-var larumbe/flycheck-iverilog-include-path nil verilog-iverilog
-  "A list of include directories for Iverilog.
-
-The value of this variable is a list of strings, where each
-string is a directory to add to the include path of Verilator.
-Relative paths are relative to the file being checked."
-  :type '(repeat (directory :tag "Include directory"))
-  :safe #'flycheck-string-list-p
-  :package-version '(flycheck . "0.24"))
-
-
 (flycheck-define-checker verilog-iverilog
   "A Verilog syntax checker using Icarus Verilog.
 
 See URL `http://iverilog.icarus.com/'"
-  :command ("iverilog" "-g2012" "-Wall" "-gassertions" "-t" "null"
-            (option-list "-I" larumbe/flycheck-iverilog-include-path concat)
+
+  ;; INFO: Use `-i' flag to ignore missing modules for current buffer.
+  ;; If a 'project mode' was to be used by means of library includes with -y flag, then there are kown limitations with iverilog:
+  ;;   - The command line -y flag will not search for .sv extensions, even though the -g2012 flag is set.
+  ;;   - The +libext+.sv will only work with COMMAND FILES, not with command line arguments.
+  ;;      - That means that a file that specifies the libraries/plusargs should be used with the -c COMMAND_FILE command line argument.
+  ;;   - Since this is a just a linter for current file, other files errors/warnings would appear at the beginning of the buffer.
+
+  :command ("iverilog" "-g2012" "-Wall" "-gassertions" "-t" "null" "-i"
             (option-list "" larumbe/verilog-project-pkg-list concat)
             source)
   :error-patterns
