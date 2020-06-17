@@ -567,8 +567,20 @@ When the region is active, send the region instead."
        ))
 
 
+(defun larumbe/vivado-tcl-xdc-completion-at-point ()
+  "Used as an element of `completion-at-point-functions'."
+  (let* ((b (save-excursion (skip-chars-backward "a-zA-Z0-9_") (point)))
+         (e (save-excursion (skip-chars-forward "a-zA-Z0-9_") (point)))
+         (str (buffer-substring b e))
+         (allcomp (all-completions str larumbe/vivado-tcl-xdc-commands)))
+    (list b e allcomp)))
+
+
+
 (define-derived-mode vivado-xdc-mode tcl-mode
   (font-lock-add-keywords 'vivado-xdc-mode larumbe/vivado-tcl-xdc-font-lock) ; Modified to preserve tcl-keywords
+  (make-local-variable 'completion-at-point-functions)
+  (add-to-list 'completion-at-point-functions 'larumbe/vivado-tcl-xdc-completion-at-point)
   (setq mode-name "XDC"))
 
 
