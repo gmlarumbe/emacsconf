@@ -540,6 +540,17 @@ these both have precedence over custom fontify."
 ;;; VHDL
 ;; INFO: Strong customization is done on vhdl-keywords-2, as the rest depend on parameters and Emacs groups customizing
 ;;;; Variables
+(defvar larumbe/vhdl-common-constructs-regex
+  (concat
+   "^\\s-*\\(\\w+\\)\\s-*:[ \t\n\r\f]*\\(\\("
+   "assert\\|block\\|case\\|exit\\|for\\|if\\|loop\\|next\\|null\\|"
+   "postponed\\|process\\|"
+   "with\\|while"
+   "\\)\\>\\|\\w+\\s-*\\(([^\n]*)\\|\\.\\w+\\)*\\s-*<=\\)"))
+(defvar larumbe/vhdl-labels-in-block-and-components-regex
+  (concat
+   "^\\s-*for\\s-+\\(\\w+\\(,\\s-*\\w+\\)*\\)\\>\\s-*"
+   "\\(:[ \t\n\r\f]*\\(\\w+\\)\\|[^i \t]\\)"))
 (defvar larumbe/vhdl-brackets-content-range-regex "\\(?1:(\\)\\(?2:[ )+*/$0-9a-zA-Z:_-]*\\)\\s-+\\(?3:\\(down\\)?to\\)\\s-+\\(?4:[ (+*/$0-9a-zA-Z:_-]*\\)\\(?5:)\\)")
 (defvar larumbe/vhdl-brackets-content-index-regex "\\(?1:(\\)\\s-*\\(?2:[0-9]+\\)\\s-*\\(?3:)\\)")
 (defvar larumbe/vhdl-directive-keywords-regex (regexp-opt '("psl" "pragma" "synopsys" "synthesis") 'symbols))
@@ -549,8 +560,8 @@ these both have precedence over custom fontify."
 (defun larumbe/vhdl-font-lock-init ()
   "Initialize fontification.
 INFO: Executed once while loading `vhdl-mode'."
-  ;; Enable muli-line font-locking
-  (setq font-lock-multiline t)
+  ;; INFO: `font-lock-multiline' variable is not reliable. Use property instead of variable for elements whose matcher is a function.
+  ;; The variable will try to add the property automatically multiline constructs, but it can miss some or make the property larger than needed.
 
   ;; highlight template prompts and directives
   (setq vhdl-font-lock-keywords-0
@@ -596,15 +607,9 @@ INFO: Executed once while loading `vhdl-mode'."
            "^\\s-*\\(architecture\\|configuration\\)\\s-+\\w+\\s-+of\\s-+\\(\\w+\\)"
            2 'font-lock-function-name-face)
 
-          ;; highlight labels of common constructs
-          (list
-           (concat
-            "^\\s-*\\(\\w+\\)\\s-*:[ \t\n\r\f]*\\(\\("
-            "assert\\|block\\|case\\|exit\\|for\\|if\\|loop\\|next\\|null\\|"
-            "postponed\\|process\\|"
-            "with\\|while"
-            "\\)\\>\\|\\w+\\s-*\\(([^\n]*)\\|\\.\\w+\\)*\\s-*<=\\)")
-           1 'font-lock-function-name-face)
+          ;; highlight labels of common constructs (use function to add `font-lock-multiline' property)
+          '(larumbe/vhdl-match-common-constructs-fontify
+            (1 'font-lock-function-name-face))
 
           ;; highlight label and component name of every instantiation (configuration, component and entity)
           (list
@@ -637,11 +642,8 @@ INFO: Executed once while loading `vhdl-mode'."
            1 'font-lock-function-name-face)
 
           ;; highlight labels in block and component specifications
-          (list
-           (concat
-            "^\\s-*for\\s-+\\(\\w+\\(,\\s-*\\w+\\)*\\)\\>\\s-*"
-            "\\(:[ \t\n\r\f]*\\(\\w+\\)\\|[^i \t]\\)")
-           '(1 font-lock-function-name-face) '(4 font-lock-function-name-face nil t))
+          '(larumbe/vhdl-match-labels-in-block-and-components-fontify
+            (1 font-lock-function-name-face) (4 font-lock-function-name-face nil t))
 
           ;; highlight names in library clauses
           (list "^\\s-*library\\>"
@@ -802,6 +804,20 @@ into account instead of only 'pragma'"
           (case-fold-search t))
       (when start
         (let ((end (or (larumbe/vhdl-end-translate-off limit) limit)))
+          (put-text-property start end 'font-lock-multiline t)
           (set-match-data (list start end))
           (goto-char end))))))
 
+(defun larumbe/vhdl-match-common-constructs-fontify (limit)
+  "Search based fontification function for VHDL common constructs.
+Needed since it sets match property as `font-lock-multiline'."
+  (while (re-search-forward larumbe/vhdl-common-constructs-regex limit t)
+    (put-text-property (match-beginning 0) (match-end 0) 'font-lock-multiline t)
+    (point)))
+
+(defun larumbe/vhdl-match-labels-in-block-and-components-fontify (limit)
+  "Search based fontification function for VHDL labels in blocks and components.
+Needed since it sets match property as `font-lock-multiline'."
+  (while (re-search-forward larumbe/vhdl-labels-in-block-and-components-regex limit t)
+    (put-text-property (match-beginning 0) (match-end 0) 'font-lock-multiline t)
+    (point)))
