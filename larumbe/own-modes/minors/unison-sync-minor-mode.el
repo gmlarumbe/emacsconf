@@ -101,13 +101,13 @@ Otherwise, it will depend on buffer local selected profile."
     (set-process-sentinel proc 'unison-sentinel-finished)))
 
 
-(defun unison-manually-sync-projects ()
+(defun unison-manually-sync-projects (&optional prompt)
   "Sometimes, when files are identical but have different timestamps/permissions unison will detect it and will skip them.
 Manually sync them will allow for a proper output at unison buffer.
 User will have to choose which of the repos has priority on the synchronization"
-  (interactive)
+  (interactive "P")
   (if (not (bound-and-true-p unison-active-profile))
-      (unison-set-active-profile))
+      (setq unison-active-profile (file-name-nondirectory (buffer-file-name))))
   (let (local remote choice)
     (save-window-excursion
       ;; Get sync folders from active profile
@@ -123,10 +123,12 @@ User will have to choose which of the repos has priority on the synchronization"
       (re-search-forward "^root=ssh://")
       (backward-char 6)
       (setq remote (thing-at-point 'url t))
+      (setq choice local)               ; Default local
       ;; Prompt for remote/local precedence and invoke a different process depending on which has precedence
-      (if (y-or-n-p "Override with remote's data? [y->remote] [n->local]")
-          (setq choice remote)
-        (setq choice local))
+      (when prompt
+        (if (y-or-n-p "Override with remote's data? [y->remote] [n->local]")
+            (setq choice remote)
+          (setq choice local)))
       (start-process larumbe/unison-buffer larumbe/unison-buffer larumbe/unison-command-name unison-active-profile "-auto" "-batch" "-force" choice))))
 
 
@@ -199,7 +201,7 @@ User will have to choose which of the repos has priority on the synchronization"
     ("\C-c\C-c" . unison-my-run)
     ("\C-c\C-v" . unison-toggle-enable-process-window)
     ("\C-c\C-b" . unison-pop-show-unison-buffer)
-    ("\C-c\C-z" . set-unison-process-coding-system)
+    ("\C-c\C-z" . unison-manually-sync-projects)
 
     ;; ("\C-c\C-s" . unison-toggle-sync-save-hook)
     )
