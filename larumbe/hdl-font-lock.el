@@ -2,9 +2,13 @@
 ;; HDL Font-Locking (VHDL/SystemVerilog ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; INFO: Multiline Font Locking is not reliable in Emacs.
+;; INFO: Multiline Font Locking has reliability limitations in Emacs.
+;;  - https://www.gnu.org/software/emacs/manual/html_node/elisp/Multiline-Font-Lock.html
 ;;  - https://www.gnu.org/software/emacs/manual/html_node/elisp/Font-Lock-Multiline.html
-;;  - Some thread said that using the `font-lock-multiline' might apply to a few lines (such is the case).
+;;
+;;  - One way to ensure reliable rehighlighting of multiline font-lock constructs is by using the `font-lock-multiline' text property.
+;;  - The `font-lock-multiline' variable might seem to be working but is not reliable.
+;;  - Using the `font-lock-multiline' property might apply to a few lines (such is the case).
 ;;    For longer sections it is necessary to create font lock custom functions and gets more complicated.
 
 ;; INFO: Search based fontification:
@@ -175,9 +179,7 @@ obj.method();
 (defvar larumbe/curly-brackets-regex "[{}]")
 (defvar larumbe/braces-regex "\\(\\[\\|\\]\\)")
 (defvar larumbe/punctuation-regex "\\([!,;:?'=<>]\\|\\*\\)")
-(defvar larumbe/punctuation-bold-regex "\\([&^~+-]\\||\\|\\.\\)") ; Does not include / nor - for Verilog/VHDL comments
-(defvar larumbe/slash-not-verilog-comments-regex "[^/]\\(/\\)[^/]")
-(defvar larumbe/dash-not-vhdl-comments-regex "[^-]\\(-\\)[^-]")
+(defvar larumbe/punctuation-bold-regex "\\([&^~+-]\\||\\|\\.\\|\\/\\)")
 
 ;;; SystemVerilog
 ;;;; Variables
@@ -220,24 +222,35 @@ obj.method();
 
 
 ;;;; Functions
-(defun larumbe/find-verilog-module-fontify (limit)
-  "Search based fontification function of Verilog modules."
-  (let (start end)
+(defun larumbe/find-verilog-module-instance-fontify (limit)
+  "Search based fontification function of Verilog modules/instances."
+  (let (start end start-line end-line)
     (when (larumbe/find-verilog-module-instance-fwd limit)
-      (setq start (match-beginning 1))
-      (setq end (match-end 1))
-      (set-match-data (list start end))
+      (setq start-line (save-excursion
+                         (goto-char (match-beginning 0))
+                         (point-at-bol)))
+      (setq end-line (save-excursion
+                         (goto-char (match-end 0))
+                         (point-at-eol)))
+      (unless (get-text-property (point) 'font-lock-multiline)
+        (put-text-property start-line end-line 'font-lock-multiline t))
       (point))))
 
 
-(defun larumbe/find-verilog-instance-fontify (limit)
-  "Search based fontification function of Verilog instances."
-  (let (start end)
-    (when (larumbe/find-verilog-module-instance-fwd limit)
-      (setq start (match-beginning 2))
-      (setq end (match-end 2))
-      (set-match-data (list start end))
-      (point))))
+(defun larumbe/verilog-match-translate-off-fontify (limit)
+  "Copied from `verilog-match-translate-off' but including `font-lock-multiline' property
+
+   Match a translate-off block, setting `match-data' and returning t, else nil.
+Bound search by LIMIT."
+  (when (< (point) limit)
+    (let ((start (or (verilog-within-translate-off)
+                     (verilog-start-translate-off limit)))
+          (case-fold-search t))
+      (when start
+        (let ((end (or (verilog-end-translate-off limit) limit)))
+          (put-text-property start end 'font-lock-multiline t)
+          (set-match-data (list start end))
+          (goto-char end))))))
 
 
 (defun larumbe/find-verilog-variable-type-fwd (regex limit)
@@ -383,8 +396,10 @@ these both have precedence over custom fontify."
        (larumbe/verilog-font-general-keywords
         (eval-when-compile
           (regexp-opt
-           ;; INFO: Same as the one in `verilog-mode' but excluding include
-           ;; as it must be highlighted as a macro instead
+           ;; INFO: Same as the one in `verilog-mode' but excluding "include"
+           ;; as it must be highlighted as a macro instead.
+           ;; INFO: Have changed macro priority over keywords.
+           ;; INFO: Also excluding 'this' to highlight it in green, same as python
            '("always" "assign" "automatic" "case" "casex" "casez" "cell"
              "config" "deassign" "default" "design" "disable" "edge" "else"
              "endcase" "endconfig" "endfunction" "endgenerate" "endmodule"
@@ -409,7 +424,7 @@ these both have precedence over custom fontify."
              "matches" "modport" "new" "null" "package" "priority"
              "program" "property" "protected" "pure" "rand" "randc"
              "randcase" "randsequence" "return" "sequence" "solve" "super"
-             "tagged" "this" "throughout" "timeprecision" "timeunit"
+             "tagged" "throughout" "timeprecision" "timeunit"
              "unique" "virtual" "void" "wait_order" "wildcard" "with"
              "within"
              ;; 1800-2009
@@ -424,12 +439,14 @@ these both have precedence over custom fontify."
        (larumbe/verilog-font-grouping-keywords
         (eval-when-compile
           (regexp-opt
-           '( "begin" "end" ) nil))))
+           '( "begin" "end" "this") nil)))) ; "this" is not grouping but looks better in green
 
 
 
   (setq larumbe/verilog-font-lock-keywords
         (list
+         ;; Preprocessor macros and compiler directives
+         '("`\\s-*[A-Za-z][A-Za-z0-9_]*" 0 larumbe/font-lock-preprocessor-face) ; Place at the top to have precendence in `else or `include 'macros over keywords
          ;; Builtin keywords
          (concat "\\<\\(" larumbe/verilog-font-general-keywords "\\)\\>") ; Default 'font-lock-keyword-face
          ;; User/System tasks and functions
@@ -461,8 +478,6 @@ these both have precedence over custom fontify."
                        '(2 'larumbe/font-lock-preprocessor-face prepend))
                  ;; Escaped names
                  '("\\(\\\\\\S-*\\s-\\)"  0 font-lock-function-name-face)
-                 ;; Preprocessor macros and compiler directives
-                 '("`\\s-*[A-Za-z][A-Za-z0-9_]*" 0 larumbe/font-lock-preprocessor-face)
                  ;; Delays/numbers
                  '("\\s-*#\\s-*\\(?1:\\([0-9_.]+\\([munpf]s\\)?\\('s?[hdxbo][0-9a-fA-F_xz]*\\)?\\)\\|\\(([^(),.=]+)\\|\\sw+\\)\\)" 1 font-lock-type-face append)
                  ;; Fontify property/sequence cycle delays - these start with '##'
@@ -479,8 +494,6 @@ these both have precedence over custom fontify."
                  (list larumbe/verilog-braces-content-regex     1 larumbe/font-lock-braces-content-face)
                  (list larumbe/punctuation-regex                0 larumbe/font-lock-punctuation-face)
                  (list larumbe/punctuation-bold-regex           0 larumbe/font-lock-punctuation-bold-face)
-                 (list larumbe/slash-not-verilog-comments-regex 0 larumbe/font-lock-punctuation-bold-face)
-                 (list larumbe/dash-not-vhdl-comments-regex     0 larumbe/font-lock-punctuation-bold-face)
                  (list larumbe/braces-regex                     0 larumbe/font-lock-braces-face)
                  (list larumbe/brackets-regex                   0 larumbe/font-lock-brackets-face)
                  (list larumbe/curly-brackets-regex             0 larumbe/font-lock-curly-brackets-face)
@@ -492,15 +505,11 @@ these both have precedence over custom fontify."
                  (list (concat "(\\*\\s-+" "\\<\\(?1:" larumbe/verilog-xilinx-attributes "\\)\\>" "\\s-+\\*)") 1 larumbe/xilinx-attributes-face)
 
                  ;; FUNCTION-Based search fontify
-                 ;; *_translate off regions
-                 '(verilog-match-translate-off
-                   (0 'larumbe/font-lock-translate-off-face prepend)) ; 3rd parameter (prepend or t) overrides previous fontlocking
-
                  ;; Modules/instances
-                 '(larumbe/find-verilog-module-fontify
-                   (0 'larumbe/font-lock-module-face prepend))
-                 '(larumbe/find-verilog-instance-fontify
-                   (0 'larumbe/font-lock-instance-face prepend))
+                 '(larumbe/find-verilog-module-instance-fontify
+                   (1 'larumbe/font-lock-module-face))
+                 '(larumbe/find-verilog-module-instance-fontify
+                   (2 'larumbe/font-lock-instance-face))
 
                  ;; Variable types
                  '(larumbe/find-verilog-variable-type-fontify-1
@@ -509,6 +518,10 @@ these both have precedence over custom fontify."
                    (0 'larumbe/font-lock-variable-type-face))
                  '(larumbe/find-verilog-variable-type-fontify-3
                    (0 'larumbe/font-lock-variable-type-face))
+
+                 ;; *_translate off regions
+                 '(larumbe/verilog-match-translate-off-fontify
+                   (0 'larumbe/font-lock-translate-off-face prepend)) ; 3rd parameter (prepend or t) overrides previous fontlocking
                  )
 
                 ;; DANGER: Still experimental. Regexps are not solid enough.
@@ -684,8 +697,6 @@ INFO: Executed once while loading `vhdl-mode'."
           ;; Own Verilog-based customization
           (list larumbe/punctuation-regex                0 larumbe/font-lock-punctuation-face)
           (list larumbe/punctuation-bold-regex           0 larumbe/font-lock-punctuation-bold-face)
-          (list larumbe/slash-not-verilog-comments-regex 0 larumbe/font-lock-punctuation-bold-face)
-          (list larumbe/dash-not-vhdl-comments-regex     0 larumbe/font-lock-punctuation-bold-face)
           (list larumbe/vhdl-brackets-content-range-regex ; Bit range
                 '(1 larumbe/font-lock-curly-brackets-face prepend)
                 '(5 larumbe/font-lock-curly-brackets-face prepend)

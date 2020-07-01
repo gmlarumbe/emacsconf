@@ -4058,9 +4058,6 @@ Key bindings specific to `verilog-mode-map' are:
     (setq mode-popup-menu (cons "Verilog Mode" verilog-stmt-menu)))
 
   ;; Stuff for GNU Emacs
-  ;; DANGER: Added by Larumbe (support for non-long mutiline regexp based fontlocking)
-  (setq font-lock-multiline t)
-  ;; End of DANGER
   ;; DANGER: Changed font-lock-keywords to be used to the own ones defined @ verilog-settings
   ;; Commented old code
   ;; (set (make-local-variable 'font-lock-defaults)
@@ -4118,9 +4115,12 @@ Key bindings specific to `verilog-mode-map' are:
       (make-local-hook 'font-lock-mode-hook)
       (make-local-hook 'font-lock-after-fontify-buffer-hook); doesn't exist in Emacs
       (make-local-hook 'after-change-functions))
-    (add-hook 'font-lock-mode-hook 'verilog-highlight-buffer t t)
-    (add-hook 'font-lock-after-fontify-buffer-hook 'verilog-highlight-buffer t t) ; not in Emacs
-    (add-hook 'after-change-functions 'verilog-highlight-region t t))
+    ;; DANGER: `verilog-highlight-modules' or `verilog-highlight-includes' are meant to be disabled
+    ;; (add-hook 'font-lock-mode-hook 'verilog-highlight-buffer t t)
+    ;; (add-hook 'font-lock-after-fontify-buffer-hook 'verilog-highlight-buffer t t) ; not in Emacs
+    ;; (add-hook 'after-change-functions 'verilog-highlight-region t t)
+    ;; End of DANGER
+    )
 
   ;; Tell imenu how to handle Verilog.
   (set (make-local-variable 'imenu-generic-expression)

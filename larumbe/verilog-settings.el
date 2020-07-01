@@ -16,8 +16,12 @@
               ("C-M-a"    . verilog-beg-of-defun)
               ("C-M-e"    . verilog-end-of-defun)
               ("<return>" . larumbe/electric-verilog-terminate-line)
-              ("C-s"      . larumbe/verilog-isearch-forward)
-              ("C-r"      . larumbe/verilog-isearch-backward)
+
+              ;; DANGER: Breaks highlighting of comments since it modifies syntax table with isearch
+              ;; ("C-s"      . larumbe/verilog-isearch-forward)
+              ;; ("C-r"      . larumbe/verilog-isearch-backward)
+              ;; End of DANGER
+
               ("M-s ."    . larumbe/verilog-isearch-forward-symbol-at-point)
               ("M-f"      . larumbe/verilog-forward-word)
               ("M-b"      . larumbe/verilog-backward-word)
@@ -1409,7 +1413,7 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
 (defun larumbe/verilog-forward-word (&optional arg)
   "Make verilog word navigation commands stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
   (interactive "p")
-  (let ((table (make-syntax-table)))
+  (let ((table (make-syntax-table verilog-mode-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
     (with-syntax-table table
       (forward-word arg))))
@@ -1418,16 +1422,17 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
 (defun larumbe/verilog-backward-word (&optional arg)
   "Make verilog word navigation commands stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
   (interactive "p")
-  (let ((table (make-syntax-table)))
+  (let ((table (make-syntax-table verilog-mode-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
     (with-syntax-table table
       (backward-word arg))))
 
 
+;; DANGER: Destroys syntax highlighting due to syntax-table modifying with isearch
 (defun larumbe/verilog-isearch-forward ()
   "Make verilog Isearch word navigation stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
   (interactive)
-  (let ((table (make-syntax-table)))
+  (let ((table (make-syntax-table verilog-mode-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
     (with-syntax-table table
       (isearch-forward))))
@@ -1436,10 +1441,11 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
 (defun larumbe/verilog-isearch-backward ()
   "Make verilog Isearch word navigation stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
   (interactive)
-  (let ((table (make-syntax-table)))
+  (let ((table (make-syntax-table verilog-mode-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
     (with-syntax-table table
       (isearch-backward))))
+;; End of DANGER
 
 
 (defun larumbe/verilog-isearch-forward-symbol-at-point ()
