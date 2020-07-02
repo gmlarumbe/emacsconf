@@ -246,7 +246,10 @@
 (add-hook 'exwm-manage-finish-hook
           (lambda ()
             (when (and exwm-class-name
-                       (string= exwm-class-name "Firefox"))
+                       (or (string= exwm-class-name "Firefox")
+                           (string= exwm-class-name "Firefox-esr")
+                           (string= exwm-class-name "Tor Browser")
+                           ))
               (exwm-input-set-local-simulation-keys
                '(
                  ;; Own keys
