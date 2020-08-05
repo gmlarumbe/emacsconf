@@ -136,10 +136,18 @@
 
 (use-package pdf-tools
   :bind (:map pdf-view-mode-map
-              ("j" . pdf-view-next-line-or-next-page)
-              ("k" . pdf-view-previous-line-or-previous-page))
+              ("j"   . pdf-view-next-line-or-next-page)
+              ("k"   . pdf-view-previous-line-or-previous-page)
+              ("M-w" . pdf-view-kill-ring-save)
+              )
   :config
   (pdf-tools-install))
+
+
+(use-package browse-url
+  :config
+  (setq browse-url-browser-function 'browse-url-firefox))
+
 
 ;;; Editing
 (use-package untabify-trailing-ws
