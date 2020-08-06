@@ -19,6 +19,11 @@
   (setq magit-diff-refine-hunk t) ; Highlight differences of selected hunk
   )
 
+(use-package magit-lfs
+  :pin melpa
+  ;; INFO: Remaps ':' key from `magit-git-command' to `magit-lfs'
+  )
+
 
 
 ;;; SVN
