@@ -9,7 +9,12 @@
          ("\\.psl\\'"         . verilog-mode)
          ("\\.vams\\'"        . verilog-mode)
          ("\\.vinc\\'"        . verilog-mode)
-         ("\\.vsrc\\'"        . verilog-mode)) ; Custom, for Gigatron vsrc files
+         ;; Vancouver custom formats
+         ("\\.vsrc\\'"        . verilog-mode)
+         ("\\.vsrc.pp\\'"     . verilog-mode)
+         ("\\.v.pp\\'"        . verilog-mode)
+         ("\\.ppv\\'"         . verilog-mode)
+         )
   :hook ((verilog-mode . my-verilog-hook)
          (verilog-mode . modi/verilog-mode-customization))
   :bind (:map verilog-mode-map
@@ -17,10 +22,10 @@
               ("C-M-e"    . verilog-end-of-defun)
               ("<return>" . larumbe/electric-verilog-terminate-line)
 
-              ;; DANGER: Breaks highlighting of comments since it modifies syntax table with isearch
+              ;; TODO: Breaks highlighting of comments since it modifies syntax table with isearch
               ;; ("C-s"      . larumbe/verilog-isearch-forward)
               ;; ("C-r"      . larumbe/verilog-isearch-backward)
-              ;; End of DANGER
+              ;; End of TODO
 
               ("M-s ."    . larumbe/verilog-isearch-forward-symbol-at-point)
               ("M-f"      . larumbe/verilog-forward-word)
@@ -1428,7 +1433,7 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
       (backward-word arg))))
 
 
-;; DANGER: Destroys syntax highlighting due to syntax-table modifying with isearch
+;; TODO: Destroys syntax highlighting due to syntax-table modifying with isearch
 (defun larumbe/verilog-isearch-forward ()
   "Make verilog Isearch word navigation stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
   (interactive)
@@ -1445,7 +1450,7 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
     (modify-syntax-entry ?_ "_" table)
     (with-syntax-table table
       (isearch-backward))))
-;; End of DANGER
+;; End of TODO
 
 
 (defun larumbe/verilog-isearch-forward-symbol-at-point ()

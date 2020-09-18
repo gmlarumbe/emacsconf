@@ -54,6 +54,7 @@
        "*youtube-dl*"))))
 
 
+;; DANGER: Legacy. Use only as a reference to create other macros!
 (defun larumbe/show-svn-buffers-hp ()
   (interactive)
   (switch-to-buffer "*svn-update<metaljf>*")
@@ -104,6 +105,7 @@
   (other-window 1))
 
 
+;; DANGER: Legacy. Use only as a reference to create other macros!
 (defun larumbe/show-repo-sync-buffers ()
   (interactive)
   (setq last-command-event 49)

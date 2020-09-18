@@ -5,7 +5,7 @@
 ;;; vc-dir
 (use-package vc-dir
   :ensure nil
-  :bind (:map vc-dir-map
+  :bind (:map vc-dir-mode-map
               ("e"       . vc-ediff)     ; Overrides vc-find-file, already mapped to `f'
               ("C-x v p" . svn-propedit) ; dsvn function 'exported' to be used as well with vc-mode
               )
