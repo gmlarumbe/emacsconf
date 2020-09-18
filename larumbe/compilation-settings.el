@@ -151,6 +151,7 @@ Otherwise create it"
       '(
         (verilog-IES-error   ".*\\(?1:\\*E\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)?" 2 3 nil 2 nil (1 compilation-error-face))
         (verilog-IES-warning ".*\\(?1:\\*W\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)?" 2 3 nil 1 nil (1 compilation-warning-face))
+        (verilog-IES-note    ".*\\(?1:\\*N\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)?" 2 3 nil 0 nil (1 compilation-info-face))
         ))
 
 (defun larumbe/irun-error-regexp-set-emacs ()
