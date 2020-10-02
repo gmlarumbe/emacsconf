@@ -166,3 +166,28 @@
   (handle-focus-in
    `(focus-in ,(elmacro-get-frame "0x6cabe70")))
   (setq last-command-event 'f4))
+
+
+(defun larumbe/show-buffers-rr-ansi-term ()
+  (interactive)
+  (delete-other-windows)
+  (switch-to-buffer "*tetra*")
+  (split-window-right nil)
+  (other-window 1)
+  (split-window-below nil)
+  (switch-to-buffer "*microtron*")
+  (other-window 1)
+  (switch-to-buffer "*microtron--mct*")
+  (other-window 1))
+
+
+(defun larumbe/kill-buffers-rr-ansi-term ()
+  (interactive)
+  (set-process-query-on-exit-flag (get-process "*tetra*") nil)
+  (kill-buffer "*tetra*")
+  (set-process-query-on-exit-flag (get-process "*microtron--mct*") nil)
+  (kill-buffer "*microtron--mct*")
+  (set-process-query-on-exit-flag (get-process "*microtron*") nil)
+  (kill-buffer "*microtron*")
+  (delete-other-windows))
+
