@@ -439,14 +439,95 @@ these both have precedence over custom fontify."
        (larumbe/verilog-font-grouping-keywords
         (eval-when-compile
           (regexp-opt
-           '( "begin" "end" "this") nil)))) ; "this" is not grouping but looks better in green
+           '( "begin" "end" "this") nil)))  ; "this" is not grouping but looks better in green
 
+       (larumbe/verilog-special-macros
+        (eval-when-compile
+          (regexp-opt
+           '( ;; DMA Macros
+              "DMA_MASTER_V2K_PORTS_READ" "DMA_MASTER_V2K_PORTS_WRITE" "DMA_MASTER_V2K_PORTS" "DMA_MASTER_V2K_PORTS_QOS"
+              "DMA_MASTER_V2K_PORTS_ACE" "DMA_MASTER_V2K_PORTS_ACE_QOS" "DMA_MASTER_V2K_PORTS_MON" "DMA_MASTER_IO_DECS_READ"
+              "DMA_MASTER_IO_DECS_WRITE" "DMA_MASTER_IO_DECS" "DMA_MASTER_IO_DECS_QOS" "DMA_SLAVE_V2K_PORTS_READ"
+              "DMA_SLAVE_V2K_PORTS_WRITE" "DMA_SLAVE_V2K_PORTS" "DMA_SLAVE_V2K_PORTS_QOS" "DMA_SLAVE_V2K_PORTS_ACE"
+              "DMA_SLAVE_V2K_PORTS_ACE_QOS" "DMA_SLAVE_V2K_PORTS_ACELITE_QOS" "DMA_SLAVE_IO_DECS_READ" "DMA_SLAVE_IO_DECS_WRITE"
+              "DMA_SLAVE_IO_DECS" "DMA_PORTS_READ" "DMA_PORTS_WRITE" "DMA_PORTS" "DMA_PORTS_QOS" "DMA_HP_TRACE_V2K_PORTS" "DMA_INST_CONNS_READ"
+              "DMA_INST_CONNS_WRITE" "DMA_INST_CONNS" "DMA_INST_CONNS_QOS" "DMA_INST_CONNS_ACE" "DMA_INST_CONNS_ACE_QOS"
+              "DMA_INST_CONNS_ACELITE_QOS" "DMA_INST_CONNS_NO_LC_READ" "DMA_INST_CONNS_NO_LC_WRITE" "DMA_INST_CONNS_NO_LC" "DMA_INST_CONNS_NO_LCPI_READ"
+              "DMA_INST_CONNS_NO_LCPI_WRITE" "DMA_INST_CONNS_NO_LCPI" "DMA_INST_CONNS_READ_UC" "DMA_INST_CONNS_WRITE_UC" "DMA_INST_CONNS_UC"
+              "DMA_INST_CONNS_READ_LC" "DMA_INST_CONNS_WRITE_LC" "DMA_INST_CONNS_LC" "DMA_INST_CONNS_LC_QOS" "DMA_INST_CONNS_ADDR_PAD_READ"
+              "DMA_INST_CONNS_ADDR_PAD_WRITE" "DMA_INST_CONNS_ADDR_PAD" "DMA_INST_CONNS_ADDR_PAD_QOS" "DMA_INST_CONNS_ADDR_PAD_ACE"
+              "DMA_INST_CONNS_ADDR_PAD_ACE_QOS" "DMA_INST_CONNS_ADDR_PAD_ACELITE_QOS" "DMA_INST_CONNS_ADDR_TRUNC_READ"
+              "DMA_INST_CONNS_ADDR_TRUNC_WRITE" "DMA_INST_CONNS_ADDR_TRUNC" "DMA_INST_CONNS_ADDR_TRUNC_QOS" "DMA_INST_CONNS_ADDR_TRUNC_ACE"
+              "DMA_INST_CONNS_ADDR_TRUNC_ACE_QOS" "DMA_INST_CONNS_ADDR_TRUNC_ACELITE_QOS" "DMA_INST_CONNS_ADDR_TRUNC_READ_UC" "DMA_INST_CONNS_ADDR_TRUNC_WRITE_UC"
+              "DMA_INST_CONNS_ADDR_TRUNC_UC" "DMA_INST_HP_TRACE_CONNS" "DMA_WIRES_READ" "DMA_WIRES_WRITE"
+              "DMA_WIRES" "DMA_WIRES_QOS" "DMA_WIRES_ACE" "DMA_WIRES_ACE_QOS"
+              "DMA_WIRES_ACELITE_QOS" "DMA_WIRES_NO_LC_READ" "DMA_WIRES_NO_LC_WRITE" "DMA_WIRES_NO_LC"
+              "DMA_WIRES_NO_LCP_READ" "DMA_WIRES_NO_LCP_WRITE" "DMA_WIRES_NO_LCP" "DMA_HP_TRACE_WIRES"
+              "DMA_MASTER_EXCLUDE_ASSIGNS_READ" "DMA_MASTER_EXCLUDE_ASSIGNS_WRITE" "DMA_MASTER_EXCLUDE_ASSIGNS" "DMA_MASTER_EXCLUDE_ASSIGNS_QOS"
+              "DMA_MASTER_EXCLUDE_ASSIGNS_ACE" "DMA_MASTER_EXCLUDE_ASSIGNS_ACE_QOS" "DMA_MASTER_EXCLUDE_ASSIGNS_ACELITE_QOS" "DMA_SLAVE_EXCLUDE_ASSIGNS_READ"
+              "DMA_SLAVE_EXCLUDE_ASSIGNS_WRITE" "DMA_SLAVE_EXCLUDE_ASSIGNS" "DMA_SLAVE_EXCLUDE_ASSIGNS_ACE_QOS" "DMA_SLAVE_EXCLUDE_ASSIGNS_ACELITE_QOS"
+              "DMA_MON_EXCLUDE_ASSIGNS" "DMA_PASS_THRU_NO_LC_READ" "DMA_PASS_THRU_NO_LC_WRITE" "DMA_PASS_THRU_NO_LC"
+              "DMA_PASS_THRU_READ" "DMA_PASS_THRU_WRITE" "DMA_PASS_THRU" "DMA_PASS_THRU_QOS"
+              "DMA_PASS_THRU_MON" "DMA_PASS_THRU_MON_NO_LC" "DMA_S_TO_M0_AND_M1_READ" "DMA_S_TO_M0_AND_M1_WRITE"
+              "DMA_S_TO_M0_AND_M1" "DMA_S_TO_M0_AND_M1_QOS" "DMA_NO_LC_ASSIGNS" "DMA_NO_LCP_ASSIGNS"
+              "DMA_NO_LCQ_ASSIGNS" "DMA_READ_ONLY_ASSIGNS" "DMA_WRITE_ONLY_ASSIGNS" "HP_TRACE_ASSIGNS"
+              "AXI_TRACE_CODE" "AXI_MASTER_VALID_CHECKS" "AXI_SLAVE_VALID_CHECKS" "AXI_PACER_CONNECT"
+              "AXI_PACING_CHECK" "AXI_PACING_CHECK_AHB_TO_AXI" "AXI_PACING_CHECK_ANSIBLE_TO_AXI" "AXI_PACING_CHECK_EBD2AXI"
+              "AXI_PACING_CHECK_A_SERIES" "AXI_PACING_CHECK_MDMA"
+
+              ;; Regbus macros
+              "REGBUS_SINGLE_V2K_PORTS" "REGBUS_SUPER_V2K_PORTS" "REGBUS_RD_SIGS_V2K_PORTS" "REGBUS_RD_SIGS_V2K_PORTS_IN"
+              "REGBUS_RD_SIGS_NO_RESP_V2K_PORTS" "REGBUS_RD_SIGS_NO_RESP_V2K_PORTS_IN" "REGBUS_RD_SIGS_EXCLUDE_ASSIGNS" "REGBUS_RD_SIGS_NO_RESP_EXCLUDE_ASSIGNS"
+              "REGBUS_SINGLE_INST_CONNS" "REGBUS_SINGLE_NO_RESP_INST_CONNS" "REGBUS_SUPER_INST_CONNS" "REGBUS_RD_SIGS_INST_CONNS"
+              "REGBUS_RD_SIGS_NO_RESP_INST_CONNS" "REGBUS_RD_SIGS_WIRES" "REGBUS_RD_SIGS_NO_RESP_WIRES" "REGBUS_SUPER_SINGLE_V2K_PORTS"
+              "REGBUS_SUPER_SINGLE_INST_CONNS"
+
+              ;; SRAM Macros
+              "SRAM_SP_V2K_PORTS" "SRAM_TP_V2K_PORTS" "SRAM_DP_V2K_PORTS" "SRAM_DP_RW_R_V2K_PORTS"
+              "SRAM_DP_R_RW_V2K_PORTS" "SRAM_DP_RW_W_V2K_PORTS" "SRAM_DP_W_RW_V2K_PORTS" "SRAM_RW_V2K_PORTS"
+              "SRAM_WO_V2K_PORTS" "SRAM_RO_V2K_PORTS" "SRAM_SP_V95_PORTS" "SRAM_TP_V95_PORTS"
+              "SRAM_DP_V95_PORTS" "SRAM_DP_RW_R_V95_PORTS" "SRAM_DP_R_RW_V95_PORTS" "SRAM_DP_RW_W_V95_PORTS"
+              "SRAM_DP_W_RW_V95_PORTS" "SRAM_RW_V95_PORTS" "SRAM_WO_V95_PORTS" "SRAM_RO_V95_PORTS"
+              "SRAM_SP_V95_IO_DECS" "SRAM_TP_V95_IO_DECS" "SRAM_DP_V95_IO_DECS" "SRAM_DP_RW_R_V95_IO_DECS"
+              "SRAM_DP_R_RW_V95_IO_DECS" "SRAM_DP_RW_W_V95_IO_DECS" "SRAM_DP_W_RW_V95_IO_DECS" "SRAM_RW_V95_IO_DECS"
+              "SRAM_WO_V95_IO_DECS" "SRAM_RO_V95_IO_DECS" "SRAM_SP_INST_CONNS" "SRAM_TP_INST_CONNS"
+              "SRAM_DP_INST_CONNS" "SRAM_DP_RW_R_INST_CONNS" "SRAM_DP_R_RW_INST_CONNS" "SRAM_DP_RW_W_INST_CONNS"
+              "SRAM_DP_W_RW_INST_CONNS" "SRAM_SP_INST_CONNS2" "SRAM_TP_INST_CONNS2" "SRAM_DP_INST_CONNS2"
+              "SRAM_DP_RW_R_INST_CONNS2" "SRAM_DP_R_RW_INST_CONNS2" "SRAM_DP_RW_W_INST_CONNS2" "SRAM_DP_W_RW_INST_CONNS2"
+              "SRAM_RW_INST_CONNS" "SRAM_WO_INST_CONNS" "SRAM_RO_INST_CONNS" "SRAM_SP_WIRES"
+              "SRAM_TP_WIRES" "SRAM_DP_WIRES" "SRAM_DP_RW_R_WIRES" "SRAM_DP_R_RW_WIRES"
+              "SRAM_DP_RW_W_WIRES" "SRAM_DP_W_RW_WIRES" "SRAM_RW_WIRES" "SRAM_WO_WIRES"
+              "SRAM_RO_WIRES" "SRAM_SP_EXCLUDE_ASSIGNS" "SRAM_TP_EXCLUDE_ASSIGNS" "SRAM_DP_EXCLUDE_ASSIGNS"
+              "SRAM_DP_RW_R_EXCLUDE_ASSIGNS" "SRAM_DP_R_RW_EXCLUDE_ASSIGNS" "SRAM_DP_RW_W_EXCLUDE_ASSIGNS" "SRAM_DP_W_RW_EXCLUDE_ASSIGNS"
+              "SRAM_RW_EXCLUDE_ASSIGNS" "SRAM_WO_EXCLUDE_ASSIGNS" "SRAM_RO_EXCLUDE_ASSIGNS" "SRAM_SP_LJRBIST_ASSIGNS"
+              "SRAM_TP_LJRBIST_ASSIGNS" "SRAM_DP_LJRBIST_ASSIGNS"
+              )
+           nil))) ; Used for non-verilog constructs (i.e. custom preprocessing)
+
+       (larumbe/verilog-special-constructs
+        (eval-when-compile
+          (regexp-opt
+           '(
+             ;; These constructs contain some special character that prevent them to be detected as symbols
+             "@include" "@replace_ifdef" "@replace_end"
+             "@macro_begin" "@macro_end"
+             "@if" "@else" "@endif"
+             "@comment"
+             "@define"
+
+             "%include" "%register"
+             )
+           nil)))) ; Used for non-verilog constructs (i.e. custom preprocessing)
 
 
   (setq larumbe/verilog-font-lock-keywords
         (list
          ;; Preprocessor macros and compiler directives
          '("`\\s-*[A-Za-z][A-Za-z0-9_]*" 0 larumbe/font-lock-preprocessor-face) ; Place at the top to have precendence in `else or `include 'macros over keywords
+         ;; Special macros
+         (cons (concat "\\<\\(" larumbe/verilog-special-macros "\\)\\>") 'larumbe/xilinx-attributes-face)
+         ;; Special constructs
+         (cons (concat "\\(" larumbe/verilog-special-constructs "\\)") 'larumbe/xilinx-attributes-face)
          ;; Builtin keywords
          (concat "\\<\\(" larumbe/verilog-font-general-keywords "\\)\\>") ; Default 'font-lock-keyword-face
          ;; User/System tasks and functions
