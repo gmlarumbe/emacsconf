@@ -116,6 +116,7 @@ Otherwise create it"
     ("irun"         (larumbe/irun-error-regexp-set-emacs))
     ("verilator"    (larumbe/verilator-error-regexp-set-emacs))
     ("iverilog"     (larumbe/iverilog-error-regexp-set-emacs))
+    ("dc-compiler"  (larumbe/synopsys-dc-error-regexp-set-emacs))
     ("scons"        (larumbe/scons-error-regexp-set-emacs))
     ("python"       (larumbe/python-error-regexp-set-emacs)))
   (end-of-buffer))
@@ -190,6 +191,24 @@ Otherwise create it"
   "Takes Iverilog regexps into account"
   (interactive)
   (larumbe/custom-error-regexp-set-emacs iverilog-error-regexp-emacs-alist-alist))
+
+
+
+;;;; Design compiler
+(defvar synopsys-dc-error-regexp-emacs-alist-alist
+      '(
+        (dc-error     "\\(?1:^Error\\):  \\(?2:[0-9a-zA-Z./_-]+\\):\\(?3:[0-9]+\\): "       2 3 nil 2 nil (1 compilation-error-face))
+        (dc-error-2   "\\(?1:^Error\\): .*"                                                 nil nil nil 2 nil (1 compilation-error-face))
+        (dc-warning   "\\(?1:^Warning\\):  \\(?2:[0-9a-zA-Z./_-]+\\):\\(?3:[0-9]+\\): "     2 3 nil 1 nil (1 compilation-warning-face))
+        (dc-warning-2 "\\(?1:^Warning\\): .*"                                               nil nil nil 1 nil (1 compilation-warning-face))
+        (dc-info      "\\(?1:^Information\\):  \\(?2:[0-9a-zA-Z./_-]+\\):\\(?3:[0-9]+\\): " 2 3 nil 0 nil (1 compilation-info-face))
+        (dc-info-2    "\\(?1:^Information\\): .*"                                           nil nil nil 0 nil (1 compilation-info-face))
+        ))
+
+(defun larumbe/synopsys-dc-error-regexp-set-emacs ()
+  "Only takes Synopsys Design Compiler regexps into account"
+  (interactive)
+  (larumbe/custom-error-regexp-set-emacs synopsys-dc-error-regexp-emacs-alist-alist))
 
 
 
