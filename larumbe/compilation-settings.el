@@ -135,13 +135,13 @@ Otherwise create it"
 (defvar vivado-error-regexp-emacs-alist-alist
       '(
         (vivado-error     "^\\(?1:^ERROR: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)"            3   4   nil 2 nil (1 compilation-error-face))
-        (vivado-error2    "^\\(?1:^ERROR: \\)"                                                        nil nil nil 2 nil (1 compilation-error-face))
+        (vivado-error2    "^\\(?1:^ERROR:\\) "                                                        nil nil nil 2 nil (1 compilation-error-face))
         (vivado-critical  "^\\(?1:^CRITICAL WARNING: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)" 3   4   nil 2 nil (1 compilation-error-face))
-        (vivado-critical2 "^\\(?1:^CRITICAL WARNING: \\)"                                             nil nil nil 2 nil (1 compilation-error-face))
+        (vivado-critical2 "^\\(?1:^CRITICAL WARNING:\\) "                                             nil nil nil 2 nil (1 compilation-error-face))
         (vivado-warning   "^\\(?1:^WARNING: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)"          3   4   nil 1 nil (1 compilation-warning-face))
-        (vivado-warning2  "^\\(?1:^WARNING: \\)"                                                      nil nil nil 1 nil (1 compilation-warning-face))
+        (vivado-warning2  "^\\(?1:^WARNING:\\) "                                                      nil nil nil 1 nil (1 compilation-warning-face))
         (vivado-info      "^\\(?1:^INFO: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)"             3   4   nil 0 nil (1 compilation-info-face))
-        (vivado-info2     "^\\(?1:^INFO: \\)"                                                         nil nil nil 0 nil (1 compilation-info-face))
+        (vivado-info2     "^\\(?1:^INFO:\\) "                                                         nil nil nil 0 nil (1 compilation-info-face))
         ))
 
 (defun larumbe/vivado-error-regexp-set-emacs ()
