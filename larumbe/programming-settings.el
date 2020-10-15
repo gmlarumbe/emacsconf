@@ -369,13 +369,16 @@ Copied from `sh-send-line-or-regin-and-step' for SH Shell scripting "
 
 ;;;; CONF
 (use-package conf-mode
-  :mode (("\\.service\\'" . conf-mode)
-         ("\\.sby\\'"     . conf-mode))
+  :mode (("\\.service\\'"      . conf-mode)
+         ("\\.sby\\'"          . conf-mode)
+         ("\\reg.sim.files\\'" . conf-mode)
+         )
   :hook ((conf-mode . my-prog-mode-hook))) ; Since it is not a childe of prog-mode, requires common configuration settings
 
 
 ;;;; MAKEFILE
 (use-package make-mode
+  :mode (("\\.mf\\'" . makefile-mode))
   :ensure nil)
 
 ;;;; PERL

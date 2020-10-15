@@ -509,11 +509,11 @@ these both have precedence over custom fontify."
           (regexp-opt
            '(
              ;; These constructs contain some special character that prevent them to be detected as symbols
-             "@include" "@replace_ifdef" "@replace_end"
+             "@include" "@replace_ifdef" "@replace_end" "@insert_ifdef"
              "@macro_begin" "@macro_end"
              "@if" "@else" "@endif"
              "@comment"
-             "@define"
+             "@define" "@define_begin" "@define_end"
 
              "%include" "%register"
              )
