@@ -186,7 +186,7 @@ and the Makefile does not already exist."
      (append iverilog-error-regexp-emacs-alist-alist
              verilator-error-regexp-emacs-alist-alist
              vivado-error-regexp-emacs-alist-alist))
-    (show-custom-compilation-buffers)))
+    (larumbe/show-custom-compilation-buffers)))
 
 
 ;;; Own Verilog templates

@@ -60,34 +60,16 @@ Otherwise create it"
   (end-of-buffer))
 
 ;;;; Resizing/regexp
-(defun larumbe/show-custom-compilation-buffers()
+(defun larumbe/show-custom-compilation-buffers (&optional regexp-alist-alist)
   (interactive)
   (delete-other-windows)
   (split-window-below)
   (other-window 1)
   (switch-to-buffer "*compilation*")
+  (when regexp-alist-alist
+    (larumbe/custom-error-regexp-set-emacs regexp-alist-alist))
   (end-of-buffer)
   (shrink-window 18))
-
-(defun larumbe/show-custom-compilation-buffers-vivado()
-  (interactive)
-  (delete-other-windows)
-  (split-window-below)
-  (other-window 1)
-  (switch-to-buffer "*compilation*")
-  (larumbe/vivado-error-regexp-set-emacs)
-  (end-of-buffer)
-  (shrink-window 10))
-
-(defun larumbe/show-custom-compilation-buffers-verilator()
-  (interactive)
-  (delete-other-windows)
-  (split-window-below)
-  (other-window 1)
-  (switch-to-buffer "*compilation*")
-  (larumbe/verilator-error-regexp-set-emacs)
-  (end-of-buffer)
-  (shrink-window 10))
 
 
 ;;; Compilation error regexp alist
@@ -295,7 +277,7 @@ Otherwise create it"
   (interactive)
   (larumbe/lfp-compile-vivado-set-active-project)
   (compile vivado-batch-compilation-command)
-  (larumbe/show-custom-compilation-buffers-vivado))
+  (larumbe/show-custom-compilation-buffers vivado-error-regexp-emacs-alist-alist))
 
 
 ;;;; Vivado Simulation (XSim)
@@ -323,7 +305,7 @@ Otherwise create it"
         (setq cmd (concat vivado-sim-compilation-command " && source simulate.sh"))
       (setq cmd vivado-sim-compilation-command))
     (compile cmd)
-    (larumbe/show-custom-compilation-buffers-vivado)))
+    (larumbe/show-custom-compilation-buffers vivado-error-regexp-emacs-alist-alist)))
 
 
 ;;;; Irun
@@ -371,9 +353,7 @@ If universal-arg is given, then elaborate the design instead."
       (setq cmd larumbe/irun-command))
     (set (make-local-variable 'compile-command) cmd)
     (compile (concat "cd " larumbe/irun-compilation-dir " && " compile-command))
-    (larumbe/show-custom-compilation-buffers)
-    (enlarge-window 18)
-    (larumbe/irun-error-regexp-set-emacs)))
+    (larumbe/show-custom-compilation-buffers irun-error-regexp-emacs-alist-alist)))
 
 
 
@@ -405,7 +385,7 @@ It's faster than Vivado elaboration since it does not elaborate design"
   (larumbe/verilator-lint-set-active-project)
   (setq compile-command verilator-compile-lint-cmd)
   (compile compile-command)
-  (larumbe/show-custom-compilation-buffers-verilator))
+  (larumbe/show-custom-compilation-buffers verilator-error-regexp-emacs-alist-alist))
 
 
 ;;;; Reggen

@@ -165,7 +165,7 @@
 (global-set-key (kbd "M-n") #'next-error)
 (global-set-key (kbd "M-p") #'previous-error)
 (global-set-key [f5] #'compile)
-(global-set-key (kbd "C-*") #'show-custom-compilation-buffers)
+(global-set-key (kbd "C-*") #'larumbe/show-custom-compilation-buffers)
 
 
 ;;;;; Misc
