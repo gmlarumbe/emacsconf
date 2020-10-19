@@ -60,7 +60,7 @@ Otherwise create it"
   (end-of-buffer))
 
 ;;;; Resizing/regexp
-(defun show-custom-compilation-buffers()
+(defun larumbe/show-custom-compilation-buffers()
   (interactive)
   (delete-other-windows)
   (split-window-below)
@@ -69,7 +69,7 @@ Otherwise create it"
   (end-of-buffer)
   (shrink-window 18))
 
-(defun show-custom-compilation-buffers-vivado()
+(defun larumbe/show-custom-compilation-buffers-vivado()
   (interactive)
   (delete-other-windows)
   (split-window-below)
@@ -79,7 +79,7 @@ Otherwise create it"
   (end-of-buffer)
   (shrink-window 10))
 
-(defun show-custom-compilation-buffers-verilator()
+(defun larumbe/show-custom-compilation-buffers-verilator()
   (interactive)
   (delete-other-windows)
   (split-window-below)
@@ -295,7 +295,7 @@ Otherwise create it"
   (interactive)
   (larumbe/lfp-compile-vivado-set-active-project)
   (compile vivado-batch-compilation-command)
-  (show-custom-compilation-buffers-vivado))
+  (larumbe/show-custom-compilation-buffers-vivado))
 
 
 ;;;; Vivado Simulation (XSim)
@@ -323,7 +323,7 @@ Otherwise create it"
         (setq cmd (concat vivado-sim-compilation-command " && source simulate.sh"))
       (setq cmd vivado-sim-compilation-command))
     (compile cmd)
-    (show-custom-compilation-buffers-vivado)))
+    (larumbe/show-custom-compilation-buffers-vivado)))
 
 
 ;;;; Irun
@@ -371,7 +371,7 @@ If universal-arg is given, then elaborate the design instead."
       (setq cmd larumbe/irun-command))
     (set (make-local-variable 'compile-command) cmd)
     (compile (concat "cd " larumbe/irun-compilation-dir " && " compile-command))
-    (show-custom-compilation-buffers)
+    (larumbe/show-custom-compilation-buffers)
     (enlarge-window 18)
     (larumbe/irun-error-regexp-set-emacs)))
 
@@ -405,7 +405,7 @@ It's faster than Vivado elaboration since it does not elaborate design"
   (larumbe/verilator-lint-set-active-project)
   (setq compile-command verilator-compile-lint-cmd)
   (compile compile-command)
-  (show-custom-compilation-buffers-verilator))
+  (larumbe/show-custom-compilation-buffers-verilator))
 
 
 ;;;; Reggen
