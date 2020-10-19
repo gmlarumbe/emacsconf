@@ -60,16 +60,19 @@ Otherwise create it"
   (end-of-buffer))
 
 ;;;; Resizing/regexp
-(defun larumbe/show-custom-compilation-buffers (&optional regexp-alist-alist)
+(defun larumbe/show-custom-compilation-buffers (&optional regexp-alist-alist kill-wins)
+  "Show custom compilation buffers.
+If first argument is set then provide it wiith custom regexp to parse the compilation buffer.
+If second argument is set then delete every other window."
   (interactive)
   (delete-other-windows)
-  (split-window-below)
-  (other-window 1)
+  (unless kill-wins
+    (split-window-below)
+    (other-window 1))
   (switch-to-buffer "*compilation*")
   (when regexp-alist-alist
     (larumbe/custom-error-regexp-set-emacs regexp-alist-alist))
-  (end-of-buffer)
-  (shrink-window 18))
+  (end-of-buffer))
 
 
 ;;; Compilation error regexp alist
