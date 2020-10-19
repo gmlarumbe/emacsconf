@@ -138,6 +138,7 @@
 (global-set-key (kbd "C-#")  #'helm-navi-headings)
 (global-set-key (kbd "M-#")  #'helm-navi)
 (global-set-key (kbd "C-x C-j") #'dired-jump)
+(global-set-key (kbd "C-x C-q") #'view-mode)
 
 (global-set-key (kbd "M-I") #'helm-imenu)
 (global-set-key (kbd "M-i") #'imenu-list)
