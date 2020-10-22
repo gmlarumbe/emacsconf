@@ -656,10 +656,13 @@ for all the `included files."
   (when (and (buffer-file-name)
              (string= "sv" (file-name-extension (buffer-file-name)))
              ;; Do not add this hook when working in the verilog-mode reop
-             (not (and (buffer-file-name) ;Has to be a file, and
-                       (vc-git-root (buffer-file-name)) ;In a git repo, and
-                       (when-let* ((git-repo-remote (vc-git--out-ok "config" "remote.upstream.url")))
-                         (string-match-p "veripool/verilog-mode" git-repo-remote))))) ;Upstream URL has to match this.
+             ;; DANGER: Larumbe: Emacs 26.1, the `vc-git--out-ok' causes to paste the git repo URL at the SV visited buffer (probably unintended)
+             ;; (not (and (buffer-file-name) ;Has to be a file, and
+             ;;           (vc-git-root (buffer-file-name)) ;In a git repo, and
+             ;;           (when-let* ((git-repo-remote (vc-git--out-ok "config" "remote.upstream.url")))
+             ;;             (string-match-p "veripool/verilog-mode" git-repo-remote)))) ;Upstream URL has to match this.
+             ;; End of DANGER
+             )
     (add-hook 'before-save-hook #'modi/verilog-block-end-comments-to-block-names nil :local))
 
   ;; INFO: Larumbe: Seems outshine alignment it is being overriden by own indentation functions
