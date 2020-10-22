@@ -8,23 +8,30 @@
   :bind (:map prog-mode-map
               ("C-<tab>" . hs-toggle-hiding)
               ("C-c C-n" . align-regexp))
-  :hook ((prog-mode . my-prog-mode-hook))
+  :hook ((prog-mode . my-prog-mode-hook)
+         (prog-mode . my-prog-mode-hook-perf))
   :config
   (defun my-prog-mode-hook ()
+    "Basic Hook for derived programming modes."
     ;; Verilog has its own flycheck-mode wrapper function
     (unless (string-equal major-mode "verilog-mode")
       (local-set-key (kbd "C-c C-f") #'flycheck-mode))
     ;; Customizations
     (show-paren-mode     1)
     (linum-mode          1)
-    (hs-minor-mode       1)
     (outshine-mode       1)
-    (yas-minor-mode      1)
     (fic-mode            1)
+    (setq truncate-lines t))
+
+  (defun my-prog-mode-hook-perf ()
+    "Hook for programming modes that require a bit more of CPU performance.
+Could be removed independently from previous one if needed in remote machines with resource issues."
+    (projectile-mode     1)
     (larumbe/ggtags-mode 1)
     (auto-complete-mode  1)
-    (projectile-mode     1)
-    (setq truncate-lines t)))
+    (yas-minor-mode      1)
+    (hs-minor-mode       1)))
+
 
 
 (use-package flycheck
