@@ -178,6 +178,7 @@
 (global-set-key (kbd "C-x C-h") #'larumbe/helm-help-major-mode)
 (global-set-key (kbd "C-x l") #'larumbe/org-show-todos-agenda)
 (global-set-key (kbd "C-c / y") #'helm-youtube)             ; Analogous to google-this mode keybindings
+(global-set-key (kbd "s-SPC") #'larumbe/toggle-keyboard-layout)
 
 
 

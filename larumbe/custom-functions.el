@@ -366,6 +366,22 @@ https://gist.github.com/ffevotte/9345586#file-gistfile1-el"
   (message "Sourcing environment from `%s'... done." filename))
 
 
+
+(defun larumbe/toggle-keyboard-layout ()
+  "Toggle keyboard language between US and ES"
+  (interactive)
+  (let (cur-layout)
+    (setq cur-layout (shell-command-to-string "setxkbmap -query | grep layout | awk '{print $2}'"))
+    (setq cur-layout (replace-regexp-in-string "\n$" "" cur-layout))
+    (if (string-equal cur-layout "us")
+        (progn
+          (shell-command "setxkbmap es")
+          (message "Switched to ES"))
+      (progn
+        (shell-command "setxkbmap us")
+        (message "Switched to US")))))
+
+
 ;;; Xah Lee functions from ergoemacs.org tutorial
 ;;;; Bracket Movement
 (defvar xah-brackets nil "string of left/right brackets pairs.")
