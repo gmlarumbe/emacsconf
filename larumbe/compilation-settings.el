@@ -139,6 +139,8 @@ If second argument is set then delete every other window."
 ;; Fetched from verilog-mode (verilog-IES: Incisive Enterprise Simulator) and improved to fit Emacs
 (defvar irun-error-regexp-emacs-alist-alist
       '(
+        (verilog-IES-fatal    "^[a-z]+: \\(?1:\\*F\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)?" 2 3 nil 2 nil (1 compilation-error-face))
+        (verilog-IES-fatal2   "^[a-z]+: \\(?1:\\*F\\),[0-9A-Z]+: " nil nil nil 2 nil (1 compilation-error-face))
         (verilog-IES-error    "^[a-z]+: \\(?1:\\*E\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)?" 2 3 nil 2 nil (1 compilation-error-face))
         (verilog-IES-error2   "^[a-z]+: \\(?1:\\*E\\),[0-9A-Z]+: " nil nil nil 2 nil (1 compilation-error-face))
         (verilog-IES-warning  "^[a-z]+: \\(?1:\\*W\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)?" 2 3 nil 1 nil (1 compilation-warning-face))
