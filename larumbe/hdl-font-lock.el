@@ -353,7 +353,7 @@ these both have precedence over custom fontify."
              "specparam" "strong0" "strong1" "supply" "supply0" "supply1"
              "time" "tran" "tranif0" "tranif1" "tri" "tri0" "tri1" "triand"
              "trior" "trireg" "unsigned" "uwire" "vectored" "wand" "weak0"
-             "weak1" "wire" "wor" "xnor" "xor"
+             "weak1" "wire" "wor" "xnor" "xor" "signed"
              ;; 1800-2005
              "bit" "byte" "chandle" "const" "enum" "int" "logic" "longint"
              "packed" "ref" "shortint" "shortreal" "static" "string"
