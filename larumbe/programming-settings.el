@@ -429,4 +429,6 @@ Copied from `sh-send-line-or-regin-and-step' for SH Shell scripting "
 (use-package ahk-mode
   ;; DANGER: Even though it is definde as prog-mode derived, hooks are not automatically loaded
   :hook ((ahk-mode . my-prog-mode-hook)
-         (ahk-mode . my-prog-mode-hook-perf)))
+         (ahk-mode . my-prog-mode-hook-perf))
+  :config
+  (setq ahk-indentation 2))

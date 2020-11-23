@@ -291,6 +291,8 @@
                  ;; Key-Scripting -> With '-' and between parenthesis they will be pressed in that order "simultaneously"
                  ([?\C-j]  . tab)
                  ([?\C-\;] . (S-tab))
+                 ;; Toggle link/page view
+                 ([?\C-l] . f6)
                  )))))
 
 
@@ -421,6 +423,8 @@
                  ;; ([?\C-\M-r] . ?\C-F)      ; Find
                  ;; ([?\C-s]    . ?\C-G)      ; Find Next (forward search)
                  ;; ([?\C-r]    . (S-f3))     ; Find Previous (backwards search)
+                 ;; Selection/highlight
+                 ([?\C-a] . ?\C-a)
                  )))))
 
 

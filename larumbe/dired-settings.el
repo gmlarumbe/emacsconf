@@ -23,7 +23,8 @@
   :config
   (setq dired-guess-shell-alist-user ; Program mappings to dired-do-shell-command (overrides `dired-guess-shell-alist-default')
         '(
-          ("\\.pdf\\'" "okular")
+          ("\\.pdf\\'"  "okular")
+          ("\\.lxt2\\'" "gtkwave")
           ))
   (setq dired-bind-info nil))
 
