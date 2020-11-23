@@ -418,4 +418,15 @@ Copied from `sh-send-line-or-regin-and-step' for SH Shell scripting "
 (use-package bitbake)  ; Recipes
 (use-package dts-mode) ; Device tree
 
+;;;; PHP
+(use-package php-mode
+  :bind
+  (:map php-mode-map
+        ;; Overrides `c-backward-conditional' but this is only used for interactive testing of PHP functions
+        ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)))
 
+;;;; AHK
+(use-package ahk-mode
+  ;; DANGER: Even though it is definde as prog-mode derived, hooks are not automatically loaded
+  :hook ((ahk-mode . my-prog-mode-hook)
+         (ahk-mode . my-prog-mode-hook-perf)))
