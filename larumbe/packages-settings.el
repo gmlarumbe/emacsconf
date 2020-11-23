@@ -244,3 +244,5 @@
 
 (use-package jpeg-mode
   :load-path "~/.elisp/download/")
+
+(use-package pcap-mode)
