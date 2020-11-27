@@ -54,6 +54,20 @@ Written to be added as a hook every prog-mode derived but avoiding being loaded 
     (ggtags-mode enable)))
 
 
+
+;;; Custom
+(defun larumbe/ggtags-backend-switch ()
+  "Switch between diferent backends for Global and ggtags.
+The function `ggtags-create-tags' used by all the wrappers relies on the environment
+variable GTAGSLABEL, which will select between backends available at GTAGSCONF globalrc file."
+  (interactive)
+  (let ((active-backend)
+        (backends '("pygments" "ctags" "default")))
+    (setq active-backend (completing-read "Select backend: " backends))
+    (setenv "GTAGSLABEL" active-backend)
+    (message "Set env GTAGSLABEL=%s" active-backend)))
+
+
 ;;; Vivado
 ;; Projects list for the `larumbe/vivado-projects' and `larumbe/quartus-projects' variables:
 ;; Name of the project (+plus)
