@@ -9,6 +9,8 @@
               ("C-c a" . org-agenda)
               ("C-c c" . org-capture)
               ("C-c b" . org-iswitchb)
+              ("M-."   . org-open-at-point)  ; Override xref-find-definitions, used now to follow internal/external links/tags
+              ("M-,"   . org-mark-ring-goto) ; Override xref-pop-marker-stack, used now to pop back links
               ("C-,"   . nil) ; Unamps org-cycle-agenda-files to free `larumbe/ansi-term'
               )
   :config
