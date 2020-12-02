@@ -178,7 +178,7 @@
 
 
 ;;; Misc
-(use-package coin-ticker)
+(use-package btc-ticker)
 
 
 (use-package google-this
