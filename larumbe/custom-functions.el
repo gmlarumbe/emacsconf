@@ -382,6 +382,13 @@ https://gist.github.com/ffevotte/9345586#file-gistfile1-el"
         (message "Switched to US")))))
 
 
+;; https://emacs.stackexchange.com/questions/10077/how-to-edit-crontab-directly-within-emacs-when-i-already-have-emacs-open
+(defun crontab-e ()
+    "Run `crontab -e' in a emacs buffer."
+    (interactive)
+    (with-editor-async-shell-command "crontab -e"))
+
+
 ;;; Xah Lee functions from ergoemacs.org tutorial
 ;;;; Bracket Movement
 (defvar xah-brackets nil "string of left/right brackets pairs.")
