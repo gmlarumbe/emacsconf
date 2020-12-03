@@ -432,3 +432,6 @@ Copied from `sh-send-line-or-regin-and-step' for SH Shell scripting "
          (ahk-mode . my-prog-mode-hook-perf))
   :config
   (setq ahk-indentation 2))
+
+;;;; CRON
+(use-package crontab-mode)
