@@ -9,6 +9,7 @@
   :bind (:map compilation-mode-map
               ("r"   . rename-buffer)
               ("j"   . larumbe/recompile-with-regexp-alist)
+              ("t"   . larumbe/compilation-threshold)
               ("C-(" . larumbe/show-only-vivado-warnings))
   :bind (:map comint-mode-map
               ("TAB" . completion-at-point)                  ; Similar to ansi-term (e.g. for vivado tcl-shell)
@@ -74,6 +75,16 @@ If second argument is set then delete every other window."
     (larumbe/custom-error-regexp-set-emacs regexp-alist-alist))
   (end-of-buffer))
 
+;;;; Misc
+(defun larumbe/compilation-threshold ()
+  (interactive)
+  (let* ((choices '("error" "warning" "info"))
+         (choice   (completing-read "Threshold: " choices)))
+    (pcase choice
+      ("error"   (setq compilation-skip-threshold 2))
+      ("warning" (setq compilation-skip-threshold 1))
+      ("info"    (setq compilation-skip-threshold 0)))))
+
 
 ;;; Compilation error regexp alist
 ;;;; Common
@@ -120,13 +131,13 @@ If second argument is set then delete every other window."
 (defvar vivado-error-regexp-emacs-alist-alist
       '(
         (vivado-error     "^\\(?1:^ERROR: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)"            3   4   nil 2 nil (1 compilation-error-face))
-        (vivado-error2    "^\\(?1:^ERROR:\\) "                                                        nil nil nil 2 nil (1 compilation-error-face))
+        (vivado-error2    "^\\(?1:^ERROR:\\) "                                                        1   nil nil 2 nil)
         (vivado-critical  "^\\(?1:^CRITICAL WARNING: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)" 3   4   nil 2 nil (1 compilation-error-face))
-        (vivado-critical2 "^\\(?1:^CRITICAL WARNING:\\) "                                             nil nil nil 2 nil (1 compilation-error-face))
+        (vivado-critical2 "^\\(?1:^CRITICAL WARNING:\\) "                                             1   nil nil 2 nil)
         (vivado-warning   "^\\(?1:^WARNING: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)"          3   4   nil 1 nil (1 compilation-warning-face))
-        (vivado-warning2  "^\\(?1:^WARNING:\\) "                                                      nil nil nil 1 nil (1 compilation-warning-face))
+        (vivado-warning2  "^\\(?1:^WARNING:\\) "                                                      1   nil nil 1 nil)
         (vivado-info      "^\\(?1:^INFO: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)"             3   4   nil 0 nil (1 compilation-info-face))
-        (vivado-info2     "^\\(?1:^INFO:\\) "                                                         nil nil nil 0 nil (1 compilation-info-face))
+        (vivado-info2     "^\\(?1:^INFO:\\) "                                                         1   nil nil 0 nil)
         ))
 
 (defun larumbe/vivado-error-regexp-set-emacs ()
@@ -172,13 +183,13 @@ If second argument is set then delete every other window."
 
 ;;;; Iverilog
 (defvar iverilog-error-regexp-emacs-alist-alist
-      '((iverilog-unsupported  "\\(?1:.*\\):\\(?2:[0-9]+\\):.*sorry:"            1 2 nil 0 nil (1 compilation-info-face) (2 compilation-line-face))
-        (iverilog-warning      "\\(?1:.*\\):\\(?2:[0-9]+\\):.*warning:"          1 2 nil 1 nil (1 compilation-warning-face) (2 compilation-line-face))
-        (iverilog-warning2     "^\\(warning\\):"                                 nil nil nil 1 nil (1 compilation-warning-face))
-        (iverilog-error        "\\(?1:.*\\):\\(?2:[0-9]+\\):.*error:"            1 2 nil 2 nil (1 compilation-error-face)   (2 compilation-line-face))
-        (vvp-warning           "^\\(?1:WARNING\\): \\(?2:.*\\):\\(?3:[0-9]+\\):" 2 3 nil 1 nil (1 compilation-warning-face) (2 compilation-warning-face) (3 compilation-line-face))
-        (vvp-error             "^\\(?1:ERROR\\): \\(?2:.*\\):\\(?3:[0-9]+\\):"   2 3 nil 2 nil (1 compilation-warning-face) (2 compilation-warning-face) (3 compilation-line-face))
-        (vvp-info              "^\\(?1:LXT2 info\\):"                            nil nil nil 0 nil (1 compilation-info-face))
+      '((iverilog-unsupported  "\\(?1:.*\\):\\(?2:[0-9]+\\):.*sorry:"            1 2 nil   0 nil (1 compilation-info-face) (2 compilation-line-face))
+        (iverilog-warning      "\\(?1:.*\\):\\(?2:[0-9]+\\):.*warning:"          1 2 nil   1 nil (1 compilation-warning-face) (2 compilation-line-face))
+        (iverilog-warning2     "^\\(?1:warning\\):"                              1 nil nil 1 nil)
+        (iverilog-error        "\\(?1:.*\\):\\(?2:[0-9]+\\):.*error:"            1 2 nil   2 nil (1 compilation-error-face)   (2 compilation-line-face))
+        (vvp-warning           "^\\(?1:WARNING\\): \\(?2:.*\\):\\(?3:[0-9]+\\):" 2 3 nil   1 nil (1 compilation-warning-face) (2 compilation-warning-face) (3 compilation-line-face))
+        (vvp-error             "^\\(?1:ERROR\\): \\(?2:.*\\):\\(?3:[0-9]+\\):"   2 3 nil   2 nil (1 compilation-warning-face) (2 compilation-warning-face) (3 compilation-line-face))
+        (vvp-info              "^\\(?1:LXT2 info\\):"                            1 nil nil 0 nil)
         ))
 
 (defun larumbe/iverilog-error-regexp-set-emacs ()
@@ -191,12 +202,12 @@ If second argument is set then delete every other window."
 ;;;; Design compiler
 (defvar synopsys-dc-error-regexp-emacs-alist-alist
       '(
-        (dc-error     "\\(?1:^Error\\):  \\(?2:[0-9a-zA-Z./_-]+\\):\\(?3:[0-9]+\\): "       2 3 nil 2 nil (1 compilation-error-face))
-        (dc-error-2   "\\(?1:^Error\\): .*"                                                 nil nil nil 2 nil (1 compilation-error-face))
-        (dc-warning   "\\(?1:^Warning\\):  \\(?2:[0-9a-zA-Z./_-]+\\):\\(?3:[0-9]+\\): "     2 3 nil 1 nil (1 compilation-warning-face))
-        (dc-warning-2 "\\(?1:^Warning\\): .*"                                               nil nil nil 1 nil (1 compilation-warning-face))
-        (dc-info      "\\(?1:^Information\\):  \\(?2:[0-9a-zA-Z./_-]+\\):\\(?3:[0-9]+\\): " 2 3 nil 0 nil (1 compilation-info-face))
-        (dc-info-2    "\\(?1:^Information\\): .*"                                           nil nil nil 0 nil (1 compilation-info-face))
+        (dc-error     "\\(?1:^Error\\):  \\(?2:[0-9a-zA-Z./_-]+\\):\\(?3:[0-9]+\\): "       2 3   nil 2 nil (1 compilation-error-face))
+        (dc-error-2   "\\(?1:^Error\\): .*"                                                 1 nil nil 2 nil)
+        (dc-warning   "\\(?1:^Warning\\):  \\(?2:[0-9a-zA-Z./_-]+\\):\\(?3:[0-9]+\\): "     2 3   nil 1 nil (1 compilation-warning-face))
+        (dc-warning-2 "\\(?1:^Warning\\): .*"                                               1 nil nil 1 nil)
+        (dc-info      "\\(?1:^Information\\):  \\(?2:[0-9a-zA-Z./_-]+\\):\\(?3:[0-9]+\\): " 2 3   nil 0 nil (1 compilation-info-face))
+        (dc-info-2    "\\(?1:^Information\\): .*"                                           1 nil nil 0 nil)
         ))
 
 (defun larumbe/synopsys-dc-error-regexp-set-emacs ()
@@ -210,9 +221,9 @@ If second argument is set then delete every other window."
 (defvar python-error-regexp-emacs-alist-alist
       '(;; Adapted from compilation.el for Python tracebacks
         (python-tracebacks-and-caml "File \\(\"?\\)\\([^,\" \n\t<>]+\\)\\1, lines? \\([0-9]+\\)-?\\([0-9]+\\)?\\(?:$\\|, \\(?: characters? \\([0-9]+\\)-?\\([0-9]+\\)?:\\)?\\([ \n]Warning\\(?: [0-9]+\\)?:\\)?\\)?" 2 (3 . 4) (5 . 6) (7)) ; Some regexps where not detected on some SCons errors (original one did not have `?' at the end)
-        (python-log-error   "\\(?1:[0-9-]+ [0-9:,]+\\) - \\(?2:[a-zA-Z0-9.]+\\) - \\(?3:ERROR\\) - "   nil nil nil 2 2 (1 compilation-line-face) (3 compilation-error-face))
-        (python-log-warning "\\(?1:[0-9-]+ [0-9:,]+\\) - \\(?2:[a-zA-Z0-9.]+\\) - \\(?3:WARNING\\) - " nil nil nil 1 2 (1 compilation-line-face) (3 compilation-warning-face))
-        (python-log-info    "\\(?1:[0-9-]+ [0-9:,]+\\) - \\(?2:[a-zA-Z0-9.]+\\) - \\(?3:INFO\\) - "    nil nil nil 0 2 (1 compilation-line-face) (3 compilation-info-face))
+        (python-log-error   "\\(?1:[0-9-]+ [0-9:,]+\\) - \\(?2:[a-zA-Z0-9.]+\\) - \\(?3:ERROR\\) - "   3 nil nil 2 2 (1 compilation-line-face) (3 compilation-error-face))
+        (python-log-warning "\\(?1:[0-9-]+ [0-9:,]+\\) - \\(?2:[a-zA-Z0-9.]+\\) - \\(?3:WARNING\\) - " 3 nil nil 1 2 (1 compilation-line-face) (3 compilation-warning-face))
+        (python-log-info    "\\(?1:[0-9-]+ [0-9:,]+\\) - \\(?2:[a-zA-Z0-9.]+\\) - \\(?3:INFO\\) - "    3 nil nil 0 2 (1 compilation-line-face) (3 compilation-info-face))
         ))
 
 
