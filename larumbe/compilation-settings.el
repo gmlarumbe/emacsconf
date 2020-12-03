@@ -88,14 +88,20 @@ If second argument is set then delete every other window."
 
 ;;; Compilation error regexp alist
 ;;;; Common
-(defvar larumbe/custom-compilation-regexp-sets '("verilog-make" "vivado" "irun" "verilator" "iverilog" "scons" "python"))
+(defvar larumbe/custom-compilation-regexp-sets '("verilog-make" "vivado" "irun" "verilator" "iverilog" "scons" "python" "pax"))
 (defvar larumbe/custom-compilation-regexp-active nil)
 
 
 (defun larumbe/recompile-set-active-regexp-alist ()
-  "Set current regexp-alist for *compilation* buffer"
+  "Set current regexp-alist for EVERY *compilation* buffer.
+
+INFO: Tried to set `larumbe/custom-compilation-regexp-active' locally to each buffer,
+but it actually was more effort. It is assumed that most of the time work will be done
+with the same tool consecutively, i.e. there won't be constant switches between Vivado and IES.
+However, if it is set locally to each buffer, every buffer would require confirmation. "
   (interactive)
-  (setq larumbe/custom-compilation-regexp-active (completing-read "Select compiler: " larumbe/custom-compilation-regexp-sets)))
+  (setq larumbe/custom-compilation-regexp-active (completing-read "Select compiler: " larumbe/custom-compilation-regexp-sets))
+  (message "Compilation Error Regexp set Globally to: %s" larumbe/custom-compilation-regexp-active))
 
 
 (defun larumbe/recompile-with-regexp-alist ()
@@ -114,7 +120,8 @@ If second argument is set then delete every other window."
     ("iverilog"     (larumbe/iverilog-error-regexp-set-emacs))
     ("dc-compiler"  (larumbe/synopsys-dc-error-regexp-set-emacs))
     ("scons"        (larumbe/scons-error-regexp-set-emacs))
-    ("python"       (larumbe/python-error-regexp-set-emacs)))
+    ("python"       (larumbe/python-error-regexp-set-emacs))
+    ("pax"          (larumbe/pax-error-regexp-set-emacs)))
   (end-of-buffer))
 
 ;; Master function
@@ -244,6 +251,20 @@ If second argument is set then delete every other window."
     vivado-error-regexp-emacs-alist-alist
     scons-error-regexp-emacs-alist-alist
     python-error-regexp-emacs-alist-alist)))
+
+
+;;;; Pax
+(setq pax-error-regexp-emacs-alist-alist
+      '((pax-assert-err  "** \\(?1:assertion failure\\) at time \\(?2:[0-9.]+\\)"   1 nil nil 2 nil (2 compilation-line-face))
+        ))
+
+(defun larumbe/pax-error-regexp-set-emacs ()
+  "Takes Irun and some others regexps into account"
+  (interactive)
+  (larumbe/custom-error-regexp-set-emacs
+   (append
+    irun-error-regexp-emacs-alist-alist
+    pax-error-regexp-emacs-alist-alist)))
 
 
 
