@@ -21,8 +21,10 @@
 
 (use-package magit-lfs
   :pin melpa
-  ;; INFO: Remaps ':' key from `magit-git-command' to `magit-lfs'
-  )
+  :init
+  ;; INFO: Magit Remaps ':' key from `magit-git-command' to `magit-lfs'
+  ;; Setting following variable maps it to ";" instead
+  (setq magit-lfs-suffix ";"))
 
 
 
