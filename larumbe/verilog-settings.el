@@ -15,7 +15,7 @@
          ("\\.v.pp\\'"        . verilog-mode)
          ("\\.ppv\\'"         . verilog-mode)
          )
-  :hook ((verilog-mode . my-verilog-hook)
+  :hook ((verilog-mode . larumbe/my-verilog-hook-machine-hooked)
          (verilog-mode . modi/verilog-mode-customization))
   :bind (:map verilog-mode-map
               ("C-M-a"    . verilog-beg-of-defun)

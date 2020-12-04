@@ -30,7 +30,7 @@
 
   (use-package jedi-core
     :config
-    (add-hook 'python-mode-hook #'jedi:setup)))
+    (add-hook 'python-mode-hook #'larumbe/jedi:setup-machine-hooked)))
 
 
 (defun python-send-line-or-region-and-step ()

@@ -8,8 +8,7 @@
   :bind (:map prog-mode-map
               ("C-<tab>" . hs-toggle-hiding)
               ("C-c C-n" . align-regexp))
-  :hook ((prog-mode . my-prog-mode-hook)
-         (prog-mode . my-prog-mode-hook-perf))
+  :hook ((prog-mode . my-prog-mode-hook))
   :config
   (defun my-prog-mode-hook ()
     "Basic Hook for derived programming modes."
@@ -17,21 +16,16 @@
     (unless (string-equal major-mode "verilog-mode")
       (local-set-key (kbd "C-c C-f") #'flycheck-mode))
     ;; Customizations
-    (show-paren-mode     1)
-    (linum-mode          1)
-    (outshine-mode       1)
-    (fic-mode            1)
-    (setq truncate-lines t))
-
-  (defun my-prog-mode-hook-perf ()
-    "Hook for programming modes that require a bit more of CPU performance.
-Could be removed independently from previous one if needed in remote machines with resource issues."
-    (projectile-mode     1)
-    (larumbe/ggtags-mode 1)
-    (auto-complete-mode  1)
-    (yas-minor-mode      1)
-    (hs-minor-mode       1)))
-
+    (larumbe/ggtags-mode-machine-hooked        1)
+    (larumbe/projectile-mode-machine-hooked    1)
+    (larumbe/auto-complete-mode-machine-hooked 1)
+    (show-paren-mode                           1)
+    (linum-mode                                1)
+    (outshine-mode                             1)
+    (fic-mode                                  1)
+    (yas-minor-mode                            1)
+    (hs-minor-mode                             1)
+    (setq truncate-lines                       t)))
 
 
 (use-package flycheck
@@ -279,7 +273,7 @@ while inde_x_ed        _+_ add
   (use-package semantic
     :bind (:map semantic-mode-map
                 ("C-c ," . nil)) ; INFO: Unbinds ALL semantic commands, since C-c , is the prefix
-    :hook ((c-mode-common . semantic-mode))))
+    :hook ((c-mode-common . larumbe/semantic-mode-machine-hooked))))
 
 
 ;;;; TCL
@@ -432,8 +426,7 @@ Copied from `sh-send-line-or-regin-and-step' for SH Shell scripting "
 ;;;; AHK
 (use-package ahk-mode
   ;; DANGER: Even though it is definde as prog-mode derived, hooks are not automatically loaded
-  :hook ((ahk-mode . my-prog-mode-hook)
-         (ahk-mode . my-prog-mode-hook-perf))
+  :hook ((ahk-mode . my-prog-mode-hook))
   :config
   (setq ahk-indentation 2))
 
