@@ -116,6 +116,7 @@ in order to check pending project actions. "
               ("C-n" . ac-next)
               ("C-p" . ac-previous)
               ("C-j" . ac-complete)
+              ("C-g" . ac-stop) ; Prevents aborting YAsnippet if occurs at the same time as autocompleting
               ("RET" . ac-complete))
   :config
   (setq ac-delay 1.3)
