@@ -148,6 +148,8 @@ in order to check pending project actions. "
   :load-path "~/.elisp/download/")
 
 
+(use-package rainbow-delimiters)
+
 
 ;;; Programming Languages Setups
 ;;;; Verilog / SystemVerilog
@@ -171,7 +173,8 @@ in order to check pending project actions. "
               ("C-M-z"   . eval-region)
               ("M-."     . larumbe/xref-find-definitions)
               ("M-?"     . larumbe/xref-find-reference-at-point))
-  :hook ((emacs-lisp-mode . my-elisp-hook))
+  :hook ((emacs-lisp-mode . my-elisp-hook)
+         (emacs-lisp-mode . rainbow-delimiters-mode))
   :config
   (defun larumbe/xref-find-definitions ()
     "Wrapper of `xref-find-definitions' to visit a tags/files depending
