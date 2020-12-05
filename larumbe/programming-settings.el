@@ -25,6 +25,8 @@
     (fic-mode                                  1)
     (yas-minor-mode                            1)
     (hs-minor-mode                             1)
+    (auto-fill-mode                            1)
+    (wide-column-mode                          1)
     (setq truncate-lines                       t)))
 
 
@@ -144,6 +146,9 @@ in order to check pending project actions. "
 
 
 (use-package rainbow-delimiters)
+
+
+(use-package wide-column)
 
 
 ;;; Programming Languages Setups
