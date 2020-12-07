@@ -41,7 +41,6 @@
 
 (use-package bind-chord)
 
-(use-package f)
 
 (use-package which-key
   :config

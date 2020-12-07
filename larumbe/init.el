@@ -41,6 +41,8 @@
 (load "~/.elisp/larumbe/config-basic.el")
 
 ;; Custom functions
+(use-package f)
+(use-package with-editor)
 (require 'custom-functions)
 
 ;; Custom macros as functions
