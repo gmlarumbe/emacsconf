@@ -19,7 +19,7 @@
 
 ;;;; Window/Frame Display
 (menu-bar-mode -1)   ; Disable Menu bar
-(tool-bar-mode -1)   ; Disable Tool bar
+;; (tool-bar-mode -1)   ; Disable Tool bar
 (scroll-bar-mode -1) ; Disable Scroll-bar (watch out percentage)
 
 ;;;; Load Path
