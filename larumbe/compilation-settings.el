@@ -451,8 +451,7 @@ It's faster than Vivado elaboration since it does not elaborate design"
     ;; Get Project name
     (if (bound-and-true-p larumbe-reggen-input-file)
         (setq reggen (completing-read "Select project: " (mapcar 'car larumbe-reggen-projects)))
-      (progn
-        (setq reggen (car (car larumbe-reggen-projects)))))  ; If no project is defined, use default (first one)
+      (setq reggen (car (car larumbe-reggen-projects))))  ; If no project is defined, use default (first one)
     (setq files-list (cdr (assoc reggen larumbe-reggen-projects)))
     ;; Set parameters accordingly
     (setq larumbe-reggen-input-file       (nth 0 files-list))

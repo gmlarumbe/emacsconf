@@ -41,9 +41,8 @@
       (progn
         (setq larumbe/unison-show-process-window t)
         (message "Show %s buffer enabled" larumbe/unison-buffer))
-    (progn
-      (setq larumbe/unison-show-process-window nil)
-      (message "Show %s buffer disabled" larumbe/unison-buffer))))
+    (setq larumbe/unison-show-process-window nil)
+    (message "Show %s buffer disabled" larumbe/unison-buffer)))
 
 
 (defun unison-show-process-window ()
@@ -65,11 +64,10 @@
         (view-mode t)
         (setq truncate-lines t)
         (end-of-buffer))
-    (progn
-      (select-window (get-buffer-window larumbe/unison-buffer))
-      (view-mode t)
-      (setq truncate-lines t)
-      (end-of-buffer))))
+    (select-window (get-buffer-window larumbe/unison-buffer))
+    (view-mode t)
+    (setq truncate-lines t)
+    (end-of-buffer)))
 
 
 (defun unison-sentinel-finished (process signal)
@@ -90,10 +88,10 @@ If opening a prf conf file, the update will be over that file.
 Otherwise, it will depend on buffer local selected profile."
   (interactive)
   (let (proc)
-    (if (string-equal (file-name-extension (buffer-file-name)) "prf")
-        (setq unison-active-profile (file-relative-name (buffer-file-name))))
-    (if (not (bound-and-true-p unison-active-profile))
-        (unison-set-active-profile))
+    (when (string-equal (file-name-extension (buffer-file-name)) "prf")
+      (setq unison-active-profile (file-relative-name (buffer-file-name))))
+    (unless (bound-and-true-p unison-active-profile)
+      (unison-set-active-profile))
     (setq proc (start-process larumbe/unison-buffer larumbe/unison-buffer larumbe/unison-command-name unison-active-profile "-auto" "-batch"))
     (message "Synchronizing...")
     (when (bound-and-true-p larumbe/unison-show-process-window)
@@ -106,8 +104,8 @@ Otherwise, it will depend on buffer local selected profile."
 Manually sync them will allow for a proper output at unison buffer.
 User will have to choose which of the repos has priority on the synchronization"
   (interactive "P")
-  (if (not (bound-and-true-p unison-active-profile))
-      (setq unison-active-profile (file-name-nondirectory (buffer-file-name))))
+  (unless (bound-and-true-p unison-active-profile)
+    (setq unison-active-profile (file-name-nondirectory (buffer-file-name))))
   (let (local remote choice)
     (save-window-excursion
       ;; Get sync folders from active profile
@@ -179,15 +177,15 @@ User will have to choose which of the repos has priority on the synchronization"
         ;;                (add-hook 'write-file-functions 'unison-sync-save-hook nil 'make-it-local)))
         (setq larumbe/unison-sync-hook-active nil)
         (message "Unison save-sync disabled..."))
-    (progn
-      (add-hook 'unison-sync-minor-mode-hook
-                (lambda ()
-                  (add-hook 'after-save-hook 'unison-sync-save-hook nil 'make-it-local)))
-      ;; (add-hook 'unison-sync-minor-mode-hook
-      ;;           (lambda ()
-      ;;             (add-hook 'write-file-functions 'unison-sync-save-hook nil 'make-it-local)))
-      (setq larumbe/unison-sync-hook-active t)
-      (message "Unison save-sync enabled!"))))
+    ;; Not active
+    (add-hook 'unison-sync-minor-mode-hook
+              (lambda ()
+                (add-hook 'after-save-hook 'unison-sync-save-hook nil 'make-it-local)))
+    ;; (add-hook 'unison-sync-minor-mode-hook
+    ;;           (lambda ()
+    ;;             (add-hook 'write-file-functions 'unison-sync-save-hook nil 'make-it-local)))
+    (setq larumbe/unison-sync-hook-active t)
+    (message "Unison save-sync enabled!")))
 
 
 
@@ -198,14 +196,11 @@ User will have to choose which of the repos has priority on the synchronization"
   :lighter " [U]"
   :keymap
   '(
+    ;; ("\C-c\C-s" . unison-toggle-sync-save-hook)
     ("\C-c\C-c" . unison-my-run)
     ("\C-c\C-v" . unison-toggle-enable-process-window)
     ("\C-c\C-b" . unison-pop-show-unison-buffer)
-    ("\C-c\C-z" . unison-manually-sync-projects)
-
-    ;; ("\C-c\C-s" . unison-toggle-sync-save-hook)
-    )
-  )
+    ("\C-c\C-z" . unison-manually-sync-projects)))
 
 
 ;;;; Provide
