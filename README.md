@@ -1,3 +1,6 @@
+[![Build Status](https://github.com/gmlarumbe/emacsconf/workflows/CI/badge.svg)](https://github.com/gmlarumbe/emacsconf/actions)
+
+
 ## Overview
 
 My Emacs configuration file.
