@@ -254,3 +254,5 @@
   :load-path "~/.elisp/download/")
 
 (use-package pcap-mode)
+
+(use-package deferred)

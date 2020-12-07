@@ -534,3 +534,6 @@ Copied from `sh-send-line-or-regin-and-step' for SH Shell scripting "
 
 ;;;; CRON
 (use-package crontab-mode)
+
+;;;; YAML
+(use-package yaml-mode)
