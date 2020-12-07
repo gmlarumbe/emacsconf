@@ -16,9 +16,9 @@
     (unless (string-equal major-mode "verilog-mode")
       (local-set-key (kbd "C-c C-f") #'flycheck-mode))
     ;; Customizations
-    (larumbe/ggtags-mode-machine-hooked        1)
-    (larumbe/projectile-mode-machine-hooked    1)
-    (larumbe/auto-complete-mode-machine-hooked 1)
+    ;; (larumbe/ggtags-mode-machine-hooked        1)
+    ;; (larumbe/projectile-mode-machine-hooked    1)
+    ;; (larumbe/auto-complete-mode-machine-hooked 1)
     (show-paren-mode                           1)
     (linum-mode                                1)
     (outshine-mode                             1)
