@@ -1,50 +1,59 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; OWN MACROS FOR EXWM Automation      ;;
-;; 1) Go to EXWM buffer                ;;
-;; 2) F3 (start recording macro)       ;;
-;; 3) record macro                     ;;
-;; 4) F4 (stop recording macro)        ;;
-;; 5) M-x kmacro-name-last-macro       ;;
-;; 6) insert-kbd-macro                 ;;
-;; 7) Assign into a function/keystroke ;;
-;;                                     ;;
-;;                                     ;;
-;; For elmacro:                        ;;
-;;   - Record Macro                    ;;
-;;   - elmacro-show-last-macro         ;;
-;;   - copy/use it as desired!         ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; macros.el --- Macros & Elmacro  -*- lexical-binding: t -*-
+;;; Commentary:
+;;
+;; Own macros for exwm Automation
+;;
+;; 1) Go to EXWM buffer
+;; 2) F3 (start recording macro)
+;; 3) record macro
+;; 4) F4 (stop recording macro)
+;; 5) M-x kmacro-name-last-macro
+;; 6) insert-kbd-macro
+;; 7) Assign into a function/keystroke
+;;
+;;
+;; For elmacro:
+;;   - Record Macro
+;;   - elmacro-show-last-macro
+;;   - copy/use it as desired!
+;;
 ;; https://emacs.stackexchange.com/questions/70/how-to-save-a-keyboard-macro-as-a-lisp-function
+;;
+;;; Code:
+
+(require 'elmacro)
+(require 'custom-functions)
 
 ;; Recorded from insert-kbd-macro
 (fset 'open-google
    [?\C-g ?\C-l ?w ?w ?w ?. ?g ?o ?o ?g ?l ?e ?. ?c ?o ?m return return])
 
 (defun larumbe/exwm-firefox-open-search-engine ()
-  "Script for opening a search engine in an EXWM buffer"
+  "Script for opening a search engine in an EXWM buffer."
   (interactive)
   (start-process-shell-command "firefox" nil "firefox")
   (sleep-for 1)
   (switch-to-buffer "Firefox-esr")
   ;; https://stackoverflow.com/questions/28039958/emacs-call-a-kbd-macro-in-defun-function
-  (execute-kbd-macro 'open-google) ; open-google is not a function but a macro, so it needs to be executed this way
-)
+  (execute-kbd-macro 'open-google)) ; open-google is not a function but a macro, so it needs to be executed this way
 
 
 (fset 'copy-firefox-link
-   [?\C-l ?\M-w])
+   [?\C-l ?\M-w ?\C-g])
 
 
 (defun larumbe/exwm-firefox-youtube-dl ()
-  "Download MP3 from current's Firefox window link. Use `C-w' instead of `M-w' to check that link is being killed properly"
+  "Download MP3 from current's Firefox window link.
+Use `C-w' instead of `M-w' to check that link is being killed properly."
   (interactive)
-  (let (link dir)
+  (let ((link)
+        (dir "~/youtube-dl-mp3"))
     (save-window-excursion
       (switch-to-buffer "Firefox")
       ;; https://stackoverflow.com/questions/28039958/emacs-call-a-kbd-macro-in-defun-function
       (execute-kbd-macro 'copy-firefox-link)
       (setq link (current-kill 0))
-      (setq dir larumbe/youtube-dl-download-folder)
+      (setq dir "")
       (async-shell-command
        (concat
         "mkdir -p " dir " && "
@@ -56,6 +65,7 @@
 
 ;; DANGER: Legacy. Use only as a reference to create other macros!
 (defun larumbe/show-svn-buffers-hp ()
+  "Show SVN buffers."
   (interactive)
   (switch-to-buffer "*svn-update<metaljf>*")
   (delete-other-windows)
@@ -107,6 +117,7 @@
 
 ;; DANGER: Legacy. Use only as a reference to create other macros!
 (defun larumbe/show-repo-sync-buffers ()
+  "Show repo buffers."
   (interactive)
   (setq last-command-event 49)
   (delete-other-windows)
@@ -120,7 +131,7 @@
    `(focus-in ,(elmacro-get-frame "0x6cabe70")))
   (switch-to-buffer "*<git_smc_metaljf>*" nil 'force-same-window)
   (insert "g")
-  (delete-backward-char 1 nil)
+  (delete-char 1 nil)
   (handle-focus-out
    `(focus-out ,(elmacro-get-frame "0x6cabe70")))
   (other-window 1)
@@ -137,6 +148,7 @@
 
 
 (defun larumbe/kill-repo-sync-buffers ()
+  "Kill repo buffers."
   (interactive)
   (handle-focus-out
    `(focus-out ,(elmacro-get-frame "0x6cabe70")))
@@ -169,6 +181,7 @@
 
 
 (defun larumbe/show-buffers-rr-ansi-term ()
+  "Show rr ansi term buffers."
   (interactive)
   (delete-other-windows)
   (switch-to-buffer "*tetra*")
@@ -182,6 +195,7 @@
 
 
 (defun larumbe/kill-buffers-rr-ansi-term ()
+  "Kill rr ansi term buffers."
   (interactive)
   (set-process-query-on-exit-flag (get-process "*tetra*") nil)
   (kill-buffer "*tetra*")
@@ -191,3 +205,8 @@
   (kill-buffer "*microtron*")
   (delete-other-windows))
 
+
+
+(provide 'macros)
+
+;;; macros.el ends here

@@ -1,12 +1,14 @@
 ;;; init.el --- Larumbe's dotemacs file  -*- lexical-binding: t -*-
 
+;;; Commentary:
+
 ;; Copyright (C) 2017-2020 Gonzalo M. Larumbe
 
 ;; Author: Gonzalo Martinez Larumbe <gonzalomlarumbe@gmail.com>
 ;; Homepage: https://github.com/gmlarumbe/emacsconf
 ;;           https://gmlarumbe.com
 
-;;; Code
+;;; Code:
 
 ;;; Load Path
 (add-to-list 'load-path (expand-file-name "~/.elisp"))
@@ -36,9 +38,10 @@
 (use-package gnu-elpa-keyring-update) ; Update elpa keys to avoid signature issues
 
 
+
 ;;; Requires
 ;; Config basic
-(load "~/.elisp/larumbe/config-basic.el")
+(require 'config-basic)
 
 ;; Custom functions
 (use-package f)
@@ -46,7 +49,7 @@
 (require 'custom-functions)
 
 ;; Custom macros as functions
-(load "~/.elisp/larumbe/macros.el")
+(require 'macros)
 
 ;; Helm/IDO setup
 (load "~/.elisp/larumbe/helm-settings.el")
@@ -80,3 +83,8 @@
 ;;   - It will have specific content to the machine (e.g. EXWM enabling)
 (if (file-exists-p "~/.elisp_private/machine/machine-config.el")
     (load "~/.elisp_private/machine/machine-config.el" t))
+
+
+(provide 'init)
+;;; init.el ends here
+

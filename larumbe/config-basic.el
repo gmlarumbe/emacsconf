@@ -1,7 +1,10 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; BASIC CONFIGURATION FOR EMACS INIT FILE ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Basic settings
+;;; config-basic.el --- Basic configuration  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
+(require 'use-package)
+(require 'time)
+
 ;;;; Basics
 (if (and (fboundp 'server-running-p)           ; Server start for emacsclient support
          (not (server-running-p)))
@@ -25,8 +28,9 @@
   (scroll-bar-mode -1))
 
 
-;;; Mode-line
+;;;; Mode-line
 (use-package smart-mode-line
+  :commands (sml/setup)
   :config
   (setq sml/theme 'dark) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
   (sml/setup)            ; Enable smart-mode-line
@@ -35,3 +39,8 @@
   (setq line-number-mode nil) ; Hide current line number from mode-line
   (setq display-time-default-load-average nil) ; Display time on the status bar
   (display-time-mode t))
+
+
+(provide 'config-basic)
+
+;;; config-basic.el ends here
