@@ -1,8 +1,17 @@
-;;;;;;;;;;;;;;;;;;;;;;
-;; CUSTOM FUNCTIONS ;;
-;;;;;;;;;;;;;;;;;;;;;;
+;;; custom-functions.el --- Auxiliary library  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
+(require 'thingatpt)
+(require 'xref)
+(require 'f)
+(require 'with-editor)
+
+(defvar larumbe/shrink-window-horizontally-delta   15)
+(defvar larumbe/shrink-window-vertically-delta      5)
 
 ;;; Restart code
+;; https://emacs.stackexchange.com/questions/5428/restart-emacs-from-within-emacs
 (defun launch-separate-emacs-in-terminal ()
   (suspend-emacs "fg ; emacs -nw"))
 
@@ -14,15 +23,13 @@
   ;; We need the new emacs to be spawned after all kill-emacs-hooks
   ;; have been processed and there is nothing interesting left
   (let ((kill-emacs-hook (append kill-emacs-hook (list (if (display-graphic-p)
-                                                         #'launch-separate-emacs-under-x
+                                                           #'launch-separate-emacs-under-x
                                                          #'launch-separate-emacs-in-terminal)))))
     (save-buffers-kill-emacs)))
 
-
-
 ;;; Buffer management
 (defun close-all-buffers ()
-  "Kill all buffers"
+  "Kill all buffers."
   (interactive)
   (mapc #'kill-buffer (buffer-list)))
 
@@ -32,7 +39,7 @@
   (mapc #'kill-buffer (cdr (buffer-list (current-buffer)))))
 
 (defun buffer-mode (&optional buffer)
-  "Returns the major mode associated with a buffer."
+  "Return the major mode associated with BUFFER."
   (let (buf)
     (if buffer
         (setq buf buffer)
@@ -41,61 +48,61 @@
       major-mode)))
 
 (defun larumbe/enlarge-window-horizontally ()
-  "Uses shrink-window as a wrapper"
+  "Use `shrink-window' as a wrapper."
   (interactive)
   (shrink-window larumbe/shrink-window-horizontally-delta t))
 
 (defun larumbe/shrink-window-horizontally ()
-  "Uses shrink-window as a wrapper"
+  "Use `shrink-window' as a wrapper."
   (interactive)
   (shrink-window (- larumbe/shrink-window-horizontally-delta) t))
 
 (defun larumbe/enlarge-window-vertically ()
-  "Uses shrink-window as a wrapper"
+  "Use `shrink-window' as a wrapper."
   (interactive)
   (shrink-window larumbe/shrink-window-vertically-delta))
 
 (defun larumbe/shrink-window-vertically ()
-  "Uses shrink-window as a wrapper"
+  "Use `shrink-window' as a wrapper."
   (interactive)
   (shrink-window (- larumbe/shrink-window-vertically-delta)))
 
 
 (defun file-title ()
-  "Return file title; eg returns asdf for /otp/asdf.txt ."
-  (file-name-sans-extension(file-name-nondirectory (buffer-file-name))))
+  "Return file title; e.g. for '/opt/asdf.txt' eval 'asdf'."
+  (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))
 
 
 (defun larumbe/kill-current-buffer ()
-  "Kill current buffer without confirmation.(buffer-name) defaults to current-buffer name"
+  "Kill current buffer without confirmation."
   (interactive)
   (kill-buffer (buffer-name)))
 
 
 (defun larumbe/load-file-current-buffer ()
-  "Load current buffer .el file "
+  "Load current buffer .el file."
   (interactive)
-  (load-file buffer-file-name))
+  (if (string-equal "el" (file-name-extension buffer-file-name))
+      (load-file buffer-file-name)
+    (error "Cannot load non-Elisp files")))
 
 
 (defun larumbe/revert-buffer-no-confirm ()
-  "Revert current buffer without asking"
+  "Revert current buffer without prompting for confirmation."
   (interactive)
   (revert-buffer nil t t))
 
 
 (defun larumbe/current-buffer-to-file (out-file)
-  "Export current buffer to output-file passed as parameter.
-Can be called interactively or not.
-It was first thought for exporting SCons compilations."
-  (interactive "FEnter output path: "
-               (setq out-file s))
+  "Export current buffer to OUT-FILE.
+Seems useful to export long compilation logs."
+  (interactive "FEnter output path: ")
   (append-to-file (point-min) (point-max) out-file))
 
 
 (defun larumbe/pwd-to-kill-ring (&optional no-line)
-  "Copy current file path to kill-ring.
-If optional NO_LINE is given, then do not copy line to kill ring"
+  "Copy current file path to `kill-ring'.
+If optional NO-LINE is given, then do not copy line to `kill-ring'"
   (interactive "P")
   (let (file-name)
     (if no-line
@@ -106,9 +113,10 @@ If optional NO_LINE is given, then do not copy line to kill ring"
 
 
 ;;; Navigation
+;; https://www.emacswiki.org/emacs/SearchAtPoint
 (defun my-isearch-yank-word-or-char-from-beginning ()
-  "Move to beginning of word before yanking word in isearch-mode.
-Make C-s C-w and C-r C-w act like Vim's g* and g#, keeping Emacs'
+  "Move to beginning of word before yanking word in `isearch-mode'.
+Make \\keymapC-s C-w and C-r C-w act like Vim's g* and g#, keeping Emacs'
 C-s C-w [C-w] [C-w]... behaviour. "
   (interactive)
   ;; Making this work after a search string is entered by user
@@ -170,47 +178,51 @@ DANGER: Comment needs to be substituted from '--' to  mode-specific comment."
 
 
 (defun larumbe/pop-to-previous-mark ()
-  "Pop to previous mark"
+  "Pop to previous mark."
   (interactive)
   (set-mark-command 4))
 
 
 ;;; Editing
+;; https://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs
 (defun duplicate-line()
+  "Duplicate current line."
   (interactive)
   (move-beginning-of-line 1)
   (kill-line)
   (yank)
   (open-line 1)
-  (next-line 1)
+  (forward-line 1)
   (yank)
   (move-beginning-of-line 1))
 
 
 (defun larumbe/copy-region-or-symbol-at-point ()
+  "Copy symbol under cursor.  If region is active, copy it instead."
   (interactive)
   (let ((symbol (thing-at-point 'symbol t)))
     (if (use-region-p)
         (call-interactively #'kill-ring-save)
-      (progn
-        (kill-new symbol)
-        (message symbol)))))
+      (kill-new symbol)
+      (message symbol))))
 
 
+;; https://emacs.stackexchange.com/questions/5441/function-to-delete-all-comments-from-a-buffer-without-moving-them-to-kill-ring
 (defun larumbe/delete-comments-from-buffer ()
-  "Delete comments from buffer without moving them to the kill ring.
-
-Fetched from https://emacs.stackexchange.com/questions/5441/function-to-delete-all-comments-from-a-buffer-without-moving-them-to-kill-ring "
+  "Delete comments from buffer without moving them to the kill ring."
   (interactive)
   (goto-char (point-min))
   (let (kill-ring)
     (comment-kill (count-lines (point-min) (point-max)))))
 
 
+;; https://stackoverflow.com/questions/31767779/is-there-an-apply-command-to-each-line-in-region-in-emacs
+;; INFO: Do not use functions that alter the length of the buffer
+;; (e.g. #'kill-line) as the start/end parameters will change during execution.
 (defun do-lines (fun &optional start end)
   "Invoke function FUN on the text of each line from START to END."
   (interactive
-   (let ((fn   (intern (completing-read "Function: " obarray 'functionp t))))
+   (let ((fn (intern (completing-read "Function: " obarray 'functionp t))))
      (if (use-region-p)
          (list fn (region-beginning) (region-end))
        (list fn (point-min) (point-max)))))
@@ -222,11 +234,11 @@ Fetched from https://emacs.stackexchange.com/questions/5441/function-to-delete-a
 
 
 (defun larumbe/buffer-expand-filenames ()
-  "Expands filenames path present in `current-buffer' line by line"
+  "Expands filenames paths present in `current-buffer' line by line."
   (interactive)
   (let (cur-line)
     (save-excursion
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (while (< (point) (point-max))
         (delete-horizontal-space)
         (setq cur-line (expand-file-name (thing-at-point 'line) default-directory))
@@ -235,32 +247,34 @@ Fetched from https://emacs.stackexchange.com/questions/5441/function-to-delete-a
 
 
 (defun larumbe/sort-regexp-at-the-beginning-of-file (regexp)
-  "Move lines containing REGEXP recursively at the beginning of the file, line by line
-This might be useful when managing a list of files, one file at a line, and there is some need of sorting by regexp
-For example, in SystemVerilog packages might need to be included before reading other files."
+  "Move lines containing REGEXP recursively at the beginning of the file.
+Done line by line, this might be useful when managing a list of files,
+one file at a line,and there is some need of sorting by regexp.
+For example, in SystemVerilog,packages might need to be included before other files."
   (interactive)
-  (beginning-of-buffer)
-  (while (not sorted-files-p)
-    (save-excursion
-      (if (not (search-forward-regexp regexp nil 1))
+  (let ((sorted-files-p nil))
+    (goto-char (point-min))
+    (unless sorted-files-p
+      (save-excursion
+        (unless (search-forward-regexp regexp nil 1)
           (setq sorted-files-p t))
-      (beginning-of-line)
-      (kill-line 1)) ; 1 kills trailing newline as well
-    (yank)))
+        (beginning-of-line)
+        (kill-line 1)) ; Kill trailing newline as well
+      (yank))))
 
 
 ;;; Lists/strings/files/directories
+;; http://ergoemacs.org/emacs/elisp_read_file_content.html
 (defun read-lines (filePath)
-  "Return a list of lines of a file at filePath."
+  "Return a list of lines of a file at FILEPATH."
   (with-temp-buffer
     (insert-file-contents filePath)
     (split-string (buffer-string) "\n" t)))
 
 
+;; https://www.gnu.org/software/emacs/manual/html_node/eintr/print_002delements_002dof_002dlist.html
 (defun print-elements-of-list (list)
-  "Print each element of LIST on a line of its own.
-
-https://www.gnu.org/software/emacs/manual/html_node/eintr/print_002delements_002dof_002dlist.html "
+  "Print each element of LIST on a line of its own."
   (while list
     (print (car list))
     (setq list (cdr list))))
@@ -275,24 +289,22 @@ https://www.gnu.org/software/emacs/manual/html_node/eintr/print_002delements_002
     (message "%s" return-string)))
 
 
+;; http://ergoemacs.org/emacs/elisp_read_file_content.html
 (defun get-string-from-file (filePath)
-  "Return filePath's file content as a string.
-
-http://ergoemacs.org/emacs/elisp_read_file_content.html"
+  "Return FILEPATH file content as a string."
   (with-temp-buffer
     (insert-file-contents filePath)
     (buffer-string)))
 
 
+;; https://stackoverflow.com/questions/17325713/looking-for-a-replace-in-string-function-in-elisp
 (defun replace-in-string (what with in)
-  "Replace WHAT to WITH in string IN.
-
-https://stackoverflow.com/questions/17325713/looking-for-a-replace-in-string-function-in-elisp"
+  "Replace WHAT to WITH in string IN."
   (replace-regexp-in-string (regexp-quote what) with in nil 'literal))
 
 
 (defun larumbe/directory-files-recursively-to-file (base-dir file re &optional append exclude-re)
-  "Retrieve every file matching regexp RE of a specified BASE-DIR to output FILE.
+  "Retrieve all files matching regexp RE of a specified BASE-DIR to output FILE.
 If optional APPEND is set to non-nil, append result to existing FILE.
 Otherwise, overwrite old existing FILE with new results.
 If optional EXCLUDE-RE is set, delete paths with that regexp from generated file."
@@ -307,7 +319,7 @@ If optional EXCLUDE-RE is set, delete paths with that regexp from generated file
                    append)
           (setq buf (current-buffer))
           (find-file file)
-          (end-of-buffer)
+          (goto-char (point-max))
           (newline)
           (insert-buffer-substring buf))
         ;; Filter according to optional parameter
@@ -316,11 +328,12 @@ If optional EXCLUDE-RE is set, delete paths with that regexp from generated file
         (write-file file)))))
 
 
+;; https://stackoverflow.com/questions/3775377/how-do-you-diff-a-directory-for-only-files-of-a-specific-type
 (defun larumbe/directory-diff-recursive (dir1 dir2 out-file)
-  "Export diff between two directories to output file.
-It uses an exclude schema that leaves out of the diff the files/expresions in exclude.list
-This is because there is no include option for `diff' utils.
-`https://stackoverflow.com/questions/3775377/how-do-you-diff-a-directory-for-only-files-of-a-specific-type'"
+  "Export diff between DIR1 and DIR2 to OUT-FILE.
+It uses an exclude schema that leaves out of the diff
+the files/expresions in exclude.list This is because there
+is no include option for `diff' utils."
   (interactive "DSelect first directory: \nDSelect second directory: \nFSelect output file:")
   (let ((exclude-file)
         (exclude-patterns '("*.wdf"
@@ -342,10 +355,9 @@ This is because there is no include option for `diff' utils.
 
 
 ;;; Misc
+;; https://gist.github.com/ffevotte/9345586#file-gistfile1-el
 (defun source (filename)
-  "Update environment variables from a shell source file.
-
-https://gist.github.com/ffevotte/9345586#file-gistfile1-el"
+  "Update environment variables from FILENAME source file."
   (interactive "fSource file: ")
   (message "Sourcing environment from `%s'..." filename)
   (with-temp-buffer
@@ -368,7 +380,7 @@ https://gist.github.com/ffevotte/9345586#file-gistfile1-el"
 
 
 (defun larumbe/toggle-keyboard-layout ()
-  "Toggle keyboard language between US and ES"
+  "Toggle keyboard language between US and ES."
   (interactive)
   (let (cur-layout)
     (setq cur-layout (shell-command-to-string "setxkbmap -query | grep layout | awk '{print $2}'"))
@@ -377,16 +389,15 @@ https://gist.github.com/ffevotte/9345586#file-gistfile1-el"
         (progn
           (shell-command "setxkbmap es")
           (message "Switched to ES"))
-      (progn
-        (shell-command "setxkbmap us")
-        (message "Switched to US")))))
+      (shell-command "setxkbmap us")
+      (message "Switched to US"))))
 
 
 ;; https://emacs.stackexchange.com/questions/10077/how-to-edit-crontab-directly-within-emacs-when-i-already-have-emacs-open
 (defun crontab-e ()
-    "Run `crontab -e' in a emacs buffer."
-    (interactive)
-    (with-editor-async-shell-command "crontab -e"))
+  "Run `crontab -e' in an Emacs buffer."
+  (interactive)
+  (with-editor-async-shell-command "crontab -e"))
 
 
 ;;; Xah Lee functions from ergoemacs.org tutorial
@@ -397,7 +408,7 @@ https://gist.github.com/ffevotte/9345586#file-gistfile1-el"
 (defvar xah-left-brackets '("(" "{" "[" "<" "〔" "【" "〖" "〈" "《" "「" "『" "“" "‘" "‹" "«" )
   "List of left bracket chars.")
 (progn
-;; make xah-left-brackets based on xah-brackets
+  ;; make xah-left-brackets based on xah-brackets
   (setq xah-left-brackets '())
   (dotimes ($x (- (length xah-brackets) 1))
     (when (= (% $x 2) 0)
@@ -763,3 +774,7 @@ Version 2017-07-02"
       (push-mark (point) t)
       (goto-char $pt)
       (delete-char 1))))
+
+
+(provide 'custom-functions)
+;;; custom-functions.el ends here

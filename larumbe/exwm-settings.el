@@ -93,9 +93,6 @@
 
 
 ;;;; Window/Frame movement/navigation
-(defvar larumbe/shrink-window-horizontally-delta   15)
-(defvar larumbe/shrink-window-vertically-delta      5)
-
 (exwm-input-set-key (kbd "C-}")   #'larumbe/shrink-window-horizontally)
 (exwm-input-set-key (kbd "C-{")   #'larumbe/enlarge-window-horizontally)
 (exwm-input-set-key (kbd "C-M-{") #'larumbe/shrink-window-vertically)
