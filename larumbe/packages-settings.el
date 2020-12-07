@@ -30,8 +30,6 @@
   (setq tramp-own-remote-path nil) ; `tramp-remote-path': List of directories to search for executables on remote host.
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
-(use-package elmacro
-  :diminish)
 
 (use-package re-builder
   :config

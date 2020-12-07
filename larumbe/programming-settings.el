@@ -135,7 +135,8 @@ in order to check pending project actions. "
   (defun my-prog-mode-hook ()
     "Basic Hook for derived programming modes."
     ;; Verilog has its own flycheck-mode wrapper function
-    (unless (string-equal major-mode "verilog-mode")
+    (unless (or (string-equal major-mode "verilog-mode")
+                (string-equal major-mode "emacs-lisp--mode"))
       (local-set-key (kbd "C-c C-f") #'flycheck-mode))
     ;; Customizations
     ;; (larumbe/ggtags-mode-machine-hooked        1)
@@ -220,17 +221,18 @@ Disable `eldoc-mode' if flycheck is enabled to avoid minibuffer collisions."
   (defun sanityinc/headerise-elisp ()
     "Add minimal header and footer to an elisp buffer in order to placate flycheck."
     (interactive)
-    (let ((fname (if (buffer-file-name)
-                     (file-name-nondirectory (buffer-file-name))
-                   (error "This buffer is not visiting a file")))
-          (desc (read-string "Package description: ")))
+    (let* ((fname (if (buffer-file-name)
+                      (file-name-nondirectory (buffer-file-name))
+                    (error "This buffer is not visiting a file")))
+           (pname (file-name-sans-extension fname))
+           (desc (read-string "Package description: ")))
       (save-excursion
         (goto-char (point-min))
-        (insert ";;; " fname " --- " desc  " -*- lexical-binding: t -*-\n"
+        (insert ";;; " fname " --- " desc  "  -*- lexical-binding: t -*-\n"
                 ";;; Commentary:\n"
                 ";;; Code:\n\n")
         (goto-char (point-max))
-        (insert "\n\n(provide '" fname ")\n\n")
+        (insert "\n\n(provide '" pname ")\n\n")
         (insert ";;; " fname " ends here\n"))))
 
   ;; INFO: Copied from modi's setup

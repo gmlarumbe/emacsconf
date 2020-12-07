@@ -43,46 +43,61 @@
 ;; Config basic
 (require 'config-basic)
 
+
 ;; Custom functions
 (use-package f)
 (use-package with-editor)
 (require 'custom-functions)
 
+
 ;; Custom macros as functions
+(use-package elmacro
+  :diminish)
 (require 'macros)
 
+
 ;; Helm/IDO setup
-(load "~/.elisp/larumbe/helm-settings.el")
+(require 'helm-settings)
+
 
 ;; Dired setup
 (load "~/.elisp/larumbe/dired-settings.el")
 
+
 ;; Org-mode setup
 (load "~/.elisp/larumbe/org-settings.el")
+
 
 ;; Global/ggtags setup
 (load "~/.elisp/larumbe/ggtags-settings.el")
 
+
 ;; Other packages setup
 (load "~/.elisp/larumbe/packages-settings.el")
+
 
 ;; Git/SVN/repo
 (load "~/.elisp/larumbe/version-control-settings.el")
 
+
 ;; Process/Compilation buffers config
 (load "~/.elisp/larumbe/compilation-settings.el")
+
 
 ;; Programming languages config
 (load "~/.elisp/larumbe/programming-settings.el")
 
+
 ;; Emacs X-Window Manager config
 (load "~/.elisp/larumbe/exwm-settings.el")
+
 
 ;; Machine specific settings files:
 ;;   - This file will not be present in the repo
 ;;   - It will have specific content to the machine (e.g. EXWM enabling)
 (if (file-exists-p "~/.elisp_private/machine/machine-config.el")
     (load "~/.elisp_private/machine/machine-config.el" t))
+
 
 
 (provide 'init)

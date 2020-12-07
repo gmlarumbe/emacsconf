@@ -1,8 +1,8 @@
-;;;;;;;;;;;;;;;;;
-;; HELM SETUP  ;;
-;;;;;;;;;;;;;;;;;
+;;; helm-settings.el --- Helm & related   -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
 
-;;; Helm
+;;;; Helm
 (use-package helm
   :diminish
   :bind (("C-x c /" . helm-find) ; Enable C-x c prefix commands
@@ -40,8 +40,8 @@
 
 (defun larumbe/helm-occur (&optional prefix)
   "Copied from `helm-occur' and slightly modified to allow searching symbols.
-If called without prefix argument search for symbol and case-sensitive.
-If called with prefix, search for string and no case sensitive."
+If called without PREFIX argument search for symbol and case-sensitive.
+If called with PREFIX, search for string and no case sensitive."
   (interactive "P")
   ;; DANGER: Added to do a case-sensitive search
   (let ((case-fold-search prefix))
@@ -81,7 +81,7 @@ If called with prefix, search for string and no case sensitive."
 
 
 (defun larumbe/helm-help-major-mode ()
-  "Get helm M-x commands list and shortcuts for the last time it was used (before a C-g)
+  "Get helm `M-x' commands list/shortcuts for the last time it was used.
 It is assumed to be used after a `M-x' then e.g. `org-', then `C-g' and finally this function for window arrangement."
   (interactive)
   (delete-other-windows)
@@ -93,7 +93,7 @@ It is assumed to be used after a `M-x' then e.g. `org-', then `C-g' and finally 
 
 
 
-;;; Projectile + Helm-Projectile + Helm AG
+;;;; Projectile + Helm-Projectile + Helm AG
 (use-package projectile
   :bind (:map projectile-mode-map ; Projectile 2.0 removes automatic keybindings
               ("C-c p j" . projectile-find-tag)
@@ -124,7 +124,7 @@ Replaces `projectile-default-mode-line' that also showed ':generic' type of proj
 
 
 
-;;; Helm-Navi + Outshine
+;;;; Helm-Navi + Outshine
 (use-package outshine
   :config
   (setq outshine-imenu-show-headlines-p nil) ; Do not include outshine tags at imenu
@@ -137,7 +137,7 @@ Replaces `projectile-default-mode-line' that also showed ':generic' type of proj
   :config
   (use-package helm-org) ; Required by helm-havi
 
-;;;; Function overriding
+;;;;; Function overriding
   ;; BUG: Issue with helm-navi in last MELPA package
   ;; https://github.com/emacs-helm/helm-navi/pull/3
   ;; These functions needs to be redefined and:
@@ -151,7 +151,7 @@ function to return a regular expression, or
     (with-current-buffer buffer
       ;; Make sure outshine is loaded
       (unless outshine-promotion-headings
-        (error "Outshine is not activated in buffer \"%s\".  Activate `outline-minor-mode', or consult Outshine's documentation for further instructions if necessary." (buffer-name buffer)))
+        (error "Outshine is not activated in buffer \"%s\".  Activate `outline-minor-mode', or consult Outshine's documentation for further instructions if necessary" (buffer-name buffer)))
       (let* ((heading-regexp (pcase regexp
                                ((pred functionp) (funcall regexp))
                                ((pred stringp) regexp)
@@ -201,3 +201,8 @@ function to return a regular expression, or
                         "\\|"))
             ".*$")))
 
+
+
+(provide 'helm-settings)
+
+;;; helm-settings.el ends here
