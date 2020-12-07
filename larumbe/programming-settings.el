@@ -3,31 +3,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Common configuration
-(use-package prog-mode
-  :ensure nil
-  :bind (:map prog-mode-map
-              ("C-<tab>" . hs-toggle-hiding)
-              ("C-c C-n" . align-regexp))
-  :hook ((prog-mode . my-prog-mode-hook))
+(use-package fic-mode
   :config
-  (defun my-prog-mode-hook ()
-    "Basic Hook for derived programming modes."
-    ;; Verilog has its own flycheck-mode wrapper function
-    (unless (string-equal major-mode "verilog-mode")
-      (local-set-key (kbd "C-c C-f") #'flycheck-mode))
-    ;; Customizations
-    ;; (larumbe/ggtags-mode-machine-hooked        1)
-    ;; (larumbe/projectile-mode-machine-hooked    1)
-    ;; (larumbe/auto-complete-mode-machine-hooked 1)
-    (show-paren-mode                           1)
-    (linum-mode                                1)
-    (outshine-mode                             1)
-    (fic-mode                                  1)
-    (yas-minor-mode                            1)
-    (hs-minor-mode                             1)
-    (auto-fill-mode                            1)
-    (wide-column-mode                          1)
-    (setq truncate-lines                       t)))
+  (setq fic-activated-faces '(font-lock-doc-face  font-lock-comment-face))
+  (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "DANGER" "INFO"))
+
+  (defun larumbe/clean-fic-keywords-dir ()
+    "Perform an `ag-regexp' of `fic-mode' highlighted keywords in selected DIR
+in order to check pending project actions. "
+    (interactive)
+    (let ((kwd)
+          (path)
+          (ag-arguments ag-arguments) ; Save the global value of `ag-arguments' (copied from modi)
+          (regex)
+          (files)
+          )
+      (setq kwd (completing-read "Select keyword: " 'fic-highlighted-words))
+      (setq path (read-directory-name "Directory: "))
+      ;; (setq regex (completing-read "Select file regex: " 'regex))
+      (setq files (completing-read "Select file regex: " '("(System)Verilog" "Python" "elisp")))
+      (pcase files
+        ("(System)Verilog" (setq regex ".[s]?v[h]?$")) ; +Headers
+        ("Python"          (setq regex ".py$"))
+        ("elisp"           (setq regex ".el$"))
+        )
+      ;; Copied from AG for `modi/verilog-find-parent-module'
+      (add-to-list 'ag-arguments "-G" :append)
+      (add-to-list 'ag-arguments regex :append)
+      (ag-regexp kwd path))))
 
 
 (use-package flycheck
@@ -76,35 +79,6 @@
   (setq ediff-window-setup-function #'ediff-setup-windows-plain))
 
 
-(use-package fic-mode
-  :config
-  (setq fic-activated-faces '(font-lock-doc-face  font-lock-comment-face))
-  (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "DANGER" "INFO"))
-
-  (defun larumbe/clean-fic-keywords-dir ()
-    "Perform an `ag-regexp' of `fic-mode' highlighted keywords in selected DIR
-in order to check pending project actions. "
-    (interactive)
-    (let ((kwd)
-          (path)
-          (ag-arguments ag-arguments) ; Save the global value of `ag-arguments' (copied from modi)
-          (regex)
-          (files)
-          )
-      (setq kwd (completing-read "Select keyword: " 'fic-highlighted-words))
-      (setq path (read-directory-name "Directory: "))
-      ;; (setq regex (completing-read "Select file regex: " 'regex))
-      (setq files (completing-read "Select file regex: " '("(System)Verilog" "Python" "elisp")))
-      (pcase files
-        ("(System)Verilog" (setq regex ".[s]?v[h]?$")) ; +Headers
-        ("Python"          (setq regex ".py$"))
-        ("elisp"           (setq regex ".el$"))
-        )
-      ;; Copied from AG for `modi/verilog-find-parent-module'
-      (add-to-list 'ag-arguments "-G" :append)
-      (add-to-list 'ag-arguments regex :append)
-      (ag-regexp kwd path))))
-
 
 (use-package auto-complete
   :diminish
@@ -149,6 +123,33 @@ in order to check pending project actions. "
 
 
 (use-package wide-column)
+
+
+(use-package prog-mode
+  :ensure nil
+  :bind (:map prog-mode-map
+              ("C-<tab>" . hs-toggle-hiding)
+              ("C-c C-n" . align-regexp))
+  :hook ((prog-mode . my-prog-mode-hook))
+  :config
+  (defun my-prog-mode-hook ()
+    "Basic Hook for derived programming modes."
+    ;; Verilog has its own flycheck-mode wrapper function
+    (unless (string-equal major-mode "verilog-mode")
+      (local-set-key (kbd "C-c C-f") #'flycheck-mode))
+    ;; Customizations
+    ;; (larumbe/ggtags-mode-machine-hooked        1)
+    ;; (larumbe/projectile-mode-machine-hooked    1)
+    ;; (larumbe/auto-complete-mode-machine-hooked 1)
+    (show-paren-mode                           1)
+    (linum-mode                                1)
+    (outshine-mode                             1)
+    (fic-mode                                  1)
+    (yas-minor-mode                            1)
+    (hs-minor-mode                             1)
+    (auto-fill-mode                            1)
+    (wide-column-mode                          1)
+    (setq truncate-lines                       t)))
 
 
 ;;; Programming Languages Setups
