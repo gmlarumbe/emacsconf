@@ -152,6 +152,12 @@
   (setq browse-url-browser-function 'browse-url-firefox))
 
 
+(use-package beacon
+  :config
+  (beacon-mode 1))
+
+(use-package buffer-move)
+
 ;;; Editing
 (use-package untabify-trailing-ws
   :load-path "~/.elisp/larumbe/own-modes/minors/"
@@ -181,7 +187,7 @@
 
 
 ;;; Misc
-(use-package btc-ticker)
+;; (use-package btc-ticker)
 
 
 (use-package google-this

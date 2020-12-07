@@ -3,7 +3,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Basic settings
 ;;;; Basics
-(server-start)                                 ; Server start for emacsclient support
+(if (and (fboundp 'server-running-p)           ; Server start for emacsclient support
+         (not (server-running-p)))
+    (server-start))
 (setq custom-file "~/.emacs.d/custom-file.el") ; Custom file does not need to be in version control.
 (unless (file-exists-p custom-file)            ; It will only hold a list with safe variables, `package-selected-packages' for autoremove and custom set variables.
   (write-region "" nil custom-file))           ; All of these are actually local to a machine.

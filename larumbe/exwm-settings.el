@@ -104,7 +104,10 @@
 (exwm-input-set-key (kbd "M-o")   #'other-window) ; Suggested by Mastering-Emacs author (Replaces Enriched faces: https://www.gnu.org/software/emacs/manual/html_node/emacs/Enriched-Faces.html)
 (exwm-input-set-key (kbd "M-O")   #'other-frame)  ; replaces 'negative-argument
 (exwm-input-set-key (kbd "M-'")   #'larumbe/kill-current-buffer)
-
+(exwm-input-set-key (kbd "<C-S-up>")     #'buf-move-up)
+(exwm-input-set-key (kbd "<C-S-down>")   #'buf-move-down)
+(exwm-input-set-key (kbd "<C-S-left>")   #'buf-move-left)
+(exwm-input-set-key (kbd "<C-S-right>")  #'buf-move-right)
 
 ;;;; Line-mode global keybindings
 ;;;;; Text Editing

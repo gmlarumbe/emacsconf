@@ -46,4 +46,5 @@
 ;; Machine specific settings files:
 ;;   - This file will not be present in the repo
 ;;   - It will have specific content to the machine (e.g. EXWM enabling)
-(load "~/.elisp_private/machine/machine-config.el" t)
+(if (file-exists-p "~/.elisp_private/machine/machine-config.el")
+    (load "~/.elisp_private/machine/machine-config.el" t))
