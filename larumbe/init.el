@@ -57,38 +57,14 @@
 (require 'macros)
 (require 'helm-settings)
 (require 'projectile-settings)
-
-
-;; Dired setup
-(load "~/.elisp/larumbe/dired-settings.el")
-
-
-;; Org-mode setup
-(load "~/.elisp/larumbe/org-settings.el")
-
-
-;; Global/ggtags setup
-(load "~/.elisp/larumbe/ggtags-settings.el")
-
-
-;; Other packages setup
-(load "~/.elisp/larumbe/packages-settings.el")
-
-
-;; Git/SVN/repo
-(load "~/.elisp/larumbe/version-control-settings.el")
-
-
-;; Process/Compilation buffers config
-(load "~/.elisp/larumbe/compilation-settings.el")
-
-
-;; Programming languages config
-(load "~/.elisp/larumbe/programming-settings.el")
-
-
-;; Emacs X-Window Manager config
-(load "~/.elisp/larumbe/exwm-settings.el")
+(require 'dired-settings)
+(require 'org-settings)
+(require 'ggtags-settings)
+(require 'packages-settings)
+(require 'version-control-settings)
+(require 'compilation-settings)
+(require 'programming-settings)
+(require 'exwm-settings)
 
 
 ;; Machine specific settings files:

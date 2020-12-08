@@ -1,6 +1,7 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Global/ggtags and functions based on them ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; ggtags-settings.el --- Ggtags/Global  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 
 ;;; Use-package config
 (use-package ggtags
@@ -326,3 +327,8 @@ An alternative manual method would be to use a (helm-projectile-grep)"
       (delete-duplicate-lines (point-min) (point-max)) ; for libraries setup of previous files
       (larumbe/buffer-expand-filenames)
       (write-file output-file))))
+
+
+(provide 'ggtags-settings)
+
+;;; ggtags-settings.el ends here

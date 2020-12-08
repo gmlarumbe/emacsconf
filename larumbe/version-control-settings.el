@@ -1,6 +1,7 @@
-;;;;;;;;;;;;;;;;;;;;;
-;; VERSION CONTROL ;;
-;;;;;;;;;;;;;;;;;;;;;
+;;; version-control-settings.el ---   -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 
 ;;; vc-dir
 (use-package vc-dir
@@ -180,3 +181,10 @@ since it needs to be set for the whole magit session, not only for the command."
   (interactive)
   (setq magit-git-global-arguments (eval (car (get 'magit-git-global-arguments 'standard-value))))
   (message "Git arguments reset!"))
+
+
+
+
+(provide 'version-control-settings)
+
+;;; version-control-settings.el ends here

@@ -1,6 +1,7 @@
-;;;;;;;;;;;;;;;;;;;;
-;; PACKAGES SETUP ;;
-;;;;;;;;;;;;;;;;;;;;
+;;; packages-settings.el --- Packages  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 
 ;;; Basic Packages
 (use-package diminish
@@ -244,3 +245,10 @@
 (use-package pcap-mode)
 
 (use-package deferred)
+
+
+
+
+(provide 'packages-settings)
+
+;;; packages-settings.el ends here

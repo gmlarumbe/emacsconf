@@ -1,6 +1,7 @@
-;;;;;;;;;;;;;;;;
-;; VHDL setup ;;
-;;;;;;;;;;;;;;;;
+;;; vhdl-settings.el --- VHDL  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 
 ;;; Basic settings
 (use-package vhdl-mode
@@ -384,3 +385,8 @@ _IS_: Instance          ^^                      _al_: alias
   ;;;;;;;;;;;;
   ("q"   nil nil :color blue)
   ("C-g" nil nil :color blue))
+
+
+(provide 'vhdl-settings)
+
+;;; vhdl-settings.el ends here

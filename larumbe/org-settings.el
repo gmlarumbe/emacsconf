@@ -1,6 +1,7 @@
-;;;;;;;;;;;;;;;;;;;;
-;; Org-mode setup ;;
-;;;;;;;;;;;;;;;;;;;;
+;;; org-settings.el --- Org  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 
 (use-package org
   :ensure nil
@@ -37,3 +38,8 @@
       (find-file file))
     (switch-to-buffer buf)
     (call-interactively #'org-agenda-list)))
+
+
+(provide 'org-settings)
+
+;;; org-settings.el ends here

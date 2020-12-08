@@ -1,6 +1,7 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Verilog/SystemVerilog setup ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; verilog-settings.el --- Verilog/SystemVerilog  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 
 ;;; Basic settings
 (use-package verilog-mode
@@ -2175,3 +2176,8 @@ See URL `http://iverilog.icarus.com/'"
    (error   (file-name) ":" line ":" (message) line-end) ; 'syntax error' message (missing package)
    )
   :modes verilog-mode)
+
+
+(provide 'verilog-settings)
+
+;;; verilog-settings.el ends here

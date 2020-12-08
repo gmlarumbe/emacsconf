@@ -1,6 +1,7 @@
-;;;;;;;;;;;
-;; Dired ;;
-;;;;;;;;;;;
+;;; dired-settings.el --- Dired  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 
 (use-package dired
   :ensure nil
@@ -68,3 +69,8 @@
 
 
 
+
+
+(provide 'dired-settings)
+
+;;; dired-settings.el ends here

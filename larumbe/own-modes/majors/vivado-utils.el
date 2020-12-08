@@ -1,4 +1,5 @@
-;;; Vivado Utils
+;;; vivado-utils.el --- Vivado Utils  -*- lexical-binding: t -*-
+;;; Commentary:
 ;; This package includes one minor mode to add auto completion to a Vivado TCL comint shell,
 ;; and a major mode to edit Vivado XDC files (tcl mode derived)
 ;;
@@ -6,6 +7,9 @@
 ;; and on the compilation regexps association lists defined there.
 ;;
 ;; Therefore, in the future it could be packaged as a single file, with proper (require) dependencies.
+;;
+;;; Code:
+
 
 ;;; Vivado-TCL Shell
 (defvar larumbe/vivado-tcl-shell-buffer "*vivado-tcl*")
@@ -584,7 +588,7 @@ When the region is active, send the region instead."
   (setq mode-name "XDC"))
 
 
-;;; Package providing
 
 (provide 'vivado-utils)
 
+;;; vivado-utils.el ends here

@@ -1,6 +1,7 @@
-;;;;;;;;;;;;;;;;;;
-;; Python setup ;;
-;;;;;;;;;;;;;;;;;;
+;;; python-settings.el --- Python  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 (use-package python-mode
   :mode (("\\SConstruct\\'"      . python-mode)
          ("\\SConstruct.repo\\'" . python-mode))
@@ -166,3 +167,8 @@ If called witih prefix argument, execute `hs-hide-all' (including classes)"
   (larumbe/gtags-python-files-pwd-recursive)
   (ggtags-create-tags default-directory))
 
+
+
+(provide 'python-settings)
+
+;;; python-settings.el ends here

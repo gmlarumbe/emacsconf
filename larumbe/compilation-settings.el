@@ -1,8 +1,7 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;      COMPILATION-MODE Settings            ;;
-;;                                           ;;
-;; - Allows for process output parsing     - ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; compilation-settings.el --- Compilation  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 ;;; Use-package setup
 (use-package compile
   :ensure nil
@@ -542,3 +541,8 @@ Makes use of local variable `larumbe/shell-compilation-sandbox-buildcmd' to rebu
     (setq proc (get-buffer-process (current-buffer)))
     (comint-send-string proc larumbe/shell-compilation-sandbox-buildcmd)
     (comint-send-string proc "\n")))
+
+
+(provide 'compilation-settings)
+
+;;; compilation-settings.el ends here

@@ -1,10 +1,12 @@
+;;; exwm-settings.el --- EXWM  -*- lexical-binding: t -*-
+;;; Commentary:
 ;; INFO: For a new config template, check: `exwm-config-default'
 ;;   /home/gonz/.emacs.d/elpa/exwm-0.22.1/exwm-config.el:26
 ;;
 ;; Fetched from:
 ;; https://github.com/ch11ng/exwm/wiki/Configuration-Example
-
-;;; Larumbe's summary
+;;
+;;;; Larumbe's summary
 ;;  Precedence's hierarchy from top to bottom would be the following:
 ;;
 ;;  - Global keybindings: aka `exwm-input-set-key' affects char and line mode buffers (text and *EXWM*)
@@ -16,6 +18,10 @@
 ;;
 ;;    - An EWWM buffer in `line-mode' would only respond to keys that are NOT in `exwm-input-prefix-keys'
 ;;      and would change the ones included in `exwm-input-set-simulation-keys'
+;;
+;;
+;;; Code:
+
 
 
 ;;; Basic config
@@ -506,3 +512,8 @@
 ;; Also, you might want to set exwm-layout-show-all-buffers to t to allow automatically moving X
 ;; windows from inactive workspaces by switching to their associated buffers.
 (setq exwm-layout-show-all-buffers t)
+
+
+(provide 'exwm-settings)
+
+;;; exwm-settings.el ends here

@@ -1,7 +1,5 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; HDL Font-Locking (VHDL/SystemVerilog ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;;; hdl-font-lock.el --- HDL Font-locking (VHDL/SystemVerilog)  -*- lexical-binding: t -*-
+;;; Commentary:
 ;; INFO: Multiline Font Locking has reliability limitations in Emacs.
 ;;  - https://www.gnu.org/software/emacs/manual/html_node/elisp/Multiline-Font-Lock.html
 ;;  - https://www.gnu.org/software/emacs/manual/html_node/elisp/Font-Lock-Multiline.html
@@ -10,11 +8,14 @@
 ;;  - The `font-lock-multiline' variable might seem to be working but is not reliable.
 ;;  - Using the `font-lock-multiline' property might apply to a few lines (such is the case).
 ;;    For longer sections it is necessary to create font lock custom functions and gets more complicated.
-
+;;
 ;; INFO: Search based fontification:
 ;; - https://www.gnu.org/software/emacs/manual/html_node/elisp/Search_002dbased-Fontification.html
 ;;     Look for 'function' section.
 ;; - Based on `verilog-match-translate-off'
+;;
+;;; Code:
+
 
 ;;; Faces
 (defvar larumbe/font-lock-punctuation-face 'larumbe/font-lock-punctuation-face)
@@ -902,3 +903,8 @@ Needed since it sets match property as `font-lock-multiline'."
   (while (re-search-forward larumbe/vhdl-labels-in-block-and-components-regex limit t)
     (put-text-property (match-beginning 0) (match-end 0) 'font-lock-multiline t)
     (point)))
+
+
+(provide 'hdl-font-lock)
+
+;;; hdl-font-lock.el ends here
