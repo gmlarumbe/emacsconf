@@ -38,26 +38,25 @@
 (use-package gnu-elpa-keyring-update) ; Update elpa keys to avoid signature issues
 
 
-
-;;; Requires
-;; Config basic
-(require 'config-basic)
-
-
-;; Custom functions
+;;; Explicit dependencies
 (use-package f)
 (use-package with-editor)
-(require 'custom-functions)
-
-
-;; Custom macros as functions
 (use-package elmacro
   :diminish)
+(use-package outshine
+  :config
+  ;; Do not include outshine tags at imenu
+  (setq outshine-imenu-show-headlines-p nil))
+(use-package navi-mode)
+
+
+
+;;; Requires
+(require 'config-basic)
+(require 'custom-functions)
 (require 'macros)
-
-
-;; Helm/IDO setup
 (require 'helm-settings)
+(require 'projectile-settings)
 
 
 ;; Dired setup

@@ -2006,9 +2006,7 @@ It also updates currently opened SystemVerilog packages."
 (defun larumbe/verilog-vhier-preprocess-hierarchy ()
   "Preprocess hierarchy of top-level module for `includes and `defines.
 Only used if hierarchy is extracted in project mode."
-  (let ((processed-files (concat larumbe-verilog-perl-project-vhier-path "vhier.files"))
-        (sorted-files-p nil) ; Used inside while loop to decide when every `defs_pkg' has been put at the beginning
-        )
+  (let ((processed-files (concat larumbe-verilog-perl-project-vhier-path "vhier.files")))
     (shell-command
      (concat "mkdir -p " larumbe-verilog-perl-project-vhier-path)) ; Create vhier folder if it did not exist
     (with-temp-buffer

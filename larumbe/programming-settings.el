@@ -34,7 +34,10 @@ in order to check pending project actions. "
 
 
 (use-package flycheck
-  :diminish)
+  :diminish
+  :config
+  (setq flycheck-display-errors-function ; Seems it shows full error if multiline
+        #'flycheck-display-error-messages-unless-error-list))
 
 
 (use-package flyspell
@@ -136,7 +139,7 @@ in order to check pending project actions. "
     "Basic Hook for derived programming modes."
     ;; Verilog has its own flycheck-mode wrapper function
     (unless (or (string-equal major-mode "verilog-mode")
-                (string-equal major-mode "emacs-lisp--mode"))
+                (string-equal major-mode "emacs-lisp-mode"))
       (local-set-key (kbd "C-c C-f") #'flycheck-mode))
     ;; Customizations
     ;; (larumbe/ggtags-mode-machine-hooked        1)
@@ -150,7 +153,8 @@ in order to check pending project actions. "
     (hs-minor-mode                             1)
     (auto-fill-mode                            1)
     (wide-column-mode                          1)
-    (setq truncate-lines                       t)))
+    (setq truncate-lines                       t)
+    (setq fill-column                         80)))
 
 
 ;;; Programming Languages Setups
@@ -180,6 +184,7 @@ in order to check pending project actions. "
   :hook ((emacs-lisp-mode . my-elisp-hook))
   :config
   (setq flycheck-emacs-lisp-load-path 'inherit)
+  (setq flycheck-emacs-lisp-initialize-packages t)
 
   (defun larumbe/xref-find-definitions ()
     "Wrapper of `xref-find-definitions' to visit a tags/files depending
@@ -197,6 +202,7 @@ on where the point is (similar to `larumbe/ggtags-find-tag-dwim')"
   (defun my-elisp-hook ()
     (prettify-symbols-mode 1)
     (rainbow-delimiters-mode 1)
+    (larumbe/elisp-flycheck-mode 1)
     (set 'ac-sources '(ac-source-gtags ac-source-symbols)))
 
 
@@ -206,16 +212,28 @@ on where the point is (similar to `larumbe/ggtags-find-tag-dwim')"
     (byte-compile-file buffer-file-name))
 
 
-  (defun larumbe/elisp-flycheck-mode ()
+  (defun larumbe/elisp-flycheck-mode (&optional enable)
     "Flycheck-mode Elisp wrapper function.
 Disable `eldoc-mode' if flycheck is enabled to avoid minibuffer collisions."
     (interactive)
-    (if eldoc-mode
-        (progn
-          (eldoc-mode -1)
-          (flycheck-mode 1))
-      (eldoc-mode 1)
-      (flycheck-mode -1)))
+    ;; Interactive toggling
+    (unless enable
+      (if eldoc-mode
+          (progn
+            (eldoc-mode -1)
+            (flycheck-mode 1)
+            (message "Flycheck enabled"))
+        (eldoc-mode 1)
+        (flycheck-mode -1)
+        (message "Flycheck disabled")))
+    ;; Non-interactive
+    (when enable
+      (if (> enable 0)
+          (progn
+            (flycheck-mode 1)
+            (eldoc-mode -1))
+        (flycheck-mode -1)
+        (eldoc-mode 1))))
 
   ;; Copied from Steve Purcell
   (defun sanityinc/headerise-elisp ()

@@ -136,7 +136,7 @@
 ;;    - Check Helm Completing Read Handlers Alist:
 ;;    - Find all the 'ido' occurences (now are set to switch-to-buffer and find-alternate-file)
 
-(global-set-key (kbd "M-s o") #'larumbe/helm-occur)
+(global-set-key (kbd "M-s o") #'helm-occur)      ; Might be advised
 (global-set-key (kbd "M-g a") #'helm-do-grep-ag) ; Avoid `C-x c' prefix
 (global-set-key (kbd "C-#")  #'helm-navi-headings)
 (global-set-key (kbd "M-#")  #'helm-navi)
