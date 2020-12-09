@@ -260,7 +260,9 @@
                 (message "Jenkins job retrieved successfully. Waiting for regexp parsing...")
                 (pop-to-buffer console-buffer)
                 (setq truncate-lines t)
-                (setq buffer-read-only t)))))))))
+                (setq buffer-read-only t))))))))
+
+  (advice-add 'jenkins-get-console-output :override #'larumbe/jenkins-get-console-output))
 
 
 (use-package jpeg-mode
