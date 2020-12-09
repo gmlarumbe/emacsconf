@@ -22,9 +22,9 @@
   :preface
   ;; Only included to avoid flycheck warnings, since `helm-M-x' is an autoload
   ;; for the files that declare the otherwise free variables.
+  (require 'helm-mode)
   (require 'helm-occur)
 
-  :defines (helm-completing-read-handlers-alist)
   :commands (helm-autoresize-mode helm-set-local-variable larumbe/helm-occur)
 
   :bind (("C-x c /" . helm-find) ; Enable C-x c prefix commands
