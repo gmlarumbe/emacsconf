@@ -6,16 +6,6 @@
 (require 'custom-functions)
 (require 'navi-mode)
 
-(use-package ido
-  :config
-  ;; INFO: ido should not be enabled since compatibility with helm is managed by `helm-completing-read-handlers-alist'
-  ;; However, if ido is not enabled, `ido-buffer-completion-map' does not get loaded
-  ;; and therefore its not possible to make use of buffer killing while switching.
-  (setq ido-everywhere nil)
-  (ido-mode 1) ; Enable, so that commands like `ido-kill-buffer-at-head' can be performed
-  (setq ido-default-buffer-method "selected-window"))
-
-
 ;;;; Helm
 (use-package helm
   :diminish
@@ -40,7 +30,10 @@
 
   (helm-mode 1)
   (helm-autoresize-mode 1)
-
+  ;; INFO: ido should not be enabled since compatibility with helm is managed by `helm-completing-read-handlers-alist'
+  ;; However, if ido is not enabled, `ido-buffer-completion-map' does not get loaded
+  ;; and therefore its not possible to make use of buffer killing while switching.
+  (ido-mode 1) ; Enable, so that commands like `ido-kill-buffer-at-head' can be performed
 
   (defun larumbe/helm-help-major-mode ()
     "Get helm `M-x' commands list/shortcuts for the last time it was used.

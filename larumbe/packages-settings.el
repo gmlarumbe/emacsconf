@@ -30,6 +30,10 @@
   (setq ag-reuse-buffers t)
   (setq ag-reuse-window t))
 
+(use-package ido
+  :config
+  (setq ido-everywhere nil)
+  (setq ido-default-buffer-method "selected-window"))
 
 
 ;;; Basic Packages
