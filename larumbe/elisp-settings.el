@@ -5,7 +5,7 @@
 (use-package elisp-mode
   :ensure nil
   :bind (:map emacs-lisp-mode-map
-              ("C-x C-." . larumbe/load-file-current-buffer)
+              ("C-c C-l" . larumbe/load-file-current-buffer)
               ("C-c C-e" . edebug-defun)
               ("C-M-z"   . eval-region)
               ("C-c C-b" . larumbe/byte-compile-current-buffer)

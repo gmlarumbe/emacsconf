@@ -47,20 +47,22 @@ on where the point is."
 
 
 ;;; Overriding
-(defun larumbe/ggtags-mode (&optional enable)
-  "Enable `ggtags-mode' depending on programming MAJOR-MODE of current buffer.
-Written to be added as a hook every prog-mode derived but avoiding being loaded to emacs-lisp-mode"
+(defun larumbe/ggtags-mode (&optional arg)
+  "Enable `ggtags-mode' depending on current programming `major-mode'.
+Add as a hook to every derived `prog-mode' and avoiding being for elisp buffers.
+Pass ARG to `ggtags-mode' function if not called interactively."
   (interactive)
   (unless (string-match "emacs-lisp-mode" (format "%s" major-mode)) ; Do not use ggtags @ `emacs-lisp-mode'
-    (ggtags-mode enable)))
+    (ggtags-mode arg)))
 
 
 
 ;;; Custom
 (defun larumbe/ggtags-backend-switch ()
   "Switch between diferent backends for Global and ggtags.
-The function `ggtags-create-tags' used by all the wrappers relies on the environment
-variable GTAGSLABEL, which will select between backends available at GTAGSCONF globalrc file."
+The function `ggtags-create-tags' used by all the wrappers relies on the
+environment variable GTAGSLABEL, which will select between backends
+available at GTAGSCONF globalrc file."
   (interactive)
   (let ((active-backend)
         (backends '("pygments" "ctags" "default")))
@@ -92,12 +94,10 @@ variable GTAGSLABEL, which will select between backends available at GTAGSCONF g
 (defvar larumbe/ag-use-input-regexps nil)
 (defvar larumbe/hdl-source-extension-regex "\\(.sv$\\|.v$\\|.svh$\\|.vh$\\|.vhd$\\)")
 
-;; Retrieve project list and set variables accordingly
-(defun larumbe/project-set-active-project ()
-  (interactive)
+(defun larumbe/set-active-project-xpr ()
+  "Retrieve project list and set variables accordingly."
   (let ((project)
-        (files-list)
-        (gtags-args))
+        (files-list))
     ;; Get Project name
     (setq project (completing-read "Select project: " (mapcar 'car larumbe/vivado-projects))) ;; Read previous variable and get list of first element of each assoc list
     (setq files-list (cdr (assoc project larumbe/vivado-projects)))
@@ -106,23 +106,22 @@ variable GTAGSLABEL, which will select between backends available at GTAGSCONF g
     (setq larumbe/project-xpr-file             (nth 1 files-list))
     (setq larumbe/project-gtags-dirs-directory (nth 2 files-list))
     (setq larumbe/project-gtags-dirs-file      (nth 3 files-list))
-    (setq larumbe/project-gtags-file           (concat larumbe/project-gtags-dirs-directory "/" larumbe/project-gtags-dirs-file))
-    ;; Gtags creation update (For ONLY verilog file parsing)
-    ))
+    (setq larumbe/project-gtags-file           (concat larumbe/project-gtags-dirs-directory "/" larumbe/project-gtags-dirs-file))))
 
-;; WORKAROUND FOR SHITTY VIVADO Naming Conventions at IP Wizard generation.
+
 (defun larumbe/project-convert-xci-to-v-and-downcase ()
-  "Converts .xci file paths present in gtags.files to .v at downcase
+  "Convert .xci file paths present in gtags.files to .v and downcase.
 Vivado generates them in this way... Used by `vhier' and GTAGS
-Assumes it is being used in current buffer (i.e. gtags.files)"
+Assumes it is being used in current buffer (i.e. gtags.files).
+
+INFO: This is a Workaround for Vivado Naming Conventions at IP Wizard generation."
   (save-excursion
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (if (re-search-forward "\\([a-zA-Z0-9_-]*\\).xci" nil t) ; Fail silently
         (progn
           (replace-match "\\1.v")
           (re-search-backward "/")
-          (downcase-region (point) (point-at-eol)) ; Downcase the whole line
-          ))))
+          (downcase-region (point) (point-at-eol))))))
 
 
 ;; Function to parse files for project from Vivado XPR
@@ -150,7 +149,7 @@ Avoid creating GTAGS for every project included inside a repo folder"
   "Create `gtags.files' file for a specific project.
 Avoid creating GTAGS for every project included inside a repo folder"
   (interactive)
-  (larumbe/project-set-active-project)
+  (larumbe/set-active-project-xpr)
   (save-window-excursion
     (larumbe/project-files-from-xpr)
     (ggtags-create-tags larumbe/project-gtags-dirs-directory)
@@ -203,7 +202,7 @@ Checks Works in current buffer"
       (next-line))))
 
 
-;; Retrieve project list and set variables accordingly (copied from `larumbe/project-set-active-project' for Vivado xpr)
+;; Retrieve project list and set variables accordingly (copied from `larumbe/set-active-project-xpr' for Vivado xpr)
 (defun larumbe/project-set-active-project-altera ()
   (interactive)
   (let ((project)

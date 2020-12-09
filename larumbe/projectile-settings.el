@@ -11,6 +11,9 @@
               ("C-c p f" . projectile-find-file)
               ("C-c p a" . helm-projectile-ag)
               ("C-c p g" . helm-projectile-grep))
+
+  :commands (projectile-project-name larumbe/projectile-custom-mode-line)
+
   :config
   (add-to-list 'projectile-project-root-files-bottom-up ".repo") ; Detect `repo' Git sandboxes (Sandbox preference over IP)
   (setq projectile-completion-system 'helm)

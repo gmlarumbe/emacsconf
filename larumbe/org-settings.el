@@ -30,7 +30,7 @@
 
 
 (defun larumbe/org-show-todos-agenda ()
-  "Show org-mode TODOs and agenda."
+  "Show `org-mode' TODOs and agenda."
   (interactive)
   (let* ((buf  "TODO.org")
          (file (concat "~/" buf)))

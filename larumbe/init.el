@@ -1,13 +1,13 @@
 ;;; init.el --- Larumbe's dotemacs file  -*- lexical-binding: t -*-
-
+;;
 ;;; Commentary:
-
+;;
 ;; Copyright (C) 2017-2020 Gonzalo M. Larumbe
-
+;;
 ;; Author: Gonzalo Martinez Larumbe <gonzalomlarumbe@gmail.com>
 ;; Homepage: https://github.com/gmlarumbe/emacsconf
 ;;           https://gmlarumbe.com
-
+;;
 ;;; Code:
 
 ;;; Load Path
