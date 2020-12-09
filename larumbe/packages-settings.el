@@ -224,36 +224,43 @@
               ("n" . next-line)
               ("p" . previous-line))
   :config
-  ;; Redefining MELPA function
-  ;; DANGER: Workaround:
-  ;;   1st - Require package to load funcions and make them available
-  ;;   2nd - Redefine jenkins--get-auth-headers
-  ;;       BUG: Send bug report of `jenkins--get-auth-headers'
-  (defun jenkins--get-auth-headers ()
-    "Helper function to setup auth header for jenkins url call."
-    `(("Content-Type" . "application/x-www-form-urlencoded")
-      ("Authorization" .
-       ,(concat
-         "Basic "
-         (base64-encode-string
-          (concat jenkins-username ":" jenkins-api-token) t)))))
+  ;; INFO: Is relatively straightforward to implement via deferring just the last
+  ;; step (console output retrieval). However, since previous steps such as
+  ;; `jenkins--retrieve-page-as-json' make use of `url-retrieve-synchronously'
+  ;; and use the result all along the code, everything would need to be deferred
+  ;; and rewritten, and that is simply non-viable.
 
-  ;; Redefine to take scons regexps into account for console buffer
-  (defun jenkins-get-console-output (jobname build)
-    "Show the console output for the current job"
+  ;; Conditionally set compilation regexp parsing of Jenkins console output buffers
+  (defvar larumbe/jenkins-compilation-parse-console-output t)
+
+  (defun larumbe/jenkins-get-console-output (jobname build)
+    "Show the console output for the current job."
     (let ((url-request-extra-headers (jenkins--get-auth-headers))
           (console-buffer (get-buffer-create (format "*jenkins-console-%s-%s*" jobname build)))
           (url (format "%sjob/%s/%s/consoleText" (get-jenkins-url) jobname build)))
-      (with-current-buffer console-buffer
-        (erase-buffer)
-        (compilation-mode)
-        (larumbe/scons-error-regexp-set-emacs)
-        (read-only-mode -1)
-        (with-current-buffer (url-retrieve-synchronously url)
-          (append-to-buffer console-buffer (point-min) (point-max))))
-      (pop-to-buffer console-buffer)
-      (read-only-mode 1)
-      (setq truncate-lines t))))
+      (switch-to-buffer console-buffer)
+      ;; Retrieve output only if it wasn't fetched before
+      (when (equal (buffer-size console-buffer) 0)
+        (with-current-buffer console-buffer
+          (setq buffer-read-only nil)
+          (erase-buffer)
+          (insert "Loading console output asynchronously...\n")
+          (when larumbe/jenkins-compilation-parse-console-output
+            (compilation-mode)
+            (larumbe/scons-error-regexp-set-emacs)))
+        (deferred:$
+          (deferred:url-retrieve url)
+          (deferred:nextc it
+            (lambda (buf)
+              (with-current-buffer console-buffer
+                (setq buffer-read-only nil)
+                (erase-buffer))
+              (with-current-buffer buf
+                (append-to-buffer console-buffer (point-min) (point-max))
+                (message "Jenkins job retrieved successfully. Waiting for regexp parsing...")
+                (pop-to-buffer console-buffer)
+                (setq truncate-lines t)
+                (setq buffer-read-only t)))))))))
 
 
 (use-package jpeg-mode
