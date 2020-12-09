@@ -229,6 +229,11 @@
   ;; `jenkins--retrieve-page-as-json' make use of `url-retrieve-synchronously'
   ;; and use the result all along the code, everything would need to be deferred
   ;; and rewritten, and that is simply non-viable.
+  ;; Even with `async', a sentinel-based approach would be used and all the
+  ;; pending code on the call stack would be executed before the callback
+  ;; function, and this code actually depends on the result of the first
+  ;; `url-retrieve', so there is no easy option...
+
 
   ;; Conditionally set compilation regexp parsing of Jenkins console output buffers
   (defvar larumbe/jenkins-compilation-parse-console-output t)
