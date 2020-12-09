@@ -7,9 +7,8 @@
 (use-package vc-dir
   :ensure nil
   :bind (:map vc-dir-mode-map
-              ("e"       . vc-ediff)     ; Overrides vc-find-file, already mapped to `f'
-              ("C-x v p" . svn-propedit) ; dsvn function 'exported' to be used as well with vc-mode
-              )
+              ("e"       . vc-ediff)      ; Overrides vc-find-file, already mapped to `f'
+              ("C-x v p" . svn-propedit)) ; dsvn function 'exported' to be used as well with vc-mode
   :config
   (add-hook 'vc-dir-mode-hook '(lambda () (setq truncate-lines t))))
 
@@ -17,11 +16,10 @@
 ;;; Git
 (use-package magit
   :config
-  (setq magit-diff-refine-hunk t) ; Highlight differences of selected hunk
-  )
+  (setq magit-diff-refine-hunk t)) ; Highlight differences of selected hunk
+
 
 (use-package magit-lfs
-  ;; :pin melpa
   :init
   ;; INFO: Magit Remaps ':' key from `magit-git-command' to `magit-lfs'
   ;; Setting following variable maps it to ";" instead
@@ -34,14 +32,14 @@
   :config
   (autoload 'svn-status "dsvn" "Run `svn status'." t)
   (autoload 'svn-update "dsvn" "Run `svn update'." t)
-
   (define-obsolete-function-alias 'string-to-int 'string-to-number "22.1"))
 
 
 ;;; Custom functions
 ;;;; SVN customizations
 (defun larumbe/update-svn-repos (repo-paths)
-  "Update all svn-repos passed as parameter (to be used in local and cee)"
+  "Update all svn-repos passed as REPO-PATHS parameter.
+Meant to be used in local and remote."
   (while repo-paths
     (async-shell-command
      (concat "svn update " (nth 0 (car repo-paths)))
@@ -53,7 +51,8 @@
 ;;;; Git customizations
 ;;;;; Repo sync
 (defun larumbe/repo-sync-sandboxes (repo-paths)
-  "Update all .repo sandboxes passed as parameter (to be used in local and cee)"
+  "Update all .repo sandboxes passed REPO-PATHS parameters.
+Meant to be used in local and remote."
   (while repo-paths
     (async-shell-command
      (concat "cd " (nth 0 (car repo-paths)) " && repo sync")
@@ -66,6 +65,12 @@
 ;; INFO: Needs to be tested after erasing `repohome.el'
 ;; Ediff/Merge 2 branches manually by doing checkouts
 ;; This is based on old .repohome sync example. Fill with current development repo branches
+;;;;;;; Default repohome values
+(defvar larumbe/gite-repo-path "~/.repohome")
+(defvar larumbe/gite-work-tree "~")
+(defvar larumbe/gite-args (concat "--git-dir=" larumbe/gite-repo-path " --work-tree=" larumbe/gite-work-tree))
+(defvar larumbe/gite-cmd (concat magit-git-executable " " larumbe/gite-args))
+
 ;;;;;;; Variables to check which repos must get synced
 (defvar larumbe/git-available-branches '("hp" "cee" "master"))
 (defvar larumbe/git-branch-a "origin/master")
@@ -85,7 +90,7 @@
 
 ;;;;;; Aux functions
 (defun larumbe/git-find-changed-files-between-branches ()
-  "Returns a list of strings with changed files"
+  "Return a list of strings with changed files."
   (let ((str)
         (buffer-name "*shell-git-diff-output*"))
     (save-window-excursion
@@ -93,32 +98,32 @@
        (concat "git diff --name-status " larumbe/git-branch-a ".." larumbe/git-branch-b)
        buffer-name)
       (switch-to-buffer buffer-name)
-      (replace-regexp "[MAD]\t" "" nil (point-min) (point-max)) ; Modified/Added/Deleted = MAD
-      (setq str (split-string (buffer-string))))))
+      (goto-char (point-min))
+      (while (re-search-forward "[MAD]\t" nil t)  ; Modified/Added/Deleted = MAD
+        (replace-match ""))
+      (setq str (split-string (buffer-string)))
+      str)))
 
 
+;; https://stackoverflow.com/questions/25009453/how-to-delete-a-list-of-elements-from-another-list-in-elisp
+;; It is the same as solution 1 but using delete instead of delq, and printing the value of temp variable at the end
 (defun larumbe/git-exclude-files-before-ediff (merge-files exclude-files)
-  "Remove EXCLUDE-FILES from MERGE-FILES parameter list.
-https://stackoverflow.com/questions/25009453/how-to-delete-a-list-of-elements-from-another-list-in-elisp
-It is the same as solution 1 but using delete instead of delq, and printing the value of temp variable at the end"
+  "Remove EXCLUDE-FILES from MERGE-FILES parameter list."
   (let (temp)
     (setq temp merge-files)
-    (mapcar
+    (mapc
      (lambda (x)
        (setq temp (delete x temp)))
      exclude-files)
-    (setq temp temp) ; Return only last value after all the iterations
-    ))
+    (setq temp temp)))  ; Return only last value after all the iterations
 
 
-(defun larumbe/git-merge-all-files-between-branches (changed-files)
-  "Ediff/Merge every changed file (present in `files' argument)"
+(defun larumbe/git-merge-all-files-between-branches (reva revb changed-files)
+  "Ediff/Merge every file from CHANGED-FILES.
+Compares same file of revisions REVA and REVB using `magit-ediff-compare'"
   (mapcar
    (lambda (file)
-     (magit-ediff-compare
-      larumbe/git-sync-repo-a
-      larumbe/git-sync-repo-b
-      file file))
+     (magit-ediff-compare reva revb file file))
    changed-files))
 
 
@@ -149,7 +154,7 @@ It is the same as solution 1 but using delete instead of delq, and printing the 
 
 
 (defun larumbe/git-manual-branch-ediff-merge ()
-  "Ediff manual inspection/merging on every file that has changed between two branches"
+  "Ediff manual inspection/merging on every file that has changed between two branches."
   (interactive)
   (let (changed-files)
     ;; First part is to find which files have changed between both branches
@@ -160,7 +165,9 @@ It is the same as solution 1 but using delete instead of delq, and printing the 
            changed-files
            larumbe/git-branch-files-to-exclude-from-merge))
     ;; Last step would be to merge manually these files
-    (larumbe/git-merge-all-files-between-branches changed-files)))
+    (larumbe/git-merge-all-files-between-branches larumbe/git-branch-a
+                                                  larumbe/git-branch-b
+                                                  changed-files)))
 
 
 ;;;; Repohome
@@ -171,13 +178,13 @@ since it needs to be set for the whole magit session, not only for the command."
   (interactive)
   (larumbe/repohome-reset-git-args)
   (setq magit-git-global-arguments (append magit-git-global-arguments (split-string larumbe/gite-args))) ; Append `gite' args
-  (magit-status larumbe/gite-work-tree)
+  (magit-status-setup-buffer larumbe/gite-work-tree)
   (message "Gite arguments set..."))
 
 
 ;; https://emacs.stackexchange.com/questions/3022/reset-custom-variable-to-default-value-programmatically
 (defun larumbe/repohome-reset-git-args ()
-  "Resets git global arguments to switch between `gite' workspace and the rest"
+  "Reset git global arguments to switch between `gite' workspace and the rest."
   (interactive)
   (setq magit-git-global-arguments (eval (car (get 'magit-git-global-arguments 'standard-value))))
   (message "Git arguments reset!"))
