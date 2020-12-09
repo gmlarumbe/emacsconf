@@ -22,7 +22,10 @@
   :preface
   ;; Only included to avoid flycheck warnings, since `helm-M-x' is an autoload
   ;; for the files that declare the otherwise free variables.
-  (require 'helm-mode)
+  (require 'helm-occur)
+
+  :defines (helm-completing-read-handlers-alist)
+  :commands (helm-autoresize-mode helm-set-local-variable larumbe/helm-occur)
 
   :bind (("C-x c /" . helm-find) ; Enable C-x c prefix commands
          ("C-x c p" . helm-list-emacs-process)
@@ -34,6 +37,7 @@
 
   (add-to-list 'helm-completing-read-handlers-alist '((switch-to-buffer . ido)
                                                       (kill-buffer      . ido)))
+
   (helm-mode 1)
   (helm-autoresize-mode 1)
 
@@ -100,6 +104,7 @@ If called with PREFIX, search for string and no case sensitive."
 ;; `helm-navi' loads `navi-mode', and this last one loads `outshine'
 (use-package helm-navi
   :diminish outshine-mode outline-minor-mode
+  :commands (larumbe/helm-navi--get-candidates-in-buffer larumbe/helm-navi--get-regexp)
   :config
   ;; Function overriding:
   ;; BUG: Issue with helm-navi in last MELPA package
