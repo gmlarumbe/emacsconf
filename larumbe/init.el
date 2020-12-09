@@ -49,6 +49,8 @@
 (require 'org-settings)
 (require 'version-control-settings)
 (require 'compilation-settings)
+(require 'fpga-projects-settings)
+(require 'term-settings)
 (require 'programming-settings)
 (require 'exwm-settings)
 
