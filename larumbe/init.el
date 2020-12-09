@@ -35,32 +35,18 @@
 (eval-when-compile
   (require 'use-package))
 (setq use-package-always-ensure t) ; Force download if not available. INFO: Set to nil for built-in packages.
-(use-package gnu-elpa-keyring-update) ; Update elpa keys to avoid signature issues
-
-
-;;; Explicit dependencies
-(use-package f)
-(use-package with-editor)
-(use-package elmacro
-  :diminish)
-(use-package outshine
-  :config
-  ;; Do not include outshine tags at imenu
-  (setq outshine-imenu-show-headlines-p nil))
-(use-package navi-mode)
-
 
 
 ;;; Requires
 (require 'config-basic)
+(require 'packages-settings)
 (require 'custom-functions)
 (require 'macros)
 (require 'helm-settings)
 (require 'projectile-settings)
+(require 'ggtags-settings)
 (require 'dired-settings)
 (require 'org-settings)
-(require 'ggtags-settings)
-(require 'packages-settings)
 (require 'version-control-settings)
 (require 'compilation-settings)
 (require 'programming-settings)

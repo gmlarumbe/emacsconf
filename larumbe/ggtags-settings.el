@@ -3,9 +3,14 @@
 ;;; Code:
 
 
+(require 'f)
+(require 'ag)
+(require 'custom-functions)
+
 ;;; Use-package config
 (use-package ggtags
   :diminish
+  :commands (ggtags-create-tags ggtags-current-project-root)
   :bind (:map ggtags-navigation-map
               ("M-o"     . nil)
               ("C-c C-k" . nil)         ; EXWM character mode
@@ -94,7 +99,7 @@ available at GTAGSCONF globalrc file."
 (defvar larumbe/ag-use-input-regexps nil)
 (defvar larumbe/hdl-source-extension-regex "\\(.sv$\\|.v$\\|.svh$\\|.vh$\\|.vhd$\\)")
 
-(defun larumbe/set-active-project-xpr ()
+(defun larumbe/project-set-active-xpr ()
   "Retrieve project list and set variables accordingly."
   (let ((project)
         (files-list))
@@ -134,11 +139,17 @@ Avoid creating GTAGS for every project included inside a repo folder"
     (insert-file-contents (concat larumbe/project-xpr-dir "/" larumbe/project-xpr-file))
     ;; Start Regexp replacement for file
     (keep-lines "<.*File Path=.*>" (point-min) (point-max))
-    (replace-regexp "<.*File Path=\"" "" nil (point-min) (point-max))
-    (replace-regexp "\">" "" nil (point-min) (point-max))
-    (replace-string "$PPRDIR" larumbe/project-xpr-dir nil (point-min) (point-max))
+    (goto-char (point-min))
+    (while (re-search-forward "<.*File Path=\"" nil t)
+      (replace-match ""))
+    (goto-char (point-min))
+    (while (re-search-forward "\">" nil t)
+      (replace-match ""))
+    (goto-char (point-min))
+    (while (search-forward "$PPRDIR" nil t)
+      (replace-match larumbe/project-xpr-dir))
     (delete-whitespace-rectangle (point-min) (point-max))
-    (larumbe/project-convert-xci-to-v-and-downcase)                     ; Replace xci by corresponding .v files (if existing)
+    (larumbe/project-convert-xci-to-v-and-downcase)                         ; Replace xci by corresponding .v files (if existing)
     (keep-lines larumbe/hdl-source-extension-regex (point-min) (point-max)) ; Remove any non verilog/vhdl file (such as waveconfig, verilog templates, etc...)
     (larumbe/buffer-expand-filenames)
     (write-file larumbe/project-gtags-file)))
@@ -149,12 +160,11 @@ Avoid creating GTAGS for every project included inside a repo folder"
   "Create `gtags.files' file for a specific project.
 Avoid creating GTAGS for every project included inside a repo folder"
   (interactive)
-  (larumbe/set-active-project-xpr)
+  (larumbe/project-set-active-xpr)
   (save-window-excursion
     (larumbe/project-files-from-xpr)
     (ggtags-create-tags larumbe/project-gtags-dirs-directory)
-    (larumbe/project-ag-files-create) ; Create regexps for AG top-module instance searching
-    ))
+    (larumbe/project-ag-files-create))) ; Create regexps for AG top-module instance searching
 
 
 ;;; Quartus
@@ -181,33 +191,35 @@ Global needs the file name, hence this function"
   (save-excursion
     (mapcar
      (lambda (x)
-       (end-of-buffer)
+       (goto-char (point-max))
        (insert (concat x "\n")))
      (directory-files dir t))))
 
 
 (defun larumbe/project-find-repeated-included-files ()
-  "Previous append function makes duplicates if files and dirs were included.
-This function checks if there is a repeated file for GTAGS not to have a duplicate tag.
-Checks Works in current buffer"
+  "Find repeated files in current buffer (meant for gtags.files).
+There are duplicates in `larumbe/project-append-files-from-dir' if files and
+dirs are included.  This function checks if there is a repeated file in
+gtags.files for GTAGS not to have a duplicate tag.
+Checks Works in current buffer."
   (let ((file-to-check))
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (while (< (point) (point-max))
       (save-excursion
         (setq file-to-check (concat (file-name-base (thing-at-point 'filename)) "." (file-name-extension (thing-at-point 'filename))))
         (move-end-of-line 1)
-        (while (search-forward-regexp (concat file-to-check "$") nil t) ; If file is included more than once we keep only the first one
+        (while (re-search-forward (concat file-to-check "$") nil t) ; If file is included more than once we keep only the first one
           (beginning-of-line)
           (kill-line 1)))
-      (next-line))))
+      (forward-line))))
 
 
-;; Retrieve project list and set variables accordingly (copied from `larumbe/set-active-project-xpr' for Vivado xpr)
 (defun larumbe/project-set-active-project-altera ()
+  "Retrieve project list and set variables accordingly.
+Copied from `larumbe/project-set-active-xpr' for Vivado xpr."
   (interactive)
   (let ((project)
-        (files-list)
-        (gtags-args))
+        (files-list))
     ;; Get Project name
     (setq project (completing-read "Select project: " (mapcar 'car larumbe/quartus-projects))) ;; Read previous variable and get list of first element of each assoc list
     (setq files-list (cdr (assoc project larumbe/quartus-projects)))
@@ -215,14 +227,13 @@ Checks Works in current buffer"
     (setq larumbe/project-altera-dir                  (nth 0 files-list))
     (setq larumbe/project-altera-file                 (nth 1 files-list))
     (setq larumbe/project-altera-gtags-dirs-directory (nth 2 files-list))
-    (setq larumbe/project-altera-gtags-dirs-file      (nth 3 files-list))
-    ;; Gtags creation update (For ONLY verilog file parsing)
-    ))
+    (setq larumbe/project-altera-gtags-dirs-file      (nth 3 files-list))))
 
 
 (defun larumbe/project-tags-altera ()
-  "Create `gtags.files' file for a specific Altera project from `files_and_libraries.tcl' file.
-Avoid creating GTAGS for every project included inside a repo folder"
+  "Create `gtags.files' file for a specific Altera project.
+Based on a search from `files_and_libraries.tcl' file.
+Avoid creating GTAGS for every project included inside a sandbox."
   (interactive)
   ;; First thing is to set project and paths
   (larumbe/project-set-active-project-altera)
@@ -235,26 +246,33 @@ Avoid creating GTAGS for every project included inside a repo folder"
       (insert-file-contents (concat larumbe/project-altera-dir "/" larumbe/project-altera-file))
       ;; Start Regexp replacement for file
       (keep-lines altera-tcl-file-regexp (point-min) (point-max)) ; Get only files
-      (flush-lines "^#" (point-min) (point-max)) ; Remove comments
+      (goto-char (point-min))
+      (while (re-search-forward "^#" nil t)   ; Remove comments
+        (beginning-of-line)
+        (kill-line 1))
       ;; Replace files
-      (replace-regexp
-       (concat "set_global_assignment -name " altera-tcl-file-regexp-file)
-       (concat larumbe/project-altera-dir "/")
-       nil (point-min) (point-max))
+      (goto-char (point-min))
+      (while (re-search-forward (concat "set_global_assignment -name " altera-tcl-file-regexp-file) nil t)
+        (replace-match (concat larumbe/project-altera-dir "/")))
       ;; Replace SEARCH_PATH dirs
-      (beginning-of-buffer)
-      (while (search-forward-regexp altera-tcl-file-regexp-dir nil t)
+      (goto-char (point-min))
+      (while (re-search-forward altera-tcl-file-regexp-dir nil t)
         (kill-line 0) ; Kill until the beginning of line
         (insert (concat larumbe/project-altera-dir "/"))
         (larumbe/project-append-files-from-dir (thing-at-point 'filename)))
       ;; Replace $env(ARCHONS_PATH) dirs
-      (beginning-of-buffer)
-      (while (search-forward-regexp altera-tcl-env-archons-regex nil t)
+      (goto-char (point-min))
+      (while (re-search-forward altera-tcl-env-archons-regex nil t)
         (kill-line 0) ; Kill until the beginning of line
         (insert altera-tcl-env-archons-path))
       ;; Cleanup file
-      (replace-regexp " +" "" nil (point-min) (point-max)) ; Delete whitespaces in PATHs
-      (flush-lines "\\.$" (point-min) (point-max)) ; Remove search paths with previous or current dir
+      (goto-char (point-min))
+      (while (re-search-forward " +" nil t)
+        (replace-match "")) ; Delete whitespaces in PATHs
+      (goto-char (point-min))
+      (while (re-search-forward "\\.$" nil t) ; Remove search paths with previous or current dir
+        (beginning-of-line)                   ; Equivalent to `flush-lines' but
+        (kill-line 1))                        ; for non-interactive use
       (larumbe/project-find-repeated-included-files) ; Remove repeated files (due to previous directory expansion)
       (write-file (concat larumbe/project-altera-gtags-dirs-directory "/" larumbe/project-altera-gtags-dirs-file))))
   ;; Create Tags from gtags.files
@@ -265,9 +283,10 @@ Avoid creating GTAGS for every project included inside a repo folder"
 
 ;;; AG based functions (using ag-files gtags based file)
 (defun larumbe/project-ag-files-create (&optional universal-arg)
-  "Creates `ag-files' file for further processing to get regexps.
-When called interactively, just use LFP project directory `gtags.files' to create `ag-files'
-If called with a prefix, then use `gtags.files' from current directory (use with dired)"
+  "Create `ag-files' file for further processing to get regexps.
+When called interactively, just use LFP project directory `gtags.files' to
+create `ag-files'.  If called with a UNIVERSAL-ARG, then use `gtags.files' from
+current directory (use with dired)"
   (interactive "P")
   (let ((gtags-files-name (concat larumbe/project-gtags-dirs-directory "/" larumbe/project-gtags-dirs-file))
         (ag-files-name    (concat larumbe/project-gtags-dirs-directory "/" larumbe/project-gtags-ag-files-filename))
@@ -278,22 +297,28 @@ If called with a prefix, then use `gtags.files' from current directory (use with
       (setq ag-files-dir     (expand-file-name default-directory)))
     (with-temp-buffer
       (insert-file-contents gtags-files-name)
-      (replace-regexp ag-files-dir "" nil (point-min) (point-max))
+      (goto-char (point-min))
+      (while (re-search-forward ag-files-dir nil t)
+        (replace-match ""))
       (write-file ag-files-name nil))))
 
 
 (defun larumbe/project-ag-regexps ()
-  "Returns a list for the input of the -G argument of the ag searcher.
+  "Return a list for the input of the -G argument of the ag searcher.
 This allows for instance detection at a specified set of files (from project gtags.files)"
   (let ((ag-files-name (concat (ggtags-current-project-root) "/" larumbe/project-gtags-ag-files-filename)))
     (with-temp-buffer
       (insert-file-contents ag-files-name)
-      (replace-regexp "\n" "|" nil (point-min) (point-max))
+      (goto-char (point-min))
+      (while (re-search-forward "\n" nil t)
+        (replace-match "|"))
       (buffer-string))))
 
 
-(defun larumbe/lfp-clean-project-fic-keywords-ag-files ()
-  "Perform a `ag-regexp' of `fic-mode' highlighted keywords in order to check pending project actions (reads from ag_files for input file filtering)
+(defun larumbe/project-clean-fic-keywords-ag-files ()
+  "Perform an `ag-regexp' of `fic-mode' highlighted keywords.
+Do it in order to check pending project actions.
+Reads from ag_files for input file filtering.
 An alternative manual method would be to use a (helm-projectile-grep)"
   (interactive)
   (let ((kwd)
@@ -311,7 +336,7 @@ An alternative manual method would be to use a (helm-projectile-grep)"
 ;;; Useful for input to Verilog-Perl extract-hierarchy
 ;; `gtags.files' can be created manually by opening `source_files.tcl' and executing `larumbe/project-files-from-moduledef'
 (defun larumbe/project-files-from-moduledef ()
-  "Get into file all the sources present in `source_list.tcl' created by SCons from moduledef.py"
+  "Get into file all the sources present in `source_list.tcl' created by SCons from moduledef.py."
   (interactive)
   (let ((sources-file (buffer-file-name))
         (output-file (concat default-directory "gtags.files")))
