@@ -2,6 +2,9 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'ag)
+(require 'ediff-wind)
+
 
 ;;; Common configuration
 (use-package fic-mode
@@ -21,7 +24,6 @@ in order to check pending project actions. "
           )
       (setq kwd (completing-read "Select keyword: " 'fic-highlighted-words))
       (setq path (read-directory-name "Directory: "))
-      ;; (setq regex (completing-read "Select file regex: " 'regex))
       (setq files (completing-read "Select file regex: " '("(System)Verilog" "Python" "elisp")))
       (pcase files
         ("(System)Verilog" (setq regex ".[s]?v[h]?$")) ; +Headers
@@ -35,6 +37,7 @@ in order to check pending project actions. "
 
 
 (use-package flycheck
+  :commands (flycheck-display-error-messages-unless-error-list)
   :diminish
   :config
   (setq flycheck-display-errors-function ; Seems it shows full error if multiline
@@ -49,10 +52,9 @@ in order to check pending project actions. "
     (interactive)
     (if (bound-and-true-p flyspell-mode)
         (call-interactively #'flyspell-mode nil)
-      (progn
-        (call-interactively #'flyspell-mode 1)
-        (call-interactively #'flyspell-prog-mode 1)
-        (call-interactively #'flyspell-buffer)))))
+      (call-interactively #'flyspell-mode 1)
+      (call-interactively #'flyspell-prog-mode 1)
+      (call-interactively #'flyspell-buffer))))
 
 
 (use-package hydra
@@ -66,6 +68,7 @@ in order to check pending project actions. "
 
 
 (use-package yasnippet
+  :commands (yas-expand yas-reload-all)
   :diminish yasnippet yas-minor-mode
   :config
   (use-package yasnippet-snippets)                      ; Install MELPA snippets database
@@ -94,7 +97,6 @@ in order to check pending project actions. "
               ("RET" . ac-complete))
   :config
   (setq ac-delay 1.3)
-  (setq ac-etags-requires 1)
   ;; INFO: Auto-complete has 3 mode-maps: https://emacs.stackexchange.com/questions/3958/remove-tab-trigger-from-auto-complete
   (define-key ac-mode-map       (kbd "TAB") nil)
   (define-key ac-completing-map (kbd "TAB") nil)
@@ -126,7 +128,8 @@ in order to check pending project actions. "
 (use-package rainbow-delimiters)
 
 
-(use-package wide-column)
+(use-package wide-column
+  :commands (wide-column-mode))
 
 
 (use-package prog-mode
