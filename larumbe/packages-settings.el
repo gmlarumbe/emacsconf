@@ -14,21 +14,6 @@
   ;; Do not include outshine tags at imenu
   (setq outshine-imenu-show-headlines-p nil))
 (use-package navi-mode)
-(use-package ag
-  :config
-  (setq ag-arguments           ; Fetched from modi verilog config
-        '("--nogroup"          ; mandatory argument for ag.el as per https://github.com/Wilfred/ag.el/issues/41
-          "--skip-vcs-ignores" ; Ignore files/dirs ONLY from `.ignore'
-          "--numbers"          ; Line numbers
-          "--smart-case"
-          ;; "--one-device"       ; Do not cross mounts when searching
-          "--follow"           ; Follow symlinks
-          "--ignore" "#*#"     ; Adding "*#*#" or "#*#" to .ignore does not work for ag (works for rg)
-          ;; Added by Larumbe
-          "--ignore" "*~"
-          "--stats"))
-  (setq ag-reuse-buffers t)
-  (setq ag-reuse-window t))
 
 (use-package ido
   :config

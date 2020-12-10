@@ -2,9 +2,9 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'ag)
+(require 'ag-settings)
+(require 'ggtags-settings)
 (require 'ediff-wind)
-
 
 ;;; Common configuration
 (use-package fic-mode
@@ -16,22 +16,17 @@
     "Perform an `ag-regexp' of `fic-mode' highlighted keywords in selected DIR
 in order to check pending project actions. "
     (interactive)
-    (let ((kwd)
-          (path)
-          (ag-arguments ag-arguments) ; Save the global value of `ag-arguments' (copied from modi)
-          (regex)
-          (files)
-          )
-      (setq kwd (completing-read "Select keyword: " 'fic-highlighted-words))
-      (setq path (read-directory-name "Directory: "))
-      (setq files (completing-read "Select file regex: " '("(System)Verilog" "Python" "elisp")))
+    (let ((kwd (completing-read "Select keyword: " 'fic-highlighted-words))
+          (path (read-directory-name "Directory: "))
+          (files (completing-read "Select file regex: " '("(System)Verilog" "Python" "elisp")))
+          (ag-arguments ag-arguments) ; Save the global value of `ag-arguments'
+          (regex))
       (pcase files
         ("(System)Verilog" (setq regex ".[s]?v[h]?$")) ; +Headers
         ("Python"          (setq regex ".py$"))
-        ("elisp"           (setq regex ".el$"))
-        )
-      ;; Copied from AG for `modi/verilog-find-parent-module'
-      (add-to-list 'ag-arguments "-G" :append)
+        ("elisp"           (setq regex ".el$")))
+      ;; ag glob search
+      (add-to-list 'ag-arguments "-G"  :append)
       (add-to-list 'ag-arguments regex :append)
       (ag-regexp kwd path))))
 
@@ -50,30 +45,29 @@ in order to check pending project actions. "
   (defun flyspell-toggle ()
     "Toggle flyspell mode on current buffer."
     (interactive)
-    (if (bound-and-true-p flyspell-mode)
-        (call-interactively #'flyspell-mode nil)
-      (call-interactively #'flyspell-mode 1)
-      (call-interactively #'flyspell-prog-mode 1)
-      (call-interactively #'flyspell-buffer))))
+    (if flyspell-mode
+        (progn
+          (flyspell-mode -1)
+          (message "Flyspell disabled..."))
+      (flyspell-mode 1)
+      (message "Flyspell enabled..."))))
 
 
 (use-package hydra
   :config
-  (defun larumbe/hydra-yasnippet (snippet)
-    "Function/Macro to integrate YASnippet within Hydra"
-    (interactive)
-    (progn
+  (use-package yasnippet
+    :commands (yas-expand yas-reload-all)
+    :diminish yasnippet yas-minor-mode
+    :config
+    (use-package yasnippet-snippets)                      ; Install MELPA snippets database
+    (add-to-list 'yas-snippet-dirs "~/.elisp/snippets")   ; Add snippets fetched from GitHub and customized ones. DO NOT Append to give them more precendence in case of collision
+    (yas-reload-all)
+
+    (defun larumbe/hydra-yasnippet (snippet)
+      "Function/Macro to integrate YASnippet within Hydra"
+      (interactive)
       (insert snippet)
       (yas-expand))))
-
-
-(use-package yasnippet
-  :commands (yas-expand yas-reload-all)
-  :diminish yasnippet yas-minor-mode
-  :config
-  (use-package yasnippet-snippets)                      ; Install MELPA snippets database
-  (add-to-list 'yas-snippet-dirs "~/.elisp/snippets")   ; Add snippets fetched from GitHub and customized ones. DO NOT Append to give them more precendence in case of collision
-  (yas-reload-all))
 
 
 (use-package diff-mode
@@ -84,7 +78,6 @@ in order to check pending project actions. "
   :config
   (setq ediff-split-window-function #'split-window-horizontally)
   (setq ediff-window-setup-function #'ediff-setup-windows-plain))
-
 
 
 (use-package auto-complete
@@ -102,6 +95,7 @@ in order to check pending project actions. "
   (define-key ac-completing-map (kbd "TAB") nil)
   (define-key ac-completing-map [tab] nil)
 
+  ;; AC-Sources
   ;; Default sources will be `ac-source-words-in-same-mode-buffers'
 
   ;; Provides `ac-source-gtags'
@@ -134,19 +128,23 @@ in order to check pending project actions. "
 
 (use-package prog-mode
   :ensure nil
+  :commands (larumbe/ggtags-mode)
   :bind (:map prog-mode-map
               ("C-<tab>" . hs-toggle-hiding)
               ("C-c C-n" . align-regexp))
-  :hook ((prog-mode . my-prog-mode-hook))
+  :hook ((prog-mode . my-prog-mode-hook)
+         (prog-mode . larumbe/prog-mode-keys))
   :config
-  (defun my-prog-mode-hook ()
-    "Basic Hook for derived programming modes."
+  (defun larumbe/prog-mode-keys ()
+    "Wrapper for flycheck-mode keybindings based on current major-mode"
     ;; Verilog has its own flycheck-mode wrapper function
     (unless (or (string-equal major-mode "verilog-mode")
                 (string-equal major-mode "emacs-lisp-mode"))
-      (local-set-key (kbd "C-c C-f") #'flycheck-mode))
-    ;; Customizations
-    (ggtags-mode         1)
+      (local-set-key (kbd "C-c C-f") #'flycheck-mode)))
+
+  (defun my-prog-mode-hook ()
+    "Basic Hook for derived programming modes."
+    (larumbe/ggtags-mode 1)
     (projectile-mode     1)
     (auto-complete-mode  1)
     (show-paren-mode     1)
