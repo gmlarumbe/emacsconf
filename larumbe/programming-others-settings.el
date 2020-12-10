@@ -2,10 +2,12 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'auto-complete)
 
 ;;;; XML
 (use-package nxml-mode
   :ensure nil
+  :after (auto-complete)
   :hook ((nxml-mode . my-xml-mode-hook)
          (nxml-mode . my-prog-mode-hook)) ; Since it is not a child of prog-mode, requires common configuration settings
   :config
@@ -56,7 +58,6 @@
 
 
 
-
 ;;;; MARKDOWN
 (use-package markdown-mode
   :config
@@ -77,35 +78,45 @@
   :mode (("\\.mf\\'" . makefile-mode))
   :ensure nil)
 
+
 ;;;; PERL
 (defalias 'perl-mode 'cperl-mode)
+
 
 ;;;; JSON
 (use-package json-mode)
 
+
 ;;;; GO!
 (use-package go-mode)
+
 
 ;;;; MATLAB
 (use-package matlab
   :ensure matlab-mode
+  :defines (matlab-indent-function
+            matlab-shell-command)
   :mode (("\\.m\\'" . matlab-mode))
   :config
   (setq matlab-indent-function t)
   (setq matlab-shell-command "matlab"))
 
+
 ;;;; NASL
 (use-package nasl-mode
   :load-path "~/.elisp/download/")
+
 
 ;;;; RDL
 (use-package rdl-mode
   :load-path "~/.elisp/download/")
 
+
 ;;;; Yocto
 (use-package mmm-mode) ; Multi-major-mode
 (use-package bitbake)  ; Recipes
 (use-package dts-mode) ; Device tree
+
 
 ;;;; PHP
 (use-package php-mode
@@ -114,6 +125,7 @@
         ;; Overrides `c-backward-conditional' but this is only used for interactive testing of PHP functions
         ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)))
 
+
 ;;;; AHK
 (use-package ahk-mode
   ;; DANGER: Even though it is definde as prog-mode derived, hooks are not automatically loaded
@@ -121,11 +133,15 @@
   :config
   (setq ahk-indentation 2))
 
+
 ;;;; CRON
 (use-package crontab-mode)
 
+
 ;;;; YAML
 (use-package yaml-mode)
+
+
 
 
 (provide 'programming-others-settings)
