@@ -113,10 +113,13 @@ therefore not detecting the proper module but the previous one."
 
 
 (defun larumbe/verilog-align-parameters-current-module (&optional module)
-  "Align parenthesis PARAMETERS of current module, the one pointed to by `which-func' (not instant).
-It will align parameters contained between module name and instance name.
+  "Align parameters of current module, the one pointed to by `which-func'.
 
-For use programatically, an argument needs to be specified as current-module is determined by `which-func' and that takes time,
+Alignment is performed between module name and instance name.
+
+If used programatically perform a backwards regexp-search of MODULE
+and start indentation at that point.
+This is because current-module is determined by `which-func' and it takes time,
 therefore not detecting the proper module but the previous one."
   (interactive)
   (let ((case-fold-search verilog-case-fold)
@@ -130,7 +133,7 @@ therefore not detecting the proper module but the previous one."
       (setq current-module modi/verilog-which-func-xtra)) ; Find module header (modi/verilog-which-func-xtra)
     (save-excursion
       (re-search-backward (concat "\\_<" current-module "\\_>"))
-      (next-line 1) ; Assumes ports start at next line from instance name
+      (forward-line) ; Assumes ports start at next line from instance name
       (setq beg (point))
       (setq end (re-search-forward current-instance)))
     (align-regexp beg end "\\(\\s-*\\)(" 1 1 nil) ; Requires one capture group: https://stackoverflow.com/questions/14583702/align-regexp-from-emacs-lisp
@@ -138,8 +141,10 @@ therefore not detecting the proper module but the previous one."
 
 
 (defun larumbe/verilog-align-ports-current-module ()
-  "Align parenthesis PORTS of current module, the one pointed to by `modi/verilog-find-module-instance'
-It will only align ports, i.e., between instance name and end of instantiation."
+  "Align parenthesis ports of current module.
+Current module is the one pointed to by `modi/verilog-find-module-instance'.
+
+Alignment is performed between instance name and end of instantiation."
   (interactive)
   (let ((case-fold-search verilog-case-fold)
         (current-instance)
@@ -148,7 +153,7 @@ It will only align ports, i.e., between instance name and end of instantiation."
     (setq current-instance (substring-no-properties (modi/verilog-find-module-instance)))
     (save-excursion
       (re-search-backward (concat "\\_<" current-instance "\\_>"))
-      (next-line 1) ; Assumes ports start at next line from instance name
+      (forward-line) ; Assumes ports start at next line from instance name
       (setq beg (point))
       (setq end (re-search-forward ");")))
     (align-regexp beg end "\\(\\s-*\\)(" 1 1 nil) ; Requires one capture group: https://stackoverflow.com/questions/14583702/align-regexp-from-emacs-lisp
@@ -156,7 +161,7 @@ It will only align ports, i.e., between instance name and end of instantiation."
 
 
 (defun larumbe/verilog-beautify-current-module ()
-  "Beautify current module (open parenthesis +indent + align)"
+  "Beautify current module (open parenthesis, indent and align)."
   (interactive)
   (save-excursion
     (larumbe/verilog-indent-current-module)
@@ -170,9 +175,13 @@ It will only align ports, i.e., between instance name and end of instantiation."
 (defvar larumbe/connect-disconnect-not-found "No port detected at current line")
 
 (defun larumbe/verilog-toggle-connect-port (force-connect)
-  "Connect/disconnect port @ current line (regexp based).
-If regexp detects that port is connected, then disconnect it. The other way round works the same.
-If called with universal arg, `force-connect' parameter will force connection of current port, no matter it is connected/disconnected"
+  "Toggle connect/disconnect port at current line.
+
+If regexp detects that port is connected, then disconnect it.
+The other way round works the same.
+
+If called with universal arg, FORCE-CONNECT parameter will force connection
+of current port, no matter it is connected/disconnected"
   (interactive "P")
   (let* ((case-fold-search verilog-case-fold)
          (port-regex larumbe/connect-disconnect-port-re)
@@ -193,14 +202,15 @@ If called with universal arg, `force-connect' parameter will force connection of
             (progn ; Else disconnect
               (replace-match (concat "\\1.\\2\\3\(" sig "\)") t)))
           (goto-char start)
-          (next-line 1))
+          (forward-line))
       (progn ; No port found
         (goto-char start)
         (message larumbe/connect-disconnect-not-found)))))
 
 
 (defun larumbe/verilog-connect-ports-recursively ()
-  "Ask recursively for ports to be connected until no port is found at current line"
+  "Connect ports of current instance recursively.
+Ask for ports to be connected until no port is found at current line."
   (interactive)
   (while (not (string-equal (larumbe/verilog-toggle-connect-port t) larumbe/connect-disconnect-not-found))))
 
@@ -213,9 +223,9 @@ If called with universal arg, `force-connect' parameter will force connection of
 ;; Associated thread: https://emacs.stackexchange.com/questions/13254/find-external-definition-with-gtags-or-ggtags
 (defun larumbe/gtags-verilog-files-pwd-recursive (&optional exclude-re dir append)
   "Generate gtags.files for current directory, unless optional DIR is set.
-If optional EXCLUDE-RE is set, delete paths with that regexp from generated file.
+If EXCLUDE-RE is set, delete paths with that regexp from generated file.
 If DIR is not specified, use current-directory.
-If APPEND is set, append directory files to already existing tags file. "
+If APPEND is set, append directory files to already existing tags file."
   (let (tags-dir)
     (if dir
         (setq tags-dir dir)
@@ -225,7 +235,8 @@ If APPEND is set, append directory files to already existing tags file. "
 
 (defun larumbe/ggtags-create-verilog-tags-recursive ()
   "Create Verilog gtags.files for current directory.
-Do not include SCons generated '*_targets' folders. "
+
+INFO: Exclude custom '*_targets' folders."
   (interactive)
   (let ((exclude-re (concat (projectile-project-root) "[^/]+_targets")))
     (shell-command "touch GTAGS")
@@ -234,9 +245,9 @@ Do not include SCons generated '*_targets' folders. "
 
 
 ;;; Misc
+;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
 (defun larumbe/verilog-dirs-and-pkgs-of-open-buffers ()
-  "Base content fetched from: https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
-Returns a list of directories from current verilog opened files.
+  "Return a list of directories from current verilog opened files.
 It also updates currently opened SystemVerilog packages."
   (let ((verilog-opened-dirs)
         (verilog-opened-pkgs)
@@ -244,11 +255,11 @@ It also updates currently opened SystemVerilog packages."
     (dolist ($buf (buffer-list (current-buffer)))
       (with-current-buffer $buf
         (when (string-equal major-mode "verilog-mode")
-          (add-to-list 'verilog-opened-dirs default-directory)
+          (push default-directory 'verilog-opened-dirs)
           (save-excursion
-            (beginning-of-buffer)
+            (goto-char (point-min))
             (when (re-search-forward pkg-regexp nil t)
-              (add-to-list 'verilog-opened-pkgs (buffer-file-name)))))))
+              (push 'verilog-opened-dirs (buffer-file-name)))))))
     `(,verilog-opened-dirs ,verilog-opened-pkgs)))  ; Return list of dirs and packages
 
 
