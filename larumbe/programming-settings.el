@@ -160,9 +160,9 @@ in order to check pending project actions. "
 
 
 ;;; Programming Languages Setups
+(require 'hdl-font-lock)
 (require 'verilog-settings)
 (require 'vhdl-settings)
-(require 'hdl-font-lock)
 (require 'python-settings)
 (require 'elisp-settings)
 (require 'sh-script-settings)

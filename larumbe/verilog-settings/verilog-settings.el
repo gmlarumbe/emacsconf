@@ -129,12 +129,11 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
     (key-chord-mode 1)
     (larumbe/verilog-find-semicolon-in-instance-comments))
 
-  (require 'verilog-tools)
+  (require 'verilog-utils)
   (require 'verilog-templates)
   (require 'verilog-overrides)
   (require 'verilog-navigation)
   (require 'verilog-imenu)
-  (require 'verilog-indentation)
   (require 'verilog-vhier)
   (require 'verilog-flycheck))
 

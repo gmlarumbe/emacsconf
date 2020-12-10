@@ -1,9 +1,93 @@
-;;; verilog-indentation.el --- Verilog Indentation  -*- lexical-binding: t -*-
+;;; verilog-utils.el --- Verilog Utils  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;; Code:
 
+;;; Lint, Compilation and Simulation Tools
+;; INFO: Discarding the following `verilog-set-compile-command' variables:
+;; - `verilog-linter:' replaced by FlyCheck with opened buffers as additional arguments, plus custom project parsing functions
+;; - `verilog-simulator': replaced by XSim and ncsim sim project funcions
+;; - `verilog-compiler': replaced by Vivado elaboration/synthesis project functions
+;; - `verilog-preprocessor': `larumbe/verilog-preprocess' wrapper of verilog-mode internal function' does the trick
+;; - `verilog-coverage' still not implemented as there are not many free alternatives...
 
-;;; Custom indentation/alignment and other functions
+
+;;;; Preprocessor
+(defun larumbe/verilog-preprocess ()
+  "Allow choosing between programs with a wrapper of `verilog-preprocess'.
+All the libraries/incdirs are computed internally at `verilog-mode' via
+`verilog-expand'.
+INFO: `iverilog' command syntax requires writing to an output file (defaults to a.out)."
+  (interactive)
+  (let (iver-out-file)
+    (pcase (completing-read "Select tool: " '("verilator" "vppreproc" "iverilog"))
+      ("verilator" (setq verilog-preprocessor "verilator -E __FLAGS__ __FILE__"))
+      ("vppreproc" (setq verilog-preprocessor "vppreproc __FLAGS__ __FILE__"))
+      ("iverilog"  (progn (setq iver-out-file (read-string "Output filename: " (concat (file-title) "_pp.sv")))
+                          (setq verilog-preprocessor (concat "iverilog -E -o" iver-out-file " __FILE__ __FLAGS__")))))
+    (verilog-preprocess)))
+
+
+;;;; Iverilog/verilator Makefile development
+(defun larumbe/verilog-makefile-create ()
+  "Create Iverilog/verilator Yasnippet based Makefile.
+Create it only if in a projectile project and the Makefile does not exist already."
+  (interactive)
+  (let (file)
+    (if (projectile-project-p)
+        (if (file-exists-p (setq file (concat (projectile-project-root) "Makefile")))
+            (error "File %s already exists!" file)
+          (progn
+            (find-file file)
+            (larumbe/hydra-yasnippet "verilog")))
+      (error "Not in a projectile project!"))))
+
+
+(defun larumbe/verilog-makefile-compile-project ()
+  "Prompts to available previous Makefile targets and compiles then with various verilog regexps."
+  (interactive)
+  (let ((makefile (concat (projectile-project-root) "Makefile"))
+        target
+        cmd)
+    (unless (file-exists-p makefile)
+      (error "%s does not exist!" makefile))
+    (with-temp-buffer
+      (insert-file-contents makefile)
+      (setq makefile-need-target-pickup t)
+      (makefile-pickup-targets)
+      (setq target (completing-read "Target: " makefile-target-table)))
+    ;; INFO: Tried with `projectile-compile-project' but without sucess.
+    ;; Plus, it was necessary to change `compilation-read-command' which is unsafe.
+    (setq cmd (concat "make " target))
+    (cd (projectile-project-root))
+    (compile cmd)
+    (larumbe/custom-error-regexp-set-emacs
+     (append iverilog-error-regexp-emacs-alist-alist
+             verilator-error-regexp-emacs-alist-alist
+             vivado-error-regexp-emacs-alist-alist))
+    (larumbe/show-custom-compilation-buffers)))
+
+
+;;; Code beautifying
+(defun larumbe/verilog-clean-parenthesis-blanks ()
+  "Cleans blanks inside parenthesis blocks (Verilog port connections).
+If region is not used, then a query replacement is performed instead.
+DANGER: It may wrongly detect some `old-end' regexp matches, but seems too complex for the effort..."
+  (interactive)
+  (let ((old-start "([ ]+\\(.*\\))")
+        (new-start "(\\1)")
+        (old-end "(\\([^ ]+\\)[ ]+)")
+        (new-end "(\\1)"))
+    (if (use-region-p)
+        (progn
+          (message "Removing blanks at the beginning...")
+          (replace-regexp old-start new-start nil (region-beginning) (region-end))
+          (replace-regexp old-end   new-end   nil (region-beginning) (region-end)))
+      (progn
+        (message "Removing blanks at the end...")
+        (query-replace-regexp old-start new-start nil (point-min) (point-max))
+        (query-replace-regexp old-end   new-end   nil (point-min) (point-max))))))
+
+
 (defun larumbe/verilog-indent-current-module (&optional module)
   "Indent current module, the one pointed to by `which-func' (not instant)
 
@@ -79,6 +163,7 @@ It will only align ports, i.e., between instance name and end of instantiation."
     (larumbe/verilog-align-parameters-current-module)))
 
 
+;;; Port connect/disconnect
 (defvar larumbe/connect-disconnect-port-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)")
 (defvar larumbe/connect-disconnect-conn-re "\\(?4:(\\(?5:.*\\))\\)?")
 (defvar larumbe/connect-disconnect-not-found "No port detected at current line")
@@ -119,40 +204,7 @@ If called with universal arg, `force-connect' parameter will force connection of
   (while (not (string-equal (larumbe/verilog-toggle-connect-port t) larumbe/connect-disconnect-not-found))))
 
 
-(defun larumbe/verilog-def-logic (sig)
-  "Replaces `verilog-sk-def-reg' for use within `larumbe/verilog-define-signal'"
-  (let (width str)
-    (split-line) ;; Keep indentation
-    (setq width (larumbe/verilog-compute-vector-width))
-    (setq str (concat "logic " width " " sig ";"))
-    (insert str)
-    (message (concat "[Line " (format "%s" (line-number-at-pos)) "]: " str))))
-
-
-(defun larumbe/verilog-define-signal ()
-  "INFO: Copied/modified from `verilog-mode.el' function: `verilog-sk-define-signal'.
-There were some issues with this skeleton, an a function offers more flexibility.
-
-Insert a definition of signal under point at top of module."
-  (interactive "*")
-  (let* ((sig-re "[a-zA-Z0-9_]*")
-         (sig (buffer-substring
-               (save-excursion
-                 (skip-chars-backward sig-re)
-                 (point))
-               (save-excursion
-                 (skip-chars-forward sig-re)
-                 (point)))))
-    (if (not (member sig verilog-keywords))
-        (save-excursion
-          (verilog-beg-of-defun)
-          (verilog-end-of-statement)
-          (verilog-forward-syntactic-ws)
-          (larumbe/verilog-def-logic sig))
-      (message "object at point (%s) is a keyword" sig))))
-
-
-
+;;; Gtags
 ;; INFO: Global does not allow to find external definitions outside project root directory (probably due to security reasons).
 ;; In order to do so, there are 2 methods:
 ;;   - Use symbolic links to external directories.
@@ -180,26 +232,7 @@ Do not include SCons generated '*_targets' folders. "
     (ggtags-create-tags default-directory)))
 
 
-(defun larumbe/verilog-clean-parenthesis-blanks ()
-  "Cleans blanks inside parenthesis blocks (Verilog port connections).
-If region is not used, then a query replacement is performed instead.
-DANGER: It may wrongly detect some `old-end' regexp matches, but seems too complex for the effort..."
-  (interactive)
-  (let ((old-start "([ ]+\\(.*\\))")
-        (new-start "(\\1)")
-        (old-end "(\\([^ ]+\\)[ ]+)")
-        (new-end "(\\1)"))
-    (if (use-region-p)
-        (progn
-          (message "Removing blanks at the beginning...")
-          (replace-regexp old-start new-start nil (region-beginning) (region-end))
-          (replace-regexp old-end   new-end   nil (region-beginning) (region-end)))
-      (progn
-        (message "Removing blanks at the end...")
-        (query-replace-regexp old-start new-start nil (point-min) (point-max))
-        (query-replace-regexp old-end   new-end   nil (point-min) (point-max))))))
-
-
+;;; Misc
 (defun larumbe/verilog-dirs-and-pkgs-of-open-buffers ()
   "Base content fetched from: https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
 Returns a list of directories from current verilog opened files.
@@ -218,6 +251,7 @@ It also updates currently opened SystemVerilog packages."
     `(,verilog-opened-dirs ,verilog-opened-pkgs)))  ; Return list of dirs and packages
 
 
-(provide 'verilog-indentation)
 
-;;; verilog-indentation.el ends here
+(provide 'verilog-utils)
+
+;;; verilog-utils.el ends here

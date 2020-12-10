@@ -941,6 +941,38 @@ READ is assumed to be the signal name."
     (electric-verilog-tab)))
 
 
+;;;; Signal definition
+(defun larumbe/verilog-def-logic (sig)
+  "Replace `verilog-sk-def-reg' for use within `larumbe/verilog-define-signal'.
+Define a 'logic' signal named SIG."
+  (let (width str)
+    (split-line) ;; Keep indentation
+    (setq width (larumbe/verilog-compute-vector-width))
+    (setq str (concat "logic " width " " sig ";"))
+    (insert str)
+    (message (concat "[Line " (format "%s" (line-number-at-pos)) "]: " str))))
+
+
+(defun larumbe/verilog-define-signal ()
+  "Insert a definition of signal under point at top of module.
+INFO: Inspired from `verilog-sk-define-signal'."
+  (interactive "*")
+  (let* ((sig-re "[a-zA-Z0-9_]*")
+         (sig (buffer-substring
+               (save-excursion
+                 (skip-chars-backward sig-re)
+                 (point))
+               (save-excursion
+                 (skip-chars-forward sig-re)
+                 (point)))))
+    (if (not (member sig verilog-keywords))
+        (save-excursion
+          (verilog-beg-of-defun)
+          (verilog-end-of-statement)
+          (verilog-forward-syntactic-ws)
+          (larumbe/verilog-def-logic sig))
+      (message "object at point (%s) is a keyword" sig))))
+
 
 ;;;; Hydra
 (defhydra hydra-verilog-template (:color blue

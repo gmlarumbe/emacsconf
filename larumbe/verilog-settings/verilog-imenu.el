@@ -40,6 +40,7 @@
 ;;; Code:
 
 
+;;;; Variables
 ;; Search by regexp: Used as regexps in `larumbe/verilog-imenu-generic-expression'
 (defvar larumbe/verilog-imenu-top-re        "^\\s-*\\(?1:connectmodule\\|m\\(?:odule\\|acromodule\\)\\|p\\(?:rimitive\\|rogram\\|ackage\\)\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
 (defvar larumbe/verilog-imenu-localparam-re "^\\s-*localparam\\(?1:\\s-+\\(logic\\|bit\\|int\\|integer\\)\\s-*\\(\\[.*\\]\\)?\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
@@ -66,6 +67,7 @@
         ("*Instances*"      larumbe/find-verilog-module-instance-bwd 1)))  ;; Use capture group index 2 if want to get instance name instead
 
 
+;;;; Tree building
 (defun larumbe/verilog-imenu-format-class-item-label (type name)
   "Return Imenu label for single node using TYPE and NAME."
   (let (short-type)
@@ -151,6 +153,8 @@ list obtained by using the imenu generic function."
    (imenu--generic-function larumbe/verilog-imenu-generic-expression)))
 
 
+
+;;;; Interactive
 (defun larumbe/verilog-imenu ()
 "Wrapper interactive Imenu function for Verilog mode.
 Checks if there is an instance with semicolon in mutiline comments of parameters."
@@ -181,6 +185,84 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
     (message "Not in imenu-list mode !!")))
 
 
+
+;;;; Auxiliary
+(defun larumbe/find-verilog-class-bwd ()
+  "Meant to be used for Imenu class entry."
+  (let (found pos)
+    (save-excursion
+      (while (and (not found)
+                  (larumbe/find-verilog-token-bwd))
+        (when (looking-at larumbe/verilog-class-re)
+          (setq found t)
+          (setq pos (point)))))
+    (when found
+      (goto-char pos))))
+
+
+(defun larumbe/find-verilog-task-function-class-bwd ()
+  "Meant to be used for Imenu class entry."
+  (let (found pos)
+    (save-excursion
+      (while (and (not found)
+                  (larumbe/find-verilog-token-bwd))
+        (when (or (looking-at larumbe/verilog-function-re)
+                  (looking-at larumbe/verilog-task-re)
+                  (looking-at larumbe/verilog-class-re))
+          (setq found t)
+          (setq pos (point)))))
+    (when found
+      (goto-char pos))))
+
+(defun larumbe/find-verilog-task-function-outside-class-bwd ()
+  "Meant to be used for Imenu class entry."
+  (let (found pos)
+    (save-excursion
+      (while (and (not found)
+                  (larumbe/find-verilog-token-bwd))
+        (when (and (or (looking-at larumbe/verilog-function-re)
+                       (looking-at larumbe/verilog-task-re))
+                   (not (larumbe/verilog-func-task-inside-class)))
+          (setq found t)
+          (setq pos (point)))))
+    (when found
+      (goto-char pos))))
+
+
+(defun larumbe/verilog-func-task-inside-class ()
+  "Return non-nil if cursor is pointing a task inside a class."
+  (interactive)
+  (save-match-data
+    (unless (or (looking-at larumbe/verilog-task-re)
+                (looking-at larumbe/verilog-function-re))
+      (error "Pointer is not in a function/task!"))
+    (let ((task-point (point))
+          (endclass-point))
+      (save-excursion
+        (if (larumbe/find-verilog-class-bwd)
+            (progn
+              (verilog-forward-sexp)
+              (setq endclass-point (point))
+              (if (< task-point endclass-point)
+                  t
+                nil))
+          nil)))))
+
+
+(defun larumbe/find-verilog-top-bwd ()
+  "Return non-nil if cursor is pointing at verilog top module."
+  (let (found pos)
+    (save-excursion
+      (while (and (not found)
+                  (larumbe/find-verilog-token-bwd))
+        (when (looking-at larumbe/verilog-top-re)
+          (setq found t)
+          (setq pos (point)))))
+    (when found
+      (goto-char pos))))
+
+
+;;;; Legacy
 ;; DANGER: These two methods were insufficient to implement Imenu with functions/tasks within classes.
 ;; Code kept in case it is used in the future to add something new tag.
 (defun larumbe/verilog-imenu-prev-index-position-function ()
@@ -191,8 +273,10 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
   "Function to extract the tag."
   (verilog-forward-syntactic-ws)
   (thing-at-point 'symbol t))
+;; End of DANGER
 
 
+;;;; Provide
 (provide 'verilog-imenu)
 
 ;;; verilog-imenu.el ends here

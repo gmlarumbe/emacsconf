@@ -3,9 +3,10 @@
 ;;; Code:
 
 ;;; Syntax table override functions
-;; Fetched from: https://www.veripool.org/issues/724-Verilog-mode-How-to-make-word-navigation-commands-stop-at-underscores-
+;; https://www.veripool.org/issues/724-Verilog-mode-How-to-make-word-navigation-commands-stop-at-underscores-
 (defun larumbe/verilog-forward-word (&optional arg)
-  "Make verilog word navigation commands stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
+  "Make verilog word navigation commands stop at underscores.
+Move forward ARG words."
   (interactive "p")
   (let ((table (make-syntax-table verilog-mode-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
@@ -14,7 +15,8 @@
 
 
 (defun larumbe/verilog-backward-word (&optional arg)
-  "Make verilog word navigation commands stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
+  "Make verilog word navigation commands stop at underscores.
+Move backward ARG words."
   (interactive "p")
   (let ((table (make-syntax-table verilog-mode-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
@@ -22,9 +24,10 @@
       (backward-word arg))))
 
 
-;; TODO: Destroys syntax highlighting due to syntax-table modifying with isearch
+;; TODO: Try with `call-interactively' to check if syntax highlighting does not break.
 (defun larumbe/verilog-isearch-forward ()
-  "Make verilog Isearch word navigation stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
+  "Make verilog Isearch word navigation stop at underscores.
+DANGER: Destroys syntax highlighting due to syntax-table modifying."
   (interactive)
   (let ((table (make-syntax-table verilog-mode-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
@@ -33,7 +36,8 @@
 
 
 (defun larumbe/verilog-isearch-backward ()
-  "Make verilog Isearch word navigation stop at underscores withouth destroying verilog-mode syntax highlighting/indentation."
+  "Make verilog Isearch word navigation stop at underscores.
+DANGER: Destroys syntax highlighting due to syntax-table modifying."
   (interactive)
   (let ((table (make-syntax-table verilog-mode-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
@@ -50,7 +54,7 @@
 
 
 (defun larumbe/electric-verilog-tab ()
-  "Wrapper of the homonym verilog function to avoid indentation issues with compiler directives after setting custom hooks.."
+  "Wrapper of the homonym verilog function to avoid indentation issues with compiler directives after setting custom hooks."
   (interactive)
   (let ((table (make-syntax-table verilog-mode-syntax-table)))
     (modify-syntax-entry ?` "w" table)
