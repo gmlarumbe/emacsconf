@@ -4,7 +4,6 @@
 
 
 (require 'f)
-(require 'ag)
 (require 'custom-functions)
 
 ;;; Use-package config
