@@ -263,7 +263,7 @@ For example, in SystemVerilog,packages might need to be included before other fi
       (yank))))
 
 
-;;; Lists/strings/files/directories
+;;; Lists/regexp/strings/files/directories
 ;; http://ergoemacs.org/emacs/elisp_read_file_content.html
 (defun read-lines (filePath)
   "Return a list of lines of a file at FILEPATH."
@@ -301,6 +301,34 @@ For example, in SystemVerilog,packages might need to be included before other fi
 (defun replace-in-string (what with in)
   "Replace WHAT to WITH in string IN."
   (replace-regexp-in-string (regexp-quote what) with in nil 'literal))
+
+
+(defun larumbe/replace-regexp (regexp to-string start end)
+  "Wrapper function for programatic use of `replace-regexp'.
+Replace REGEXP with TO-STRING from START to END."
+  (save-excursion
+    (goto-char start)
+    (while (re-search-forward regexp end t)
+      (replace-match to-string))))
+
+
+(defun larumbe/replace-regexp-whole-buffer (regexp to-string)
+  "Replace REGEXP with TO-STRING on whole current-buffer."
+  (larumbe/replace-regexp regexp to-string (point-min) (point-max)))
+
+
+(defun larumbe/replace-string (string to-string start end)
+  "Wrapper function for programatic use of `replace-string'.
+Replace STRING with TO-STRING from START to END."
+  (save-excursion
+    (goto-char start)
+    (while (search-forward string end t)
+      (replace-match to-string))))
+
+
+(defun larumbe/replace-string-whole-buffer (string to-string)
+  "Replace STRING with TO-STRING on whole current-buffer."
+  (larumbe/replace-string string to-string (point-min) (point-max)))
 
 
 (defun larumbe/directory-files-recursively-to-file (base-dir file re &optional append exclude-re)
@@ -398,6 +426,7 @@ is no include option for `diff' utils."
   "Run `crontab -e' in an Emacs buffer."
   (interactive)
   (with-editor-async-shell-command "crontab -e"))
+
 
 
 ;;; Xah Lee functions from ergoemacs.org tutorial

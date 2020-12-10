@@ -80,18 +80,19 @@ DANGER: It may wrongly detect some `old-end' regexp matches, but seems too compl
     (if (use-region-p)
         (progn
           (message "Removing blanks at the beginning...")
-          (replace-regexp old-start new-start nil (region-beginning) (region-end))
-          (replace-regexp old-end   new-end   nil (region-beginning) (region-end)))
-      (progn
-        (message "Removing blanks at the end...")
-        (query-replace-regexp old-start new-start nil (point-min) (point-max))
-        (query-replace-regexp old-end   new-end   nil (point-min) (point-max))))))
+          (larumbe/replace-regexp old-start new-start (region-beginning) (region-end))
+          (larumbe/replace-regexp old-end   new-end   (region-beginning) (region-end)))
+      (message "Removing blanks at the end...")
+      (query-replace-regexp old-start new-start nil (point-min) (point-max))
+      (query-replace-regexp old-end   new-end   nil (point-min) (point-max)))))
 
 
 (defun larumbe/verilog-indent-current-module (&optional module)
-  "Indent current module, the one pointed to by `which-func' (not instant)
+  "Indent current module, the one pointed to by `which-func'.
 
-For use programatically, an argument needs to be specified as current-module is determined by `which-func' and that takes time,
+If used programatically perform a backwards regexp-search of MODULE
+and start indentation at that point.
+This is because current-module is determined by `which-func' and it takes time,
 therefore not detecting the proper module but the previous one."
   (interactive)
   (let ((case-fold-search verilog-case-fold)

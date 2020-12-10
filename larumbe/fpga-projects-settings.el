@@ -69,15 +69,9 @@ Avoid creating GTAGS for every project included inside a repo folder"
     (insert-file-contents (concat larumbe/project-xpr-dir "/" larumbe/project-xpr-file))
     ;; Start Regexp replacement for file
     (keep-lines "<.*File Path=.*>" (point-min) (point-max))
-    (goto-char (point-min))
-    (while (re-search-forward "<.*File Path=\"" nil t)
-      (replace-match ""))
-    (goto-char (point-min))
-    (while (re-search-forward "\">" nil t)
-      (replace-match ""))
-    (goto-char (point-min))
-    (while (search-forward "$PPRDIR" nil t)
-      (replace-match larumbe/project-xpr-dir))
+    (larumbe/replace-regexp-whole-buffer "<.*File Path=\"" "")
+    (larumbe/replace-regexp-whole-buffer "\">" "")
+    (larumbe/replace-string-whole-buffer "$PPRDIR" larumbe/project-xpr-dir)
     (delete-whitespace-rectangle (point-min) (point-max))
     (larumbe/project-convert-xci-to-v-and-downcase)                         ; Replace xci by corresponding .v files (if existing)
     (keep-lines larumbe/hdl-source-extension-regex (point-min) (point-max)) ; Remove any non verilog/vhdl file (such as waveconfig, verilog templates, etc...)
@@ -185,9 +179,9 @@ Avoid creating GTAGS for every project included inside a sandbox."
         (beginning-of-line)
         (kill-line 1))
       ;; Replace files
-      (goto-char (point-min))
-      (while (re-search-forward (concat "set_global_assignment -name " altera-tcl-file-regexp-file) nil t)
-        (replace-match (concat larumbe/project-altera-dir "/")))
+      (larumbe/replace-regexp-whole-buffer
+       (concat "set_global_assignment -name " altera-tcl-file-regexp-file)
+       (concat larumbe/project-altera-dir "/"))
       ;; Replace SEARCH_PATH dirs
       (goto-char (point-min))
       (while (re-search-forward altera-tcl-file-regexp-dir nil t)
@@ -200,9 +194,7 @@ Avoid creating GTAGS for every project included inside a sandbox."
         (kill-line 0) ; Kill until the beginning of line
         (insert altera-tcl-env-archons-path))
       ;; Cleanup file
-      (goto-char (point-min))
-      (while (re-search-forward " +" nil t)
-        (replace-match "")) ; Delete whitespaces in PATHs
+      (larumbe/replace-regexp-whole-buffer " +" "")  ; Delete whitespaces in PATHs
       (goto-char (point-min))
       (while (re-search-forward "\\.$" nil t) ; Remove search paths with previous or current dir
         (beginning-of-line)                   ; Equivalent to `flush-lines' but
