@@ -94,7 +94,7 @@
               ("C-(" . larumbe/show-only-vivado-warnings))
   :bind (:map comint-mode-map
               ("TAB" . completion-at-point)                  ; Similar to ansi-term (e.g. for vivado tcl-shell)
-              ("C-j" . larumbe/shell-compilation-recompile)) ; sandbox oriented
+              ("C-j" . larumbe/compilation-interactive-recompile)) ; sandbox oriented
   :hook ((compilation-mode . my-compilation-hook))
   :commands (recompile
              larumbe/show-custom-compilation-buffers
@@ -107,7 +107,9 @@
              larumbe/synopsys-dc-error-regexp-set-emacs
              larumbe/scons-error-regexp-set-emacs
              larumbe/python-error-regexp-set-emacs
-             larumbe/pax-error-regexp-set-emacs)
+             larumbe/pax-error-regexp-set-emacs
+             larumbe/compilation-interactive
+             comint-send-string)
   :config
   ;; Compilation motion commands skip less important messages. The value can be either
   ;; 2 -- skip anything less than error,
@@ -247,10 +249,66 @@ every buffer would require confirmation."
       python-error-regexp-emacs-alist-alist
       ableton-error-regexp-emacs-alist-alist)))
 
+
   (defun my-compilation-hook ()
-    (setq truncate-lines t))) ; Do not enable linum-mode since it slows down large compilation buffers
+    (setq truncate-lines t)) ; Do not enable linum-mode since it slows down large compilation buffers
 
 
+;;;; Interactive comint library
+  (defvar larumbe/compilation-interactive-buildcmd nil
+    "Buffer-local variable used to determine the executed build command.
+It's main use is to allow for recompiling easily.")
+
+  (defun larumbe/compilation-interactive (command bufname re-func)
+    "Create a `compilation-mode' comint shell almost identical to *ansi-term*.
+It will have the same environment and aliases without the need of setting
+`shell-command-switch' to '-ic'.
+
+Execute COMMAND in the buffer.  Buffer will be renamed to BUFNAME.
+Regexp parsing function RE-FUNC is applied.
+
+Useful to spawn a *tcl-shell* with Vivado regexps, or to init sandbox modules."
+    (when (get-buffer bufname)
+      (pop-to-buffer bufname)
+      (error (concat "Buffer " bufname " already in use!")))
+    (compile command t)
+    (select-window (get-buffer-window "*compilation*"))
+    (goto-char (point-max))
+    (setq truncate-lines t)
+    (funcall re-func)
+    (rename-buffer bufname))
+
+
+  (defun larumbe/compilation-interactive-sandbox (initcmd buildcmd bufname re-func)
+    "Initialize a comint Bash sandbox with INITCMD and execute BUILDCMD next.
+Buffer will be renamed to BUFNAME, and regexp parsing depending on RE-FUNC.
+
+Acts as wrapper for `larumbe/compilation-interactive'with an additional build command.
+
+INFO: With some minor tweaks could be extended to allow a list
+of commands to be executed by sending them through `comint-send-string'"
+    (let ((command initcmd)
+          (proc))
+      (larumbe/compilation-interactive command bufname re-func)
+      (setq-local larumbe/compilation-interactive-buildcmd buildcmd)
+      (setq proc (get-buffer-process bufname))
+      (comint-send-string proc buildcmd)
+      (comint-send-string proc "\n")))
+
+
+  (defun larumbe/compilation-interactive-recompile ()
+    "Will only work in `comint-mode' after `larumbe/compilation-interactive-sandbox' was executed.
+Makes use of buffer-local variable `larumbe/compilation-interactive-buildcmd' to rebuild a target."
+    (interactive)
+    (let (proc)
+      (when (string= major-mode "comint-mode")
+        (setq proc (get-buffer-process (current-buffer)))
+        (comint-send-string proc larumbe/compilation-interactive-buildcmd)
+        (comint-send-string proc "\n")))))
+
+
+
+;;;; Package providing
 
 (provide 'compilation-settings)
 

@@ -43,6 +43,7 @@
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe))
 
+
 ;;; Requires
 (require 'config-basic)
 (require 'packages-settings)
@@ -66,7 +67,6 @@
 ;;   - It will have specific content to the machine (e.g. EXWM enabling)
 (if (file-exists-p "~/.elisp_private/machine/machine-config.el")
     (load "~/.elisp_private/machine/machine-config.el" t))
-
 
 
 (provide 'init)
