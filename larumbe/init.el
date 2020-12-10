@@ -36,6 +36,12 @@
   (require 'use-package))
 (setq use-package-always-ensure t) ; Force download if not available. INFO: Set to nil for built-in packages.
 
+;; Keep packages updated automatically
+(use-package auto-package-update
+  :config
+  (setq auto-package-update-delete-old-versions t)
+  (setq auto-package-update-hide-results t)
+  (auto-package-update-maybe))
 
 ;;; Requires
 (require 'config-basic)
