@@ -2,14 +2,22 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'comint)
+(require 'compilation-settings)
+(require 'compile)
+
+
 ;;;; Vivado Synthesis
+(defvar vivado-binary-path nil)
+(defvar vivado-batch-script-path nil)
+(defvar vivado-batch-project-list nil)
 (defvar vivado-batch-project-path nil)
 (defvar vivado-batch-project-name nil)
 (defvar vivado-batch-compilation-command nil)
 
 
 (defun larumbe/lfp-compile-vivado-set-active-project ()
-  (interactive)
+  "Set active project based on `vivado-batch-project-list'."
   (let (vivado-project files-list)
     (setq vivado-project (completing-read "Select project: " (mapcar 'car vivado-batch-project-list)))
     (setq files-list (cdr (assoc vivado-project vivado-batch-project-list)))
@@ -25,7 +33,7 @@
 
 
 (defun larumbe/lfp-compile-vivado-tcl ()
-  "Use TCL console to elaborate/compile a design based on previous variables"
+  "Use TCL console to elaborate/compile a design based on previous variables."
   (interactive)
   (larumbe/lfp-compile-vivado-set-active-project)
   (compile vivado-batch-compilation-command)
@@ -35,9 +43,11 @@
 ;;;; Vivado Simulation (XSim)
 ;; INFO: It is required to create the simulation first with Vivado GUI, and then run the script
 (defvar vivado-sim-project-path nil)
+(defvar vivado-sim-project-list nil)
+(defvar vivado-sim-compilation-command nil)
 
 (defun larumbe/lfp-sim-elab-vivado-set-active-project ()
-  (interactive)
+  "Set active project based on `vivado-sim-project-list'."
   (let (vivado-project)
     (setq vivado-project (completing-read "Select project: " (mapcar 'car vivado-sim-project-list)))
     (setq vivado-sim-project-path (cdr (assoc vivado-project vivado-sim-project-list)))
@@ -49,7 +59,8 @@
 
 
 (defun larumbe/lfp-sim-elab-vivado-tcl (&optional universal-arg)
-  "Use TCL console to simulate/elaborate a design based on previous variables"
+  "Use TCL console to elaborate a design with Isim based on previous variables.
+If UNIVERSAL-ARG is provided, then simulate as well."
   (interactive "P")
   (larumbe/lfp-sim-elab-vivado-set-active-project)
   (let (cmd)
@@ -61,22 +72,25 @@
 
 
 ;;;; Irun
+(defvar larumbe/irun-glbl-path          nil)
+(defvar larumbe/irun-vivado-simlib-path nil)
+(defvar larumbe/irun-vivado-simlib-args nil)
+
+(defvar larumbe/irun-projects           nil)
+(defvar larumbe/irun-command            nil)
 (defvar larumbe/irun-sources-file       nil)
 (defvar larumbe/irun-top-module         nil)
 (defvar larumbe/irun-compilation-dir    nil)
-(defvar larumbe/irun-opts
-  (concat
-   "-64bit "
-   "-v93 "
-   "-relax "
-   "-access +rwc "
-   "-namemap_mixgen "
-   "-clean "
-   "-vlog_ext +.vh "
-   ))
+(defvar larumbe/irun-opts (concat "-64bit "
+                                  "-v93 "
+                                  "-relax "
+                                  "-access +rwc "
+                                  "-namemap_mixgen "
+                                  "-clean "
+                                  "-vlog_ext +.vh "))
 
 (defun larumbe/irun-set-active-project ()
-  (interactive)
+  "Set active project based on `larumbe/irun-projects'."
   (let (irun-project files-list)
     (setq irun-project (completing-read "Select project: " (mapcar 'car larumbe/irun-projects)))
     (setq files-list (cdr (assoc irun-project larumbe/irun-projects)))
@@ -95,8 +109,8 @@
 
 
 (defun larumbe/irun-sim-elab (&optional universal-arg)
-  "Simulate a design with `irun' after selecting corresponding project with previous function.
-If universal-arg is given, then elaborate the design instead."
+  "Simulate a design with `irun' after selecting project.
+If UNIVERSAL-ARG is given, elaborate the design instead."
   (interactive "P")
   (let (cmd)
     (larumbe/irun-set-active-project)
@@ -111,16 +125,19 @@ If universal-arg is given, then elaborate the design instead."
 
 ;;;; Verilator
 ;; INFO: Verilator does not support SystemVerilog verification constructs.
-;; Therefore, any source with constructs such as a clocking blocks or classes must be deleted from `verilator.files' (copied previously from gtags.file for example)
-;; If that is not possible because it is used as a source (e.g. a SystemVerilog interface with a clocking block), then tweak/comment temporarily files by hand.
+;; Therefore, any source with constructs such as a clocking blocks or classes must be
+;; deleted from `verilator.files' (copied previously from gtags.file for example)
+;; If that is not possible because it is used as a source (e.g. a SystemVerilog interface
+;; with a clocking block), then tweak/comment temporarily files by hand.
 ;;
 ;; INFO: This is useful while developing small IPs
+(defvar verilator-project-list       nil)
 (defvar verilator-compile-lint-files nil)
 (defvar verilator-compile-lint-top   nil)
 (defvar verilator-compile-lint-cmd   nil)
 
 (defun larumbe/verilator-lint-set-active-project ()
-  (interactive)
+  "Set active project based on `verilator-project-list'."
   (let (verilator-project)
     (setq verilator-project (completing-read "Select project: " (mapcar 'car verilator-project-list)))
     (setq verilator-compile-lint-files (nth 0 (cdr (assoc verilator-project verilator-project-list))))
@@ -147,7 +164,11 @@ It's faster than Vivado elaboration since it does not elaborate design"
 ;; 2) Path to the RDL definition
 ;; 3) Name of address map
 ;; 4) Output directory
-
+(defvar larumbe-reggen-tool-path        nil)
+(defvar larumbe-reggen-projects         nil)
+(defvar larumbe-reggen-input-file       nil)
+(defvar larumbe-reggen-address-map-name nil)
+(defvar larumbe-reggen-output-path      nil)
 (defvar larumbe-reggen-template-types
   '("c_header"
     "docbook"
@@ -157,7 +178,9 @@ It's faster than Vivado elaboration since it does not elaborate design"
     "verilog_regcomponent_regbusitf"
     "verilog_regcomponent_axilite"))
 
+
 (defun larumbe/reggen-set-active-project ()
+  "Set active project based on `larumbe-reggen-projects'."
   (interactive)
   (let (reggen files-list)
     ;; Get Project name
@@ -172,7 +195,7 @@ It's faster than Vivado elaboration since it does not elaborate design"
 
 
 (defun larumbe/reggen ()
-  "Generate Reggen Outputs according to global variables (depending on hp/cee)"
+  "Generate reggen outputs according to `larumbe-reggen-projects' and derived."
   (interactive)
   (let ((larumbe-reggen-command)
         (larumbe-reggen-output-file)
@@ -218,9 +241,13 @@ It's faster than Vivado elaboration since it does not elaborate design"
 
 ;;; Compilation interactive with regexp
 (defun larumbe/shell-compilation-regexp-interactive (command bufname re-func)
-  "Creates a `compilation-mode' comint shell that allows having an identical
-shell as an *ansi-term*, regarding environment and aliases without the need of setting
+  "Create a `compilation-mode' comint shell almost identical to *ansi-term*.
+It will have the same environment and aliases without the need of setting
 `shell-command-switch' to '-ic'.
+
+Execute COMMAND in the buffer.  Buffer will be renamed to BUFNAME.
+Regexp parsing function RE-FUNC is applied.
+
 Useful to spawn a *tcl-shell* with Vivado regexps, or to init sandbox modules."
   (when (get-buffer bufname)
     (pop-to-buffer bufname)
@@ -234,9 +261,19 @@ Useful to spawn a *tcl-shell* with Vivado regexps, or to init sandbox modules."
 
 
 ;;;; Sandboxes
+(defvar larumbe/shell-compilation-sandbox-buildcmd nil
+  "Buffer-local variable used to determine the executed build command.
+It's main use is to allow for recompiling easily.")
+
 (defun larumbe/shell-compilation-sandbox (initcmd buildcmd bufname re-func)
-  "Initialize a bash sandbox and execute build command.
-Basically a wrapper for `larumbe/shell-compilation-regexp-interactive' with an additional build command."
+  "Initialize a comint Bash sandbox with INITCMD and execute BUILDCMD next.
+Buffer will be renamed to BUFNAME, and regexp parsing depending on RE-FUNC.
+
+Acts as wrapper for `larumbe/shell-compilation-regexp-interactive'
+with an additional build command.
+
+INFO: With some minor tweaks could be extended to allow a list
+of commands to be executed by sending them through `comint-send-string'"
   (let ((command initcmd)
         (proc))
     (larumbe/shell-compilation-regexp-interactive command bufname re-func)
@@ -248,12 +285,13 @@ Basically a wrapper for `larumbe/shell-compilation-regexp-interactive' with an a
 
 (defun larumbe/shell-compilation-recompile ()
   "Will only work in comint mode for previous functions.
-Makes use of local variable `larumbe/shell-compilation-sandbox-buildcmd' to rebuild a target."
+Makes use of buffer-local variable `larumbe/shell-compilation-sandbox-buildcmd' to rebuild a target."
   (interactive)
-  (when (string= major-mode "comint-mode")
-    (setq proc (get-buffer-process (current-buffer)))
-    (comint-send-string proc larumbe/shell-compilation-sandbox-buildcmd)
-    (comint-send-string proc "\n")))
+  (let (proc)
+    (when (string= major-mode "comint-mode")
+      (setq proc (get-buffer-process (current-buffer)))
+      (comint-send-string proc larumbe/shell-compilation-sandbox-buildcmd)
+      (comint-send-string proc "\n"))))
 
 
 (provide 'fpga-projects-settings)

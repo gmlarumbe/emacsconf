@@ -96,7 +96,18 @@
               ("TAB" . completion-at-point)                  ; Similar to ansi-term (e.g. for vivado tcl-shell)
               ("C-j" . larumbe/shell-compilation-recompile)) ; sandbox oriented
   :hook ((compilation-mode . my-compilation-hook))
-  :commands (recompile)
+  :commands (recompile
+             larumbe/show-custom-compilation-buffers
+             larumbe/custom-error-regexp-set-emacs
+             larumbe/recompile-set-active-regexp-alist
+             larumbe/vivado-error-regexp-set-emacs
+             larumbe/irun-error-regexp-set-emacs
+             larumbe/verilator-error-regexp-set-emacs
+             larumbe/iverilog-error-regexp-set-emacs
+             larumbe/synopsys-dc-error-regexp-set-emacs
+             larumbe/scons-error-regexp-set-emacs
+             larumbe/python-error-regexp-set-emacs
+             larumbe/pax-error-regexp-set-emacs)
   :config
   ;; Compilation motion commands skip less important messages. The value can be either
   ;; 2 -- skip anything less than error,
