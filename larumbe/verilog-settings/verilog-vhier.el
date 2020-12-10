@@ -7,29 +7,31 @@
   :load-path "~/.elisp/larumbe/own-modes/minors/") ; Navigate hierarchy files easily
 
 (defvar larumbe-verilog-perl-buffer-name "Verilog-Perl"
-  "Initial buffer name to use for the hierarchy file")
+  "Initial buffer name to use for the hierarchy file.")
 
 ;; INFO: First preprocesses input files in a file for `include' and `define' expansion. Then extracts hierarchy from that preprocessed file.
 ;; Init variables for VHIER Generation to nil
-(setq larumbe-verilog-perl-top-module nil)
-(setq larumbe-verilog-perl-project-vhier-path nil)
-(setq larumbe-verilog-perl-hier-input-files nil)
-(setq larumbe-verilog-perl-hier-file nil)
+(defvar larumbe-verilog-perl-top-module nil)
+(defvar larumbe-verilog-perl-project-vhier-path nil)
+(defvar larumbe-verilog-perl-hier-input-files nil)
+(defvar larumbe-verilog-perl-hier-file nil)
 
-(setq larumbe-verilog-perl-preprocessed-file nil)
-(setq larumbe-verilog-perl-outargs nil)
-(setq larumbe-verilog-perl-prep-outargs nil)
+(defvar larumbe-verilog-perl-preprocessed-file nil)
+(defvar larumbe-verilog-perl-outargs nil)
+(defvar larumbe-verilog-perl-prep-outargs nil)
 
-;; Projects list
-;; Name of the project (+plus)
-;; 1) Name of the top-module
-;; 2) Input files for hierarchy elaboration
-;; 3) vhier folder path (for generation and further reading)
-;; 4) Output hierarchy file path
+(defvar larumbe-verilog-perl-projects nil
+"Projects list:
+Name of the project (+plus)
+1) Name of the top-module
+2) Input files for hierarchy elaboration
+3) vhier folder path (for generation and further reading)
+4) Output hierarchy file path")
 
 
-;; Retrieve VHIER project list and set variables accordingly
+
 (defun larumbe/verilog-vhier-set-active-project ()
+  "Retrieve Vhier project list and set variables accordingly."
   (let ((vhier-project)
         (files-list))
     ;; Get Project name
@@ -40,7 +42,6 @@
     (setq larumbe-verilog-perl-hier-input-files   (nth 1 files-list))
     (setq larumbe-verilog-perl-project-vhier-path (nth 2 files-list))
     (setq larumbe-verilog-perl-hier-file          (nth 3 files-list))
-
     (setq larumbe-verilog-perl-preprocessed-file
           (concat
            larumbe-verilog-perl-project-vhier-path
@@ -53,13 +54,12 @@
            "--top-module " larumbe-verilog-perl-top-module " "
            ))
     (setq larumbe-verilog-perl-prep-outargs
-          (concat "-o " larumbe-verilog-perl-preprocessed-file))
-    ))
+          (concat "-o " larumbe-verilog-perl-preprocessed-file))))
 
 
 ;; Has to be done in the file with the relative include path so that it can be found (e.g. sllc_tb.sv)
 (defun larumbe/verilog-vhier-preprocess-hierarchy ()
-  "Preprocess hierarchy of top-level module for `includes and `defines.
+  "Preprocess hierarchy of top level module for `includes and `defines.
 Only used if hierarchy is extracted in project mode."
   (let ((processed-files (concat larumbe-verilog-perl-project-vhier-path "vhier.files")))
     (shell-command
@@ -68,7 +68,7 @@ Only used if hierarchy is extracted in project mode."
       ;; (view-buffer-other-window (current-buffer))      ; INFO: Debug for `with-temp-buffer'
       ;; (clone-indirect-buffer-other-window "*debug*" t) ; INFO: Debug for `with-temp-buffer'
       (insert-file-contents larumbe-verilog-perl-hier-input-files)
-      (replace-regexp "\\(.*/\\).*\.[s]?vh$" "-y \\1" nil (point-min) (point-max)) ; Replace header `include' files with -y library flag
+      (larumbe/replace-regexp-whole-buffer "\\(.*/\\).*\.[s]?vh$" "-y \\1") ; Replace header `include' files with -y library flag
       (larumbe/sort-regexp-at-the-beginning-of-file "_defs_pkg.sv") ;; Move every _defs_pkg.sv at the beginning
       (write-file processed-files))
     ;; Eecute preprocess command
@@ -83,25 +83,25 @@ Only used if hierarchy is extracted in project mode."
 Make an outline/outshine accessible view for use with Gtags)"
   (pop-to-buffer (get-buffer larumbe-verilog-perl-buffer-name))
   (save-excursion
-    (replace-regexp "  " "*" nil (point-min) (point-max)) ; Replace blank spaces by * for outline
-    (replace-regexp "*\\([a-zA-Z0-9_-]\\)" "* \\1" nil (point-min) (point-max)) ; Add blank after asterisks
+    (larumbe/replace-regexp-whole-buffer "  " "*") ; Replace blank spaces by * for outline
+    (larumbe/replace-regexp-whole-buffer "*\\([a-zA-Z0-9_-]\\)" "* \\1") ; Add blank after asterisks
     ;; Add comments on every line for outshine detection
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (while (> (point-max) (point))
       (insert "// ")
       (beginning-of-line)
       (forward-line))
     ;; Parse not-used/not-found modules/files
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (re-search-forward "// \\* ") ; Find top instance
     (when (re-search-forward "// \\* " nil t) ; Find second instance to add a blank line if non-found modules exist
       (beginning-of-line)
       (open-line 2)
       (forward-line)
       (insert "// * Not found module references") ; Create level for not found
-      (replace-string "// * " "// ** " nil (point) (point-max)))
+      (larumbe/replace-string-whole-buffer "// * " "// ** "))
     ;; Insert header to get some info of the file
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (open-line 1)
     (insert
      (concat "// Created by Larumbe at " (format-time-string "%d-%m-%Y, %H:%M:%S") "\n"))
@@ -111,7 +111,7 @@ Make an outline/outshine accessible view for use with Gtags)"
 
 
 (defun larumbe/verilog-vhier-from-project ()
-  "Extract hierarchy of top-level module using Verilog-Perl backend"
+  "Extract hierarchy of top level module using Verilog-Perl backend."
   (interactive)
   (larumbe/verilog-vhier-set-active-project)
   (larumbe/verilog-vhier-preprocess-hierarchy)
@@ -128,9 +128,7 @@ Make an outline/outshine accessible view for use with Gtags)"
 
 
 (defun larumbe/verilog-vhier-current-file ()
-  "Extract hierarchy of current file module using Verilog-Perl backend.
-To handle packages that require being sourced before the rest of the files, use universal argument.
-Prompt for a file of with the following format: "
+  "Extract hierarchy of current file module using Verilog-Perl backend."
   (interactive)
   (let* ((library-args (verilog-expand-command "__FLAGS__"))
          (pkg-files (mapconcat #'identity (larumbe/verilog-update-project-pkg-list) " "))
@@ -148,7 +146,6 @@ Prompt for a file of with the following format: "
     ;; Body
     (verilog-read-defines) ; Not sure if needed...
     (verilog-read-includes)
-    ;; (message "%s" cmd) ;; INFO: Debug
     (shell-command cmd larumbe-verilog-perl-buffer-name)
     (larumbe/verilog-vhier-format-hierarchy-file)
     (shell-command (concat "mkdir -p " (file-name-directory file-path))) ; Ensure vhier folder is created

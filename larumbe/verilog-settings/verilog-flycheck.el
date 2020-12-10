@@ -2,14 +2,19 @@
 ;;; Commentary:
 ;;; Code:
 
-;;; Flycheck
 (defun larumbe/verilog-update-project-pkg-list ()
-  "Update `larumbe/verilog-project-pkg-list' variable with current verilog open packages
-of current projectile project. To be used with vhier/flycheck.
-INFO: Limitations are that packages included as sources might not be in the proper order.
-TODO: Some sorting method could be used in the future, such as extracting them from buffer file but in the order they have been opened and reverse sorting, for example..."
+  "Update currently open packages on `larumbe/verilog-project-pkg-list'.
+
+Only packages within current projectile project are added.
+To be used with vhier/flycheck.
+
+INFO: Limitations:
+ - Packages included as sources might not be in the proper order.
+ - Some sorting method could be used in the future:
+   - Extracting them from buffer file but in the order they have been
+     opened and reverse sorting, for example..."
   (setq larumbe/verilog-project-pkg-list nil) ; Reset list
-  (mapcar
+  (mapc
    (lambda (pkg)
      (when (string-prefix-p (projectile-project-root) pkg)
        (add-to-list 'larumbe/verilog-project-pkg-list pkg)))
@@ -18,8 +23,8 @@ TODO: Some sorting method could be used in the future, such as extracting them f
 
 
 (defun larumbe/verilog-flycheck-mode (&optional uarg)
-  "Flycheck-mode Verilog wrapper function.
-If called with universal argument, select among available linters."
+  "`flycheck-mode' Verilog wrapper function.
+If called with UARG, select among available linters."
   (interactive "P")
   (let ((linters '("verilator" "iverilog"))
         (active-linter))
@@ -34,7 +39,7 @@ If called with universal argument, select among available linters."
         (call-interactively #'flycheck-mode)))))
 
 
-;;;; Verilator override
+;;; Verilator override
 (flycheck-define-checker verilog-verilator
   "A Verilog syntax checker using the Verilator Verilog HDL simulator.
 
@@ -51,7 +56,7 @@ See URL `https://www.veripool.org/wiki/verilator'."
   :modes verilog-mode)
 
 
-;;;; Iverilog
+;;; Iverilog
 (flycheck-define-checker verilog-iverilog
   "A Verilog syntax checker using Icarus Verilog.
 
