@@ -275,6 +275,10 @@
   (setq sr-speedbar-right-side t))
 
 
+(use-package pcre2el) ; Used in VHDL and Verilog to convert Perl Regexps to Elisp and find parent modules
+
+
+
 (provide 'packages-settings)
 
 ;;; packages-settings.el ends here

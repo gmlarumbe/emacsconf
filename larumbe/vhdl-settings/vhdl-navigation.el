@@ -5,7 +5,7 @@
 
 ;;;; Navigation
 (defun larumbe/find-vhdl-module-instance-fwd (&optional limit)
-  "Searches forward for a VHDL module/instance regexp.
+  "Search forward for a VHDL module/instance regexp.
 
 LIMIT argument is included to allow the function to be used to fontify VHDL buffers."
   (interactive)
@@ -27,7 +27,7 @@ LIMIT argument is included to allow the function to be used to fontify VHDL buff
 
 
 (defun larumbe/find-vhdl-module-instance-bwd (&optional limit)
-  "Searches backwards for a VHDL module/instance regexp.
+  "Search backwards for a VHDL module/instance regexp.
 
 LIMIT argument is included to allow the function to be used to fontify VHDL buffers."
   (interactive)
@@ -90,7 +90,7 @@ Fetched from `modi/verilog-find-parent-module'"
     (let* ((ag-arguments ag-arguments)) ;Save the global value of `ag-arguments'
       ;; Search only through vhdl type files.
       ;; See "ag --list-file-types".
-      (add-to-list 'ag-arguments "--vhdl" :append)
+      (append ag-arguments '("--vhdl"))
       (ag-regexp module-instance-pcre (projectile-project-root)))))
 
 

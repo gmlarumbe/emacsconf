@@ -3,7 +3,7 @@
 ;;; Code:
 
 ;; Fetched and adapted from Flycheck Verilator
-;; INFO: Configured @ my-vhdl-hook previously on this file.
+;; INFO: Configured @ `my-vhdl-hook'
 (flycheck-def-option-var flycheck-ghdl-include-path nil vhdl-ghdl
   "A list of include directories for GHDL
 

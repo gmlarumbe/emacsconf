@@ -4,7 +4,7 @@
 
 
 (defun larumbe/vhdl-insert-instance-from-file (file)
-  "Insert instance at point from file.
+  "Insert module instance at point from FILE.
 Copied and adapted from `larumbe/verilog-insert-instance-from-file'"
   (interactive "FSelect entity from file:")
   (let* ((entity-name (with-temp-buffer
@@ -20,7 +20,7 @@ Copied and adapted from `larumbe/verilog-insert-instance-from-file'"
 
 
 (defun larumbe/vhdl-insert-testbench-from-file (file)
-  "Create testbench from entity of selected file in current buffer directory."
+  "Create testbench from entity of selected FILE in current buffer directory."
   (interactive "FSelect entity from file:")
   (let* ((entity-name (with-temp-buffer
                         (insert-file-contents file)
@@ -32,7 +32,7 @@ Copied and adapted from `larumbe/verilog-insert-instance-from-file'"
                           (error "No VHDL entity found in that file!")))))
     (if (buffer-file-name)
         (vhdl-port-paste-testbench)
-      (error "Not visiting a file. TB is created in current file directory!!"))))
+      (error "Not visiting a file.  TB is created in current file directory!!"))))
 
 
 ;;;; Hydra

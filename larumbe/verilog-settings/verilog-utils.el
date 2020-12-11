@@ -255,13 +255,12 @@ It also updates currently opened SystemVerilog packages."
     (dolist ($buf (buffer-list (current-buffer)))
       (with-current-buffer $buf
         (when (string-equal major-mode "verilog-mode")
-          (push default-directory 'verilog-opened-dirs)
+          (setq verilog-opened-dirs (push default-directory verilog-opened-dirs))
           (save-excursion
             (goto-char (point-min))
             (when (re-search-forward pkg-regexp nil t)
-              (push 'verilog-opened-dirs (buffer-file-name)))))))
+              (setq verilog-opened-pkgs (push (buffer-file-name) verilog-opened-pkgs)))))))
     `(,verilog-opened-dirs ,verilog-opened-pkgs)))  ; Return list of dirs and packages
-
 
 
 (provide 'verilog-utils)

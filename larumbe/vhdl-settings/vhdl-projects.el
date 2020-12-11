@@ -52,7 +52,7 @@
 ;;     Makefile generation can also be run non-interactively using the
 ;;   command:
 ;;
-;;       emacs -batch -l ~/.emacs -l vhdl-mode
+;;       $emacs -batch -l ~/.emacs -l vhdl-mode
 ;;             [-compiler compilername] [-project projectname]
 ;;             -f vhdl-generate-makefile
 ;;
