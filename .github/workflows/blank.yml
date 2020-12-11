@@ -33,5 +33,5 @@ jobs:
       # Runs a single command using the runners shell
       - name: Check startup
         run: |
-          ./config.sh
-          ./test-startup.sh
+          ./scripts/config.sh
+          ./scripts/test-startup.sh
