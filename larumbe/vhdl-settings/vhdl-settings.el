@@ -1,0 +1,76 @@
+;;; vhdl-settings.el --- VHDL  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
+
+(defvar larumbe/vhdl-use-own-custom-fontify t)  ; To refresh font-lock call `larumbe/vhdl-font-lock-init'
+
+
+;;; Basic settings
+(use-package vhdl-mode
+  :load-path "~/.elisp/larumbe/own-modes/override"
+  :hook ((vhdl-mode . my-vhdl-mode-hook))
+  :bind (:map vhdl-mode-map
+              ("C-M-a"           . vhdl-beginning-of-defun)
+              ("C-M-e"           . vhdl-end-of-defun)
+              ("C-M-d"           . larumbe/find-vhdl-module-instance-fwd)
+              ("C-M-u"           . larumbe/find-vhdl-module-instance-bwd)
+              ("C-M-p"           . vhdl-backward-same-indent)
+              ("C-M-n"           . vhdl-forward-same-indent)
+              ("<f5>"            . vhdl-compile)
+              ("<C-iso-lefttab>" . insert-tab-vhdl)
+              ("C-M-<tab>"       . remove-tab-vhdl)
+              ("C-c C-t"         . hydra-vhdl-template/body)
+              )
+  :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
+  (fset 'insert-tab-vhdl (kbd "C-u 4 SPC")) ; Custom 4 spaces TAB key
+  (fset 'remove-tab-vhdl (kbd "C-u 4 DEL")) ; Custom remove 4 spaces TAB key
+  :config
+  (setq vhdl-clock-edge-condition (quote function))
+  (setq vhdl-company-name "")
+  (setq vhdl-conditions-in-parenthesis t)
+  (setq vhdl-default-library "xil_defaultlib")
+  (setq vhdl-end-comment-column 120)
+  (setq vhdl-platform-spec "Debian 9.1")
+  (setq vhdl-reset-kind (quote sync))
+  (setq vhdl-speedbar-auto-open nil)
+  (setq vhdl-standard '(08 nil))
+  (setq vhdl-project "AXI Interface Converter")
+  ;; Indentation
+  (setq vhdl-basic-offset 4)
+  (setq tab-width 4)                    ; TAB Width for indentation
+  (setq indent-tabs-mode nil)           ; Replace TAB with Spaces when indenting
+  ;; GHDL custom linter setup
+  (setq vhdl-custom-ghdl-list
+        '("GHDL-custom" "ghdl" "-i --ieee=synopsys -fexplicit -fno-color-diagnostics" "make" "-f \\1" nil "mkdir \\1" "./" "work/" "Makefile" "ghdl"
+          ("ghdl_p: \\*E,\\w+ (\\([^ \\t\\n]+\\),\\([0-9]+\\)|\\([0-9]+\\)):" 1 2 3)
+          ("" 0)
+          ("\\1/entity" "\\2/\\1" "\\1/configuration" "\\1/package" "\\1/body" downcase)
+          )
+        )
+  (add-to-list 'vhdl-compiler-alist vhdl-custom-ghdl-list)
+  (vhdl-set-compiler "GHDL-custom")
+  (vhdl-electric-mode -1)
+  ;; Bind chords
+  (bind-chord "\\\\" #'larumbe/vhdl-jump-to-module-at-point vhdl-mode-map)
+  (when (executable-find "ag")
+    (bind-chord "\|\|" #'larumbe/vhdl-find-parent-module vhdl-mode-map))
+
+  (defun my-vhdl-mode-hook ()
+    (set 'ac-sources '(ac-source-gtags))
+    ;; Flycheck
+    (setq flycheck-ghdl-include-path (larumbe/vhdl-list-directories-of-open-buffers))
+    (setq flycheck-ghdl-language-standard "08")
+    (setq flycheck-ghdl-work-lib vhdl-default-library) ; "xil_defaultlib"
+    (setq flycheck-ghdl-workdir (concat (projectile-project-root) "library/" vhdl-default-library)) ; Used @ axi_if_converter
+    (setq flycheck-ghdl-ieee-library "synopsys"))
+
+  (require 'vhdl-utils)
+  (require 'vhdl-templates)
+  (require 'vhdl-navigation)
+  (require 'vhdl-imenu)
+  (require 'vhdl-flycheck))
+
+(provide 'vhdl-settings)
+
+;;; vhdl-settings.el ends here
