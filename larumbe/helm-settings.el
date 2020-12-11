@@ -92,7 +92,8 @@ If called with PREFIX, search for string and no case sensitive."
             (deactivate-mark t))))))
 
 
-  ;; Advising
+  ;; Better advising instead of forking since it's not a bug but a customization.
+  ;; Otherwise would need to get updated manually to latest helm changes.
   (advice-add 'helm-occur :override #'larumbe/helm-occur))
 
 
@@ -100,78 +101,7 @@ If called with PREFIX, search for string and no case sensitive."
 ;; `helm-navi' loads `navi-mode', and this last one loads `outshine'
 (use-package helm-navi
   :diminish outshine-mode outline-minor-mode
-  :commands (larumbe/helm-navi--get-candidates-in-buffer larumbe/helm-navi--get-regexp)
-  :config
-  ;; Function overriding:
-  ;; BUG: Issue with helm-navi in last MELPA package
-  ;; https://github.com/emacs-helm/helm-navi/pull/3
-  ;; These functions needs to be redefined and:
-  ;;  Search and replace of: outline-promotion-headings -> outshine-promotion-headings
-  ;; INFO: This function also includes some modifications to fix an issue with
-  ;; // * headings (do not remember if in Python or in SystemVerilog)
-  (defun larumbe/helm-navi--get-candidates-in-buffer (buffer &optional regexp)
-    "Return Outshine heading candidates in BUFFER.
-Optional argument REGEXP is a regular expression to match, a
-function to return a regular expression, or
-`outshine-promotion-headings' by default."
-    ;; Much of this code is copied from helm-org.el
-    (with-current-buffer buffer
-      ;; Make sure outshine is loaded
-      (unless outshine-promotion-headings
-        (error "Outshine is not activated in buffer \"%s\".  Activate `outline-minor-mode', or consult Outshine's documentation for further instructions if necessary" (buffer-name buffer)))
-      (let* ((heading-regexp (pcase regexp
-                               ((pred functionp) (funcall regexp))
-                               ((pred stringp) regexp)
-                               ((pred null) (concat "^\\("
-                                                    (mapconcat (lambda (s)                                     ;; DANGER: Modified to fix issue with // * headings,
-                                                                 (replace-in-string "*" "\\*" (s-trim (car s)))) ;; asterisk is wrongly inserted into the regexp
-                                                               outshine-promotion-headings
-                                                               "\\|")
-                                                    "\\)"
-                                                    "\s+\\(.*\\)$"))))
-             (match-fn (if helm-navi-fontify
-                           #'match-string
-                         #'match-string-no-properties))
-             (search-fn (lambda ()
-                          (re-search-forward heading-regexp nil t))))
-        (save-excursion
-          (save-restriction
-            (goto-char (point-min))
-            (cl-loop while (funcall search-fn)
-                     for beg = (point-at-bol)
-                     for end = (point-at-eol)
-                     when (and helm-navi-fontify
-                               (null (text-property-any
-                                      beg end 'fontified t)))
-                     do (jit-lock-fontify-now beg end)
-                     for level = (length (match-string-no-properties 1))
-                     for heading = (if regexp
-                                       (funcall match-fn 0)
-                                     (concat (match-string 1) " " (funcall match-fn 2)))
-                     if (or regexp
-                            (and (>= level helm-org-headings-min-depth)
-                                 (<= level helm-org-headings-max-depth)))
-                     collect `(,heading . ,(point-marker))))))))
-
-
-  (defun larumbe/helm-navi--get-regexp ()
-    "Return regexp for all headings and keywords in current buffer."
-    (concat (navi-make-regexp-alternatives
-             (navi-get-regexp (car
-                               (split-string
-                                (symbol-name major-mode)
-                                "-mode" 'OMIT-NULLS))
-                              :ALL)
-             (mapconcat (lambda (s)
-                          (s-trim (car s)))
-                        outshine-promotion-headings
-                        "\\|"))
-            ".*$"))
-
-  ;; Advising
-  (advice-add 'helm-navi--get-candidates-in-buffer :override #'larumbe/helm-navi--get-candidates-in-buffer)
-  (advice-add 'helm-navi--get-regexp               :override #'larumbe/helm-navi--get-regexp))
-
+  :load-path "~/.elisp/modified")
 
 
 (provide 'helm-settings)
