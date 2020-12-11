@@ -1,6 +1,21 @@
-[submodule ".elisp/download/erc-sasl"]
-        path = download/erc-sasl
-        url = https://gitlab.com/psachin/erc-sasl.git
-[submodule ".elisp/download/howdoi"]
-        path = download/howdoi
-        url = https://github.com/arthurnn/howdoi-emacs.git
+[submodule "submodules/emacswiki.org"]
+        path = submodules/emacswiki.org
+        url = https://github.com/emacsmirror/emacswiki.org.git
+[submodule "submodules/verilog-mode"]
+        path = submodules/verilog-mode
+        url = https://github.com/gmlarumbe/verilog-mode.git
+[submodule "submodules/erc-sasl"]
+	path = submodules/erc-sasl
+	url = https://gitlab.com/psachin/erc-sasl.git
+[submodule "submodules/howdoi-emacs"]
+	path = submodules/howdoi-emacs
+	url = https://github.com/arthurnn/howdoi-emacs.git
+[submodule "submodules/jenkins"]
+	path = submodules/jenkins
+	url = https://github.com/gmlarumbe/jenkins.el.git
+[submodule "submodules/helm-navi"]
+	path = submodules/helm-navi
+	url = https://github.com/gmlarumbe/helm-navi.git
+[submodule "submodules/emacs"]
+	path = submodules/emacs
+	url = https://github.com/gmlarumbe/emacs.git
