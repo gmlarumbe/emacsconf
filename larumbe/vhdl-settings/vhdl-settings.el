@@ -19,8 +19,6 @@
 
 
 
-
-
 ;;; Basic settings
 (use-package vhdl-mode
   :load-path "~/.elisp/larumbe/own-modes/override"
@@ -37,7 +35,10 @@
               ("<C-iso-lefttab>" . insert-tab-vhdl)
               ("C-M-<tab>"       . remove-tab-vhdl)
               ("C-c C-t"         . hydra-vhdl-template/body)
-              )
+              ("<f8>"            . sr-speedbar-open))
+  :bind (:map vhdl-speedbar-mode-map
+              ("SPC" . speedbar-toggle-line-expansion))
+
   :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
   (fset 'insert-tab-vhdl (kbd "C-u 4 SPC")) ; Custom 4 spaces TAB key
   (fset 'remove-tab-vhdl (kbd "C-u 4 DEL")) ; Custom remove 4 spaces TAB key
@@ -51,7 +52,6 @@
   (setq vhdl-reset-kind (quote sync))
   (setq vhdl-speedbar-auto-open nil)
   (setq vhdl-standard '(08 nil))
-  (setq vhdl-project "AXI Interface Converter")
   ;; Indentation
   (setq vhdl-basic-offset 4)
   (setq tab-width 4)                    ; TAB Width for indentation
@@ -83,6 +83,7 @@
 
   ;; Own settings
   (require 'vhdl-utils)
+  (require 'vhdl-projects) ; Speedbar design hierarchy and compilation via makefiles
   (require 'vhdl-templates)
   (require 'vhdl-navigation)
   (require 'vhdl-imenu)
@@ -93,6 +94,12 @@
   ;; with my functions
   (use-package vhdl-tools)
   (use-package vhdl-capf))
+
+
+;; TODO: Merge and switch some day to latest official version
+;; (use-package vhdl-mode
+;;   :load-path "~/.elisp/modified/")
+
 
 (provide 'vhdl-settings)
 

@@ -52,7 +52,6 @@
 
 
 
-
 (provide 'vhdl-imenu)
 
 ;;; vhdl-imenu.el ends here

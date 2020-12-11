@@ -3,12 +3,6 @@
 ;;; Code:
 
 
-;;;; Speedbar
-;; TODO: Fetch last version with git submodules
-;; (use-package sr-speedbar)
-;; (require 'sr-speedbar)
-
-
 ;;;; Gtags
 (defun larumbe/gtags-vhdl-files-pwd-recursive ()
   "Generate gtags.files for current directory. Purpose is to be used with dired mode for small projects, to save the regexp"

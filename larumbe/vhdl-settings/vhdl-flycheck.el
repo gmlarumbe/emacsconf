@@ -2,7 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-;;; Flycheck
 ;; Fetched and adapted from Flycheck Verilator
 ;; INFO: Configured @ my-vhdl-hook previously on this file.
 (flycheck-def-option-var flycheck-ghdl-include-path nil vhdl-ghdl

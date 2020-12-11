@@ -263,6 +263,16 @@
 (use-package deferred)
 
 
+(use-package sr-speedbar
+  :load-path "~/.elisp/submodules/emacswiki.org/"
+  :bind (:map speedbar-mode-map
+              ("q"   . larumbe/kill-current-buffer
+               "j"   . speedbar-edit-line)
+  :config
+  (setq speedbar-show-unknown-files t)
+  (setq speedbar-use-images nil)
+  (setq sr-speedbar-right-side t)
+
 
 
 (provide 'packages-settings)

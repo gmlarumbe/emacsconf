@@ -3,9 +3,7 @@
 ;;; Code:
 
 
-;;; Navigation
-
-
+;;;; Navigation
 (defun larumbe/find-vhdl-module-instance-fwd (&optional limit)
   "Searches forward for a VHDL module/instance regexp.
 
@@ -50,7 +48,7 @@ LIMIT argument is included to allow the function to be used to fontify VHDL buff
       (goto-char pos))))
 
 
-;;; Jump to modules
+;;;; Jump to modules
 ;; INFO: By default `which-func' would get Info from Imenu.
 ;;  - This was far faster for which-func updating than using the custom `larumbe/find-vhdl-module-instance-bwd' function
 ;;  and performing analogous to modi's functions.
