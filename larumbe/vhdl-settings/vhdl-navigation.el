@@ -4,15 +4,6 @@
 
 
 ;;; Navigation
-(defvar larumbe/vhdl-entity-re "^\\s-*\\(entity\\)\\s-+\\(\\(\\w\\|\\s_\\)+\\)")
-(defvar larumbe/vhdl-blank-opt-re "[[:blank:]\n]*")
-(defvar larumbe/vhdl-blank-mand-re "[[:blank:]\n]+")
-(defvar larumbe/vhdl-identifier-re "[a-zA-Z_][a-zA-Z0-9_-]*")
-(defvar larumbe/vhdl-instance-re
-  (concat "^\\s-*\\(?1:" larumbe/vhdl-identifier-re "\\)\\s-*:" larumbe/vhdl-blank-opt-re ; Instance TAG
-          "\\(?2:\\(?3:component\\s-+\\|configuration\\s-+\\|\\(?4:entity\\s-+\\(?5:" larumbe/vhdl-identifier-re "\\)\.\\)\\)\\)?"
-          "\\(?6:" larumbe/vhdl-identifier-re "\\)" larumbe/vhdl-blank-opt-re ; Module name
-          "\\(--[^\n]*" larumbe/vhdl-blank-mand-re "\\)*\\(generic\\|port\\)\\s-+map\\>"))
 
 
 (defun larumbe/find-vhdl-module-instance-fwd (&optional limit)

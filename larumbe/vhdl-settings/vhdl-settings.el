@@ -5,10 +5,26 @@
 
 (defvar larumbe/vhdl-use-own-custom-fontify t)  ; To refresh font-lock call `larumbe/vhdl-font-lock-init'
 
+;; INFO: Moved out of `vhdl-navigation' because it is loaded in vhdl-mode in
+;; `larumbe/vhdl-font-lock-init' function.
+(defvar larumbe/vhdl-entity-re "^\\s-*\\(entity\\)\\s-+\\(\\(\\w\\|\\s_\\)+\\)")
+(defvar larumbe/vhdl-blank-opt-re "[[:blank:]\n]*")
+(defvar larumbe/vhdl-blank-mand-re "[[:blank:]\n]+")
+(defvar larumbe/vhdl-identifier-re "[a-zA-Z_][a-zA-Z0-9_-]*")
+(defvar larumbe/vhdl-instance-re
+  (concat "^\\s-*\\(?1:" larumbe/vhdl-identifier-re "\\)\\s-*:" larumbe/vhdl-blank-opt-re ; Instance TAG
+          "\\(?2:\\(?3:component\\s-+\\|configuration\\s-+\\|\\(?4:entity\\s-+\\(?5:" larumbe/vhdl-identifier-re "\\)\.\\)\\)\\)?"
+          "\\(?6:" larumbe/vhdl-identifier-re "\\)" larumbe/vhdl-blank-opt-re ; Module name
+          "\\(--[^\n]*" larumbe/vhdl-blank-mand-re "\\)*\\(generic\\|port\\)\\s-+map\\>"))
+
+
+
+
 
 ;;; Basic settings
 (use-package vhdl-mode
   :load-path "~/.elisp/larumbe/own-modes/override"
+  :commands (larumbe/vhdl-index-menu-init)
   :hook ((vhdl-mode . my-vhdl-mode-hook))
   :bind (:map vhdl-mode-map
               ("C-M-a"           . vhdl-beginning-of-defun)
@@ -65,11 +81,18 @@
     (setq flycheck-ghdl-workdir (concat (projectile-project-root) "library/" vhdl-default-library)) ; Used @ axi_if_converter
     (setq flycheck-ghdl-ieee-library "synopsys"))
 
+  ;; Own settings
   (require 'vhdl-utils)
   (require 'vhdl-templates)
   (require 'vhdl-navigation)
   (require 'vhdl-imenu)
-  (require 'vhdl-flycheck))
+  (require 'vhdl-flycheck)
+
+  ;; Additional MELPA packages
+  ;; INFO: Check how they work, still untested, probably there is some overlap
+  ;; with my functions
+  (use-package vhdl-tools)
+  (use-package vhdl-capf))
 
 (provide 'vhdl-settings)
 

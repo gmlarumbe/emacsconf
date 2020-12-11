@@ -30,7 +30,7 @@ Returns a list of directories from current VHDL opened files. Useful for `ghdl' 
     (dolist ($buf (buffer-list (current-buffer)))
       (with-current-buffer $buf
         (when (string-equal major-mode "vhdl-mode")
-          (add-to-list 'vhdl-opened-dirs default-directory))))
+          (push default-directory 'vhdl-opened-dirs))))
     (eval 'vhdl-opened-dirs)))
 
 
