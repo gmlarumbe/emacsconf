@@ -224,8 +224,9 @@ obj.method();
 
 ;;;; Functions
 (defun larumbe/find-verilog-module-instance-fontify (limit)
-  "Search based fontification function of Verilog modules/instances."
-  (let (start end start-line end-line)
+  "Search based fontification function of Verilog modules/instances.
+Arg LIMIT is used internally for fontification."
+  (let (start-line end-line)
     (when (larumbe/find-verilog-module-instance-fwd limit)
       (setq start-line (save-excursion
                          (goto-char (match-beginning 0))
@@ -239,10 +240,11 @@ obj.method();
 
 
 (defun larumbe/verilog-match-translate-off-fontify (limit)
-  "Copied from `verilog-match-translate-off' but including `font-lock-multiline' property
+  "Match a translate-off block, setting `match-data' and returning t, else nil.
+Bound search by LIMIT.
 
-   Match a translate-off block, setting `match-data' and returning t, else nil.
-Bound search by LIMIT."
+Copied from `verilog-match-translate-off' but
+including `font-lock-multiline' property."
   (when (< (point) limit)
     (let ((start (or (verilog-within-translate-off)
                      (verilog-start-translate-off limit)))
@@ -256,8 +258,10 @@ Bound search by LIMIT."
 
 (defun larumbe/find-verilog-variable-type-fwd (regex limit)
   "Generic search based fontification function of Verilog variable types.
-INFO: It is not necessary to check that variable is not within string/comment since
-these both have precedence over custom fontify."
+INFO: It is not necessary to check that variable is not within string/comment
+since these both have precedence over custom fontify.
+
+Search for REGEX bound to LIMIT."
   (let ((found nil)
         (pos)
         (case-fold-search verilog-case-fold)
@@ -287,7 +291,9 @@ these both have precedence over custom fontify."
 
 
 (defun larumbe/find-verilog-variable-type-fontify-1 (limit)
-  "Search based fontification function of Verilog type 1 variable types (`larumbe/verilog-variable-re-1')"
+  "Search based fontification function of Verilog type 1 variable types.
+These are determined by variable `larumbe/verilog-variable-re-1'.
+Regex search bound to LIMIT."
   (let (start end)
     (when (larumbe/find-verilog-variable-fwd-1 limit)
       (setq start (match-beginning 1))
@@ -296,7 +302,9 @@ these both have precedence over custom fontify."
       (point))))
 
 (defun larumbe/find-verilog-variable-name-fontify-1 (limit)
-  "Search based fontification function of Verilog type 1 variable names (`larumbe/verilog-variable-re-1')"
+  "Search based fontification function of Verilog type 1 variable names.
+These are determined by variable `larumbe/verilog-variable-re-1'.
+Regex search bound to LIMIT."
   (let (start end)
     (when (larumbe/find-verilog-variable-fwd-1 limit)
       (setq start (match-beginning 3))
@@ -305,7 +313,9 @@ these both have precedence over custom fontify."
       (point))))
 
 (defun larumbe/find-verilog-variable-type-fontify-2 (limit)
-  "Search based fontification function of Verilog type 2 variable types (`larumbe/verilog-variable-re-2')."
+  "Search based fontification function of Verilog type 2 variable types.
+These are determined by variable `larumbe/verilog-variable-re-1'.
+Regex search bound to LIMIT."
   (let (start end)
     (when (larumbe/find-verilog-variable-fwd-2 limit)
       (setq start (match-beginning 1))
@@ -314,7 +324,9 @@ these both have precedence over custom fontify."
       (point))))
 
 (defun larumbe/find-verilog-variable-name-fontify-2 (limit)
-  "Search based fontification function of Verilog type 2 variable names (`larumbe/verilog-variable-re-2')."
+  "Search based fontification function of Verilog type 2 variable names.
+These are determined by variable `larumbe/verilog-variable-re-1'.
+Regex search bound to LIMIT."
   (let (start end)
     (when (larumbe/find-verilog-variable-fwd-2 limit)
       (setq start (match-beginning 2))
@@ -323,7 +335,9 @@ these both have precedence over custom fontify."
       (point))))
 
 (defun larumbe/find-verilog-variable-type-fontify-3 (limit)
-  "Search based fontification function of Verilog type 3 variable types (`larumbe/verilog-variable-re-3')."
+  "Search based fontification function of Verilog type 3 variable types.
+These are determined by variable `larumbe/verilog-variable-re-1'.
+Regex search bound to LIMIT."
   (let (start end)
     (when (larumbe/find-verilog-variable-fwd-3 limit)
       (setq start (match-beginning 1))
@@ -332,7 +346,9 @@ these both have precedence over custom fontify."
       (point))))
 
 (defun larumbe/find-verilog-variable-name-fontify-3 (limit)
-  "Search based fontification function of Verilog type 3 variable names (`larumbe/verilog-variable-re-3')."
+  "Search based fontification function of Verilog type 3 variable names.
+These are determined by variable `larumbe/verilog-variable-re-1'.
+Regex search bound to LIMIT."
   (let (start end)
     (when (larumbe/find-verilog-variable-fwd-3 limit)
       (setq start (match-beginning 3))
@@ -854,8 +870,8 @@ INFO: Executed once while loading `vhdl-mode'."
 
 
 (defun larumbe/vhdl-within-translate-off ()
-  "Same as analogous `vhdl-mode' function but taking `larumbe/vhdl-directive-keywords-regex' words
-into account instead of only 'pragma'"
+  "Same as analogous `vhdl-mode' function.
+Take `larumbe/vhdl-directive-keywords-regex' words into account instead of only 'pragma'."
   (and (save-excursion
          (re-search-backward
           (concat
@@ -864,22 +880,25 @@ into account instead of only 'pragma'"
        (point)))
 
 (defun larumbe/vhdl-start-translate-off (limit)
-  "Same as analogous `vhdl-mode' function but taking `larumbe/vhdl-directive-keywords-regex' words
-into account instead of only 'pragma'"
+  "Same as analogous `vhdl-mode' function.
+Regex search bound to LIMIT.
+Take `larumbe/vhdl-directive-keywords-regex' words into account instead of only 'pragma'."
   (when (re-search-forward
          (concat
           "^\\s-*--\\s-*" larumbe/vhdl-directive-keywords-regex "\\s-*translate_off\\s-*\n") limit t)
     (match-beginning 0)))
 
 (defun larumbe/vhdl-end-translate-off (limit)
-  "Same as analogous `vhdl-mode' function but taking `larumbe/vhdl-directive-keywords-regex' words
-into account instead of only 'pragma'"
+  "Same as analogous `vhdl-mode' function.
+Regex search bound to LIMIT.
+Take `larumbe/vhdl-directive-keywords-regex' words into account instead of only 'pragma'."
   (re-search-forward
    (concat "^\\s-*--\\s-*" larumbe/vhdl-directive-keywords-regex "\\s-*translate_on\\s-*\n") limit t))
 
 (defun larumbe/vhdl-match-translate-off (limit)
-  "Same as analogous `vhdl-mode' function but taking `larumbe/vhdl-directive-keywords-regex' words
-into account instead of only 'pragma'"
+  "Same as analogous `vhdl-mode' function.
+Regex search bound to LIMIT.
+Take `larumbe/vhdl-directive-keywords-regex' words into account instead of only 'pragma'."
   (when (< (point) limit)
     (let ((start (or (larumbe/vhdl-within-translate-off)
                      (larumbe/vhdl-start-translate-off limit)))
@@ -892,14 +911,16 @@ into account instead of only 'pragma'"
 
 (defun larumbe/vhdl-match-common-constructs-fontify (limit)
   "Search based fontification function for VHDL common constructs.
-Needed since it sets match property as `font-lock-multiline'."
+Needed since it sets match property as `font-lock-multiline'.
+Regex search bound to LIMIT."
   (while (re-search-forward larumbe/vhdl-common-constructs-regex limit t)
     (put-text-property (match-beginning 0) (match-end 0) 'font-lock-multiline t)
     (point)))
 
 (defun larumbe/vhdl-match-labels-in-block-and-components-fontify (limit)
   "Search based fontification function for VHDL labels in blocks and components.
-Needed since it sets match property as `font-lock-multiline'."
+Needed since it sets match property as `font-lock-multiline'.
+Regex search bound to LIMIT."
   (while (re-search-forward larumbe/vhdl-labels-in-block-and-components-regex limit t)
     (put-text-property (match-beginning 0) (match-end 0) 'font-lock-multiline t)
     (point)))
