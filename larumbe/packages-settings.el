@@ -265,6 +265,7 @@
 
 (use-package sr-speedbar
   :load-path "~/.elisp/download/"
+  :commands (sr-speedbar-open)
   :bind (:map speedbar-mode-map
               ("q"   . larumbe/kill-current-buffer)
               ("j"   . speedbar-edit-line))
