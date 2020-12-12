@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# contributor: Xah Lee (XahLee.org)
+# name: point-max
+# key: px
+# --
+(point-max)

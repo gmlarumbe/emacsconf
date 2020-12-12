@@ -16,6 +16,7 @@
 (add-to-list 'load-path (expand-file-name "~/.elisp/larumbe/verilog-settings"))
 (add-to-list 'load-path (expand-file-name "~/.elisp/larumbe/vhdl-settings"))
 (add-to-list 'load-path (expand-file-name "~/.elisp/larumbe/python-settings"))
+(add-to-list 'load-path (expand-file-name "~/.elisp/larumbe/elisp-settings"))
 (add-to-list 'load-path (expand-file-name "~/.elisp/download"))
 (add-to-list 'load-path (expand-file-name "~/.elisp/larumbe/own-modes/majors"))
 (add-to-list 'load-path (expand-file-name "~/.elisp/larumbe/own-modes/minors"))

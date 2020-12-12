@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# contributor: Gonzalo Larumbe
+# name: unless
+# key: ul
+# --
+(unless ${1:(cond)}
+  ($0))

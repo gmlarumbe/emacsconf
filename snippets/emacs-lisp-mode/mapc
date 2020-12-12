@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# contributor: Gonzalo Larumbe
+# name: mapc
+# key: mc
+# --
+(mapc ${1:(lambda (${3:x}) (${4:func)})} ${2:collection})$0

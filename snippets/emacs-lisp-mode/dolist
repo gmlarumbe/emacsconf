@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# contributor: Gonzalo Larumbe
+# name: dolist
+# key: dl
+# --
+(dolist (${1:elm} ${2:list})
+  ($0))

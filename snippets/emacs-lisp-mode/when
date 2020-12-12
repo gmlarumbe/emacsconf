@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# contributor: Gonzalo Larumbe
+# name: when
+# key: wh
+# --
+(when ${1:(cond)}
+  ($0))
