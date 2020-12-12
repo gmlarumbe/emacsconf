@@ -10,13 +10,13 @@
 (use-package fic-mode
   :config
   (setq fic-activated-faces '(font-lock-doc-face  font-lock-comment-face))
-  (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "DANGER" "INFO"))
+  (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "DANGER" "INFO" "NOTE"))
 
   (defun larumbe/clean-fic-keywords-dir ()
     "Perform an `ag-regexp' of `fic-mode' highlighted keywords in selected DIR
 in order to check pending project actions. "
     (interactive)
-    (let ((kwd (completing-read "Select keyword: " 'fic-highlighted-words))
+    (let ((kwd (completing-read "Select keyword: " fic-highlighted-words))
           (path (read-directory-name "Directory: "))
           (files (completing-read "Select file regex: " '("(System)Verilog" "Python" "elisp")))
           (ag-arguments ag-arguments) ; Save the global value of `ag-arguments'
@@ -26,8 +26,8 @@ in order to check pending project actions. "
         ("Python"          (setq regex ".py$"))
         ("elisp"           (setq regex ".el$")))
       ;; ag glob search
-      (add-to-list 'ag-arguments "-G"  :append)
-      (add-to-list 'ag-arguments regex :append)
+      (setq ag-arguments (append ag-arguments '("-G")))
+      (setq ag-arguments (append ag-arguments (list regex)))
       (ag-regexp kwd path))))
 
 
@@ -53,28 +53,23 @@ in order to check pending project actions. "
       (message "Flyspell enabled..."))))
 
 
-(use-package hydra
-  :config
-  (use-package yasnippet
+(use-package yasnippet
     :commands (yas-expand yas-reload-all)
     :diminish yasnippet yas-minor-mode
     :config
-    (defun larumbe/hydra-yasnippet (snippet)
-      "Function/Macro to integrate YASnippet within Hydra."
-      (interactive)
-      (insert snippet)
-      (yas-expand))
-
     ;; MELPA Snippets database
     (use-package yasnippet-snippets
       :config
-      (defvar larumbe/major-modes-yasnippet-enabled '("perl-mode"
-                                                      "cc-mode"
-                                                      "c-mode"
-                                                      "c++-mode"
-                                                      "git-commit-mode"
-                                                      "markdown-mode"
-                                                      "vhdl-mode")
+      (defvar larumbe/major-modes-yasnippet-snippet-enabled
+        '("prog-mode"
+          "vhdl-mode"
+          "c++-mode"
+          "c-mode"
+          "cc-mode"
+          "perl-mode"
+          "nxml-mode"
+          "markdown-mode"
+          "git-commit-mode")
         "Yasnippet-Snippets enabled snippets."))
 
     ;; `yasnippet-snippets' will add the directory of `yasnippet-snippets-dir' to
@@ -83,9 +78,29 @@ in order to check pending project actions. "
     ;; with some keybindings.
     (setq yas-snippet-dirs '("~/.elisp/snippets")) ; Limit snippets to those of my own to avoid name collisions
     ;; Load specific-mode snippets from `yasnippet-snippets'
-    (dolist (mode larumbe/major-modes-yasnippet-enabled)
+    (dolist (mode larumbe/major-modes-yasnippet-snippet-enabled)
       (add-to-list 'yas-snippet-dirs (larumbe/path-join yasnippet-snippets-dir mode)))
-    (yas-reload-all)))
+    ;; DANGER: If more than one directory for a specific-mode is detected, only
+    ;; the last one is taken into account.
+    (yas-reload-all)
+
+    (defun larumbe/yas-insert-snippet-dwim (&optional arg)
+      "Insert yasnippet snippet.
+If universal ARG is provided, visit a snippet file."
+      (interactive "P")
+      (if arg
+          (call-interactively #'yas-visit-snippet-file)
+        (call-interactively #'yas-insert-snippet))))
+
+
+(use-package hydra
+  :config
+  (defun larumbe/hydra-yasnippet (snippet)
+    "Function/Macro to integrate YASnippet within Hydra."
+    (interactive)
+    (insert snippet)
+    (yas-expand)))
+
 
 
 (use-package diff-mode
@@ -149,7 +164,8 @@ in order to check pending project actions. "
   :commands (larumbe/ggtags-mode)
   :bind (:map prog-mode-map
               ("C-<tab>" . hs-toggle-hiding)
-              ("C-c C-n" . align-regexp))
+              ("C-c C-n" . align-regexp)
+              ("C-c C-s" . larumbe/yas-insert-snippet-dwim))
   :hook ((prog-mode . my-prog-mode-hook)
          (prog-mode . larumbe/prog-mode-keys))
   :config
@@ -181,11 +197,11 @@ in order to check pending project actions. "
 (require 'verilog-settings)
 (require 'vhdl-settings)
 (require 'hdl-font-lock)
-(require 'python-settings)
 (require 'elisp-settings)
+(require 'python-settings)
 (require 'sh-script-settings)
-(require 'c-settings)
 (require 'tcl-settings)
+(require 'c-settings)
 (require 'programming-others-settings)
 
 

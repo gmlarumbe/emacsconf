@@ -35,6 +35,7 @@
               ("<C-iso-lefttab>" . insert-tab-vhdl)
               ("C-M-<tab>"       . remove-tab-vhdl)
               ("C-c C-t"         . hydra-vhdl-template/body)
+              ("C-c C-s"         . larumbe/yas-insert-snippet-dwim) ; override `vhdl-subprog-' prefix commands
               ("<f8>"            . sr-speedbar-open))
   :bind (:map vhdl-speedbar-mode-map
               ("SPC" . speedbar-toggle-line-expansion))

@@ -25,13 +25,17 @@ If pointing a file, visit that file instead."
   (byte-compile-file buffer-file-name))
 
 
-(defun larumbe/elisp-flycheck-mode (&optional enable)
+(defun larumbe/elisp-flycheck-mode (&optional arg)
   "Flycheck-mode Elisp wrapper function.
 Disable `eldoc-mode' if flycheck is enabled to avoid minibuffer collisions.
-Argument ENABLE sets `flycheck-mode' non-interactively."
+Argument ARG sets `flycheck-mode' non-interactively."
   (interactive)
-  ;; Interactive toggling
-  (unless enable
+  ;; Non-interactive
+  (if arg
+      (progn
+        (flycheck-mode arg)
+        (eldoc-mode    (* -1 arg)))
+    ;; Interactive
     (if eldoc-mode
         (progn
           (eldoc-mode -1)
@@ -39,15 +43,7 @@ Argument ENABLE sets `flycheck-mode' non-interactively."
           (message "Flycheck enabled"))
       (eldoc-mode 1)
       (flycheck-mode -1)
-      (message "Flycheck disabled")))
-  ;; Non-interactive
-  (when enable
-    (if (> enable 0)
-        (progn
-          (flycheck-mode 1)
-          (eldoc-mode -1))
-      (flycheck-mode -1)
-      (eldoc-mode 1))))
+      (message "Flycheck disabled"))))
 
 
 ;; Thanks to Steve Purcell
