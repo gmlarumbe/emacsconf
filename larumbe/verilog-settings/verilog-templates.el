@@ -975,8 +975,8 @@ INFO: Inspired from `verilog-sk-define-signal'."
 
 
 ;;;; Hydra
-(defhydra hydra-verilog-template (:color blue
-                                         :hint nil)
+(defhydra hydra-verilog (:color blue
+                                :hint nil)
   "
 RTL                          TESTBENCH                       COMMON
 ^^

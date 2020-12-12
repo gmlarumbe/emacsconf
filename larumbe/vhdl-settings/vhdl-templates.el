@@ -36,6 +36,7 @@ Copied and adapted from `larumbe/verilog-insert-instance-from-file'"
 
 
 ;;;; Hydra
+;; INFO: Use `vhdl-mode' templates instead of Yasnippet
 (defhydra hydra-vhdl-template (:color blue
                                       :hint nil)
   "

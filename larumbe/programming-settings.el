@@ -59,15 +59,33 @@ in order to check pending project actions. "
     :commands (yas-expand yas-reload-all)
     :diminish yasnippet yas-minor-mode
     :config
-    (use-package yasnippet-snippets)                      ; Install MELPA snippets database
-    (add-to-list 'yas-snippet-dirs "~/.elisp/snippets")   ; Add snippets fetched from GitHub and customized ones. DO NOT Append to give them more precendence in case of collision
-    (yas-reload-all)
-
     (defun larumbe/hydra-yasnippet (snippet)
-      "Function/Macro to integrate YASnippet within Hydra"
+      "Function/Macro to integrate YASnippet within Hydra."
       (interactive)
       (insert snippet)
-      (yas-expand))))
+      (yas-expand))
+
+    ;; MELPA Snippets database
+    (use-package yasnippet-snippets
+      :config
+      (defvar larumbe/major-modes-yasnippet-enabled '("perl-mode"
+                                                      "cc-mode"
+                                                      "c-mode"
+                                                      "c++-mode"
+                                                      "git-commit-mode"
+                                                      "markdown-mode"
+                                                      "vhdl-mode")
+        "Yasnippet-Snippets enabled snippets."))
+
+    ;; `yasnippet-snippets' will add the directory of `yasnippet-snippets-dir' to
+    ;; the list of available snippets. While it seems a good idea, it is better
+    ;; to take it as a reference for building my own snippets to avoid conflicts
+    ;; with some keybindings.
+    (setq yas-snippet-dirs '("~/.elisp/snippets")) ; Limit snippets to those of my own to avoid name collisions
+    ;; Load specific-mode snippets from `yasnippet-snippets'
+    (dolist (mode larumbe/major-modes-yasnippet-enabled)
+      (add-to-list 'yas-snippet-dirs (larumbe/path-join yasnippet-snippets-dir mode)))
+    (yas-reload-all)))
 
 
 (use-package diff-mode

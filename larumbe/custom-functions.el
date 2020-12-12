@@ -331,6 +331,12 @@ Replace STRING with TO-STRING from START to END."
   (larumbe/replace-string string to-string (point-min) (point-max)))
 
 
+
+(defun larumbe/path-join (arg1 arg2)
+  "Join path of ARG1 and ARG2."
+  (concat (file-name-as-directory arg1) arg2))
+
+
 (defun larumbe/directory-files-recursively-to-file (base-dir file re &optional append exclude-re)
   "Retrieve all files matching regexp RE of a specified BASE-DIR to output FILE.
 If optional APPEND is set to non-nil, append result to existing FILE.
