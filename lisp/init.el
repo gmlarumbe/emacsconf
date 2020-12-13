@@ -35,7 +35,7 @@
 (require 'package-settings)
 (require 'config-basic)
 (require 'basic-functions)
-(require 'packages-settings)
+(require 'melpa-settings)
 (require 'custom-functions)
 (require 'macros)
 (require 'helm-settings)
@@ -48,6 +48,7 @@
 (require 'compilation-settings)
 (require 'fpga-projects-settings)
 (require 'term-settings)
+(require 'misc-settings)
 (require 'programming-settings)
 (require 'exwm-settings)
 

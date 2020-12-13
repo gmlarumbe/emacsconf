@@ -111,6 +111,8 @@
              larumbe/compilation-interactive
              comint-send-string)
   :config
+  (add-to-list 'popwin:special-display-config '(compilation-mode :stick t))
+
   ;; Compilation motion commands skip less important messages. The value can be either
   ;; 2 -- skip anything less than error,
   ;; 1 -- skip anything less than warning or

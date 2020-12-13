@@ -193,6 +193,7 @@ User will have to choose which of the repos has priority on the synchronization"
 
 
 
+
 ;;;; Keymap
 ;;;###autoload
 (define-minor-mode unison-sync-minor-mode
@@ -204,7 +205,9 @@ User will have to choose which of the repos has priority on the synchronization"
     ("\C-c\C-c" . unison-my-run)
     ("\C-c\C-v" . unison-toggle-enable-process-window)
     ("\C-c\C-b" . unison-pop-show-unison-buffer)
-    ("\C-c\C-z" . unison-manually-sync-projects)))
+    ("\C-c\C-z" . unison-manually-sync-projects))
+  ;; Customizations
+  (add-to-list 'popwin:special-display-config '("*unison*" :stick t)))
 
 
 ;;;; Provide

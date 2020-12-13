@@ -251,14 +251,7 @@ as well as for C/C++ or Python..."
 ;;; Programming Languages Setups
 (require 'verilog-settings)
 (require 'vhdl-settings)
-;; TODO: Temporary fix
-;; (use-package hdl-font-lock
-;;   :ensure nil
-;;   :defer t
-;;   :after verilog-settings
-;;   )
 (require 'hdl-font-lock)
-;; End of TODO
 (require 'elisp-settings)
 (require 'python-settings)
 (require 'sh-script-settings)
