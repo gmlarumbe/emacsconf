@@ -125,7 +125,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
               ("k"   . pdf-view-previous-line-or-previous-page)
               ("M-w" . pdf-view-kill-ring-save))
   :config
-  (pdf-tools-install))
+  (pdf-tools-install t))
 
 
 
