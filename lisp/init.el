@@ -48,7 +48,6 @@
 (require 'compilation-settings)
 (require 'fpga-projects-settings)
 (require 'term-settings)
-(require 'misc-settings)
 (require 'programming-settings)
 (require 'exwm-settings)
 

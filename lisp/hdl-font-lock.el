@@ -210,8 +210,11 @@ obj.method();
                                             "timeprecision" "timeunit" "type" "typedef" "union" "unique" "unsigned" "use" "uwire" "var" "vectored" "virtual" "void" "wait"
                                             "wait_order" "weak0" "weak1" "while" "wildcard" "with" "within" "accept_on" "checker" "endchecker" "eventually" "global" "implies" "let"
                                             "nexttime" "reject_on" "restrict" "s_always" "s_eventually" "s_nexttime" "s_until" "s_until_with" "strong" "sync_accept_on" "sync_reject_on" "unique0" "until" "until_with"
-                                            "untyped" "weak" "implements" "interconnect" "nettype" "soft" ))
-;; Obtained with (dolist (word (cl-set-difference verilog-keywords verilog-type-keywords :test #'equal)) (insert "\"" word "\" "))
+                                            "untyped" "weak" "implements"
+                                            "interconnect" "nettype" "soft" )
+  "Obtained with:
+(dolist (word (cl-set-difference verilog-keywords verilog-type-keywords :test #'equal))
+  (insert "\"" word "\" "))")
 (defvar larumbe/verilog-keywords-no-types-re (regexp-opt larumbe/verilog-keywords-no-types 'symbols))
 (defvar larumbe/verilog-variable-re-1
   "\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(?2:\\[.*\\]\\s-*\\)?\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*\\(?4:=.*\\)?;"

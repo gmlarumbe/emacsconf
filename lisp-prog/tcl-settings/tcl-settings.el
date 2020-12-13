@@ -2,7 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'hdl-font-lock)
 
 (use-package tcl
   :bind (:map tcl-mode-map

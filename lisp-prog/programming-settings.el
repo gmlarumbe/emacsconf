@@ -2,9 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'ag-settings)
-(require 'ggtags-settings)
-(require 'ediff-wind)
 
 ;;; Common configuration
 (use-package fic-mode
@@ -83,9 +80,9 @@ in order to check pending project actions. "
     ;; DANGER: If more than one directory for a specific-mode is detected, only
     ;; the last one is taken into account.
 
-    (define-key yas-minor-mode-map (kbd "TAB") nil) ; Use tab for indenting
+    ;; Unmap TAB, use it for indentation only
+    (define-key yas-minor-mode-map (kbd "TAB") nil)
     (define-key yas-minor-mode-map [tab] nil)
-
     ;; Load snippets
     (yas-reload-all)
 
@@ -114,6 +111,7 @@ If universal ARG is provided, visit a snippet file."
   :hook ((diff-mode . (lambda () (setq truncate-lines t)))
          (diff-mode . linum-mode))
   :config
+  (require 'ediff-wind)
   (setq ediff-split-window-function #'split-window-horizontally)
   (setq ediff-window-setup-function #'ediff-setup-windows-plain))
 
@@ -138,17 +136,13 @@ If universal ARG is provided, visit a snippet file."
 
   ;; Provides `ac-source-gtags'
   (use-package auto-complete-gtags
-    ;; :load-path "~/.elisp/download"
     :ensure nil
     :config
     (setq ac-gtags-modes '(c-mode cc-mode c++-mode verilog-mode emacs-lisp-mode vhdl-mode sh-mode python-mode tcl-mode)))
 
   ;; Provides `ac-source-verilog'
   (use-package auto-complete-verilog
-    :ensure nil
-    ;; :load-path "~/.elisp/download/"
-    )
-  )
+    :ensure nil))
 
 
 (use-package imenu-list
@@ -158,9 +152,7 @@ If universal ARG is provided, visit a snippet file."
 
 
 (use-package hide-comnt
-  :ensure nil
-  ;; :load-path "~/.elisp/download/"
-  )
+  :ensure nil)
 
 
 (use-package rainbow-delimiters)

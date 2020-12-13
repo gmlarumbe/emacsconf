@@ -3,8 +3,6 @@
 ;;; Code:
 
 
-;; (require 'custom-functions)
-;; (require 'navi-mode)
 
 ;;;; Helm
 (use-package helm
@@ -18,7 +16,6 @@
   ;; Enable, so that commands like `ido-kill-buffer-at-head' can be performed
   (ido-mode 1)
 
-  ;; TODO: Maybe it is because they are not bound to any map?
   :bind (("C-x c /" . helm-find) ; Enable C-x c prefix commands
          ("C-x c p" . helm-list-emacs-process)
          ("C-x c t" . helm-top))
@@ -95,8 +92,7 @@ If called with PREFIX, search for string and no case sensitive."
 ;; `helm-navi' loads `navi-mode', and this last one loads `outshine'
 (use-package helm-navi
   :diminish outshine-mode outline-minor-mode
-  :defer ; Defer to fetch local version after load-path manual overriding
-  )
+  :defer) ; Defer to fetch local version after load-path manual overriding
 
 
 (provide 'helm-settings)

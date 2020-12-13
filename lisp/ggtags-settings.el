@@ -3,9 +3,6 @@
 ;;; Code:
 
 
-(require 'f)
-(require 'custom-functions)
-
 ;;; Use-package config
 (use-package ggtags
   :diminish

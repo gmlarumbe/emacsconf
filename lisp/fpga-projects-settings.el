@@ -2,9 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'custom-functions)
-(require 'ggtags-settings)
-(require 'compilation-settings)
 
 ;;;; Vivado tags
 ;; Projects list for the `larumbe/vivado-projects':

@@ -2,7 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'auto-complete)
 
 ;;;; XML
 (use-package nxml-mode

@@ -3,8 +3,6 @@
 ;;; Code:
 
 
-;; (require 'compilation-settings)
-
 
 (defvar larumbe/verilog-indent-level 4)
 (defvar larumbe/verilog-use-own-custom-fontify t)
@@ -97,7 +95,7 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
 
   ;; Many thanks to Kaushal Modi (https://scripter.co/)
   (load "~/.elisp/lisp-prog/verilog-settings/verilog-modi-setup.el")
-  ;; TODO: Move it to another directory at some point
+  ;; TODO: Fetch diff from this file and original and point to original
 
   ;; Bind chords
   (bind-chord "\\\\" #'modi/verilog-jump-to-module-at-point verilog-mode-map)
