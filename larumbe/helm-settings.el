@@ -3,28 +3,22 @@
 ;;; Code:
 
 
-(require 'custom-functions)
-(require 'navi-mode)
+;; (require 'custom-functions)
+;; (require 'navi-mode)
 
 ;;;; Helm
 (use-package helm
   :diminish
-  :init
+  :preface
+  (require 'helm-mode) ; definition of `helm-completing-read-handlers-alist'
+  (require 'helm-config)
   ;; INFO: ido should not be enabled since compatibility with helm is managed by `helm-completing-read-handlers-alist'
   ;; However, if ido is not enabled, `ido-buffer-completion-map' does not get loaded
   ;; and therefore its not possible to make use of buffer killing while switching.
-  (ido-mode 1) ; Enable, so that commands like `ido-kill-buffer-at-head' can be performed
-  ;; Added in :init section because in config it only adds autoloads and ido
-  ;; might be executed before helm loads these.
+  ;; Enable, so that commands like `ido-kill-buffer-at-head' can be performed
+  (ido-mode 1)
 
-  :preface
-  ;; Only included to avoid flycheck warnings, since `helm-M-x' is an autoload
-  ;; for the files that declare the otherwise free variables.
-  (require 'helm-mode)
-  (require 'helm-occur)
-
-  :commands (helm-autoresize-mode helm-set-local-variable larumbe/helm-occur)
-
+  ;; TODO: Maybe it is because they are not bound to any map?
   :bind (("C-x c /" . helm-find) ; Enable C-x c prefix commands
          ("C-x c p" . helm-list-emacs-process)
          ("C-x c t" . helm-top))
@@ -33,8 +27,8 @@
   (use-package helm-ag)
   (use-package helm-org) ; Required by helm-havi
 
-  (add-to-list 'helm-completing-read-handlers-alist '((switch-to-buffer . ido)
-                                                      (kill-buffer      . ido)))
+  (add-to-list 'helm-completing-read-handlers-alist '(switch-to-buffer . ido))
+  (add-to-list 'helm-completing-read-handlers-alist '(kill-buffer      . ido))
   (helm-mode 1)
   (helm-autoresize-mode 1)
 

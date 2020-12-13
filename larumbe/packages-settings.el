@@ -16,6 +16,7 @@
 (use-package navi-mode)
 
 (use-package ido
+  :ensure
   :config
   (setq ido-everywhere nil)
   (setq ido-default-buffer-method "selected-window"))
