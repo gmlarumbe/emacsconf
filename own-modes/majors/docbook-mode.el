@@ -1,5 +1,14 @@
-;;; Description
+;;; docbook-mode.el --- Docbook Mode  -*- lexical-binding: t -*-
+;;; Commentary:
+;;
 ;; Basic Larumbe's minor mode for XML Docbook editing
+;;
+;; INFO: It seems there are already some Docbook modes...
+;;  Check them and verify how this glues with the rest.
+;;
+;;; Code:
+
+;;; Description
 
 (defvar larumbe/docbook-xsl-program "xsltproc")
 (defvar larumbe/docbook-fo-program "fop")
@@ -77,8 +86,8 @@ If Universal Argument is provided, then do not preview file"
           (save-excursion
             (goto-char end)
             (insert "</emphasis>"))
-            (goto-char beg)
-            (insert "<emphasis role=\"bold\">"))
+          (goto-char beg)
+          (insert "<emphasis role=\"bold\">"))
       (message "No region selected motherfucker!"))))
 
 
@@ -93,34 +102,39 @@ If Universal Argument is provided, then do not preview file"
           (save-excursion
             (goto-char end)
             (insert "</emphasis>"))
-            (goto-char beg)
-            (insert "<emphasis role=\"italic\">"))
+          (goto-char beg)
+          (insert "<emphasis role=\"italic\">"))
       (message "No region selected motherfucker!"))))
 
 
 (defhydra hydra-nxml-docbook-template (:color blue
-                                       :hint nil)
-      "
+                                              :hint nil)
+  "
 _p_aragraph     _b_old           itemized_L_ist   _r_egisters
 _s_ection       _i_talic         _l_istitem
 _t_itle         _B_oldRegion
 _c_hapter       _I_talicRegion
 "
-      ;; ("p"   (larumbe/hydra-yasnippet "para")) ; Leaves a line between tag and text
-      ("p"   (larumbe/hydra-yasnippet "parahp")) ; Right after the tag
-      ("s"   (larumbe/hydra-yasnippet "section"))
-      ("t"   (larumbe/hydra-yasnippet "title"))
-      ("c"   (larumbe/hydra-yasnippet "chapter"))
-      ("b"   (larumbe/hydra-yasnippet "bold"))
-      ("i"   (larumbe/hydra-yasnippet "italic"))
-      ("B"   (larumbe/nxml-docbook-bold-region))
-      ("I"   (larumbe/nxml-docbook-italic-region))
-      ("r"   (larumbe/hydra-yasnippet "registers"))
-      ("L"   (larumbe/hydra-yasnippet "itemizedlist"))
-      ("l"   (larumbe/hydra-yasnippet "listitem"))
-      ("q"   nil nil :color blue)
-      ("C-g" nil nil :color blue)
-      )
+  ;; ("p"   (larumbe/hydra-yasnippet "para")) ; Leaves a line between tag and text
+  ("p"   (larumbe/hydra-yasnippet "parahp")) ; Right after the tag
+  ("s"   (larumbe/hydra-yasnippet "section"))
+  ("t"   (larumbe/hydra-yasnippet "title"))
+  ("c"   (larumbe/hydra-yasnippet "chapter"))
+  ("b"   (larumbe/hydra-yasnippet "bold"))
+  ("i"   (larumbe/hydra-yasnippet "italic"))
+  ("B"   (larumbe/nxml-docbook-bold-region))
+  ("I"   (larumbe/nxml-docbook-italic-region))
+  ("r"   (larumbe/hydra-yasnippet "registers"))
+  ("L"   (larumbe/hydra-yasnippet "itemizedlist"))
+  ("l"   (larumbe/hydra-yasnippet "listitem"))
+  ("q"   nil nil :color blue)
+  ("C-g" nil nil :color blue)
+  )
 
 
 (provide 'docbook-mode)
+
+
+(provide 'docbook-mode)
+
+;;; docbook-mode.el ends here

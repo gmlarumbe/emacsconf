@@ -10,49 +10,34 @@
 ;;
 ;;; Code:
 
-;;; Load Path
-(defvar larumbe/load-path-dirs '("~/.elisp/lisp"
-                                 "~/.elisp/lisp-prog"
-                                 "~/.elisp/download"
-                                 "~/.elisp/own-modes"))
-(dolist (dir larumbe/load-path-dirs)
-  (add-to-list 'load-path (expand-file-name dir)) ; Add directory
-  (let ((default-directory dir))                  ; And subdirectories recursively
-    (normal-top-level-add-subdirs-to-load-path)))
 
-;; (add-to-list 'load-path (expand-file-name "~/.elisp/download"))
+;;;; Load path
+;; Order of packages within `load-path' actually matters.
+;; If there is one package present in more than one directory of `load-path',
+;; only the first in the list will be used to load the package.
 
-
-;;; Package management setup for use-package
-(require 'package)
-(setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa"        . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
-(add-to-list 'package-archives '("gnu"          . "http://elpa.gnu.org/packages/"))
-(package-initialize)
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-;; use-package.el is no longer needed at runtime
-;; This means you should put the following at the top of your Emacs, to further reduce load time:
-(eval-when-compile
-  (require 'use-package))
-(setq use-package-always-ensure t) ; Force download if not available. INFO: Set to nil for built-in packages.
-
-;; Keep packages updated automatically
-(use-package auto-package-update
-  :config
-  (setq auto-package-update-delete-old-versions t)
-  (setq auto-package-update-hide-results t)
-  (auto-package-update-maybe))
+;; Since `normal-top-level-add-subdirs-to-load-path' will add subdirectories at
+;; the end of `load-path', MELPA packages loaded with `use-package' will take
+;; precedence. As I would like to have many MELPA packages coexisting with my
+;; own overriden packages, I prefer to use a custom approach using shell commands.
 
 
-;;; Requires
+(defvar larumbe/load-path-dirs-recursive '("~/.elisp/lisp"
+                                           "~/.elisp/lisp-prog"
+                                           "~/.elisp/download"
+                                           "~/.elisp/own-modes"))
+(dolist (dir larumbe/load-path-dirs-recursive)
+  (dolist (subdir (split-string (shell-command-to-string (concat "find " dir " -type d"))))
+    (add-to-list 'load-path (expand-file-name subdir))))
+
+
+;;;; Packages
+(require 'basic-functions)
+;; (require 'load-path-settings)
+(require 'package-settings)
+(require 'custom-functions)
 (require 'config-basic)
 (require 'packages-settings)
-(require 'custom-functions)
 (require 'macros)
 (require 'helm-settings)
 (require 'projectile-settings)
@@ -68,11 +53,21 @@
 (require 'exwm-settings)
 
 
-;; Machine specific settings files:
+;;;; Machine-specific
 ;;   - This file will not be present in the repo
 ;;   - It will have specific content to the machine (e.g. EXWM enabling)
 (if (file-exists-p "~/.elisp_private/machine/machine-config.el")
     (load "~/.elisp_private/machine/machine-config.el" t))
+
+
+;;;; Load path overriding
+;; If a MELPA package has to be overriden, copy the new version (or symlink) to
+;; the 'modified' directory.
+;; When loading with `use-package', some mechanism is needed to defer it and
+;; load it after `load-path' has been updated (such as :bind, :defer, :hook...)
+(defvar larumbe/load-path-dirs-non-recursive '("~/.elisp/modified"))
+(dolist (dir larumbe/load-path-dirs-non-recursive)
+  (add-to-list 'load-path (expand-file-name dir)))
 
 
 (provide 'init)

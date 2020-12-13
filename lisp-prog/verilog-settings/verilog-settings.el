@@ -3,7 +3,7 @@
 ;;; Code:
 
 
-(require 'compilation-settings)
+;; (require 'compilation-settings)
 
 
 (defvar larumbe/verilog-indent-level 4)
@@ -22,7 +22,6 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
 
 ;;; Basic settings
 (use-package verilog-mode
-  :load-path "~/.elisp/larumbe/own-modes/override"
   :mode (("\\.[st]*v[hp]*\\'" . verilog-mode) ;.v, .sv, .svh, .tv, .vp
          ("\\.psl\\'"         . verilog-mode)
          ("\\.vams\\'"        . verilog-mode)
@@ -66,8 +65,7 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
               ("C-c C-p"  . larumbe/verilog-preprocess)
               ("C-c C-f"  . larumbe/verilog-flycheck-mode)
               ("<f8>"     . larumbe/verilog-vhier-current-file))
-  :demand ; INFO: Avoid deferring to properly load modi settings
-  :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
+  :config
   (setq verilog-indent-level             larumbe/verilog-indent-level)
   (setq verilog-indent-level-module      larumbe/verilog-indent-level)
   (setq verilog-indent-level-declaration larumbe/verilog-indent-level)
@@ -97,9 +95,8 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
     (setq verilog-highlight-translate-off         t)  ; Background highlight expressions such as // synopsys translate_off ... // synopsys translate_on
     (setq verilog-highlight-modules             nil)) ; Analogous to `verilog-highlight-includes', would highlight module while hovering mouse. However it's experimental/incomplete as the regexp is not consistent.
 
-  :config
   ;; Many thanks to Kaushal Modi (https://scripter.co/)
-  (load "~/.elisp/larumbe/verilog-settings/verilog-modi-setup.el")
+  (load "~/.elisp/lisp-prog/verilog-settings/verilog-modi-setup.el")
   ;; TODO: Move it to another directory at some point
 
   ;; Bind chords

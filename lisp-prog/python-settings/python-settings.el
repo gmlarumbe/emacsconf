@@ -21,7 +21,8 @@
   :config
   (setq python-check-command     "pylint")
   (setq py-number-face           font-lock-doc-face)
-  (setq py-object-reference-face larumbe/font-lock-grouping-keywords-face)
+  ;; TODO: Postpone until autoloads issues are fixed in verilog/hdl-font-lock
+  ;; (setq py-object-reference-face larumbe/font-lock-grouping-keywords-face)
   (setq py-pseudo-keyword-face   font-lock-constant-face) ; True/False/None
   (setq py-try-if-face           font-lock-doc-face)
   (setq py-variable-name-face    font-lock-variable-name-face)

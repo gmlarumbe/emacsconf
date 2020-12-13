@@ -82,6 +82,11 @@ in order to check pending project actions. "
       (add-to-list 'yas-snippet-dirs (larumbe/path-join yasnippet-snippets-dir mode)))
     ;; DANGER: If more than one directory for a specific-mode is detected, only
     ;; the last one is taken into account.
+
+    (define-key yas-minor-mode-map (kbd "TAB") nil) ; Use tab for indenting
+    (define-key yas-minor-mode-map [tab] nil)
+
+    ;; Load snippets
     (yas-reload-all)
 
     (defun larumbe/yas-insert-snippet-dwim (&optional arg)
@@ -133,13 +138,17 @@ If universal ARG is provided, visit a snippet file."
 
   ;; Provides `ac-source-gtags'
   (use-package auto-complete-gtags
-    :load-path "~/.elisp/download"
+    ;; :load-path "~/.elisp/download"
+    :ensure nil
     :config
     (setq ac-gtags-modes '(c-mode cc-mode c++-mode verilog-mode emacs-lisp-mode vhdl-mode sh-mode python-mode tcl-mode)))
 
   ;; Provides `ac-source-verilog'
   (use-package auto-complete-verilog
-    :load-path "~/.elisp/download/"))
+    :ensure nil
+    ;; :load-path "~/.elisp/download/"
+    )
+  )
 
 
 (use-package imenu-list
@@ -149,7 +158,9 @@ If universal ARG is provided, visit a snippet file."
 
 
 (use-package hide-comnt
-  :load-path "~/.elisp/download/")
+  :ensure nil
+  ;; :load-path "~/.elisp/download/"
+  )
 
 
 (use-package rainbow-delimiters)
@@ -161,23 +172,68 @@ If universal ARG is provided, visit a snippet file."
 
 (use-package prog-mode
   :ensure nil
-  :commands (larumbe/ggtags-mode)
   ;; INFO: If declaring with :bind, the keybindings will be overriden by major-mode keybindings
   ;;       To override minor-mode keybindings, use :bind*
   ;;       To override major-mode derived keybindings, use prog-mode-hook
   :hook ((prog-mode . my-prog-mode-hook)
          (prog-mode . larumbe/prog-mode-keys))
   :config
+  (defun larumbe/prog-mode-definitions ()
+    "Find definition of symbol at point.
+If pointing a file, visit that file instead.
+
+Selects between ggtags/xref to find definitions based on major-mode.
+
+INFO: For some major-modes, xref will use global/ggtags as a backend
+if configured. However, for elisp seems it's not the default engine,
+as well as for C/C++ or Python..."
+    (interactive)
+    (let ((def (thing-at-point 'symbol)))
+      (if (file-exists-p (thing-at-point 'filename))
+          (larumbe/find-file-at-point)
+        ;; If not pointing to a file choose between different navigation functions
+        (cond
+         ((string= major-mode "emacs-lisp-mode")
+          (xref-find-definitions def))
+         (t
+          (call-interactively #'ggtags-find-tag-dwim))))))
+
+
+  (defun larumbe/prog-mode-references ()
+    "Find references of symbol at point.
+
+Selects between ggtags/xref to find references based on major-mode.
+
+INFO: For some major-modes, xref will use global/ggtags as a backend
+if configured. However, for elisp seems it's not the default engine,
+as well as for C/C++ or Python..."
+    (interactive)
+    (let ((ref (thing-at-point 'symbol)))
+      (if (file-exists-p (thing-at-point 'filename))
+          (larumbe/find-file-at-point)
+        ;; If not pointing to a file choose between different navigation functions
+        (cond
+         ((string= major-mode "emacs-lisp-mode")
+          (xref-find-references ref))
+         (t
+          (ggtags-find-reference ref))))))
+
+
   (defun larumbe/prog-mode-keys ()
-    "Wrapper for flycheck-mode keybindings based on current major-mode"
-    ;; Verilog has its own flycheck-mode wrapper function
-    (unless (or (string-equal major-mode "verilog-mode")
-                (string-equal major-mode "emacs-lisp-mode"))
+    "Hook to set keys that will override the ones set in the derived major mode."
+    (local-set-key (kbd "C-<tab>") #'hs-toggle-hiding)
+    (local-set-key (kbd "C-c C-n") #'align-regexp)
+    (local-set-key (kbd "C-c C-s") #'larumbe/yas-insert-snippet-dwim)
+    (local-set-key (kbd "M-.")     #'larumbe/prog-mode-definitions)
+    (local-set-key (kbd "M-?")     #'larumbe/prog-mode-references)
+    (unless (or (string= major-mode "verilog-mode")
+                (string= major-mode "emacs-lisp-mode"))
       (local-set-key (kbd "C-c C-f") #'flycheck-mode)))
+
 
   (defun my-prog-mode-hook ()
     "Basic Hook for derived programming modes."
-    (larumbe/ggtags-mode 1)
+    (ggtags-mode         1)
     (projectile-mode     1)
     (auto-complete-mode  1)
     (show-paren-mode     1)
@@ -195,7 +251,14 @@ If universal ARG is provided, visit a snippet file."
 ;;; Programming Languages Setups
 (require 'verilog-settings)
 (require 'vhdl-settings)
+;; TODO: Temporary fix
+;; (use-package hdl-font-lock
+;;   :ensure nil
+;;   :defer t
+;;   :after verilog-settings
+;;   )
 (require 'hdl-font-lock)
+;; End of TODO
 (require 'elisp-settings)
 (require 'python-settings)
 (require 'sh-script-settings)

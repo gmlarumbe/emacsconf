@@ -1,3 +1,7 @@
+;;; unison-sync-minor-mode.el --- Unison Sync Minor mode  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 ;;; Basic info
 ;; Minor Mode created by Larumbe for Local/Remote unison synchronization
 ;; Fetched from: http://nullprogram.com/blog/2013/02/06/
@@ -206,3 +210,4 @@ User will have to choose which of the repos has priority on the synchronization"
 ;;;; Provide
 (provide 'unison-sync-minor-mode)
 
+;;; unison-sync-minor-mode.el ends here

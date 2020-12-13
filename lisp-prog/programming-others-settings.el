@@ -20,13 +20,13 @@
 
 ;;;; DOCBOOK
 (use-package docbook-mode
-  :load-path "~/.elisp/larumbe/own-modes/majors/"
+  :ensure nil
   :mode (("\\.docbook\\.xml" . docbook-mode)))
 
 
 ;;;; VIVADO
 (use-package vivado-utils
-  :load-path "~/.elisp/larumbe/own-modes/majors/"
+  :ensure nil
   :mode (("\\.xdc\\'" . vivado-xdc-mode))
   :hook ((vivado-mode . my-vivado-mode-hook))
   :demand t ; INFO: Force loading of all the functions in the file
@@ -104,12 +104,12 @@
 
 ;;;; NASL
 (use-package nasl-mode
-  :load-path "~/.elisp/download/")
+  :ensure nil)
 
 
 ;;;; RDL
 (use-package rdl-mode
-  :load-path "~/.elisp/download/")
+  :ensure nil)
 
 
 ;;;; Yocto

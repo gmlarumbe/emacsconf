@@ -95,7 +95,8 @@ If called with PREFIX, search for string and no case sensitive."
 ;; `helm-navi' loads `navi-mode', and this last one loads `outshine'
 (use-package helm-navi
   :diminish outshine-mode outline-minor-mode
-  :load-path "~/.elisp/modified")
+  :defer ; Defer to fetch local version after load-path manual overriding
+  )
 
 
 (provide 'helm-settings)

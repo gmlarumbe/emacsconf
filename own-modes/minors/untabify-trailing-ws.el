@@ -1,3 +1,7 @@
+;;; untabify-trailing-ws.el --- Untabify/Trailing WS  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 ;;; Description
 ;; Basic Larumbe's minor mode to untabify and delete trailing whitespaces in buffers (except for Makefiles).
 ;; This seems to be an obsolete method and there are very good alternatives out there, but it still works, so that's why I keep it.
@@ -53,3 +57,5 @@ Meant to be used as a wrapper for write-file-functions hook."
 
 ;;; Provide
 (provide 'untabify-trailing-ws)
+
+;;; untabify-trailing-ws.el ends here

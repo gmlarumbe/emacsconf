@@ -152,6 +152,7 @@
 ;;; Editing
 (use-package untabify-trailing-ws
   ;; :load-path "~/.elisp/larumbe/own-modes/minors/"
+  :ensure nil
   :config
   (untabify-trailing-ws 1)) ; Enabled
 
@@ -171,6 +172,7 @@
 
 (use-package move-lines
   ;; :load-path "~/.elisp/download/"
+  :ensure nil
   )
 
 
@@ -260,6 +262,7 @@
 
 (use-package jpeg-mode
   ;; :load-path "~/.elisp/download/")
+  :ensure nil
   )
 
 (use-package pcap-mode)

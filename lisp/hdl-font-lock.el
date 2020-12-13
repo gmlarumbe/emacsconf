@@ -195,7 +195,23 @@ obj.method();
 
 ;; Variable declaration type/name font-lock
 (defvar larumbe/verilog-highlight-variable-declaration-names nil)
-(defvar larumbe/verilog-keywords-no-types (cl-set-difference verilog-keywords verilog-type-keywords :test #'equal))
+(defvar larumbe/verilog-keywords-no-types '("`__FILE__" "`__LINE" "`begin_keywords" "`celldefine" "`default_nettype" "`define" "`else" "`elsif" "`end_keywords" "`endcelldefine" "`endif" "`ifdef" "`ifndef" "`include"
+                                            "`line" "`nounconnected_drive" "`pragma" "`resetall" "`timescale" "`unconnected_drive" "`undef" "`undefineall" "`case" "`default" "`endfor" "`endprotect" "`endswitch"
+                                            "`endwhile" "`for" "`format" "`if" "`let" "`protect" "`switch" "`timescale" "`time_scale" "`while" "after" "alias" "always" "always_comb" "always_ff" "always_latch"
+                                            "assert" "assign" "assume" "automatic" "before" "begin" "bind" "bins" "binsof" "bit" "break" "byte" "case" "casex" "casez" "cell" "chandle" "class" "clocking" "config"
+                                            "const" "constraint" "context" "continue" "cover" "covergroup" "coverpoint" "cross" "deassign" "default" "design" "disable" "dist" "do" "edge" "else" "end" "endcase"
+                                            "endclass" "endclocking" "endconfig" "endfunction" "endgenerate" "endgroup" "endinterface" "endmodule" "endpackage" "endprimitive" "endprogram" "endproperty" "endspecify"
+                                            "endsequence" "endtable" "endtask" "enum" "event" "expect" "export" "extends" "extern" "final" "first_match" "for" "force" "foreach" "forever" "fork" "forkjoin" "function"
+                                            "generate" "genvar" "highz0" "highz1" "if" "iff" "ifnone" "ignore_bins" "illegal_bins" "import" "incdir" "include" "initial" "inside" "instance" "int" "interface" "intersect"
+                                            "join" "join_any" "join_none" "large" "liblist" "library" "local" "longint" "macromodule" "matches" "medium" "modport" "module" "negedge" "new" "noshowcancelled" "null"
+                                            "package" "packed" "posedge" "primitive" "priority" "program" "property" "protected" "pulsestyle_onevent" "pulsestyle_ondetect" "pure" "rand" "randc" "randcase"
+                                            "randsequence" "ref" "release" "repeat" "return" "scalared" "sequence" "shortint" "shortreal" "showcancelled" "signed" "small" "solve" "specify"
+                                            "specparam" "static" "string" "strong0" "strong1" "struct" "super" "supply0" "supply1" "table" "tagged" "task" "this" "throughout"
+                                            "timeprecision" "timeunit" "type" "typedef" "union" "unique" "unsigned" "use" "uwire" "var" "vectored" "virtual" "void" "wait"
+                                            "wait_order" "weak0" "weak1" "while" "wildcard" "with" "within" "accept_on" "checker" "endchecker" "eventually" "global" "implies" "let"
+                                            "nexttime" "reject_on" "restrict" "s_always" "s_eventually" "s_nexttime" "s_until" "s_until_with" "strong" "sync_accept_on" "sync_reject_on" "unique0" "until" "until_with"
+                                            "untyped" "weak" "implements" "interconnect" "nettype" "soft" ))
+;; Obtained with (dolist (word (cl-set-difference verilog-keywords verilog-type-keywords :test #'equal)) (insert "\"" word "\" "))
 (defvar larumbe/verilog-keywords-no-types-re (regexp-opt larumbe/verilog-keywords-no-types 'symbols))
 (defvar larumbe/verilog-variable-re-1
   "\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(?2:\\[.*\\]\\s-*\\)?\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*\\(?4:=.*\\)?;"

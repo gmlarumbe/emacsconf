@@ -1,3 +1,7 @@
+;;; vhier-outline-mode.el --- Verilog Hierarchy  -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 ;;; Description
 ;; Minor Mode created by Larumbe to navigate with outline-minor-mode through Verilog-Perl created Hierarchy
 ;; Author: Larumbe
@@ -93,6 +97,6 @@
   (skip-chars-forward "/ *"))
 
 
-
-
 (provide 'vhier-outline-mode)
+
+;;; vhier-outline-mode.el ends here

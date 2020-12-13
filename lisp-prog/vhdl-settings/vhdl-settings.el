@@ -21,7 +21,6 @@
 
 ;;; Basic settings
 (use-package vhdl-mode
-  :load-path "~/.elisp/larumbe/own-modes/override"
   :commands (larumbe/vhdl-index-menu-init)
   :hook ((vhdl-mode . my-vhdl-mode-hook))
   :bind (:map vhdl-mode-map
@@ -85,11 +84,6 @@
   ;; with my functions
   (use-package vhdl-tools)
   (use-package vhdl-capf))
-
-
-;; TODO: Merge and switch some day to latest official version
-;; (use-package vhdl-mode
-;;   :load-path "~/.elisp/modified/")
 
 
 (provide 'vhdl-settings)

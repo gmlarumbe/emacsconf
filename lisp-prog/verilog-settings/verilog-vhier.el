@@ -3,8 +3,10 @@
 ;;; Code:
 
 ;;; Verilog-Perl hierarchy
+;; Navigate hierarchy files easily
 (use-package vhier-outline-mode
-  :load-path "~/.elisp/larumbe/own-modes/minors/") ; Navigate hierarchy files easily
+  :ensure nil) ; Fetch it from `load-path' and not from MELPA
+
 
 (defvar larumbe-verilog-perl-buffer-name "Verilog-Perl"
   "Initial buffer name to use for the hierarchy file.")
