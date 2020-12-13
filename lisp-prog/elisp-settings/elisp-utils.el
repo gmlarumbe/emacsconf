@@ -3,22 +3,6 @@
 ;;; Code:
 
 
-
-(defun larumbe/xref-find-definitions-at-point-dwim ()
-  "Find definition of symbol at point.
-If pointing a file, visit that file instead."
-  (interactive)
-  (if (file-exists-p (thing-at-point 'filename))
-      (larumbe/find-file-at-point)
-    (xref-find-definitions (thing-at-point 'symbol))))
-
-
-(defun larumbe/xref-find-reference-at-point ()
-  "Find reference of symbol at point."
-  (interactive)
-  (xref-find-references (thing-at-point 'symbol)))
-
-
 (defun larumbe/byte-compile-current-buffer ()
   "Byte-compile file of current visited buffer."
   (interactive)

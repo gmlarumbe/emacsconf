@@ -11,9 +11,7 @@
               ("C-c C-t" . hydra-elisp/body)
               ("C-c C-e" . edebug-defun)
               ("C-c h"   . sanityinc/headerise-elisp)
-              ("C-M-z"   . eval-region)
-              ("M-."     . larumbe/xref-find-definitions-at-point-dwim)
-              ("M-?"     . larumbe/xref-find-reference-at-point))
+              ("C-M-z"   . eval-region))
   :hook ((emacs-lisp-mode . my-elisp-hook))
   :config
   (use-package edebug

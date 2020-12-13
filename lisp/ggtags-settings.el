@@ -12,16 +12,15 @@
   :commands (ggtags-create-tags
              ggtags-current-project-root
              ggtags-find-reference
-             modi/ggtags-tag-at-point
-             larumbe/ggtags-mode)
+             modi/ggtags-tag-at-point)
   :bind (:map ggtags-navigation-map
               ("M-o"     . nil)
               ("C-c C-k" . nil) ; EXWM character mode
               ("M->"     . nil)
               ("M-<"     . nil))
   :bind (:map ggtags-mode-map
-              ("M-."     . larumbe/ggtags-find-tag-dwim)
-              ("M-?"     . larumbe/ggtags-find-reference))
+              ("M-."     . nil)
+              ("M-?"     . nil))
   :config
   (setq ggtags-sort-by-nearness t) ; Enabling nearness requires global 6.5+
   (setq ggtags-navigation-mode-lighter nil)
@@ -46,19 +45,6 @@
          ;; else return the whole `(buffer-substring beg end)'
          (buffer-substring beg end)))))
 
-  (defun larumbe/ggtags-mode (&optional arg)
-    "Enable `ggtags-mode' depending on current programming `major-mode'.
-Add as a hook to every derived `prog-mode' and avoiding being for elisp buffers.
-Pass ARG to `ggtags-mode' function if not called interactively."
-    (interactive)
-    (unless (string-match "emacs-lisp-mode" (format "%s" major-mode)) ; Do not use ggtags @ `emacs-lisp-mode'
-      (if arg
-          (ggtags-mode arg)
-        ;; If called interactive toggle current minor-mode
-        (if ggtags-mode
-            (ggtags-mode -1)
-          (ggtags-mode 1)))))
-
   ;; Advising
   ;; INFO: It is not a good idea to advice ggtags-mode as it also advices the
   ;; buffer-local variable `ggtags-mode', with some side-effects such as
@@ -67,22 +53,6 @@ Pass ARG to `ggtags-mode' function if not called interactively."
 
 
 ;;;; Auxiliar functions
-  (defun larumbe/ggtags-find-tag-dwim ()
-    "Wrapper of `ggtags-find-tag-dwim' to visit a tags/files depending
-on where the point is."
-    (interactive)
-    (if (file-exists-p (thing-at-point 'filename))
-        (larumbe/find-file-at-point)
-      (call-interactively #'ggtags-find-tag-dwim)))
-
-
-  (defun larumbe/ggtags-find-reference ()
-    "Wrapper of `ggtags-find-reference' to visit reference at point."
-    (interactive)
-    (let ((ref (thing-at-point 'symbol)))
-      (ggtags-find-reference ref)))
-
-
   (defun larumbe/ggtags-backend-switch ()
     "Switch between diferent backends for Global and ggtags.
 The function `ggtags-create-tags' used by all the wrappers relies on the
