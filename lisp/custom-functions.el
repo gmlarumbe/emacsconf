@@ -7,110 +7,6 @@
 (require 'f)
 (require 'with-editor)
 
-(defvar larumbe/shrink-window-horizontally-delta   15)
-(defvar larumbe/shrink-window-vertically-delta      5)
-
-;;; Restart code
-;; https://emacs.stackexchange.com/questions/5428/restart-emacs-from-within-emacs
-(defun launch-separate-emacs-in-terminal ()
-  (suspend-emacs "fg ; emacs -nw"))
-
-(defun launch-separate-emacs-under-x ()
-  (call-process "sh" nil nil nil "-c" "emacs &"))
-
-(defun restart-emacs ()
-  (interactive)
-  ;; We need the new emacs to be spawned after all kill-emacs-hooks
-  ;; have been processed and there is nothing interesting left
-  (let ((kill-emacs-hook (append kill-emacs-hook (list (if (display-graphic-p)
-                                                           #'launch-separate-emacs-under-x
-                                                         #'launch-separate-emacs-in-terminal)))))
-    (save-buffers-kill-emacs)))
-
-;;; Buffer management
-(defun close-all-buffers ()
-  "Kill all buffers."
-  (interactive)
-  (mapc #'kill-buffer (buffer-list)))
-
-(defun only-current-buffer ()
-  "Kill all buffers except active one."
-  (interactive)
-  (mapc #'kill-buffer (cdr (buffer-list (current-buffer)))))
-
-(defun buffer-mode (&optional buffer)
-  "Return the major mode associated with BUFFER."
-  (let (buf)
-    (if buffer
-        (setq buf buffer)
-      (setq buf (current-buffer)))
-    (with-current-buffer buf
-      major-mode)))
-
-(defun larumbe/enlarge-window-horizontally ()
-  "Use `shrink-window' as a wrapper."
-  (interactive)
-  (shrink-window larumbe/shrink-window-horizontally-delta t))
-
-(defun larumbe/shrink-window-horizontally ()
-  "Use `shrink-window' as a wrapper."
-  (interactive)
-  (shrink-window (- larumbe/shrink-window-horizontally-delta) t))
-
-(defun larumbe/enlarge-window-vertically ()
-  "Use `shrink-window' as a wrapper."
-  (interactive)
-  (shrink-window larumbe/shrink-window-vertically-delta))
-
-(defun larumbe/shrink-window-vertically ()
-  "Use `shrink-window' as a wrapper."
-  (interactive)
-  (shrink-window (- larumbe/shrink-window-vertically-delta)))
-
-
-(defun file-title ()
-  "Return file title; e.g. for '/opt/asdf.txt' eval 'asdf'."
-  (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))
-
-
-(defun larumbe/kill-current-buffer ()
-  "Kill current buffer without confirmation."
-  (interactive)
-  (kill-buffer (buffer-name)))
-
-
-(defun larumbe/load-file-current-buffer ()
-  "Load current buffer .el file."
-  (interactive)
-  (if (string-equal "el" (file-name-extension buffer-file-name))
-      (load-file buffer-file-name)
-    (error "Cannot load non-Elisp files")))
-
-
-(defun larumbe/revert-buffer-no-confirm ()
-  "Revert current buffer without prompting for confirmation."
-  (interactive)
-  (revert-buffer nil t t))
-
-
-(defun larumbe/current-buffer-to-file (out-file)
-  "Export current buffer to OUT-FILE.
-Seems useful to export long compilation logs."
-  (interactive "FEnter output path: ")
-  (append-to-file (point-min) (point-max) out-file))
-
-
-(defun larumbe/pwd-to-kill-ring (&optional no-line)
-  "Copy current file path to `kill-ring'.
-If optional NO-LINE is given, then do not copy line to `kill-ring'"
-  (interactive "P")
-  (let (file-name)
-    (if no-line
-        (setq file-name (buffer-file-name))
-      (setq file-name (concat (buffer-file-name) ":" (format "%s" (line-number-at-pos)))))
-    (kill-new file-name)
-    (message (buffer-file-name))))
-
 
 ;;; Navigation
 ;; https://www.emacswiki.org/emacs/SearchAtPoint
@@ -181,6 +77,25 @@ DANGER: Comment needs to be substituted from '--' to  mode-specific comment."
   "Pop to previous mark."
   (interactive)
   (set-mark-command 4))
+
+
+(defun larumbe/xref-find-definitions-at-point-dwim ()
+  "Find definition of symbol at point.
+If pointing a file, visit that file instead.
+
+INFO: Will use global/ggtags as a backend if configured."
+  (interactive)
+  (if (file-exists-p (thing-at-point 'filename))
+      (larumbe/find-file-at-point)
+    (xref-find-definitions (thing-at-point 'symbol))))
+
+
+(defun larumbe/xref-find-reference-at-point ()
+  "Find reference of symbol at point.
+
+INFO: Will use global/ggtags as a backend if configured."
+  (interactive)
+  (xref-find-references (thing-at-point 'symbol)))
 
 
 ;;; Editing
@@ -337,6 +252,10 @@ Replace STRING with TO-STRING from START to END."
   (concat (file-name-as-directory arg1) arg2))
 
 
+
+
+
+
 (defun larumbe/directory-files-recursively-to-file (base-dir file re &optional append exclude-re)
   "Retrieve all files matching regexp RE of a specified BASE-DIR to output FILE.
 If optional APPEND is set to non-nil, append result to existing FILE.
@@ -411,20 +330,6 @@ is no include option for `diff' utils."
           (setenv var value)))))
   (message "Sourcing environment from `%s'... done." filename))
 
-
-
-(defun larumbe/toggle-keyboard-layout ()
-  "Toggle keyboard language between US and ES."
-  (interactive)
-  (let (cur-layout)
-    (setq cur-layout (shell-command-to-string "setxkbmap -query | grep layout | awk '{print $2}'"))
-    (setq cur-layout (replace-regexp-in-string "\n$" "" cur-layout))
-    (if (string-equal cur-layout "us")
-        (progn
-          (shell-command "setxkbmap es")
-          (message "Switched to ES"))
-      (shell-command "setxkbmap us")
-      (message "Switched to US"))))
 
 
 ;; https://emacs.stackexchange.com/questions/10077/how-to-edit-crontab-directly-within-emacs-when-i-already-have-emacs-open
