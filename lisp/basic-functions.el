@@ -1,10 +1,10 @@
 ;;; basic-functions.el --- Basic Functions  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;
-;; This file hosts basic functions that have no dependencies beyond Emacs
-;; bundled basic functions and libraries.
+;; This file hosts some general purpose functions that have no dependencies
+;; beyond those provided by Emacs installation libraries.
 ;;
-;; These are meant to be used everywhere in the configuration file.
+;; These are meant to be used all along the configuration file.
 ;;
 ;;; Code:
 
@@ -124,7 +124,144 @@ If optional NO-LINE is given, then do not copy line to `kill-ring'"
     (message (buffer-file-name))))
 
 
-;;;; Directories
+
+;;;; Navigation
+(defun larumbe/find-file-at-point ()
+  "Wrapper for `ffap' without asking for the file."
+  (interactive)
+  (let ((file (thing-at-point 'filename)))
+    (if (file-exists-p file)
+        (progn
+          (xref-push-marker-stack)
+          (ffap file))
+      (error "File \"%s\" does not exist (check point or current path)" file))))
+
+
+(defun larumbe/pop-to-previous-mark ()
+  "Pop to previous mark."
+  (interactive)
+  (set-mark-command 4))
+
+
+(defun larumbe/xref-find-definitions-at-point-dwim ()
+  "Find definition of symbol at point.
+If pointing a file, visit that file instead.
+
+INFO: Will use global/ggtags as a backend if configured."
+  (interactive)
+  (if (file-exists-p (thing-at-point 'filename))
+      (larumbe/find-file-at-point)
+    (xref-find-definitions (thing-at-point 'symbol))))
+
+
+(defun larumbe/xref-find-reference-at-point ()
+  "Find reference of symbol at point.
+
+INFO: Will use global/ggtags as a backend if configured."
+  (interactive)
+  (xref-find-references (thing-at-point 'symbol)))
+
+
+
+;;;; Editing
+;; https://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs
+(defun duplicate-line()
+  "Duplicate current line."
+  (interactive)
+  (move-beginning-of-line 1)
+  (kill-line)
+  (yank)
+  (open-line 1)
+  (forward-line 1)
+  (yank)
+  (move-beginning-of-line 1))
+
+
+(defun larumbe/copy-region-or-symbol-at-point ()
+  "Copy symbol under cursor.  If region is active, copy it instead."
+  (interactive)
+  (let ((symbol (thing-at-point 'symbol t)))
+    (if (use-region-p)
+        (call-interactively #'kill-ring-save)
+      (kill-new symbol)
+      (message symbol))))
+
+
+
+;;;; Lists/regexp/strings/files/directories
+;; http://ergoemacs.org/emacs/elisp_read_file_content.html
+(defun read-lines (filePath)
+  "Return a list of lines of a file at FILEPATH."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (split-string (buffer-string) "\n" t)))
+
+
+;; https://www.gnu.org/software/emacs/manual/html_node/eintr/print_002delements_002dof_002dlist.html
+(defun print-elements-of-list (list)
+  "Print each element of LIST on a line of its own."
+  (while list
+    (print (car list))
+    (setq list (cdr list))))
+
+
+(defun larumbe/print-elements-of-list-of-strings (list-of-strings)
+  "Print each element of LIST-OF-STRINGS on a line of its own."
+  (let (return-string)
+    (while list-of-strings
+      (setq return-string (concat return-string (message "%s\n" (car list-of-strings))))
+      (setq list-of-strings (cdr list-of-strings)))
+    (message "%s" return-string)))
+
+
+;; http://ergoemacs.org/emacs/elisp_read_file_content.html
+(defun get-string-from-file (filePath)
+  "Return FILEPATH file content as a string."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
+
+;; https://stackoverflow.com/questions/17325713/looking-for-a-replace-in-string-function-in-elisp
+(defun replace-in-string (what with in)
+  "Replace WHAT to WITH in string IN."
+  (replace-regexp-in-string (regexp-quote what) with in nil 'literal))
+
+
+(defun larumbe/replace-regexp (regexp to-string start end)
+  "Wrapper function for programatic use of `replace-regexp'.
+Replace REGEXP with TO-STRING from START to END."
+  (save-excursion
+    (goto-char start)
+    (while (re-search-forward regexp end t)
+      (replace-match to-string))))
+
+
+(defun larumbe/replace-regexp-whole-buffer (regexp to-string)
+  "Replace REGEXP with TO-STRING on whole current-buffer."
+  (larumbe/replace-regexp regexp to-string (point-min) (point-max)))
+
+
+(defun larumbe/replace-string (string to-string start end)
+  "Wrapper function for programatic use of `replace-string'.
+Replace STRING with TO-STRING from START to END."
+  (save-excursion
+    (goto-char start)
+    (while (search-forward string end t)
+      (replace-match to-string))))
+
+
+(defun larumbe/replace-string-whole-buffer (string to-string)
+  "Replace STRING with TO-STRING on whole current-buffer."
+  (larumbe/replace-string string to-string (point-min) (point-max)))
+
+
+
+(defun larumbe/path-join (arg1 arg2)
+  "Join path of ARG1 and ARG2."
+  (concat (file-name-as-directory arg1) arg2))
+
+
 (defun larumbe/directory-find-recursive-dirs (&optional dir)
   "Retrieve list of recursive directories from current directory.
 If first argument is provided, find DIR subdirectories.
@@ -137,6 +274,7 @@ This is identical to what is done to to handle the `load-path' at startup."
         (setq cwd dir)
       (setq cwd default-directory))
     (split-string (shell-command-to-string (concat "find " dir " -type d")))))
+
 
 
 ;;;; Misc

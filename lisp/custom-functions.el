@@ -1,29 +1,12 @@
 ;;; custom-functions.el --- Auxiliary library  -*- lexical-binding: t -*-
 ;;; Commentary:
+;;
+;; This file hosts more specific functions that might have some package dependencies.
+;;
 ;;; Code:
 
-(require 'thingatpt)
-(require 'xref)
 (require 'f)
 (require 'with-editor)
-
-
-;;; Navigation
-;; https://www.emacswiki.org/emacs/SearchAtPoint
-(defun my-isearch-yank-word-or-char-from-beginning ()
-  "Move to beginning of word before yanking word in `isearch-mode'.
-Make \\keymapC-s C-w and C-r C-w act like Vim's g* and g#, keeping Emacs'
-C-s C-w [C-w] [C-w]... behaviour. "
-  (interactive)
-  ;; Making this work after a search string is entered by user
-  ;; is too hard to do, so work only when search string is empty.
-  (if (= 0 (length isearch-string))
-      (beginning-of-thing 'word))
-  (isearch-yank-word-or-char)
-  ;; Revert to 'isearch-yank-word-or-char for subsequent calls
-  (substitute-key-definition #'my-isearch-yank-word-or-char-from-beginning
-                             #'isearch-yank-word-or-char
-                             isearch-mode-map))
 
 
 (defun forward-same-indent ()
@@ -60,66 +43,6 @@ DANGER: Comment needs to be substituted from '--' to  mode-specific comment."
       (message "No preceding line with same indent found in this block")
       (goto-char pos)
       nil)))
-
-
-(defun larumbe/find-file-at-point ()
-  "Wrapper for `ffap' without asking for the file."
-  (interactive)
-  (let ((file (thing-at-point 'filename)))
-    (if (file-exists-p file)
-        (progn
-          (xref-push-marker-stack)
-          (ffap file))
-      (error "File \"%s\" does not exist (check point or current path)" file))))
-
-
-(defun larumbe/pop-to-previous-mark ()
-  "Pop to previous mark."
-  (interactive)
-  (set-mark-command 4))
-
-
-(defun larumbe/xref-find-definitions-at-point-dwim ()
-  "Find definition of symbol at point.
-If pointing a file, visit that file instead.
-
-INFO: Will use global/ggtags as a backend if configured."
-  (interactive)
-  (if (file-exists-p (thing-at-point 'filename))
-      (larumbe/find-file-at-point)
-    (xref-find-definitions (thing-at-point 'symbol))))
-
-
-(defun larumbe/xref-find-reference-at-point ()
-  "Find reference of symbol at point.
-
-INFO: Will use global/ggtags as a backend if configured."
-  (interactive)
-  (xref-find-references (thing-at-point 'symbol)))
-
-
-;;; Editing
-;; https://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs
-(defun duplicate-line()
-  "Duplicate current line."
-  (interactive)
-  (move-beginning-of-line 1)
-  (kill-line)
-  (yank)
-  (open-line 1)
-  (forward-line 1)
-  (yank)
-  (move-beginning-of-line 1))
-
-
-(defun larumbe/copy-region-or-symbol-at-point ()
-  "Copy symbol under cursor.  If region is active, copy it instead."
-  (interactive)
-  (let ((symbol (thing-at-point 'symbol t)))
-    (if (use-region-p)
-        (call-interactively #'kill-ring-save)
-      (kill-new symbol)
-      (message symbol))))
 
 
 ;; https://emacs.stackexchange.com/questions/5441/function-to-delete-all-comments-from-a-buffer-without-moving-them-to-kill-ring
@@ -178,84 +101,6 @@ For example, in SystemVerilog,packages might need to be included before other fi
       (yank))))
 
 
-;;; Lists/regexp/strings/files/directories
-;; http://ergoemacs.org/emacs/elisp_read_file_content.html
-(defun read-lines (filePath)
-  "Return a list of lines of a file at FILEPATH."
-  (with-temp-buffer
-    (insert-file-contents filePath)
-    (split-string (buffer-string) "\n" t)))
-
-
-;; https://www.gnu.org/software/emacs/manual/html_node/eintr/print_002delements_002dof_002dlist.html
-(defun print-elements-of-list (list)
-  "Print each element of LIST on a line of its own."
-  (while list
-    (print (car list))
-    (setq list (cdr list))))
-
-
-(defun larumbe/print-elements-of-list-of-strings (list-of-strings)
-  "Print each element of LIST-OF-STRINGS on a line of its own."
-  (let (return-string)
-    (while list-of-strings
-      (setq return-string (concat return-string (message "%s\n" (car list-of-strings))))
-      (setq list-of-strings (cdr list-of-strings)))
-    (message "%s" return-string)))
-
-
-;; http://ergoemacs.org/emacs/elisp_read_file_content.html
-(defun get-string-from-file (filePath)
-  "Return FILEPATH file content as a string."
-  (with-temp-buffer
-    (insert-file-contents filePath)
-    (buffer-string)))
-
-
-;; https://stackoverflow.com/questions/17325713/looking-for-a-replace-in-string-function-in-elisp
-(defun replace-in-string (what with in)
-  "Replace WHAT to WITH in string IN."
-  (replace-regexp-in-string (regexp-quote what) with in nil 'literal))
-
-
-(defun larumbe/replace-regexp (regexp to-string start end)
-  "Wrapper function for programatic use of `replace-regexp'.
-Replace REGEXP with TO-STRING from START to END."
-  (save-excursion
-    (goto-char start)
-    (while (re-search-forward regexp end t)
-      (replace-match to-string))))
-
-
-(defun larumbe/replace-regexp-whole-buffer (regexp to-string)
-  "Replace REGEXP with TO-STRING on whole current-buffer."
-  (larumbe/replace-regexp regexp to-string (point-min) (point-max)))
-
-
-(defun larumbe/replace-string (string to-string start end)
-  "Wrapper function for programatic use of `replace-string'.
-Replace STRING with TO-STRING from START to END."
-  (save-excursion
-    (goto-char start)
-    (while (search-forward string end t)
-      (replace-match to-string))))
-
-
-(defun larumbe/replace-string-whole-buffer (string to-string)
-  "Replace STRING with TO-STRING on whole current-buffer."
-  (larumbe/replace-string string to-string (point-min) (point-max)))
-
-
-
-(defun larumbe/path-join (arg1 arg2)
-  "Join path of ARG1 and ARG2."
-  (concat (file-name-as-directory arg1) arg2))
-
-
-
-
-
-
 (defun larumbe/directory-files-recursively-to-file (base-dir file re &optional append exclude-re)
   "Retrieve all files matching regexp RE of a specified BASE-DIR to output FILE.
 If optional APPEND is set to non-nil, append result to existing FILE.
@@ -306,8 +151,6 @@ is no include option for `diff' utils."
      (concat "diff -X " exclude-file " -r " dir1 " " dir2 " > " out-file))))
 
 
-
-;;; Misc
 ;; https://gist.github.com/ffevotte/9345586#file-gistfile1-el
 (defun source (filename)
   "Update environment variables from FILENAME source file."

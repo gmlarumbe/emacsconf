@@ -32,12 +32,11 @@
 
 
 ;;;; Packages
-(require 'basic-functions)
-;; (require 'load-path-settings)
 (require 'package-settings)
-(require 'custom-functions)
 (require 'config-basic)
+(require 'basic-functions)
 (require 'packages-settings)
+(require 'custom-functions)
 (require 'macros)
 (require 'helm-settings)
 (require 'projectile-settings)
