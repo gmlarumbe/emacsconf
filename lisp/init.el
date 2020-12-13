@@ -52,12 +52,6 @@
 (require 'exwm-settings)
 
 
-;;;; Machine-specific
-;;   - This file will not be present in the repo
-;;   - It will have specific content to the machine (e.g. EXWM enabling)
-(if (file-exists-p "~/.elisp_private/machine/machine-config.el")
-    (load "~/.elisp_private/machine/machine-config.el" t))
-
 
 ;;;; Load path overriding
 ;; If a MELPA package has to be overriden, copy the new version (or symlink) to
@@ -67,6 +61,18 @@
 (defvar larumbe/load-path-dirs-non-recursive '("~/.elisp/modified"))
 (dolist (dir larumbe/load-path-dirs-non-recursive)
   (add-to-list 'load-path (expand-file-name dir)))
+
+
+
+;;;; Machine-specific
+;;   - This file will not be present in the repo
+;;   - It will have specific machine content (e.g. EXWM enabling)
+(when (file-exists-p "~/.elisp_private/")
+  (defvar larumbe/load-path-dirs-private '("~/.elisp_private"))
+  (dolist (dir larumbe/load-path-dirs-private)
+    (add-to-list 'load-path (expand-file-name dir)))
+  (require 'private-settings))
+
 
 
 (provide 'init)
