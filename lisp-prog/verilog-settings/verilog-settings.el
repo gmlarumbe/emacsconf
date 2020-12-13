@@ -64,7 +64,6 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
               ("C-c C-l"  . larumbe/verilog-align-parameters-current-module)
               ("C-c C-c"  . larumbe/verilog-connect-ports-recursively)
               ("C-c C-p"  . larumbe/verilog-preprocess)
-              ("C-c C-s"  . larumbe/yas-insert-snippet-dwim) ; Overrides `verilog-auto-save-compile'
               ("C-c C-f"  . larumbe/verilog-flycheck-mode)
               ("<f8>"     . larumbe/verilog-vhier-current-file))
   :demand ; INFO: Avoid deferring to properly load modi settings

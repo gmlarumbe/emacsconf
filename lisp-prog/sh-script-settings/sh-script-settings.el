@@ -8,7 +8,6 @@
               ("C-c C-j" . sh-switch-to-process-buffer)
               ("C-c C-k" . sh-send-line-or-region-and-step)
               ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)
-              ("C-c C-s" . larumbe/yas-insert-snippet-dwim) ; Unmaps select skeleton
               ("C-c C-t" . hydra-sh/body))
   :hook ((sh-mode . my-sh-mode-hook))
   :config

@@ -9,17 +9,14 @@
               ;; NOTE: Some commands need to be redefined since python overrides prog-mode-map somehow...
               ("C-c C-p"     . larumbe/python-send-line-or-region) ; Overrides `run-python'
               ("C-c C-c"     . run-python)                         ; Overrides `python-shell-send-buffer'
-              ("C-c C-s"     . larumbe/yas-insert-snippet-dwim)    ; Unmaps `py-execute-shell' to allow yasnippets
               ("C-c C-t"     . larumbe/hydra-python-placeholder)   ; Unmaps `py-toggle-shell' which was not declared at the time of implementing...
-              ("C-c C-n"     . align-regexp)                       ; Unmaps `py-forward-statement' to allow `align-regexp'
               ("C-c RET"     . ac-complete-jedi-direct)
               ("C-M-n"       . forward-same-indent)
               ("C-M-p"       . backward-same-indent)
               ;; Send text to an *ansi-term* running a Python interpreter (that may run in a remote machine)
               ("C-c C-k"     . larumbe/python-send-line-or-region-ansi-term)
               ;; Send text to an *ansi-term* running a Python interpreter and ignore indentation (that may run in a remote machine)
-              ("C-c C-l"     . larumbe/python-send-line-ansi-term-no-indent-ignore-comment) ; Overrides `python-shell-send-file'
-              )
+              ("C-c C-l"     . larumbe/python-send-line-ansi-term-no-indent-ignore-comment)) ; Overrides `python-shell-send-file'
   :bind (:map jedi-mode-map ("<C-tab>" . nil)) ; Let C-tab to HideShow
   :config
   (setq python-check-command     "pylint")

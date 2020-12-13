@@ -162,14 +162,9 @@ If universal ARG is provided, visit a snippet file."
 (use-package prog-mode
   :ensure nil
   :commands (larumbe/ggtags-mode)
-  :bind (:map prog-mode-map
-              ("C-<tab>" . hs-toggle-hiding)
-              ("C-c C-n" . align-regexp)
-              ("C-c C-s" . larumbe/yas-insert-snippet-dwim)
-              )
-  ;; :bind* (:map prog-mode-map
-  ;;              ("C-c C-s" . larumbe/yas-insert-snippet-dwim)
-  ;;              )
+  ;; INFO: If declaring with :bind, the keybindings will be overriden by major-mode keybindings
+  ;;       To override minor-mode keybindings, use :bind*
+  ;;       To override major-mode derived keybindings, use prog-mode-hook
   :hook ((prog-mode . my-prog-mode-hook)
          (prog-mode . larumbe/prog-mode-keys))
   :config
