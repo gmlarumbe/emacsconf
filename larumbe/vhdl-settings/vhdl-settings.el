@@ -73,15 +73,6 @@
   (when (executable-find "ag")
     (bind-chord "\|\|" #'larumbe/vhdl-find-parent-module vhdl-mode-map))
 
-  (defun my-vhdl-mode-hook ()
-    (set 'ac-sources '(ac-source-gtags))
-    ;; Flycheck
-    (setq flycheck-ghdl-include-path (larumbe/vhdl-list-directories-of-open-buffers))
-    (setq flycheck-ghdl-language-standard "08")
-    (setq flycheck-ghdl-work-lib vhdl-default-library) ; "xil_defaultlib"
-    (setq flycheck-ghdl-workdir (concat (projectile-project-root) "library/" vhdl-default-library)) ; Used @ axi_if_converter
-    (setq flycheck-ghdl-ieee-library "synopsys"))
-
   ;; Own settings
   (require 'vhdl-utils)
   (require 'vhdl-projects) ; Speedbar design hierarchy and compilation via makefiles

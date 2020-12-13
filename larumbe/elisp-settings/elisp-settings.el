@@ -26,12 +26,7 @@
 
   (require 'elisp-utils)
   (require 'elisp-templates)
-
-  (defun my-elisp-hook ()
-    (prettify-symbols-mode 1)
-    (rainbow-delimiters-mode 1)
-    (larumbe/elisp-flycheck-mode 1)
-    (set 'ac-sources '(ac-source-gtags ac-source-symbols))))
+  (sanityinc/enable-check-parens-on-save))
 
 
 (provide 'elisp-settings)

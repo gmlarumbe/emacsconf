@@ -46,6 +46,12 @@ Argument ARG sets `flycheck-mode' non-interactively."
       (message "Flycheck disabled"))))
 
 
+(defun my-elisp-hook ()
+    (prettify-symbols-mode 1)
+    (rainbow-delimiters-mode 1)
+    (larumbe/elisp-flycheck-mode 1)
+    (set 'ac-sources '(ac-source-gtags ac-source-symbols)))
+
 ;; Thanks to Steve Purcell
 (defun sanityinc/headerise-elisp ()
   "Add minimal header and footer to an elisp buffer in order to placate flycheck."
@@ -63,6 +69,11 @@ Argument ARG sets `flycheck-mode' non-interactively."
       (goto-char (point-max))
       (insert "\n\n(provide '" pname ")\n\n")
       (insert ";;; " fname " ends here\n"))))
+
+
+(defun sanityinc/enable-check-parens-on-save ()
+  "Run `check-parens' when the current buffer is saved."
+  (add-hook 'after-save-hook #'check-parens nil t))
 
 
 (provide 'elisp-utils)

@@ -116,17 +116,6 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
   (advice-add 'verilog-indent-line-relative :before-until #'modi/verilog-selective-indent) ;; Advise the indentation behavior of `indent-region' done using `C-M-\'
   (advice-add 'verilog-indent-line :before-until #'modi/verilog-selective-indent)          ;; Advise the indentation done by hitting `TAB' (modi multi-line defines)
 
-  (defun my-verilog-hook ()
-    (set 'ac-sources '(ac-source-verilog ac-source-gtags)) ; Auto-complete verilog-sources
-    (setq larumbe/verilog-open-dirs (nth 0 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
-    (setq larumbe/verilog-open-pkgs (nth 1 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
-    (setq verilog-library-directories             larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
-    (flycheck-select-checker 'verilog-iverilog)  ; Default checker
-    (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs)
-    (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
-    (key-chord-mode 1)
-    (larumbe/verilog-find-semicolon-in-instance-comments))
-
   (require 'verilog-utils)
   (require 'verilog-templates)
   (require 'verilog-overrides)

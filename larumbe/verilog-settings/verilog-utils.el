@@ -245,6 +245,18 @@ INFO: Exclude custom '*_targets' folders."
 
 
 ;;; Misc
+(defun my-verilog-hook ()
+  (set 'ac-sources '(ac-source-verilog ac-source-gtags)) ; Auto-complete verilog-sources
+  (setq larumbe/verilog-open-dirs (nth 0 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
+  (setq larumbe/verilog-open-pkgs (nth 1 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
+  (setq verilog-library-directories             larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
+  (flycheck-select-checker 'verilog-iverilog)  ; Default checker
+  (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs)
+  (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
+  (key-chord-mode 1)
+  (larumbe/verilog-find-semicolon-in-instance-comments))
+
+
 ;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
 (defun larumbe/verilog-dirs-and-pkgs-of-open-buffers ()
   "Return a list of directories from current verilog opened files.
