@@ -22,7 +22,6 @@
 ;;; Code:
 
 (require 'elmacro)
-(require 'custom-functions)
 
 ;; Recorded from insert-kbd-macro
 (fset 'open-google

@@ -9,7 +9,7 @@
 ;;;; Helm
 (use-package helm
   :diminish
-  :preface
+  :init
   (require 'helm-mode) ; definition of `helm-completing-read-handlers-alist'
   (require 'helm-config)
   ;; INFO: ido should not be enabled since compatibility with helm is managed by `helm-completing-read-handlers-alist'
