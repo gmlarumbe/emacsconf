@@ -11,10 +11,16 @@
 ;;; Code:
 
 ;;; Load Path
-(add-to-list 'load-path (expand-file-name "~/.elisp/larumbe"))
-(let ((default-directory  "~/.elisp/larumbe"))
-  (normal-top-level-add-subdirs-to-load-path))
-(add-to-list 'load-path (expand-file-name "~/.elisp/download"))
+(defvar larumbe/load-path-dirs '("~/.elisp/lisp"
+                                 "~/.elisp/lisp-prog"
+                                 "~/.elisp/download"
+                                 "~/.elisp/own-modes"))
+(dolist (dir larumbe/load-path-dirs)
+  (add-to-list 'load-path (expand-file-name dir)) ; Add directory
+  (let ((default-directory dir))                  ; And subdirectories recursively
+    (normal-top-level-add-subdirs-to-load-path)))
+
+;; (add-to-list 'load-path (expand-file-name "~/.elisp/download"))
 
 
 ;;; Package management setup for use-package

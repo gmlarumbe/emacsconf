@@ -165,7 +165,11 @@ If universal ARG is provided, visit a snippet file."
   :bind (:map prog-mode-map
               ("C-<tab>" . hs-toggle-hiding)
               ("C-c C-n" . align-regexp)
-              ("C-c C-s" . larumbe/yas-insert-snippet-dwim))
+              ("C-c C-s" . larumbe/yas-insert-snippet-dwim)
+              )
+  ;; :bind* (:map prog-mode-map
+  ;;              ("C-c C-s" . larumbe/yas-insert-snippet-dwim)
+  ;;              )
   :hook ((prog-mode . my-prog-mode-hook)
          (prog-mode . larumbe/prog-mode-keys))
   :config

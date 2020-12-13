@@ -6,7 +6,7 @@
 mkdir -p ${HOME}/.emacs.d
 
 ln -s $PWD ~/.elisp
-ln -s larumbe/init.el ${HOME}/.emacs.d/init.el
+ln -s lisp/init.el ${HOME}/.emacs.d/init.el
 
 
 # mv ${CUR_DIR} ${HOME}/.elisp

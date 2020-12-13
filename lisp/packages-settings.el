@@ -151,7 +151,7 @@
 
 ;;; Editing
 (use-package untabify-trailing-ws
-  :load-path "~/.elisp/larumbe/own-modes/minors/"
+  ;; :load-path "~/.elisp/larumbe/own-modes/minors/"
   :config
   (untabify-trailing-ws 1)) ; Enabled
 
@@ -170,7 +170,8 @@
 
 
 (use-package move-lines
-  :load-path "~/.elisp/download/")
+  ;; :load-path "~/.elisp/download/"
+  )
 
 
 (use-package whole-line-or-region)
@@ -202,7 +203,8 @@
   (setq auto-mode-alist (append '(("\\.prf$" . unison-mode)) auto-mode-alist))
 
   (use-package unison-sync-minor-mode
-    :load-path "~/.elisp/larumbe/own-modes/minors/"))
+    ;; :load-path "~/.elisp/larumbe/own-modes/minors/"
+    ))
 
 
 (use-package jenkins
@@ -257,7 +259,8 @@
 
 
 (use-package jpeg-mode
-  :load-path "~/.elisp/download/")
+  ;; :load-path "~/.elisp/download/")
+  )
 
 (use-package pcap-mode)
 
@@ -265,7 +268,7 @@
 
 
 (use-package sr-speedbar
-  :load-path "~/.elisp/download/"
+  ;; :load-path "~/.elisp/download/"
   :commands (sr-speedbar-open)
   :bind (:map speedbar-mode-map
               ("q"   . larumbe/kill-current-buffer)
