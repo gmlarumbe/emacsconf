@@ -119,13 +119,13 @@ C-s C-w [C-w] [C-w]... behaviour. "
   (google-this-mode 1))
 
 
-;; (use-package pdf-tools
-;;   :bind (:map pdf-view-mode-map
-;;               ("j"   . pdf-view-next-line-or-next-page)
-;;               ("k"   . pdf-view-previous-line-or-previous-page)
-;;               ("M-w" . pdf-view-kill-ring-save))
-;;   :config
-;;   (pdf-tools-install t))
+(use-package pdf-tools
+  :bind (:map pdf-view-mode-map
+              ("j"   . pdf-view-next-line-or-next-page)
+              ("k"   . pdf-view-previous-line-or-previous-page)
+              ("M-w" . pdf-view-kill-ring-save))
+  :config
+  (pdf-loader-install t))
 
 
 
