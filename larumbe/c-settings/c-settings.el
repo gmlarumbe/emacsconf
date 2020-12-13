@@ -11,16 +11,15 @@
               )
   :hook ((c-mode-common . my-cc-mode-hook))
   :config
-  (setq c-default-style "linux") ; Indent and style
-  (setq c-basic-offset 4)
-
-  (defun my-cc-mode-hook ()
-    (set 'ac-sources '(ac-source-semantic-raw ac-source-gtags)))
-
   (use-package semantic
     :bind (:map semantic-mode-map
                 ("C-c ," . nil)) ; INFO: Unbinds ALL semantic commands, since C-c , is the prefix
-    :hook ((c-mode-common . larumbe/semantic-mode-machine-hooked))))
+    :hook ((c-mode-common . larumbe/semantic-mode-machine-hooked)))
+
+  (setq c-default-style "linux") ; Indent and style
+  (setq c-basic-offset 4)
+
+  (require 'c-utils))
 
 
 (provide 'c-settings)
