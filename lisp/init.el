@@ -24,7 +24,7 @@
 
 (defvar larumbe/load-path-dirs-recursive '("~/.elisp/lisp"
                                            "~/.elisp/lisp-prog"
-                                           "~/.elisp/download"
+                                           "~/.elisp/site-lisp"
                                            "~/.elisp/own-modes"))
 (dolist (dir larumbe/load-path-dirs-recursive)
   (dolist (subdir (split-string (shell-command-to-string (concat "find " dir " -type d"))))
