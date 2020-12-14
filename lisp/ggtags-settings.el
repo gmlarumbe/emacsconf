@@ -3,7 +3,10 @@
 ;;; Code:
 
 
-;;; Use-package config
+(defvar larumbe/ggtags-enable t
+  "Conditionally determine in a hook if mode is enabled.")
+
+
 (use-package ggtags
   :diminish
   :commands (ggtags-create-tags
@@ -47,6 +50,17 @@
   ;; buffer-local variable `ggtags-mode', with some side-effects such as
   ;; recursive function calling when testing `ggtags-mode' variable...
   (advice-add 'ggtags-tag-at-point :override #'modi/ggtags-tag-at-point)
+
+
+  (defun larumbe/ggtags-mode (&optional arg)
+    "Enable ggtags-mode depending on value of `larumbe/ggtags-enable'.
+
+Purpose is to use this function as a conditional hook.
+ARG will be passed to `ggtags-mode' wrapped function."
+    (interactive)
+    (when larumbe/ggtags-enable
+      (ggtags-mode arg)))
+
 
 
 ;;;; Auxiliar functions

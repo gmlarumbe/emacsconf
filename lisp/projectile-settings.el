@@ -2,6 +2,9 @@
 ;;; Commentary:
 ;;; Code:
 
+(defvar larumbe/projectile-enable t
+  "Conditionally determine in a hook if mode is enabled.")
+
 
 (use-package projectile
   :bind (:map projectile-mode-map ; Projectile 2.0 removes automatic keybindings
@@ -27,7 +30,17 @@ Replaces `projectile-default-mode-line' that also showed ':generic' type of proj
               projectile-mode-line-prefix
               (or project-name "-")
               )))
-  (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line))
+  (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line)
+
+
+  (defun larumbe/projectile-mode (&optional arg)
+    "Enable projectile-mode depending on value of `larumbe/projectile-enable'.
+
+Purpose is to use this function as a conditional hook.
+ARG will be passed to `projectile-mode' wrapped function."
+    (interactive)
+    (when larumbe/projectile-enable
+      (projectile-mode arg))))
 
 
 

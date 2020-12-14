@@ -41,6 +41,7 @@
 (require 'helm-settings)
 (require 'projectile-settings)
 (require 'ggtags-settings)
+(require 'completion-settings)
 (require 'ag-settings)
 (require 'dired-settings)
 (require 'org-settings)
