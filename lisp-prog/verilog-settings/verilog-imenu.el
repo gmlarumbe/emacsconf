@@ -55,7 +55,7 @@
 (defvar larumbe/verilog-class-re    "\\(?1:\\(?:\\(?:virtual\\|interface\\)\\s-+\\)?class\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
 (defvar larumbe/verilog-top-re      "\\(?1:package\\|program\\|module\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
 
-(defvar larumbe/verilog-imenu-generic-expression
+(setq larumbe/verilog-imenu-generic-expression ; INFO: For the time being, is declared in `verilog-mode'
       `((nil                ,larumbe/verilog-imenu-top-re 2)
         ("*Localparams*"    ,larumbe/verilog-imenu-localparam-re 2)
         ("*Defines*"        ,larumbe/verilog-imenu-define-re 1)
@@ -177,8 +177,8 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
         (goto-char (point-min))
         (while (< (point) (point-max))
           (hs-hide-block)
-          (forward-line))
-        (beginning-of-buffer)
+          (line-move-visual 1))
+        (goto-char (point-min))
         ;; If there is an optional argument, unfold first block
         (when first
           (hs-show-block)))
