@@ -30,8 +30,7 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
          ("\\.v.pp\\'"        . verilog-mode)
          ("\\.ppv\\'"         . verilog-mode)
          )
-  :hook ((verilog-mode . larumbe/my-verilog-hook-machine-hooked)
-         (verilog-mode . modi/verilog-mode-customization))
+  :hook ((verilog-mode . modi/verilog-mode-customization))
   :bind (:map verilog-mode-map
               ;; TODO: Breaks highlighting of comments since it modifies syntax table with isearch
               ;; ("C-s"      . larumbe/verilog-isearch-forward)

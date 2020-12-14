@@ -916,7 +916,8 @@ READ is assumed to be the signal name."
   "Insert a task definition."
   (interactive)
   (let ((case-fold-search verilog-case-fold)
-        (in-read out-read))
+        (in-read)
+        (out-read))
     (insert "task ")
     (insert (read-string "Task name: ") " (")
     (electric-verilog-terminate-line)
