@@ -23,6 +23,7 @@
   (use-package helm-projectile :diminish)
   (use-package helm-ag)
   (use-package helm-org) ; Required by helm-havi
+  (use-package helm-youtube)
 
   (add-to-list 'helm-completing-read-handlers-alist '(switch-to-buffer . ido))
   (add-to-list 'helm-completing-read-handlers-alist '(kill-buffer      . ido))

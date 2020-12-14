@@ -6,15 +6,15 @@
 (use-package dired
   :ensure nil
   :bind (:map dired-mode-map
-              ("J" . dired-goto-file)                             ; Switch from 'j' to 'J'
-              ("j" . larumbe/dired-do-async-shell-command-okular) ; Open file-at-point directly with Okular if is a PDF and delete async process window. Otherwise it will ask for default program
-              ("," . larumbe/dired-toggle-deletion-confirmer)     ; https://superuser.com/questions/332590/how-to-prevent-delete-confirmation-in-emacs-dired
+              ("J" . dired-goto-file)                                ; Switch from 'j' to 'J'
+              ("j" . larumbe/dired-do-async-shell-command-or-okular) ; Open file-at-point directly with Okular if is a PDF and delete async process window. Otherwise it will ask for default program
+              ("," . larumbe/dired-toggle-deletion-confirmer)        ; https://superuser.com/questions/332590/how-to-prevent-delete-confirmation-in-emacs-dired
               ("b" . dired-up-directory))
   :hook ((dired-mode . my-dired-hook))
   :commands (dired-do-async-shell-command dired-hide-details-mode)
   :config
   (defun larumbe/dired-toggle-deletion-confirmer ()
-    "Toggles deletion confirmer for dired from (y-or-n) to nil and viceversa"
+    "Toggles deletion confirmer for dired from (y-or-n) to nil and viceversa."
     (interactive)
     (if (equal dired-deletion-confirmer 'yes-or-no-p)
         (progn
@@ -25,8 +25,8 @@
         (message "Dired deletion confirmation: TRUE"))))
 
 
-  (defun larumbe/dired-do-async-shell-command-okular ()
-    "Same as `dired-do-async-shell-command' but if on a PDF will open Okular directly"
+  (defun larumbe/dired-do-async-shell-command-or-okular ()
+    "Same as `dired-do-async-shell-command' but if on a PDF will open Okular directly."
     (interactive)
     (when (not (string-equal major-mode "dired-mode"))
       (error "Needs to be executed in dired...! "))
@@ -48,7 +48,7 @@
   :bind (:map dired-mode-map
               ("I" . dired-kill-subdir)) ; Replaces `dired-info' when dired-x is enabled
   :config
-  (setq dired-guess-shell-alist-user ; Program mappings to dired-do-shell-command (overrides `dired-guess-shell-alist-default')
+  (setq dired-guess-shell-alist-user ; Program mappings to dired-do-shell-command (precedence over `dired-guess-shell-alist-default')
         '(("\\.pdf\\'"  "okular")
           ("\\.lxt2\\'" "gtkwave")))
   (setq dired-bind-info nil))
