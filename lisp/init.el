@@ -24,7 +24,6 @@
 
 (defvar larumbe/load-path-dirs-recursive '("~/.elisp/lisp"
                                            "~/.elisp/lisp-prog"
-                                           "~/.elisp/site-lisp"
                                            "~/.elisp/own-modes"))
 (dolist (dir larumbe/load-path-dirs-recursive)
   (dolist (subdir (split-string (shell-command-to-string (concat "find " dir " -type d"))))
@@ -37,7 +36,7 @@
 (require 'basic-functions)
 (require 'melpa-settings)
 (require 'custom-functions)
-(require 'macros)
+(require 'macros-settings)
 (require 'helm-settings)
 (require 'projectile-settings)
 (require 'ggtags-settings)
@@ -56,10 +55,11 @@
 
 ;;;; Load path overriding
 ;; If a MELPA package has to be overriden, copy the new version (or symlink) to
-;; the 'modified' directory.
+;; the 'modified' or 'site-lisp' directories.
 ;; When loading with `use-package', some mechanism is needed to defer it and
 ;; load it after `load-path' has been updated (such as :bind, :defer, :hook...)
-(defvar larumbe/load-path-dirs-non-recursive '("~/.elisp/modified"))
+(defvar larumbe/load-path-dirs-non-recursive '("~/.elisp/modified"
+                                               "~/.elisp/site-lisp"))
 (dolist (dir larumbe/load-path-dirs-non-recursive)
   (add-to-list 'load-path (expand-file-name dir)))
 
@@ -69,13 +69,14 @@
 ;;   - This file will not be present in the repo
 ;;   - It will have specific machine content (e.g. EXWM enabling)
 (when (file-exists-p "~/.elisp_private/")
-  (defvar larumbe/load-path-dirs-private '("~/.elisp_private"))
+  (defvar larumbe/load-path-dirs-private '("~/.elisp_private/lisp"
+                                           "~/.elisp_private/site-lisp"))
   (dolist (dir larumbe/load-path-dirs-private)
-    (add-to-list 'load-path (expand-file-name dir)))
+    (dolist (subdir (split-string (shell-command-to-string (concat "find " dir " -type d"))))
+      (add-to-list 'load-path (expand-file-name subdir))))
   (require 'private-settings))
 
 
 
 (provide 'init)
 ;;; init.el ends here
-

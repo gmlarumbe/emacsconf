@@ -206,6 +206,6 @@ Use `C-w' instead of `M-w' to check that link is being killed properly."
 
 
 
-(provide 'macros)
+(provide 'macros-settings)
 
 ;;; macros.el ends here
