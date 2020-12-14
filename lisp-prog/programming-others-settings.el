@@ -106,11 +106,6 @@
   :ensure nil)
 
 
-;;;; RDL
-(use-package rdl-mode
-  :ensure nil)
-
-
 ;;;; Yocto
 (use-package mmm-mode) ; Multi-major-mode
 (use-package bitbake)  ; Recipes
