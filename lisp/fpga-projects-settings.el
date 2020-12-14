@@ -17,14 +17,10 @@
 (defvar larumbe/project-xpr-file             (nth 2 (car larumbe/vivado-projects)))
 (defvar larumbe/project-gtags-dirs-directory (nth 3 (car larumbe/vivado-projects)))
 (defvar larumbe/project-gtags-dirs-file      (nth 4 (car larumbe/vivado-projects)))
-(defvar larumbe/project-gtags-file           (concat larumbe/project-gtags-dirs-directory "/" larumbe/project-gtags-dirs-file))
-;; AG Variable files
-(defvar larumbe/project-gtags-ag-files-filename "ag-files") ; Default, not a need to parameterize.
+(defvar larumbe/project-gtags-file           (larumbe/path-join larumbe/project-gtags-dirs-directory larumbe/project-gtags-dirs-file))
 
-; INFO: Seems that will eventually deprecate, since is not scalable (assumes files are regexps, and freezes emacs for more than a few files)
-; If set to true, will use files in `ag-files' as regexps to parse instantiations. It was a first attempt of making that work in a sandbox with many projects.
-(defvar larumbe/ag-use-input-regexps nil)
 (defvar larumbe/hdl-source-extension-regex "\\(.sv$\\|.v$\\|.svh$\\|.vh$\\|.vhd$\\)")
+
 
 (defun larumbe/project-set-active-xpr ()
   "Retrieve project list and set variables accordingly."
@@ -38,7 +34,7 @@
     (setq larumbe/project-xpr-file             (nth 1 files-list))
     (setq larumbe/project-gtags-dirs-directory (nth 2 files-list))
     (setq larumbe/project-gtags-dirs-file      (nth 3 files-list))
-    (setq larumbe/project-gtags-file           (concat larumbe/project-gtags-dirs-directory "/" larumbe/project-gtags-dirs-file))))
+    (setq larumbe/project-gtags-file           (larumbe/path-join larumbe/project-gtags-dirs-directory larumbe/project-gtags-dirs-file))))
 
 
 (defun larumbe/project-convert-xci-to-v-and-downcase ()
@@ -63,12 +59,12 @@ Avoid creating GTAGS for every project included inside a repo folder"
   (with-temp-buffer
     ;; (view-buffer-other-window (current-buffer))      ; Option A: preferred (not valid if modifying the temp buffer)
     ;; (clone-indirect-buffer-other-window "*debug*" t) ; Option B: used here (however, cannot save temp buffer while debugging)
-    (insert-file-contents (concat larumbe/project-xpr-dir "/" larumbe/project-xpr-file))
+    (insert-file-contents (larumbe/path-join larumbe/project-xpr-dir larumbe/project-xpr-file))
     ;; Start Regexp replacement for file
     (keep-lines "<.*File Path=.*>" (point-min) (point-max))
     (larumbe/replace-regexp-whole-buffer "<.*File Path=\"" "")
     (larumbe/replace-regexp-whole-buffer "\">" "")
-    (larumbe/replace-string-whole-buffer "$PPRDIR" larumbe/project-xpr-dir)
+    (larumbe/replace-string-whole-buffer "$PPRDIR" larumbe/project-xpr-dir t)
     (delete-whitespace-rectangle (point-min) (point-max))
     (larumbe/project-convert-xci-to-v-and-downcase)                         ; Replace xci by corresponding .v files (if existing)
     (keep-lines larumbe/hdl-source-extension-regex (point-min) (point-max)) ; Remove any non verilog/vhdl file (such as waveconfig, verilog templates, etc...)
@@ -168,7 +164,7 @@ Avoid creating GTAGS for every project included inside a sandbox."
       ;; (view-buffer-other-window (current-buffer))      ; Option A: preferred (not valid if modifying the temp buffer)
       ;; (clone-indirect-buffer-other-window "*debug*" t) ; Option B: used here (however, cannot save temp buffer while debugging)
       ;; End of INFO
-      (insert-file-contents (concat larumbe/project-altera-dir "/" larumbe/project-altera-file))
+      (insert-file-contents (larumbe/path-join larumbe/project-altera-dir larumbe/project-altera-file))
       ;; Start Regexp replacement for file
       (keep-lines altera-tcl-file-regexp (point-min) (point-max)) ; Get only files
       (goto-char (point-min))
@@ -178,12 +174,12 @@ Avoid creating GTAGS for every project included inside a sandbox."
       ;; Replace files
       (larumbe/replace-regexp-whole-buffer
        (concat "set_global_assignment -name " altera-tcl-file-regexp-file)
-       (concat larumbe/project-altera-dir "/"))
+       (concat (file-name-as-directory larumbe/project-altera-dir)))
       ;; Replace SEARCH_PATH dirs
       (goto-char (point-min))
       (while (re-search-forward altera-tcl-file-regexp-dir nil t)
         (kill-line 0) ; Kill until the beginning of line
-        (insert (concat larumbe/project-altera-dir "/"))
+        (insert (file-name-as-directory larumbe/project-altera-dir))
         (larumbe/project-append-files-from-dir (thing-at-point 'filename)))
       ;; Replace $env(ARCHONS_PATH) dirs
       (goto-char (point-min))
@@ -197,9 +193,10 @@ Avoid creating GTAGS for every project included inside a sandbox."
         (beginning-of-line)                   ; Equivalent to `flush-lines' but
         (kill-line 1))                        ; for non-interactive use
       (larumbe/project-find-repeated-included-files) ; Remove repeated files (due to previous directory expansion)
-      (write-file (concat larumbe/project-altera-gtags-dirs-directory "/" larumbe/project-altera-gtags-dirs-file))))
+      (larumbe/buffer-expand-filenames)
+      (write-file (larumbe/path-join larumbe/project-altera-gtags-dirs-directory larumbe/project-altera-gtags-dirs-file))))
   ;; Create Tags from gtags.files
-  (f-touch (concat larumbe/project-altera-gtags-dirs-directory "/GTAGS")) ; Sometimes there are errors with gtags if file didnt exist before
+  (f-touch (larumbe/path-join larumbe/project-altera-gtags-dirs-directory "GTAGS")) ; Sometimes there are errors with gtags if file didnt exist before
   (ggtags-create-tags larumbe/project-altera-gtags-dirs-directory))
 
 

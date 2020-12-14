@@ -239,27 +239,36 @@ Replace REGEXP with TO-STRING from START to END."
 
 (defun larumbe/replace-regexp-whole-buffer (regexp to-string)
   "Replace REGEXP with TO-STRING on whole current-buffer."
-  (larumbe/replace-regexp regexp to-string (point-min) (point-max)))
+  (larumbe/replace-regexp regexp to-string (point-min) nil))
 
 
-(defun larumbe/replace-string (string to-string start end)
+(defun larumbe/replace-string (string to-string start end &optional fixedcase)
   "Wrapper function for programatic use of `replace-string'.
-Replace STRING with TO-STRING from START to END."
+Replace STRING with TO-STRING from START to END.
+
+If optional arg FIXEDCASE is non-nil, do not alter the case of
+the replacement text (see `replace-match' for more info)."
   (save-excursion
     (goto-char start)
     (while (search-forward string end t)
-      (replace-match to-string))))
+      (replace-match to-string fixedcase))))
 
 
-(defun larumbe/replace-string-whole-buffer (string to-string)
-  "Replace STRING with TO-STRING on whole current-buffer."
-  (larumbe/replace-string string to-string (point-min) (point-max)))
+(defun larumbe/replace-string-whole-buffer (string to-string &optional fixedcase)
+  "Replace STRING with TO-STRING on whole current-buffer.
+
+If optional arg FIXEDCASE is non-nil, do not alter the case of
+the replacement text (see `replace-match' for more info)."
+  (larumbe/replace-string string to-string (point-min) nil fixedcase))
 
 
 
 (defun larumbe/path-join (arg1 arg2)
   "Join path of ARG1 and ARG2."
-  (concat (file-name-as-directory arg1) arg2))
+  (if (and arg1 arg2)
+      (concat (file-name-as-directory arg1) arg2)
+    (message "larumbe/path-join: Cannot join path with nil arguments.")
+    nil))
 
 
 (defun larumbe/directory-find-recursive-dirs (&optional dir)
