@@ -35,7 +35,7 @@
 
   (use-package jedi-core
     :config
-    (add-hook 'python-mode-hook #'jedi:setup))
+    (add-hook 'python-mode-hook #'larumbe/jedi:setup))
 
   (use-package elpy)) ; TODO: Deserves some attention if some day Python becomes a priority
 

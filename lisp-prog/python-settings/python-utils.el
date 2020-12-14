@@ -3,6 +3,9 @@
 ;;; Code:
 
 
+(defvar larumbe/jedi:setup-enable t
+  "Conditionally determine in a hook if mode is enabled.")
+
 ;;;; Send to console
 (defun larumbe/python-send-line-or-region ()
   "Send the current line to the inferior shell and step to the next line.
@@ -147,6 +150,17 @@ If called witih prefix arg HIDEALL, execute `hs-hide-all' (including classes)"
   (shell-command "touch GTAGS")
   (larumbe/gtags-python-files-pwd-recursive)
   (ggtags-create-tags default-directory))
+
+
+
+;;;; Jedi hook
+(defun larumbe/jedi:setup ()
+  "Enable jedi:setup depending on value of `larumbe/jedi:setup-enable'.
+
+Purpose is to use this function as a conditional hook."
+  (interactive)
+  (when larumbe/jedi:setup-enable
+    (jedi:setup)))
 
 
 (provide 'python-utils)
