@@ -59,8 +59,9 @@
 Purpose is to use this function as a conditional hook.
 ARG will be passed to `ggtags-mode' wrapped function."
     (interactive)
-    (when larumbe/ggtags-enable
-      (ggtags-mode arg)))
+    (if larumbe/ggtags-enable
+        (ggtags-mode arg)
+      (ggtags-mode -1)))
 
 
 

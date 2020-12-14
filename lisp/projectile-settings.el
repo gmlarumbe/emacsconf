@@ -30,8 +30,8 @@ Replaces `projectile-default-mode-line' that also showed ':generic' type of proj
     (let ((project-name (projectile-project-name)))
       (format "%s[%s]"
               projectile-mode-line-prefix
-              (or project-name "-")
-              )))
+              (or project-name "-"))))
+
   (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line)
 
 
@@ -41,8 +41,9 @@ Replaces `projectile-default-mode-line' that also showed ':generic' type of proj
 Purpose is to use this function as a conditional hook.
 ARG will be passed to `projectile-mode' wrapped function."
     (interactive)
-    (when larumbe/projectile-enable
-      (projectile-mode arg))))
+    (if larumbe/projectile-enable
+        (projectile-mode arg)
+      (projectile-mode -1))))
 
 
 

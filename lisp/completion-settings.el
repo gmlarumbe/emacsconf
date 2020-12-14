@@ -45,8 +45,9 @@
 Purpose is to use this function as a conditional hook.
 ARG will be passed to `auto-complete-mode' wrapped function."
     (interactive)
-    (when larumbe/auto-complete-enable
-      (auto-complete-mode arg))))
+    (if larumbe/auto-complete-enable
+        (auto-complete-mode arg)
+      (auto-complete-mode -1))))
 
 
 
