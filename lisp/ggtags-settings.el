@@ -12,7 +12,8 @@
   :commands (ggtags-create-tags
              ggtags-current-project-root
              ggtags-find-reference
-             modi/ggtags-tag-at-point)
+             modi/ggtags-tag-at-point
+             larumbe/ggtags-mode)
   :bind (:map ggtags-navigation-map
               ("M-o"     . nil)
               ("C-c C-k" . nil) ; EXWM character mode

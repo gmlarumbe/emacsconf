@@ -12,6 +12,7 @@
 
 (use-package auto-complete
   :diminish
+  :commands (larumbe/auto-complete-mode)
   :bind (:map ac-completing-map
               ("C-n" . ac-next)
               ("C-p" . ac-previous)
