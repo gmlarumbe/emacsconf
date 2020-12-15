@@ -2,6 +2,10 @@
 ;;; Commentary:
 ;;; Code:
 
+
+(require 'init-load-path-header)
+
+
 ;;;; Load path overriding
 ;; If a MELPA package has to be overriden, copy the new version (or symlink) to
 ;; the 'modified' or 'site-lisp' directories.
