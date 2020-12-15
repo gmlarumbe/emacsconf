@@ -22,8 +22,8 @@
 ;;; Code:
 
 
-;;;; Basic config
-(use-package exwm :demand)
+(use-package exwm
+  :demand)
 
 
 ;;;; Buffer naming
@@ -54,7 +54,8 @@
               (exwm-workspace-rename-buffer exwm-title))))
 
 
-;;;; Global KeyBindings
+;;;; Global keybindings
+;;;;; Examples
 ;; `exwm-input-set-key' allows you to set a global key binding (available in
 ;; any case). Following are a few examples.
 ;; + We always need a way to go back to line-mode from char-mode
@@ -67,36 +68,49 @@
                       `(lambda ()
                          (interactive)
                          (exwm-workspace-switch-create ,i))))
-;; + Application launcher ('M-&' also works if the output buffer does not
-;;   bother you). Note that there is no need for processes to be created by
-;;   Emacs.
-(exwm-input-set-key (kbd "s-j")
-                    (lambda (command)
-                      (interactive (list (read-shell-command "$ ")))
-                      (start-process-shell-command command nil command)))
 
 ;; + 'slock' is a simple X display locker provided by suckless tools.
 (exwm-input-set-key (kbd "s-<f2>")
                     (lambda () (interactive) (start-process "" nil "slock")))
 
-;; Shortcuts created by Larumbe for convenience
-;; Firefox Shortcut
-(exwm-input-set-key (kbd "s-k")
-                    (lambda ()
-                      (interactive)
-                      (start-process-shell-command "" nil "firefox")))
 
+;;;;; My bindings
+(defun larumbe/exwm-launch (&optional program buffer)
+  "Launch PROGRAM on a *EXWM* buffer.
+PROGRAM must be a string with a binary in the PATH, or
+with a full path in case it is not added.
 
-;; Keyboard layout switch
-(exwm-input-set-key (kbd "s-SPC") #'larumbe/toggle-keyboard-layout)
+If universal argument or second argument BUFFER is non-nil,
+show stdout in BUFFER and pop to this window (for debug mainly)."
+  (interactive)
+  (unless program
+    (setq program (read-shell-command "$ ")))
+  (when current-prefix-arg
+    (setq buffer (concat "*" program "*")))
+  (start-process-shell-command "" buffer program)
+  (when buffer
+    (pop-to-buffer buffer)))
 
-;;;;; Window/Frame movement/navigation
+(defun larumbe/exwm-launch-firefox ()
+  "Launch Firefox."
+  (interactive)
+  (larumbe/exwm-launch "firefox"))
+
+;; Processes
+(exwm-input-set-key (kbd "s-j") #'larumbe/exwm-launch)
+(exwm-input-set-key (kbd "s-k") #'larumbe/exwm-launch-firefox)
+(exwm-input-set-key (kbd "s-l") #'async-shell-command)
+(exwm-input-set-key (kbd "s-;") #'shell-command)
+;; Window/Frame movement/navigation
+(exwm-input-set-key (kbd "M-o")   #'other-window) ; Replaces enriched faces
+(exwm-input-set-key (kbd "M-O")   #'other-frame)  ; Replaces 'negative argument
 (exwm-input-set-key (kbd "C-}")   #'larumbe/shrink-window-horizontally)
 (exwm-input-set-key (kbd "C-{")   #'larumbe/enlarge-window-horizontally)
 (exwm-input-set-key (kbd "C-M-{") #'larumbe/shrink-window-vertically)
 (exwm-input-set-key (kbd "C-M-}") #'larumbe/enlarge-window-vertically)
-
 (exwm-input-set-key (kbd "M-'")   #'larumbe/kill-current-buffer)
+;; Misc
+(exwm-input-set-key (kbd "s-SPC") #'larumbe/toggle-keyboard-layout)
 
 
 ;;;; Local KeyBindings
@@ -113,8 +127,6 @@
 ;; Ansi-term
 (push '?\C-, exwm-input-prefix-keys)
 (push '?\C-. exwm-input-prefix-keys)
-;; Screenshot
-(push '\print exwm-input-prefix-keys)
 ;; Various functions
 (push 'f9 exwm-input-prefix-keys)
 
@@ -125,9 +137,8 @@
 ;; list of cons cells (SRC . DEST), where SRC is the key sequence you press and
 ;; DEST is what EXWM actually sends to application. Note that SRC must be a key
 ;; sequence (of type vector or string), while DEST can also be a single key.
-(exwm-input-set-simulation-keys
- '(
-   ;; Own keys
+(defvar larumbe/exwm-common-input-simulation-keys
+  '(;; Own keys
     ([?\C-g] . escape)
     ;; movement
     ([?\C-b] . left)
@@ -153,14 +164,72 @@
     ))
 
 
+(setq larumbe/exwm-firefox-class-names '("Firefox" "Firefox-esr" "Tor Browser"))
+(setq larumbe/exwm-firefox-prefix-keys nil)
+(setq larumbe/exwm-firefox-simulation-keys
+      '(([?\C-g] . escape)
+        ;; movement
+        ([?\C-b] . left)
+        ([?\M-b] . C-left)
+        ([?\C-f] . right)
+        ([?\M-f] . C-right)
+        ([?\C-p] . up)
+        ([?\C-n] . down)
+        ([?\M-<] . home)
+        ([?\M->] . end)
+        ([?\C-a] . home)
+        ([?\C-e] . end)
+        ([?\M-v] . prior)
+        ([?\C-v] . next)
+        ([?\C-d] . delete)
+        ([?\C-k] . (S-end ?\C-x)) ; It kills, not simply deletes
+        ;; cut/paste.
+        ;; ([?\C-w] . ?\C-x)
+        ([?\M-w] . ?\C-c)
+        ([?\C-y] . ?\C-v)
+        ;; search
+        ([?\C-\M-s] . ?\C-F)      ; Find
+        ([?\C-\M-r] . ?\C-F)      ; Find
+        ([?\C-s]    . ?\C-G)      ; Find Next (forward search)
+        ([?\C-r]    . (S-f3))     ; Find Previous (backwards search)
+        ;; TABs navigation
+        ([?\C-\M-l] . (C-next))   ;
+        ([?\C-\M-h] . (C-prior))  ;
+        ;; Deleting words
+        ([?\M-d] . (S-C-right delete))
+        ;; ([?\M-\d] . (S-C-left delete))  ;; INFO: Could no make it work (not even with binary value, with backspace, with delete...): Note (http://ergoemacs.org/emacs/keystroke_rep.html)
+        ;; Key-Scripting -> With '-' and between parenthesis they will be pressed in that order "simultaneously"
+        ([?\C-j]  . tab)
+        ([?\C-\;] . (S-tab))
+        ;; Toggle link/page view
+        ([?\C-l] . f6)))
+
+()
+
+
+(setq larumbe/exwm-input-key-variable
+      '(larumbe/exwm-firefox-class-names
+        larumbe/exwm-firefox-simulation-keys
+        larumbe/exwm-firefox-prefix-keys))
+
+(defun larumbe/exwm-input-key-hook (class-names-list simulation-keys prefix-keys)
+  "Set `exwm-input-prefix-keys' and local simulation keys on CLASS-NAME buffer."
+  (when (and exwm-class-name
+             (member exwm-class-name class-names-list))
+    (exwm-input-set-local-simulation-keys simulation)
+    (setq-local exwm-input-prefix-keys prefix)))
+
+(larumbe/exwm-input-key-hook larumbe/exwm-firefox-class-names
+                             larumbe/exwm-firefox-simulation-keys
+                             larumbe/exwm-firefox-prefix-keys)
+
+
+(add-hook 'exwm-manage-finish-hook #'
+
+(car '(1 . 3))
+(cdr '(1 . 3))
+
 ;;;; Firefox Local Key-Bindings
-;; Local Key-bindings
-;; (add-hook 'exwm-manage-finish-hook
-;;           (lambda ()
-;;             (when (and exwm-class-name
-;;                        (string= exwm-class-name "firefox"))
-;;               ;; (setq-local exwm-input-prefix-keys '(?\C-c))
-;;                  )))
 ;; Simulation keys
 (add-hook 'exwm-manage-finish-hook
           (lambda ()

@@ -26,16 +26,6 @@
   (scroll-bar-mode -1))
 
 
-(use-package window
-  :ensure nil
-  :bind (("M-o" . other-window))) ; Replaces enriched faces
-
-
-(use-package frame
-  :ensure nil
-  :bind (("M-O" . other-frame))) ; Replaces 'negative argument
-
-
 (use-package minibuffer
   :ensure nil
   :bind ("<C-return>" . completion-at-point))
