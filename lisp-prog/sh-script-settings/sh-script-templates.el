@@ -14,7 +14,7 @@ while inde_x_ed        _+_ add
   ("m"   (larumbe/hydra-yasnippet "for"))
   ("u"   (larumbe/hydra-yasnippet "until"))
   ("w"   (larumbe/hydra-yasnippet "while"))
-  ("f"   (larumbe/hydra-yasnippet "f"))
+  ("f"   (larumbe/hydra-yasnippet "def"))
   ("p"   (larumbe/hydra-yasnippet "pr"))
   ("e"   (larumbe/hydra-yasnippet "e"))
   ("d"   (larumbe/hydra-yasnippet "pd"))

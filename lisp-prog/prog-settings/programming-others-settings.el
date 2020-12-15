@@ -123,7 +123,7 @@
 
 ;;;; AHK
 (use-package ahk-mode
-  ;; DANGER: Even though it is definde as prog-mode derived, hooks are not automatically loaded
+  ;; DANGER: Even though it is defined as prog-mode derived, hooks are not automatically loaded
   :hook ((ahk-mode . my-prog-mode-hook))
   :config
   (setq ahk-indentation 2))
@@ -136,6 +136,9 @@
 ;;;; YAML
 (use-package yaml-mode)
 
+
+;;;; SED
+(use-package sed-mode)
 
 
 

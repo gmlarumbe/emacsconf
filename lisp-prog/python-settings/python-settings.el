@@ -34,6 +34,7 @@
   (require 'python-templates)
 
   (use-package jedi-core
+    :demand
     :config
     (add-hook 'python-mode-hook #'larumbe/jedi:setup))
 

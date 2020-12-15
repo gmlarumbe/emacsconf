@@ -72,7 +72,7 @@
   (dolist (dir larumbe/load-path-dirs-private)
     (dolist (subdir (split-string (shell-command-to-string (concat "find " dir " -type d"))))
       (add-to-list 'load-path (expand-file-name subdir))))
-  (require 'private-settings))
+  (require 'init-private))
 
 
 

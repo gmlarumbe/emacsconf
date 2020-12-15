@@ -127,10 +127,8 @@ region, down by N lines, or 1 line if N is nil."
 (defun move-lines-binding ()
   "Sets the default key binding for moving lines. M-p or M-<up> for moving up
 and M-n or M-<down> for moving down."
-  ;; (global-set-key (kbd "M-p") 'move-lines-up)
-  (global-set-key (kbd "C-M-<up>") 'move-lines-up)
-  ;; (global-set-key (kbd "M-n") 'move-lines-down)
-  (global-set-key (kbd "C-M-<down>") 'move-lines-down))
+  (global-set-key (kbd "M-p") 'move-lines-up)
+  (global-set-key (kbd "M-n") 'move-lines-down))
 
 (provide 'move-lines)
 

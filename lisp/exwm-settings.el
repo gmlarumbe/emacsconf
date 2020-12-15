@@ -1,7 +1,7 @@
 ;;; exwm-settings.el --- EXWM  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;; INFO: For a new config template, check: `exwm-config-default'
-;;   /home/gonz/.emacs.d/elpa/exwm-0.22.1/exwm-config.el:26
+;;   ~/.emacs.d/elpa/exwm-0.24/exwm-config.el:26
 ;;
 ;; Fetched from:
 ;; https://github.com/ch11ng/exwm/wiki/Configuration-Example
@@ -19,21 +19,15 @@
 ;;    - An EWWM buffer in `line-mode' would only respond to keys that are NOT in `exwm-input-prefix-keys'
 ;;      and would change the ones included in `exwm-input-set-simulation-keys'
 ;;
-;;
 ;;; Code:
 
 
-
-;;; Basic config
-;; Load EXWM
+;;;; Basic config
 (use-package exwm :demand)
 (require 'exwm-config)
 
-;; Set the initial number of workspaces.
-(setq exwm-workspace-number 2)
 
-
-;;; Buffer naming
+;;;; Buffer naming
 ;; All buffers created in EXWM mode are named "*EXWM*". You may want to change
 ;; it in `exwm-update-class-hook' and `exwm-update-title-hook', which are run
 ;; when a new window class name or title is available. Here's some advice on
@@ -61,7 +55,7 @@
               (exwm-workspace-rename-buffer exwm-title))))
 
 
-;;; Global KeyBindings
+;;;; Global KeyBindings
 ;; `exwm-input-set-key' allows you to set a global key binding (available in
 ;; any case). Following are a few examples.
 ;; + We always need a way to go back to line-mode from char-mode
@@ -98,7 +92,7 @@
 
 
 
-;;;; Window/Frame movement/navigation
+;;;;; Window/Frame movement/navigation
 (exwm-input-set-key (kbd "C-}")   #'larumbe/shrink-window-horizontally)
 (exwm-input-set-key (kbd "C-{")   #'larumbe/enlarge-window-horizontally)
 (exwm-input-set-key (kbd "C-M-{") #'larumbe/shrink-window-vertically)
@@ -108,10 +102,8 @@
 (exwm-input-set-key (kbd "M-O")   #'other-frame)  ; replaces 'negative-argument
 (exwm-input-set-key (kbd "M-'")   #'larumbe/kill-current-buffer)
 
-;;;; Line-mode global keybindings
-;;;;; Text Editing
-(global-set-key (kbd "C-M-<up>") #'move-lines-up)
-(global-set-key (kbd "C-M-<down>") #'move-lines-down)
+;;;;; Line-mode global keybindings
+;;;;;; Text Editing
 (global-set-key (kbd "C-x d") #'duplicate-line) ; Replaces Dired (C-x C-j works better)
 (global-set-key (kbd "C-w") #'whole-line-or-region-kill-region)
 (global-set-key (kbd "M-w") #'larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
@@ -129,7 +121,7 @@
 (global-set-key [f12] #'toggle-truncate-lines)              ;  Truncate lines
 
 
-;;;;; Navigation
+;;;;;; Navigation
 (global-set-key (kbd "M-x") #'helm-M-x)
 (global-set-key (kbd "C-x C-f") #'helm-find-files)
 (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
@@ -160,7 +152,7 @@
 (global-set-key (kbd "<C-S-right>")  #'buf-move-right)
 
 
-;;;;; Version Control
+;;;;;; Version Control
 (global-set-key (kbd "C-x g") #'magit-status)
 (global-set-key (kbd "C-x M-g") #'magit-dispatch)
 (global-set-key (kbd "C-x j") '(lambda ()
@@ -171,7 +163,7 @@
 (global-set-key (kbd "C-x y") #'larumbe/repohome-reset-git-args)
 
 
-;;;;; Compilation
+;;;;;; Compilation
 ;; M-n and M-p are already overwritten at mode-line.el. This mapping allows to step through errors in a non-compilation buffer
 (global-set-key (kbd "M-n") #'next-error)
 (global-set-key (kbd "M-p") #'previous-error)
@@ -179,7 +171,7 @@
 (global-set-key (kbd "C-*") #'larumbe/show-custom-compilation-buffers)
 
 
-;;;;; Misc
+;;;;;; Misc
 (global-set-key (kbd "C-,") #'larumbe/ansi-term)
 (global-set-key (kbd "C-.") '(lambda ()
                                (interactive)
@@ -191,7 +183,7 @@
 
 
 
-;;; Local KeyBindings
+;;;; Local KeyBindings
 ;; The following example demonstrates how to set a key binding only available
 ;; in line mode. It's simply done by first push the prefix key to
 ;; `exwm-input-prefix-keys' and then add the key sequence to `exwm-mode-map'.
@@ -211,7 +203,7 @@
 (push 'f9 exwm-input-prefix-keys)
 
 
-;;; Common Simulation Key-Bindings
+;;;; Common Simulation Key-Bindings
 ;; The following example demonstrates how to use simulation keys to mimic the
 ;; behavior of Emacs. The argument to `exwm-input-set-simulation-keys' is a
 ;; list of cons cells (SRC . DEST), where SRC is the key sequence you press and
@@ -245,7 +237,7 @@
     ))
 
 
-;;; Firefox Local Key-Bindings
+;;;; Firefox Local Key-Bindings
 ;; Local Key-bindings
 ;; (add-hook 'exwm-manage-finish-hook
 ;;           (lambda ()
@@ -304,7 +296,7 @@
 
 
 
-;;; Okular Local Key-Bindings
+;;;; Okular Local Key-Bindings
 ;; Local Key-bindings
 ;; (add-hook 'exwm-manage-finish-hook
 ;;           (lambda ()
@@ -349,7 +341,7 @@
 
 
 
-;;; Vivado Local Key-Bindings
+;;;; Vivado Local Key-Bindings
 ;; Local Key-bindings
 ;; (add-hook 'exwm-manage-finish-hook
 ;;           (lambda ()
@@ -389,7 +381,7 @@
 
 
 
-;;; Gtkwave Local Key-Bindings
+;;;; Gtkwave Local Key-Bindings
 ;; ;; Local Key-bindings
 ;; (add-hook 'exwm-manage-finish-hook
 ;;           (lambda ()
@@ -436,7 +428,7 @@
 
 
 
-;;; Novas Local Key-Bindings
+;;;; Novas Local Key-Bindings
 ;; ;; Local Key-bindings
 ;; (add-hook 'exwm-manage-finish-hook
 ;;           (lambda ()
@@ -481,7 +473,7 @@
 
 
 
-;;; Other Options
+;;;; Other Options
 ;; You can hide the minibuffer and echo area when they're not used, by
 ;; uncommenting the following line
 ;; (setq exwm-workspace-minibuffer-position 'bottom)
@@ -492,7 +484,7 @@
 ;; (add-hook 'exwm-floating-exit-hook #'exwm-layout-show-mode-line)
 
 
-;;; Unused features
+;;;; Unused features
 ;; Compositing manager
 ;; (require 'exwm-cm)
 ;; Make all Emacs frames opaque.
@@ -506,13 +498,18 @@
 ;; (exwm-systemtray-enable)
 
 
-;;; Workspace/Layout settings
+;;;; Workspace/Layout settings
 ;; Note: EXWM only shows X windows belonging to the current workspace by default.
 ;; You may alter this behavior by assigning exwm-workspace-show-all-buffers a non-nil value.
 (setq exwm-workspace-show-all-buffers t)
 ;; Also, you might want to set exwm-layout-show-all-buffers to t to allow automatically moving X
 ;; windows from inactive workspaces by switching to their associated buffers.
 (setq exwm-layout-show-all-buffers t)
+
+
+;;;; xrandr
+;; INFO: Command to be set if exwm-randr is enabled in a specific machine
+(defvar larumbe/exwm-randr-resolution-command nil)
 
 
 (provide 'exwm-settings)
