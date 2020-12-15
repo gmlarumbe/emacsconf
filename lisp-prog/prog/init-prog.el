@@ -19,7 +19,7 @@
 ;;;; Language-specific
 (require 'init-verilog)
 (require 'init-vhdl)
-(require 'hdl-font-lock)
+(require 'init-hdl-font-lock)
 (require 'init-elisp)
 (require 'init-python)
 (require 'init-sh-script)
