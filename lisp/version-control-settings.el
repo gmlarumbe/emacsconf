@@ -16,7 +16,11 @@
 ;;; Git
 (use-package magit
   :demand ; TODO: Required by some custom functions further in this file
-	  ; TODO: Create autoloads for these functions and do a require of magit?
+          ; TODO: Create autoloads for these functions and do a require of magit?
+  :bind (("C-x g"   . magit-status)
+         ("C-x M-g" . magit-dispatch)
+         ("C-x t"   . larumbe/repohome-magit-status)
+         ("C-x y"   . larumbe/repohome-reset-git-args))
   :config
   (setq magit-diff-refine-hunk t)) ; Highlight differences of selected hunk
 
@@ -31,14 +35,23 @@
 
 ;;; SVN
 (use-package dsvn
+  :bind (("C-x j" . larumbe/svn-status)) ; Setting a hook for `svn-status-mode' did not seem to work
   :commands (svn-status
              svn-update)
   :config
   (define-obsolete-function-alias 'string-to-int 'string-to-number "22.1"))
 
 
+
 ;;; Custom functions
 ;;;; SVN customizations
+(defun larumbe/svn-status ()
+  "Perform svn status via `dsvn' on `default-directory'."
+  (interactive)
+  (svn-status default-directory)
+  (setq truncate-lines t))
+
+
 (defun larumbe/update-svn-repos (repo-paths)
   "Update all svn-repos passed as REPO-PATHS parameter.
 Meant to be used in local and remote."

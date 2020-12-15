@@ -26,6 +26,21 @@
   (scroll-bar-mode -1))
 
 
+(use-package window
+  :ensure nil
+  :bind (("M-o" . other-window))) ; Replaces enriched faces
+
+
+(use-package frame
+  :ensure nil
+  :bind (("M-O" . other-frame))) ; Replaces 'negative argument
+
+
+(use-package minibuffer
+  :ensure nil
+  :bind ("<C-return>" . completion-at-point))
+
+
 (use-package smart-mode-line
   :demand
   :config
@@ -41,6 +56,13 @@
 (use-package popwin
   :config
   (popwin-mode 1))
+
+
+(use-package buffer-move
+  :bind (("<C-S-up>"    . buf-move-up)
+         ("<C-S-down>"  . buf-move-down)
+         ("<C-S-left>"  . buf-move-left)
+         ("<C-S-right>" . buf-move-right)))
 
 
 
@@ -76,6 +98,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
               ("j"   . View-scroll-line-forward)
               ("k"   . View-scroll-line-backward)
               ("l"   . recenter-top-bottom))
+  :bind (("C-x C-q" . view-mode))
   :config
   (setq view-read-only t))
 
@@ -116,10 +139,10 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package google-this
   :diminish
-  :commands (google-this-line		; TODO: They are marked as autoloads
-	     google-this-error		; Might it be necessary to recompile the package?
-	     google-this-symbol
-	     google-this-word)
+  :commands (google-this-line           ; TODO: They are marked as autoloads
+             google-this-error          ; Might it be necessary to recompile the package?
+             google-this-symbol
+             google-this-word)
   :config
   (google-this-mode 1))
 
@@ -137,14 +160,15 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 ;;;; Editing
-(use-package move-lines	      ; TODO: There are autoloads
-  :commands (move-lines-up    ; Since it is not a MELPA, is it
-	     move-lines-down) ; necessary to generate autoloads manually?
+(use-package move-lines
+  :bind (("<C-M-up>"   . move-lines-up)
+         ("<C-M-down>" . move-lines-down))
   :ensure nil)
 
 
 (use-package untabify-trailing-ws
   :ensure nil
+  :demand ; INFO: Assumes it's being enabled at startup!
   :config
   (untabify-trailing-ws 1))
 
@@ -162,12 +186,30 @@ C-s C-w [C-w] [C-w]... behaviour. "
   (electric-pair-mode 1))
 
 
+(use-package whole-line-or-region
+  :bind (("C-w" . whole-line-or-region-kill-region)))
+
+
 
 ;;;; Misc
+(use-package simple
+  :ensure nil
+  :bind (("M-n"     . next-error)     ; M-n and M-p are already overwritten at mode-line.el.
+         ("M-p"     . previous-error) ; This mapping allows to step through errors in a non-compilation buffer
+         ("C-<f12>" . auto-fill-mode)
+         ("<f12>"   . toggle-truncate-lines)))
+
+
 (use-package tramp
   :config
   (setq tramp-own-remote-path nil) ; `tramp-remote-path': List of directories to search for executables on remote host.
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+
+
+(use-package hi-lock
+  :ensure nil
+  :bind (("C-\\" . highlight-symbol-at-point)
+         ("C-'"  . unhighlight-regexp)))
 
 
 (use-package re-builder
@@ -196,10 +238,12 @@ C-s C-w [C-w] [C-w]... behaviour. "
   :ensure nil)
 
 
-(use-package so-long
-  :diminish
-  :quelpa (so-long :url "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/so-long.el" :fetcher url)
-  :config (global-so-long-mode 1))
+;; (use-package so-long
+;;   :diminish
+;;   :quelpa (so-long :url "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/so-long.el" :fetcher url)
+;;   :config
+;;   (require 'quelpa-use-package)
+;;   (global-so-long-mode 1))
 
 
 (use-package jenkins

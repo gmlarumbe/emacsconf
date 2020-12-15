@@ -13,6 +13,7 @@
 (use-package auto-complete
   :diminish
   :commands (larumbe/auto-complete-mode)
+  :bind ("<S-return>" . auto-complete)
   :bind (:map ac-completing-map
               ("C-n" . ac-next)
               ("C-p" . ac-previous)
@@ -55,6 +56,7 @@ ARG will be passed to `auto-complete-mode' wrapped function."
 (use-package yasnippet
     :commands (yas-expand yas-reload-all)
     :diminish yasnippet yas-minor-mode
+    :bind ("<C-M-return>" . yas-expand)
     :config
     ;; MELPA Snippets database
     (use-package yasnippet-snippets
@@ -106,6 +108,14 @@ If universal ARG is provided, visit a snippet file."
     (interactive)
     (insert snippet)
     (yas-expand)))
+
+
+
+;;;; Hippie-expand
+(use-package hippie-expand
+  :ensure nil
+  :bind ([remap dabbrev-expand] . hippie-expand))
+
 
 
 

@@ -24,7 +24,6 @@
 
 ;;;; Basic config
 (use-package exwm :demand)
-(require 'exwm-config)
 
 
 ;;;; Buffer naming
@@ -87,10 +86,9 @@
                       (interactive)
                       (start-process-shell-command "" nil "firefox")))
 
+
 ;; Keyboard layout switch
 (exwm-input-set-key (kbd "s-SPC") #'larumbe/toggle-keyboard-layout)
-
-
 
 ;;;;; Window/Frame movement/navigation
 (exwm-input-set-key (kbd "C-}")   #'larumbe/shrink-window-horizontally)
@@ -98,89 +96,7 @@
 (exwm-input-set-key (kbd "C-M-{") #'larumbe/shrink-window-vertically)
 (exwm-input-set-key (kbd "C-M-}") #'larumbe/enlarge-window-vertically)
 
-(exwm-input-set-key (kbd "M-o")   #'other-window) ; Suggested by Mastering-Emacs author (Replaces Enriched faces: https://www.gnu.org/software/emacs/manual/html_node/emacs/Enriched-Faces.html)
-(exwm-input-set-key (kbd "M-O")   #'other-frame)  ; replaces 'negative-argument
 (exwm-input-set-key (kbd "M-'")   #'larumbe/kill-current-buffer)
-
-;;;;; Line-mode global keybindings
-;;;;;; Text Editing
-(global-set-key (kbd "C-x d") #'duplicate-line) ; Replaces Dired (C-x C-j works better)
-(global-set-key (kbd "C-w") #'whole-line-or-region-kill-region)
-(global-set-key (kbd "M-w") #'larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
-(global-set-key (kbd "C-M-<backspace>") #'xah-delete-backward-char-or-bracket-text)
-
-(global-set-key (kbd "<C-return>") #'completion-at-point)
-(global-set-key (kbd "<S-return>") #'auto-complete)
-(global-set-key (kbd "<C-M-return>") #'yas-expand)          ; Outline-minor mode replaces this yas keybinding
-(global-set-key [remap dabbrev-expand] #'hippie-expand)
-
-(global-set-key (kbd "C-\\")  #'highlight-symbol-at-point)
-(global-set-key (kbd "C-'")  #'unhighlight-regexp)
-
-(global-set-key (kbd "C-<f12>") #'auto-fill-mode)           ;  Auto-fill mode
-(global-set-key [f12] #'toggle-truncate-lines)              ;  Truncate lines
-
-
-;;;;;; Navigation
-(global-set-key (kbd "M-x") #'helm-M-x)
-(global-set-key (kbd "C-x C-f") #'helm-find-files)
-(global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
-;; IDO mode compatibility with Helm:
-;;    - To do so, M-x customize-group RET helm-mode RET and then:
-;;    - Check Helm Completing Read Handlers Alist:
-;;    - Find all the 'ido' occurences (now are set to switch-to-buffer and find-alternate-file)
-
-(global-set-key (kbd "M-s o") #'helm-occur)      ; Might be advised
-(global-set-key (kbd "M-g a") #'helm-do-grep-ag) ; Avoid `C-x c' prefix
-(global-set-key (kbd "C-#")  #'helm-navi-headings)
-(global-set-key (kbd "M-#")  #'helm-navi)
-(global-set-key (kbd "C-x C-j") #'dired-jump)
-(global-set-key (kbd "C-x C-q") #'view-mode)
-
-(global-set-key (kbd "M-I") #'helm-imenu)
-(global-set-key (kbd "M-i") #'imenu-list)
-
-(global-set-key (kbd "C-z") #'larumbe/pop-to-previous-mark) ; Unmaps suspending frame
-(global-set-key (kbd "C-x C-z") #'larumbe/pop-to-previous-mark) ; Unmaps suspending frame
-
-(global-set-key (kbd "C-x C-/") #'larumbe/pwd-to-kill-ring)
-(global-set-key (kbd "C-x C-,") #'revert-buffer) ; Bind to `larumbe/revert-buffer-no-confirm' to avoid asking
-
-(global-set-key (kbd "<C-S-up>")     #'buf-move-up)
-(global-set-key (kbd "<C-S-down>")   #'buf-move-down)
-(global-set-key (kbd "<C-S-left>")   #'buf-move-left)
-(global-set-key (kbd "<C-S-right>")  #'buf-move-right)
-
-
-;;;;;; Version Control
-(global-set-key (kbd "C-x g") #'magit-status)
-(global-set-key (kbd "C-x M-g") #'magit-dispatch)
-(global-set-key (kbd "C-x j") '(lambda ()
-                                 (interactive)
-                                 (svn-status default-directory)
-                                 (setq truncate-lines t))) ; Setting a hook for `svn-status-mode' did not seem to work
-(global-set-key (kbd "C-x t") #'larumbe/repohome-magit-status)
-(global-set-key (kbd "C-x y") #'larumbe/repohome-reset-git-args)
-
-
-;;;;;; Compilation
-;; M-n and M-p are already overwritten at mode-line.el. This mapping allows to step through errors in a non-compilation buffer
-(global-set-key (kbd "M-n") #'next-error)
-(global-set-key (kbd "M-p") #'previous-error)
-(global-set-key [f5] #'compile)
-(global-set-key (kbd "C-*") #'larumbe/show-custom-compilation-buffers)
-
-
-;;;;;; Misc
-(global-set-key (kbd "C-,") #'larumbe/ansi-term)
-(global-set-key (kbd "C-.") '(lambda ()
-                               (interactive)
-                               (ansi-term "/bin/bash")))
-(global-set-key (kbd "<print>")  #'screenshot-take)
-(global-set-key (kbd "C-x C-h") #'larumbe/helm-help-major-mode)
-(global-set-key (kbd "C-x l") #'larumbe/org-show-todos-agenda)
-
-
 
 
 ;;;; Local KeyBindings

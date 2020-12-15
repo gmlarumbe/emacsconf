@@ -302,6 +302,16 @@ This is identical to what is done to to handle the `load-path' at startup."
 
 
 
+;;;; Keybindings
+(global-set-key (kbd "C-x d")   #'duplicate-line)                         ; Replaces Dired (C-x C-j works better)
+(global-set-key (kbd "M-w")     #'larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
+(global-set-key (kbd "C-z")     #'larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
+(global-set-key (kbd "C-x C-z") #'larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
+(global-set-key (kbd "C-x C-/") #'larumbe/pwd-to-kill-ring)
+(global-set-key (kbd "C-x C-,") #'larumbe/revert-buffer-no-confirm)
+
+
+
 (provide 'basic-functions)
 
 ;;; basic-functions.el ends here

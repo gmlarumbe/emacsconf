@@ -10,6 +10,7 @@
               ("j" . larumbe/dired-do-async-shell-command-or-okular) ; Open file-at-point directly with Okular if is a PDF and delete async process window. Otherwise it will ask for default program
               ("," . larumbe/dired-toggle-deletion-confirmer)        ; https://superuser.com/questions/332590/how-to-prevent-delete-confirmation-in-emacs-dired
               ("b" . dired-up-directory))
+  :bind (("C-x C-j" . dired-jump))
   :hook ((dired-mode . my-dired-hook))
   :commands (dired-do-async-shell-command dired-hide-details-mode)
   :config

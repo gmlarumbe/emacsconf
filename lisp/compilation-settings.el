@@ -90,6 +90,8 @@
 ;;; Use-package setup
 (use-package compile
   :ensure nil
+  :bind (([f5]  . compile)
+         ("C-*" . larumbe/show-custom-compilation-buffers))
   :bind (:map compilation-mode-map
               ("r"   . rename-buffer)
               ("j"   . larumbe/recompile-with-regexp-alist)

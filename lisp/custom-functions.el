@@ -9,6 +9,7 @@
 (require 'with-editor)
 
 
+;;;; Functions
 (defun forward-same-indent ()
   "Move forward to next line with same indent (copied from `vhdl-mode').
 DANGER: Comment needs to be substituted from '--' to  mode-specific comment."
@@ -183,8 +184,8 @@ is no include option for `diff' utils."
 
 
 
-;;; Xah Lee functions from ergoemacs.org tutorial
-;;;; Bracket Movement
+;;;; Xah Lee
+;;;;; Bracket Movement
 (defvar xah-brackets nil "string of left/right brackets pairs.")
 (setq xah-brackets "()[]{}<>（）［］｛｝⦅⦆〚〛⦃⦄“”‘’‹›«»「」〈〉《》【】〔〕⦗⦘『』〖〗〘〙｢｣⟦⟧⟨⟩⟪⟫⟮⟯⟬⟭⌈⌉⌊⌋⦇⦈⦉⦊❛❜❝❞❨❩❪❫❴❵❬❭❮❯❰❱❲❳〈〉⦑⦒⧼⧽﹙﹚﹛﹜﹝﹞⁽⁾₍₎⦋⦌⦍⦎⦏⦐⁅⁆⸢⸣⸤⸥⟅⟆⦓⦔⦕⦖⸦⸧⸨⸩｟｠⧘⧙⧚⧛⸜⸝⸌⸍⸂⸃⸄⸅⸉⸊᚛᚜༺༻༼༽⏜⏝⎴⎵⏞⏟⏠⏡﹁﹂﹃﹄︹︺︻︼︗︘︿﹀︽︾﹇﹈︷︸")
 
@@ -244,7 +245,7 @@ Version 2016-11-22"
      (t (backward-up-list 1 'ESCAPE-STRINGS 'NO-SYNTAX-CROSSING)))))
 
 
-;;;; Quote Movement
+;;;;; Quote Movement
 (defun xah-forward-quote-smart ()
   "Move cursor to the current or next string quote.
 Place cursor at the position after the left quote.
@@ -279,7 +280,7 @@ Version 2016-07-23"
       nil)))
 
 
-;;;; Text Selecting
+;;;;; Text Selecting
 (defun xah-select-text-in-quote ()
   "Select text between the nearest left and right delimiters.
 Delimiters here includes the following chars: \"<>(){}[]“”‘’‹›«»「」『』【】〖〗《》〈〉〔〕（）
@@ -461,7 +462,7 @@ Version 2017-01-15"
        ))))
 
 
-;;;; Brackets
+;;;;; Brackets
 (defun xah-delete-backward-char-or-bracket-text ()
   "Delete backward 1 character, but if it's a \"quote\" or bracket ()[]{}【】「」 etc, delete bracket and the inner text, push the deleted text to `kill-ring'.
 
@@ -559,5 +560,14 @@ Version 2017-07-02"
       (delete-char 1))))
 
 
+
+;;;; Keybindings
+(global-set-key (kbd "C-M-<backspace>") #'xah-delete-backward-char-or-bracket-text)
+
+
+
 (provide 'custom-functions)
+
+
+
 ;;; custom-functions.el ends here

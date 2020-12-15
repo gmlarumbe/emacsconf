@@ -13,6 +13,7 @@
               ("C-,"   . nil)                ; Unamps org-cycle-agenda-files to free `larumbe/ansi-term'
               ("C-c l" . org-store-link)
               ("C-c a" . org-agenda))
+  :bind (("C-x l" . larumbe/org-show-todos-agenda))
   :config
   (setq org-log-done 'time)
   (setq org-agenda-files (list "~/TODO.org"))

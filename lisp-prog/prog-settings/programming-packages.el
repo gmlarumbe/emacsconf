@@ -62,6 +62,7 @@ in order to check pending project actions. "
 
 
 (use-package imenu-list
+  :bind (("M-i" . imenu-list))
   :config
   (setq imenu-list-size 0.15)
   (setq imenu-auto-rescan t))

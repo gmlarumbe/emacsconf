@@ -16,16 +16,29 @@
   ;; Enable, so that commands like `ido-kill-buffer-at-head' can be performed
   (ido-mode 1)
 
-  :bind (("C-x c /" . helm-find) ; Enable C-x c prefix commands
+  :bind (("M-x"     . helm-M-x)
+         ("C-x C-f" . helm-find-files)
+         ("C-x r b" . helm-filtered-bookmarks)
+         ("M-s o"   . helm-occur)      ; Might be advised
+         ("M-g a"   . helm-do-grep-ag) ; Avoid `C-x c' prefix
+         ("M-I"     . helm-imenu)
+         ("C-x c /" . helm-find) ; Enable C-x c prefix commands
          ("C-x c p" . helm-list-emacs-process)
          ("C-x c t" . helm-top)
-	 ("C-x c y" . helm-youtube))
+         ("C-x c y" . helm-youtube)
+         ("C-x C-h" . larumbe/helm-help-major-mode)) ; TODO: Deprecate it after `which-key'
   :config
   (use-package helm-projectile :diminish)
   (use-package helm-ag)
   (use-package helm-org) ; Required by helm-havi
   (use-package helm-youtube)
+  (use-package helm-navi
+    :pin manual ; Manually forked version
+    :bind (("C-#" . helm-navi-headings)
+           ("M-#" . helm-navi))
+    :diminish outshine-mode outline-minor-mode)
 
+  ;; Actual config
   (add-to-list 'helm-completing-read-handlers-alist '(switch-to-buffer . ido))
   (add-to-list 'helm-completing-read-handlers-alist '(kill-buffer      . ido))
   (helm-mode 1)
@@ -90,10 +103,6 @@ If called with PREFIX, search for string and no case sensitive."
   (advice-add 'helm-occur :override #'larumbe/helm-occur))
 
 
-
-;; `helm-navi' loads `navi-mode', and this last one loads `outshine'
-(use-package helm-navi
-  :diminish outshine-mode outline-minor-mode)
 
 
 (provide 'helm-settings)
