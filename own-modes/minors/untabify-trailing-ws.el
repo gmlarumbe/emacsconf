@@ -18,6 +18,7 @@
 
 
 ;;; Functions
+;;;###autoload
 (define-minor-mode untabify-trailing-ws
   "Basic minor mode to untabify and delete trailing whitespaces by using write-file-functions hooks."
   :global t
@@ -32,6 +33,7 @@
     (message "Untabify set to: %s" untabify-delete-trailing-whitespace)))
 
 
+;;;###autoload
 (defun larumbe/untabify-trailing-whitespace ()
   "Untabify and delete trailing whitespace depending on MAJOR-MODE of current buffer.
 Meant to be used as a wrapper for write-file-functions hook."
@@ -41,6 +43,7 @@ Meant to be used as a wrapper for write-file-functions hook."
     (delete-trailing-whitespace (point-min) (point-max))))
 
 
+;;;###autoload
 (defun larumbe/untabify-trailing-whitespace-toggle ()
   "GLOBALLY Toggle untabify and delete trailing whitespace for some customized programming modes."
   (interactive)

@@ -99,6 +99,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package beacon
+  :demand
   :config
   (beacon-mode 1))
 
@@ -115,8 +116,8 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package google-this
   :diminish
-  :commands (google-this-line
-	     google-this-error
+  :commands (google-this-line		; TODO: They are marked as autoloads
+	     google-this-error		; Might it be necessary to recompile the package?
 	     google-this-symbol
 	     google-this-word)
   :config
@@ -136,8 +137,10 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 ;;;; Editing
-(use-package move-lines
- :ensure nil)
+(use-package move-lines	      ; TODO: There are autoloads
+  :commands (move-lines-up    ; Since it is not a MELPA, is it
+	     move-lines-down) ; necessary to generate autoloads manually?
+  :ensure nil)
 
 
 (use-package untabify-trailing-ws

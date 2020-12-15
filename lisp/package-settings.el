@@ -30,8 +30,8 @@
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe))
 
-(use-package gnu-elpa-keyring-update)    ; Update elpa keys to avoid signature issues
-(use-package quelpa-use-package :demand) ; Needed by some packages such as `so-long'
+(use-package gnu-elpa-keyring-update :demand) ; Update elpa keys to avoid signature issues
+(use-package quelpa-use-package :demand)      ; Needed by some packages such as `so-long'
 
 
 (provide 'package-settings)
