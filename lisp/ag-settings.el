@@ -3,7 +3,7 @@
 ;;; Code:
 
 (use-package ag
-  :defines (ag-arguments)
+  :defines (ag-arguments) ; TODO: What for?
   :commands (ag/search
              larumbe/ag-search-file-list
              projectile-project-root)

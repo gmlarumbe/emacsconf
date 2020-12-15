@@ -20,16 +20,18 @@
 (eval-when-compile
   (require 'use-package))
 (setq use-package-always-ensure t) ; Force download if not available. INFO: Set to nil for built-in packages.
+(setq use-package-always-defer t)  ; Force deferring of every package for proper loading after `load-path' updating
 
 ;; Keep packages updated automatically
 (use-package auto-package-update
+  :demand
   :config
   (setq auto-package-update-delete-old-versions t)
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe))
 
-(use-package gnu-elpa-keyring-update) ; Update elpa keys to avoid signature issues
-(use-package quelpa-use-package)      ; Needed by some packages such as `so-long'
+(use-package gnu-elpa-keyring-update)    ; Update elpa keys to avoid signature issues
+(use-package quelpa-use-package :demand) ; Needed by some packages such as `so-long'
 
 
 (provide 'package-settings)

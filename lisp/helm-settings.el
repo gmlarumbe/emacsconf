@@ -18,7 +18,8 @@
 
   :bind (("C-x c /" . helm-find) ; Enable C-x c prefix commands
          ("C-x c p" . helm-list-emacs-process)
-         ("C-x c t" . helm-top))
+         ("C-x c t" . helm-top)
+	 ("C-x c y" . helm-youtube))
   :config
   (use-package helm-projectile :diminish)
   (use-package helm-ag)
@@ -92,8 +93,7 @@ If called with PREFIX, search for string and no case sensitive."
 
 ;; `helm-navi' loads `navi-mode', and this last one loads `outshine'
 (use-package helm-navi
-  :diminish outshine-mode outline-minor-mode
-  :defer) ; Defer to fetch local version after load-path manual overriding
+  :diminish outshine-mode outline-minor-mode)
 
 
 (provide 'helm-settings)

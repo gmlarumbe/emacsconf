@@ -20,8 +20,6 @@
 ;; the end of `load-path', MELPA packages loaded with `use-package' will take
 ;; precedence. As I would like to have many MELPA packages coexisting with my
 ;; own overriden packages, I prefer to use a custom approach using shell commands.
-
-
 (defvar larumbe/load-path-dirs-recursive '("~/.elisp/lisp"
                                            "~/.elisp/lisp-prog"
                                            "~/.elisp/own-modes"))
@@ -58,8 +56,8 @@
 ;; the 'modified' or 'site-lisp' directories.
 ;; When loading with `use-package', some mechanism is needed to defer it and
 ;; load it after `load-path' has been updated (such as :bind, :defer, :hook...)
-(defvar larumbe/load-path-dirs-non-recursive '("~/.elisp/modified"
-                                               "~/.elisp/site-lisp"))
+(defvar larumbe/load-path-dirs-non-recursive '("~/.elisp/site-lisp"
+                                               "~/.elisp/modified"))
 (dolist (dir larumbe/load-path-dirs-non-recursive)
   (add-to-list 'load-path (expand-file-name dir)))
 

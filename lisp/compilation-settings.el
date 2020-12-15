@@ -2,6 +2,9 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'popwin)
+
+
 (defvar larumbe/custom-compilation-regexp-sets '("verilog-make" "vivado" "irun" "verilator" "iverilog" "scons" "python" "pax"))
 (defvar larumbe/custom-compilation-regexp-active nil)
 

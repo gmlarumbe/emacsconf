@@ -27,6 +27,7 @@
 
 
 (use-package smart-mode-line
+  :demand
   :config
   (setq sml/theme 'dark) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
   (sml/setup)            ; Enable smart-mode-line
@@ -103,7 +104,6 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package sr-speedbar
-  :commands (sr-speedbar-open)
   :bind (:map speedbar-mode-map
               ("q"   . larumbe/kill-current-buffer)
               ("j"   . speedbar-edit-line))
@@ -115,6 +115,10 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package google-this
   :diminish
+  :commands (google-this-line
+	     google-this-error
+	     google-this-symbol
+	     google-this-word)
   :config
   (google-this-mode 1))
 

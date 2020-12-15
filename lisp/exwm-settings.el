@@ -26,7 +26,7 @@
 
 ;;; Basic config
 ;; Load EXWM
-(use-package exwm)
+(use-package exwm :demand)
 (require 'exwm-config)
 
 ;; Set the initial number of workspaces.
@@ -187,7 +187,7 @@
 (global-set-key (kbd "<print>")  #'screenshot-take)
 (global-set-key (kbd "C-x C-h") #'larumbe/helm-help-major-mode)
 (global-set-key (kbd "C-x l") #'larumbe/org-show-todos-agenda)
-(global-set-key (kbd "C-c / y") #'helm-youtube)             ; Analogous to google-this mode keybindings
+
 
 
 

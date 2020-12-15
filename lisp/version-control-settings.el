@@ -15,6 +15,8 @@
 
 ;;; Git
 (use-package magit
+  :demand ; TODO: Required by some custom functions further in this file
+	  ; TODO: Create autoloads for these functions and do a require of magit?
   :config
   (setq magit-diff-refine-hunk t)) ; Highlight differences of selected hunk
 

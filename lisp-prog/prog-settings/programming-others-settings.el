@@ -29,6 +29,7 @@
   :mode (("\\.xdc\\'" . vivado-xdc-mode))
   :hook ((vivado-mode . my-vivado-mode-hook))
   :demand t ; INFO: Force loading of all the functions in the file
+            ; TODO: Create autoloads and remove this demand someday
   :config
   (defun my-vivado-mode-hook ()
     (set 'ac-sources '(ac-source-gtags
