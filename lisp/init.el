@@ -10,23 +10,7 @@
 ;;
 ;;; Code:
 
-
-;;;; Load path
-;; Order of packages within `load-path' actually matters.
-;; If there is one package present in more than one directory of `load-path',
-;; only the first in the list will be used to load the package.
-
-;; Since `normal-top-level-add-subdirs-to-load-path' will add subdirectories at
-;; the end of `load-path', MELPA packages loaded with `use-package' will take
-;; precedence. As I would like to have many MELPA packages coexisting with my
-;; own overriden packages, I prefer to use a custom approach using shell commands.
-(defvar larumbe/load-path-dirs-recursive '("~/.elisp/lisp"
-                                           "~/.elisp/lisp-prog"
-                                           "~/.elisp/own-modes"))
-(dolist (dir larumbe/load-path-dirs-recursive)
-  (dolist (subdir (split-string (shell-command-to-string (concat "find " dir " -type d"))))
-    (add-to-list 'load-path (expand-file-name subdir))))
-
+(load "~/.elisp/lisp/init-load-path-header.el")
 
 ;;;; Packages
 (require 'package-settings)
@@ -48,32 +32,7 @@
 (require 'term-settings)
 (require 'programming-settings)
 (require 'exwm-settings)
-
-
-
-;;;; Load path overriding
-;; If a MELPA package has to be overriden, copy the new version (or symlink) to
-;; the 'modified' or 'site-lisp' directories.
-;; When loading with `use-package', some mechanism is needed to defer it and
-;; load it after `load-path' has been updated (such as :bind, :defer, :hook...)
-(defvar larumbe/load-path-dirs-non-recursive '("~/.elisp/site-lisp"
-                                               "~/.elisp/modified"))
-(dolist (dir larumbe/load-path-dirs-non-recursive)
-  (add-to-list 'load-path (expand-file-name dir)))
-
-
-
-;;;; Machine-specific
-;;   - This file will not be present in the repo
-;;   - It will have specific machine content (e.g. EXWM enabling)
-(when (file-exists-p "~/.elisp_private/")
-  (defvar larumbe/load-path-dirs-private '("~/.elisp_private/lisp"
-                                           "~/.elisp_private/site-lisp"))
-  (dolist (dir larumbe/load-path-dirs-private)
-    (dolist (subdir (split-string (shell-command-to-string (concat "find " dir " -type d"))))
-      (add-to-list 'load-path (expand-file-name subdir))))
-  (require 'init-private))
-
+(require 'init-load-path-footer)
 
 
 (provide 'init)
