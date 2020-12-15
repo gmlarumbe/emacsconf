@@ -33,7 +33,7 @@
   (use-package helm-org) ; Required by helm-havi
   (use-package helm-youtube)
   (use-package helm-navi
-    :pin manual ; Manually forked version
+    :ensure nil
     :bind (("C-#" . helm-navi-headings)
            ("M-#" . helm-navi))
     :diminish outshine-mode outline-minor-mode)
