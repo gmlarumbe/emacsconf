@@ -9,8 +9,7 @@
               ("M->" . end-of-buffer)
               ("M-<" . beginning-of-buffer))
   :bind (("C-," . larumbe/ansi-term-dwim)
-         ("C-," . larumbe/ansi-term-new))
-  :commands (larumbe/ansi-term)
+         ("C-." . larumbe/ansi-term-new))
   :config
   (setq comint-process-echoes t)
 

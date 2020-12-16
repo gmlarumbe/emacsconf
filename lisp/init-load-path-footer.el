@@ -11,7 +11,8 @@
 ;; the 'modified' or 'site-lisp' directories.
 ;; When loading with `use-package', some mechanism is needed to defer it and
 ;; load it after `load-path' has been updated (such as :bind, :defer, :hook...)
-(defvar larumbe/load-path-dirs-non-recursive '("~/.elisp/site-lisp"
+(defvar larumbe/load-path-dirs-non-recursive '("~/.elisp/snippets"
+                                               "~/.elisp/site-lisp"
                                                "~/.elisp/modified"))
 (larumbe/add-to-load-path larumbe/load-path-dirs-non-recursive)
 
