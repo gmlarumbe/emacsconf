@@ -13,15 +13,19 @@ INFO: For some major-modes, xref will use global/ggtags as a backend
 if configured. However, for elisp seems it's not the default engine,
 as well as for C/C++ or Python..."
   (interactive)
-  (let ((def (thing-at-point 'symbol)))
-    (if (file-exists-p (thing-at-point 'filename))
+  (let ((file (thing-at-point 'filename))
+        (def  (thing-at-point 'symbol)))
+    (if (and file
+             (file-exists-p file))
         (larumbe/find-file-at-point)
       ;; If not pointing to a file choose between different navigation functions
-      (cond
-       ((string= major-mode "emacs-lisp-mode")
-        (xref-find-definitions def))
-       (t
-        (call-interactively #'ggtags-find-tag-dwim))))))
+      (cond ((string= major-mode "emacs-lisp-mode")
+             (if def
+                 (xref-find-definitions def)
+               (call-interactively #'xref-find-definitions)))
+            ;; Default will be using ggtags interface
+            (t
+             (call-interactively #'ggtags-find-tag-dwim))))))
 
 
 (defun larumbe/prog-mode-references ()
@@ -33,15 +37,20 @@ INFO: For some major-modes, xref will use global/ggtags as a backend
 if configured. However, for elisp seems it's not the default engine,
 as well as for C/C++ or Python..."
   (interactive)
-  (let ((ref (thing-at-point 'symbol)))
-    (if (file-exists-p (thing-at-point 'filename))
+  (let ((file (thing-at-point 'filename))
+        (ref  (thing-at-point 'symbol)))
+    (if (and file
+             (file-exists-p file))
         (larumbe/find-file-at-point)
       ;; If not pointing to a file choose between different navigation functions
-      (cond
-       ((string= major-mode "emacs-lisp-mode")
-        (xref-find-references ref))
-       (t
-        (ggtags-find-reference ref))))))
+      (cond ((string= major-mode "emacs-lisp-mode")
+             (if ref
+                 (xref-find-references ref)
+               (call-interactively #'xref-find-references)))
+            ;; Default will be using ggtags interface
+            (t
+             (call-interactively #'ggtags-find-reference ref))))))
+
 
 
 (defun larumbe/prog-mode-keys ()
