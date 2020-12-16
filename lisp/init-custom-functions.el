@@ -103,10 +103,24 @@
     (error "Cannot load non-Elisp files")))
 
 
-(defun larumbe/revert-buffer-no-confirm ()
-  "Revert current buffer without prompting for confirmation."
-  (interactive)
-  (revert-buffer nil t t))
+(defvar larumbe/revert-buffer-confirm-p t
+  "Ask for confirmation when reverting current buffer.")
+
+(defun larumbe/revert-buffer-maybe-no-confirm (toggle)
+  "Revert current buffer without prompting for confirmation.
+If universal arg or TOGGLE are provided, toggle for confirmation."
+  (interactive "P")
+  (if toggle
+      (if larumbe/revert-buffer-confirm-p
+          (progn
+            (setq larumbe/revert-buffer-confirm-p nil)
+            (message "Revert confirmation: nil"))
+        (setq larumbe/revert-buffer-confirm-p t)
+        (message "Revert confirmation: t"))
+    ;; If not toggling, revert
+    (if larumbe/revert-buffer-confirm-p
+        (revert-buffer nil nil t)
+      (revert-buffer nil t t))))
 
 
 (defun larumbe/current-buffer-to-file (out-file)
@@ -488,7 +502,7 @@ is no include option for `diff' utils."
 (global-set-key (kbd "C-z")     #'larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
 (global-set-key (kbd "C-x C-z") #'larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
 (global-set-key (kbd "C-x C-/") #'larumbe/pwd-to-kill-ring)
-(global-set-key (kbd "C-x C-,") #'larumbe/revert-buffer-no-confirm)
+(global-set-key (kbd "C-x C-,") #'larumbe/revert-buffer-maybe-no-confirm)
 
 
 
