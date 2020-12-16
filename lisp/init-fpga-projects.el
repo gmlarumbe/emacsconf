@@ -17,7 +17,7 @@
 (defvar larumbe/project-xpr-file             (nth 2 (car larumbe/vivado-projects)))
 (defvar larumbe/project-gtags-dirs-directory (nth 3 (car larumbe/vivado-projects)))
 (defvar larumbe/project-gtags-dirs-file      (nth 4 (car larumbe/vivado-projects)))
-(defvar larumbe/project-gtags-file           (larumbe/path-join larumbe/project-gtags-dirs-directory larumbe/project-gtags-dirs-file))
+(defvar larumbe/project-gtags-file           nil) ; (larumbe/path-join larumbe/project-gtags-dirs-directory larumbe/project-gtags-dirs-file)
 
 (defvar larumbe/hdl-source-extension-regex "\\(.sv$\\|.v$\\|.svh$\\|.vh$\\|.vhd$\\)")
 

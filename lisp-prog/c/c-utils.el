@@ -6,14 +6,15 @@
   "Conditionally determine in a hook if mode is enabled.")
 
 (defun my-cc-mode-hook ()
+  "C/C++ hook."
   (set 'ac-sources '(ac-source-semantic-raw ac-source-gtags)))
 
 
 (defun larumbe/semantic-mode (&optional arg)
-  "Enable semantic-mode depending on value of `larumbe/semantic-enable'.
+  "Enable semantic depending on value of `larumbe/semantic-enable'.
 
 Purpose is to use this function as a conditional hook.
-ARG will be passed to `semantic-mode' wrapped function."
+ARG will be passed to wrapped function `semantic-mode'."
   (interactive)
   (if larumbe/semantic-enable
       (semantic-mode arg)

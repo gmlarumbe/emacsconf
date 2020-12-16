@@ -4,7 +4,7 @@
 
 
 (defun larumbe/sh-send-line-or-region-and-step-ansi ()
-  "Same as `sh-send-line-or-region-and-step' but for *ansi-term* process"
+  "Same as `sh-send-line-or-region-and-step' but for *ansi-term* process."
   (interactive)
   (unless (get-buffer "*ansi-term*")
     (error "Buffer *ansi-term* does not exist"))
@@ -22,11 +22,13 @@
 
 
 (defun sh-switch-to-process-buffer ()
+  "Switch to process named 'shell'."
   (interactive)
   (pop-to-buffer (process-buffer (get-process "shell")) t))
 
 
 (defun my-sh-mode-hook ()
+  "Sh hook."
   (set 'ac-sources '(ac-source-gtags ac-source-symbols)))
 
 

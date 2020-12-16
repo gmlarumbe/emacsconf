@@ -88,7 +88,7 @@
 
 ;;;;; Firefox
 (defvar larumbe/exwm-firefox-class-names '("Firefox" "Firefox-esr" "Tor Browser"))
-(defvar larumbe/exwm-firefox-prefix-keys '(f8 f7))
+(defvar larumbe/exwm-firefox-prefix-keys '(f8 f7)) ; Just to test these keys, nothing important is done...
 (defvar larumbe/exwm-firefox-simulation-keys
   '(([?\C-w]     . ?\C-w)         ; Keep value for window closing
     ([?\C-k]     . (S-end ?\C-x)) ; It kills, not simply deletes
@@ -109,7 +109,7 @@
     ;; Toggle link/page view
     ([?\C-l]     . f6)))
 
-(defvar larumbe/exwm-firefox-input-key-variable '(larumbe/exwm-firefox-class-names larumbe/exwm-firefox-simulation-keys larumbe/exwm-firefox-prefix-keys))
+(defvar larumbe/exwm-firefox-list '(larumbe/exwm-firefox-class-names larumbe/exwm-firefox-simulation-keys larumbe/exwm-firefox-prefix-keys))
 
 
 ;;;;; Okular
@@ -123,7 +123,7 @@
     ([?\C-s] . ?\C-')    ; Forward
     ([?\C-r] . ?\C-\\))) ; Backward
 
-(defvar larumbe/exwm-okular-input-key-variable '(larumbe/exwm-okular-class-names larumbe/exwm-okular-simulation-keys larumbe/exwm-okular-prefix-keys))
+(defvar larumbe/exwm-okular-list '(larumbe/exwm-okular-class-names larumbe/exwm-okular-simulation-keys larumbe/exwm-okular-prefix-keys))
 
 
 ;;;;; Vivado
@@ -139,7 +139,7 @@
     ;; Undo
     ([?\C-\/] . ?\C-z)))
 
-(defvar larumbe/exwm-vivado-input-key-variable '(larumbe/exwm-vivado-class-names larumbe/exwm-vivado-simulation-keys larumbe/exwm-vivado-prefix-keys))
+(defvar larumbe/exwm-vivado-list '(larumbe/exwm-vivado-class-names larumbe/exwm-vivado-simulation-keys larumbe/exwm-vivado-prefix-keys))
 
 
 ;;;;; Gtkwave
@@ -154,7 +154,7 @@
     ;; Selection/highlight
     ([?\C-a] . ?\C-a)))
 
-(defvar larumbe/exwm-gtkwave-input-key-variable '(larumbe/exwm-gtkwave-class-names larumbe/exwm-gtkwave-simulation-keys larumbe/exwm-gtkwave-prefix-keys))
+(defvar larumbe/exwm-gtkwave-list '(larumbe/exwm-gtkwave-class-names larumbe/exwm-gtkwave-simulation-keys larumbe/exwm-gtkwave-prefix-keys))
 
 
 ;;;;; Novas
@@ -169,7 +169,7 @@
     ;; Selection/highlight
     ([?\C-a] . ?\C-a)))
 
-(defvar larumbe/exwm-novas-input-key-variable '(larumbe/exwm-novas-class-names larumbe/exwm-novas-simulation-keys larumbe/exwm-novas-prefix-keys))
+(defvar larumbe/exwm-novas-list '(larumbe/exwm-novas-class-names larumbe/exwm-novas-simulation-keys larumbe/exwm-novas-prefix-keys))
 
 
 
@@ -227,11 +227,11 @@ Java applications and GIMP."
 
 (defun larumbe/exwm-register-active-processes ()
   "Register processes that will remap prefix/simulation keybindings."
-  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-firefox-input-key-variable)
-  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-okular-input-key-variable)
-  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-vivado-input-key-variable)
-  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-gtkwave-input-key-variable)
-  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-novas-input-key-variable))
+  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-firefox-list)
+  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-okular-list)
+  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-vivado-list)
+  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-gtkwave-list)
+  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-novas-list))
 
 
 

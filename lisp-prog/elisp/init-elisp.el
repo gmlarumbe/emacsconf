@@ -23,8 +23,7 @@
   (setq flycheck-emacs-lisp-initialize-packages t)
 
   (require 'elisp-utils)
-  (require 'elisp-templates)
-  (sanityinc/enable-check-parens-on-save))
+  (require 'elisp-templates))
 
 
 (provide 'init-elisp)

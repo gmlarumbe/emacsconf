@@ -11,7 +11,8 @@
 
 (defun larumbe/elisp-flycheck-mode (&optional arg)
   "Flycheck-mode Elisp wrapper function.
-Disable `eldoc-mode' if flycheck is enabled to avoid minibuffer collisions.
+Disable function `eldoc-mode' if flycheck is enabled
+to avoid minibuffer collisions.
 Argument ARG sets `flycheck-mode' non-interactively."
   (interactive)
   ;; Non-interactive
@@ -31,10 +32,13 @@ Argument ARG sets `flycheck-mode' non-interactively."
 
 
 (defun my-elisp-hook ()
-    (prettify-symbols-mode 1)
-    (rainbow-delimiters-mode 1)
-    (larumbe/elisp-flycheck-mode 1)
-    (set 'ac-sources '(ac-source-gtags ac-source-symbols)))
+  "Custom elisp hook."
+  (sanityinc/enable-check-parens-on-save)
+  (prettify-symbols-mode 1)
+  (rainbow-delimiters-mode 1)
+  (larumbe/elisp-flycheck-mode 1)
+  (set 'ac-sources '(ac-source-gtags ac-source-symbols)))
+
 
 ;; Thanks to Steve Purcell
 (defun sanityinc/headerise-elisp ()

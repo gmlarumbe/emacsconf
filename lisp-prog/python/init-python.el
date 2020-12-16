@@ -18,11 +18,10 @@
               ;; Send text to an *ansi-term* running a Python interpreter and ignore indentation (that may run in a remote machine)
               ("C-c C-l"     . larumbe/python-send-line-ansi-term-no-indent-ignore-comment)) ; Overrides `python-shell-send-file'
   :bind (:map jedi-mode-map ("<C-tab>" . nil)) ; Let C-tab to HideShow
+  :custom-face (py-object-reference-face ((t (:foreground "dark olive green"))))
   :config
   (setq python-check-command     "pylint")
   (setq py-number-face           font-lock-doc-face)
-  ;; TODO: Postpone until autoloads issues are fixed in verilog/hdl-font-lock
-  ;; (setq py-object-reference-face larumbe/font-lock-grouping-keywords-face)
   (setq py-pseudo-keyword-face   font-lock-constant-face) ; True/False/None
   (setq py-try-if-face           font-lock-doc-face)
   (setq py-variable-name-face    font-lock-variable-name-face)
