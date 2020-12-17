@@ -32,12 +32,14 @@
 
   ;; Provides `ac-source-gtags'
   (use-package auto-complete-gtags
+    :demand
     :ensure nil
     :config
     (setq ac-gtags-modes '(c-mode cc-mode c++-mode verilog-mode emacs-lisp-mode vhdl-mode sh-mode python-mode tcl-mode)))
 
   ;; Provides `ac-source-verilog'
   (use-package auto-complete-verilog
+    :demand
     :ensure nil)
 
   (defun larumbe/auto-complete-mode (&optional arg)
