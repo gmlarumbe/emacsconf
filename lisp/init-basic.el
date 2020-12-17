@@ -136,10 +136,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package google-this
   :diminish
-  :commands (google-this-line           ; TODO: They are marked as autoloads
-             google-this-error          ; Might it be necessary to recompile the package?
-             google-this-symbol
-             google-this-word)
+  :demand
   :config
   (google-this-mode 1))
 
