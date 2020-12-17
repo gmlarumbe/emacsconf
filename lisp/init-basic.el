@@ -229,6 +229,9 @@ C-s C-w [C-w] [C-w]... behaviour. "
     :ensure nil))
 
 
+(use-package ssh-tunnels
+  :ensure nil)
+
 
 
 ;;;; Misc
