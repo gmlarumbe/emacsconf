@@ -21,6 +21,7 @@
 
   :config
   (add-to-list 'projectile-project-root-files-bottom-up ".repo") ; Detect `repo' Git sandboxes (Sandbox preference over IP)
+  (setq projectile-indexing-method 'alien) ; Fastest indexing method (default), but ignores .projectile ignores
   (setq projectile-completion-system 'helm)
   (setq projectile-mode-line-prefix " P") ; Modeline
 
