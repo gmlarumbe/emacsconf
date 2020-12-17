@@ -299,8 +299,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package xah-lee-functions
-  :ensure nil
-  :bind (("C-M-<backspace>" . xah-delete-backward-char-or-bracket-text)))
+  :ensure nil)
 
 
 

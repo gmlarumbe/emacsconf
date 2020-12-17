@@ -152,7 +152,7 @@ If optional NO-LINE is given, then do not copy line to `kill-ring'"
         (progn
           (xref-push-marker-stack)
           (ffap file))
-      (error "File \"%s\" does not exist (check point or current path)" file))))
+      (message "File \"%s\" does not exist (check point or current path)" file))))
 
 
 (defun larumbe/pop-to-previous-mark ()
@@ -203,6 +203,12 @@ INFO: Will use global/ggtags as a backend if configured."
         (call-interactively #'kill-ring-save)
       (kill-new symbol)
       (message symbol))))
+
+
+(defun larumbe/kill-sexp-backwards ()
+  "Kill sexp backwards."
+  (interactive)
+  (kill-sexp -1))
 
 
 
@@ -497,13 +503,13 @@ is no include option for `diff' utils."
 
 
 ;;;; Keybindings
-(global-set-key (kbd "C-x d")   #'duplicate-line)                         ; Replaces Dired (C-x C-j works better)
-(global-set-key (kbd "M-w")     #'larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
-(global-set-key (kbd "C-z")     #'larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
-(global-set-key (kbd "C-x C-z") #'larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
-(global-set-key (kbd "C-x C-/") #'larumbe/pwd-to-kill-ring)
-(global-set-key (kbd "C-x C-,") #'larumbe/revert-buffer-maybe-no-confirm)
-
+(global-set-key (kbd "C-x d")           #'duplicate-line)                         ; Replaces Dired (C-x C-j works better)
+(global-set-key (kbd "M-w")             #'larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
+(global-set-key (kbd "C-z")             #'larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
+(global-set-key (kbd "C-x C-z")         #'larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
+(global-set-key (kbd "C-x C-/")         #'larumbe/pwd-to-kill-ring)
+(global-set-key (kbd "C-x C-,")         #'larumbe/revert-buffer-maybe-no-confirm)
+(global-set-key (kbd "C-M-<backspace>") #'larumbe/kill-sexp-backwards)
 
 
 (provide 'init-custom-functions)
