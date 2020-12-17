@@ -19,3 +19,6 @@
 [submodule "submodules/emacs"]
 	path = submodules/emacs
 	url = https://github.com/gmlarumbe/emacs.git
+[submodule "submodules/emacs-btc-ticker"]
+	path = submodules/emacs-btc-ticker
+	url = https://github.com/gmlarumbe/emacs-btc-ticker.git

@@ -280,7 +280,9 @@ C-s C-w [C-w] [C-w]... behaviour. "
 ;;   (global-so-long-mode 1))
 
 
-(use-package btc-ticker)
+;; API of `coin-ticker' was outdated
+(use-package btc-ticker
+  :ensure nil)
 
 
 (use-package xah-lee-functions
