@@ -54,35 +54,18 @@ ARG will be passed to `auto-complete-mode' wrapped function."
 
 ;;;; Yasnippet
 (use-package yasnippet
-    :commands (yas-expand yas-reload-all)
+    :commands (yas-expand yas-reload-all larumbe/yas-melpa-snippets-prevent-load)
     :diminish yasnippet yas-minor-mode
     :bind ("<C-M-return>" . yas-expand)
     :config
     ;; MELPA Snippets database
-    (use-package yasnippet-snippets
-      :config
-      (defvar larumbe/major-modes-yasnippet-snippet-enabled
-        '("prog-mode"
-          "vhdl-mode"
-          "c++-mode"
-          "c-mode"
-          "cc-mode"
-          "perl-mode"
-          "nxml-mode"
-          "markdown-mode"
-          "git-commit-mode")
-        "Yasnippet-Snippets enabled snippets."))
+    (use-package yasnippet-snippets) ; evals and initializes after yasnippet loading
 
     ;; `yasnippet-snippets' will add the directory of `yasnippet-snippets-dir' to
-    ;; the list of available snippets. While it seems a good idea, it is better
-    ;; to take it as a reference for building my own snippets to avoid conflicts
-    ;; with some keybindings.
-    (setq yas-snippet-dirs '("~/.elisp/snippets")) ; Limit snippets to those of my own to avoid name collisions
-    ;; Load specific-mode snippets from `yasnippet-snippets'
-    (dolist (mode larumbe/major-modes-yasnippet-snippet-enabled)
-      (add-to-list 'yas-snippet-dirs (larumbe/path-join yasnippet-snippets-dir mode)))
-    ;; DANGER: If more than one directory for a specific-mode is detected, only
-    ;; the last one is taken into account.
+    ;; the list of available snippets. So we advice the function and do it manually.
+    (advice-add 'yasnippet-snippets-initialize :override #'larumbe/yas-melpa-snippets-prevent-load)
+    (setq yas-snippet-dirs '(yasnippet-snippets-dir))
+    (add-to-list 'yas-snippet-dirs "~/.elisp/snippets") ; Own snippets will have precedence over MELPA ones
 
     ;; Unmap TAB, use it for indentation only
     (define-key yas-minor-mode-map (kbd "TAB") nil)
@@ -96,7 +79,13 @@ If universal ARG is provided, visit a snippet file."
       (interactive "P")
       (if arg
           (call-interactively #'yas-visit-snippet-file)
-        (call-interactively #'yas-insert-snippet))))
+        (call-interactively #'yas-insert-snippet)))
+
+    (defun larumbe/yas-melpa-snippets-prevent-load ()
+      "Prevent automatic loading of MELPA snippets.
+Allows a selective loading/overriding of the desired snippets/modes."
+      (interactive)
+          (message "Avoiding loading of Melpa snippets")))
 
 
 
