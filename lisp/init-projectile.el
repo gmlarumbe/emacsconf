@@ -12,6 +12,7 @@
               ("C-c p r" . projectile-regenerate-tags)
               ("C-c p c" . projectile-compile-project)
               ("C-c p f" . projectile-find-file)
+              ("C-c p s" . projectile-switch-project)
               ("C-c p a" . helm-projectile-ag)
               ("C-c p g" . helm-projectile-grep))
 
