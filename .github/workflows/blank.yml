@@ -29,9 +29,11 @@ jobs:
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+        with:
+          path: .elisp
 
       # Runs a single command using the runners shell
       - name: Check startup
         run: |
-          ./scripts/config.sh
-          ./scripts/test-startup.sh
+          ./.elisp/scripts/config.sh
+          ./.elisp/scripts/test-startup.sh

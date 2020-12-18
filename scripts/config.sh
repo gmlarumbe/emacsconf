@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# Rename repos
-# CUR_DIR=$PWD
-
 mkdir -p ${HOME}/.emacs.d
 
-ln -s $PWD ~/.elisp
-ln -s lisp/init.el ${HOME}/.emacs.d/init.el
+echo "Create .elisp home dir..."
+ln -s .elisp ~/.elisp
 
-git submodule update --init --recursive
+if [ -d ".elisp_private" ]; then
+    echo "Create .elisp_private home dir..."
+    ln -s .elisp_private ~/.elisp_private
+fi
 
-# mv ${CUR_DIR} ${HOME}/.elisp
-# mv ~/emacsconf_priv ~/.elisp_private
+echo "Link to emacs init folder..."
+ln -s .elisp/lisp/init.el ${HOME}/.emacs.d/init.el
 
-# Create symlinks inside .emacs.d
-# ln -sf ${HOME}/.elisp/larumbe/init.el ${HOME}/.emacs.d/init.el
+cd .elisp
+git submodule update --init --recursive --jobs 4
