@@ -257,6 +257,25 @@ every buffer would require confirmation."
       ableton-error-regexp-emacs-alist-alist)))
 
 
+  (defun larumbe/log-add-regex-header (&optional regex-fun)
+    "Add elisp header to current visited log file.
+Open it in compilation mode with custom regexp parsing.
+
+If passed REGEX-FUN, set that to be evaluated at the header."
+    (interactive)
+    (let* ((regex (if regex-fun
+                      regex-fun
+                    (read-command "Regexp function: " "larumbe/pax-error-regexp-set-emacs")))
+           (header (concat "-*- mode: compilation; default-directory: \"" default-directory "\"; eval: (" (symbol-name regex) ") -*-")))
+      (read-only-mode -1)
+      (goto-char (point-min))
+      (open-line 2)
+      (insert header)
+      (save-buffer)
+      (read-only-mode 1)
+      (revert-buffer nil t)))
+
+
   (defun my-compilation-hook ()
     (setq truncate-lines t)) ; Do not enable linum-mode since it slows down large compilation buffers
 

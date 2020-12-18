@@ -232,7 +232,7 @@ INFO: Useful function for Verilog-Perl hierarchy extraction."
 (defvar larumbe/vivado-batch-compilation-command nil)
 
 
-(defun larumbe/lfp-compile-vivado-set-active-project ()
+(defun larumbe/vivado-set-active-project ()
   "Set active project based on `larumbe/vivado-batch-project-list'."
   (let (vivado-project files-list)
     (setq vivado-project (completing-read "Select project: " (mapcar 'car larumbe/vivado-batch-project-list)))
@@ -248,10 +248,10 @@ INFO: Useful function for Verilog-Perl hierarchy extraction."
            larumbe/vivado-batch-script-path))))
 
 
-(defun larumbe/lfp-compile-vivado-tcl ()
+(defun larumbe/vivado-compile ()
   "Use TCL console to elaborate/compile a design based on previous variables."
   (interactive)
-  (larumbe/lfp-compile-vivado-set-active-project)
+  (larumbe/vivado-set-active-project)
   (compile larumbe/vivado-batch-compilation-command)
   (larumbe/show-custom-compilation-buffers vivado-error-regexp-emacs-alist-alist))
 
@@ -262,7 +262,7 @@ INFO: Useful function for Verilog-Perl hierarchy extraction."
 (defvar larumbe/vivado-sim-project-list nil)
 (defvar larumbe/vivado-sim-compilation-command nil)
 
-(defun larumbe/lfp-sim-elab-vivado-set-active-project ()
+(defun larumbe/vivado-sim-set-active-project ()
   "Set active project based on `larumbe/vivado-sim-project-list'."
   (let (vivado-project)
     (setq vivado-project (completing-read "Select project: " (mapcar 'car larumbe/vivado-sim-project-list)))
@@ -274,11 +274,11 @@ INFO: Useful function for Verilog-Perl hierarchy extraction."
            "source elaborate.sh"))))
 
 
-(defun larumbe/lfp-sim-elab-vivado-tcl (&optional universal-arg)
+(defun larumbe/vivado-sim-tcl (&optional universal-arg)
   "Use TCL console to elaborate a design with Isim based on previous variables.
 If UNIVERSAL-ARG is provided, then simulate as well."
   (interactive "P")
-  (larumbe/lfp-sim-elab-vivado-set-active-project)
+  (larumbe/vivado-sim-set-active-project)
   (let (cmd)
     (if universal-arg
         (setq cmd (concat larumbe/vivado-sim-compilation-command " && source simulate.sh"))
@@ -288,12 +288,12 @@ If UNIVERSAL-ARG is provided, then simulate as well."
 
 
 ;;;; Irun
+;; 1st) Make sure that Vivado simulation libraries have been exported with the `compile_simlib'
+;; command at vivado TCL console
 (defvar larumbe/irun-glbl-path          nil)
 (defvar larumbe/irun-vivado-simlib-path nil)
 (defvar larumbe/irun-vivado-simlib-args nil)
-
 (defvar larumbe/irun-projects           nil)
-(defvar larumbe/irun-command            nil)
 (defvar larumbe/irun-sources-file       nil)
 (defvar larumbe/irun-top-module         nil)
 (defvar larumbe/irun-compilation-dir    nil)
@@ -305,6 +305,29 @@ If UNIVERSAL-ARG is provided, then simulate as well."
                                   "-clean "
                                   "-vlog_ext +.vh "))
 
+;; Command built after according to previous variables
+(defvar larumbe/irun-command nil)
+
+
+(defun larumbe/irun-vivado-build-simlib-args ()
+  "Build Vivado simlib args for use in compilation functions."
+  (concat "-reflib " larumbe/irun-vivado-simlib-path "/unisim:unisim "
+          "-reflib " larumbe/irun-vivado-simlib-path "/unisims_ver:unisims_ver "
+          "-reflib " larumbe/irun-vivado-simlib-path "/secureip:secureip "
+          "-reflib " larumbe/irun-vivado-simlib-path "/unimacro:unimacro "
+          "-reflib " larumbe/irun-vivado-simlib-path "/unimacro_ver:unimacro_ver "))
+
+
+(defun larumbe/irun-build-command ()
+  "Irun build command."
+  (concat "irun "
+          larumbe/irun-opts
+          (larumbe/irun-vivado-build-simlib-args)
+          "-f " larumbe/irun-sources-file " "
+          "-top xil_defaultlib." larumbe/irun-top-module " "
+          "-top glbl " larumbe/irun-glbl-path))
+
+
 (defun larumbe/irun-set-active-project ()
   "Set active project based on `larumbe/irun-projects'."
   (let (irun-project files-list)
@@ -313,14 +336,7 @@ If UNIVERSAL-ARG is provided, then simulate as well."
     (setq larumbe/irun-sources-file    (nth 0 files-list))
     (setq larumbe/irun-top-module      (nth 1 files-list))
     (setq larumbe/irun-compilation-dir (nth 2 files-list))
-    (setq larumbe/irun-command
-          (concat
-           "irun "
-           larumbe/irun-opts
-           larumbe/irun-vivado-simlib-args
-           "-f " larumbe/irun-sources-file " "
-           "-top xil_defaultlib." larumbe/irun-top-module " "
-           "-top glbl " larumbe/irun-glbl-path))))
+    (setq larumbe/irun-command (larumbe/irun-build-command))))
 
 
 
@@ -363,7 +379,7 @@ If UNIVERSAL-ARG is given, elaborate the design instead."
                   larumbe/verilator-compile-lint-files " "
                   "--top-module " larumbe/verilator-compile-lint-top))))
 
-(defun larumbe/compile-verilator-lint ()
+(defun larumbe/verilator-lint ()
   "Files created with ggtags and renamed (useful for small projects).
 It's faster than Vivado elaboration since it does not elaborate design"
   (interactive)
