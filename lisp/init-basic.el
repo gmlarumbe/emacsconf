@@ -283,6 +283,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package which-key
+  :demand
   :config
   (which-key-mode 1))
 
