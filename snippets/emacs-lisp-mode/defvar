@@ -2,4 +2,4 @@
 # name: defvar
 # key: dv
 # --
-(defvar ${1:symbol} ${2:initvalue} "${3:docstring}")
+(defvar ${1:symbol} ${2:nil}${3: "docstring"})
