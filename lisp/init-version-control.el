@@ -187,7 +187,7 @@ Compares same file of revisions REVA and REVB using `magit-ediff-compare'"
 
 ;;;; Repohome
 (defun larumbe/repohome-magit-status ()
-  "Perform magit-status with `git-dir' and `work-tree' changed accordingly.
+  "Perform `magit-status' with `git-dir' and `work-tree' changed accordingly.
 INFO: Is not possible to use `magit-git-global-arguments' as a local variable,
 since it needs to be set for the whole magit session, not only for the command."
   (interactive)

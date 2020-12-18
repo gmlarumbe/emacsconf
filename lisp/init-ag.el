@@ -3,7 +3,6 @@
 ;;; Code:
 
 (use-package ag
-  :defines (ag-arguments) ; TODO: What for?
   :commands (ag/search
              larumbe/ag-search-file-list
              projectile-project-root)
@@ -13,7 +12,6 @@
           "--skip-vcs-ignores" ; Ignore files/dirs ONLY from `.ignore'
           "--numbers"          ; Line numbers
           "--smart-case"
-          ;; "--one-device"       ; Do not cross mounts when searching
           "--follow"           ; Follow symlinks
           "--ignore" "#*#"     ; Adding "*#*#" or "#*#" to .ignore does not work for ag (works for rg)
           "--ignore" "*~"

@@ -26,10 +26,12 @@
 ;;;; VIVADO
 (use-package vivado-utils
   :ensure nil
+  :commands (vivado-xdc-mode
+             larumbe/vivado-shell
+             larumbe/vivado-shell-tcl-send-line-or-region-and-step
+             larumbe/vivado-shell-auto-complete-mode)
   :mode (("\\.xdc\\'" . vivado-xdc-mode))
   :hook ((vivado-mode . my-vivado-mode-hook))
-  :demand t ; INFO: Force loading of all the functions in the file
-            ; TODO: Create autoloads and remove this demand someday
   :config
   (defun my-vivado-mode-hook ()
     (set 'ac-sources '(ac-source-gtags

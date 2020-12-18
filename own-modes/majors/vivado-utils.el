@@ -580,7 +580,6 @@ When the region is active, send the region instead."
     (list b e allcomp)))
 
 
-
 (define-derived-mode vivado-xdc-mode tcl-mode
   (font-lock-add-keywords 'vivado-xdc-mode larumbe/vivado-tcl-xdc-font-lock) ; Modified to preserve tcl-keywords
   (make-local-variable 'completion-at-point-functions)

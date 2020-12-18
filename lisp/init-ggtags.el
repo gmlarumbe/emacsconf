@@ -26,10 +26,7 @@
   (setq ggtags-sort-by-nearness t) ; Enabling nearness requires global 6.5+
   (setq ggtags-navigation-mode-lighter nil)
   (setq ggtags-mode-line-project-name nil)
-  ;; (setq ggtags-oversize-limit (* 30 1024 1024)) ; 30 MB
-
-  ;; BUG: Set to 0 to avoid the `global -u' automatic GTAGS update if tags file is smaller than the variable.
-  ;; Problem is that that automatic command called from (ggtags-update-tags) does not read the Larumbe's verilog source file
+  ;; INFO: Set to 1 to avoid the `global -u' automatic GTAGS update if tags file is smaller than the variable.
   (setq ggtags-oversize-limit 1)   ; If set to nil it seems that there is no limit...
   (setq ggtags-update-on-save nil) ; Try to avoid the `global -u in progress...'
 
