@@ -292,7 +292,6 @@ If UNIVERSAL-ARG is provided, then simulate as well."
 ;; command at vivado TCL console
 (defvar larumbe/irun-glbl-path          nil)
 (defvar larumbe/irun-vivado-simlib-path nil)
-(defvar larumbe/irun-vivado-simlib-args nil)
 (defvar larumbe/irun-projects           nil)
 (defvar larumbe/irun-sources-file       nil)
 (defvar larumbe/irun-top-module         nil)
