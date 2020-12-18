@@ -43,7 +43,7 @@ Create it only if in a projectile project and the Makefile does not exist alread
 
 
 (defun larumbe/verilog-makefile-compile-project ()
-  "Prompts to available previous Makefile targets and compiles then with various verilog regexps."
+  "Prompts to available previous Makefile targets and compiles them with various verilog regexps."
   (interactive)
   (let ((makefile (concat (projectile-project-root) "Makefile"))
         target

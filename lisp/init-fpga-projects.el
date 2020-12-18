@@ -96,13 +96,13 @@ Avoid creating GTAGS for every project included inside a repo folder"
 (defvar larumbe/project-altera-gtags-dirs-directory (nth 3 (car larumbe/quartus-projects)))
 (defvar larumbe/project-altera-gtags-dirs-file      (nth 4 (car larumbe/quartus-projects)))
 
-(defvar altera-tcl-file-regexp "\\(.*_FILE\\|SEARCH_PATH\\) ")
-(defvar altera-tcl-file-regexp-file "\\(.*_FILE\\) ")
-(defvar altera-tcl-file-regexp-dir "\\(.*SEARCH_PATH\\) ")
+(defvar larumbe/altera-tcl-file-regexp "\\(.*_FILE\\|SEARCH_PATH\\) ")
+(defvar larumbe/altera-tcl-file-regexp-file "\\(.*_FILE\\) ")
+(defvar larumbe/altera-tcl-file-regexp-dir "\\(.*SEARCH_PATH\\) ")
 
 ;; Functions and variables for directory expansion (retrieve files from a dir on each line for gtags processing)
-(defvar altera-tcl-env-archons-path "/home/martigon/Repos/svn/obelix/archons/3.0")
-(defvar altera-tcl-env-archons-regex "$env(ARCHONS_PATH)")
+(defvar larumbe/altera-tcl-env-archons-path "/home/martigon/Repos/svn/obelix/archons/3.0")
+(defvar larumbe/altera-tcl-env-archons-regex "$env(ARCHONS_PATH)")
 ;; Output of `echo $ARCHONS_PATH' at LFP CEE obelix environment
 
 (defun larumbe/project-append-files-from-dir (dir)
@@ -166,26 +166,26 @@ Avoid creating GTAGS for every project included inside a sandbox."
       ;; End of INFO
       (insert-file-contents (larumbe/path-join larumbe/project-altera-dir larumbe/project-altera-file))
       ;; Start Regexp replacement for file
-      (keep-lines altera-tcl-file-regexp (point-min) (point-max)) ; Get only files
+      (keep-lines larumbe/altera-tcl-file-regexp (point-min) (point-max)) ; Get only files
       (goto-char (point-min))
       (while (re-search-forward "^#" nil t)   ; Remove comments
         (beginning-of-line)
         (kill-line 1))
       ;; Replace files
       (larumbe/replace-regexp-whole-buffer
-       (concat "set_global_assignment -name " altera-tcl-file-regexp-file)
+       (concat "set_global_assignment -name " larumbe/altera-tcl-file-regexp-file)
        (concat (file-name-as-directory larumbe/project-altera-dir)))
       ;; Replace SEARCH_PATH dirs
       (goto-char (point-min))
-      (while (re-search-forward altera-tcl-file-regexp-dir nil t)
+      (while (re-search-forward larumbe/altera-tcl-file-regexp-dir nil t)
         (kill-line 0) ; Kill until the beginning of line
         (insert (file-name-as-directory larumbe/project-altera-dir))
         (larumbe/project-append-files-from-dir (thing-at-point 'filename)))
       ;; Replace $env(ARCHONS_PATH) dirs
       (goto-char (point-min))
-      (while (re-search-forward altera-tcl-env-archons-regex nil t)
+      (while (re-search-forward larumbe/altera-tcl-env-archons-regex nil t)
         (kill-line 0) ; Kill until the beginning of line
-        (insert altera-tcl-env-archons-path))
+        (insert larumbe/altera-tcl-env-archons-path))
       ;; Cleanup file
       (larumbe/replace-regexp-whole-buffer " +" "")  ; Delete whitespaces in PATHs
       (goto-char (point-min))
@@ -224,52 +224,52 @@ INFO: Useful function for Verilog-Perl hierarchy extraction."
 
 
 ;;;; Vivado Synthesis
-(defvar vivado-binary-path nil)
-(defvar vivado-batch-script-path nil)
-(defvar vivado-batch-project-list nil)
-(defvar vivado-batch-project-path nil)
-(defvar vivado-batch-project-name nil)
-(defvar vivado-batch-compilation-command nil)
+(defvar larumbe/vivado-binary-path nil)
+(defvar larumbe/vivado-batch-script-path nil)
+(defvar larumbe/vivado-batch-project-list nil)
+(defvar larumbe/vivado-batch-project-path nil)
+(defvar larumbe/vivado-batch-project-name nil)
+(defvar larumbe/vivado-batch-compilation-command nil)
 
 
 (defun larumbe/lfp-compile-vivado-set-active-project ()
-  "Set active project based on `vivado-batch-project-list'."
+  "Set active project based on `larumbe/vivado-batch-project-list'."
   (let (vivado-project files-list)
-    (setq vivado-project (completing-read "Select project: " (mapcar 'car vivado-batch-project-list)))
-    (setq files-list (cdr (assoc vivado-project vivado-batch-project-list)))
-    (setq vivado-batch-project-path (nth 0 files-list))
-    (setq vivado-batch-project-name (nth 1 files-list))
-    (setq vivado-batch-compilation-command
+    (setq vivado-project (completing-read "Select project: " (mapcar 'car larumbe/vivado-batch-project-list)))
+    (setq files-list (cdr (assoc vivado-project larumbe/vivado-batch-project-list)))
+    (setq larumbe/vivado-batch-project-path (nth 0 files-list))
+    (setq larumbe/vivado-batch-project-name (nth 1 files-list))
+    (setq larumbe/vivado-batch-compilation-command
           (concat
-           "cd " vivado-batch-project-path " && " ; Temp files will be stored in this path
-           vivado-binary-path " -mode tcl "
-           vivado-batch-project-name
+           "cd " larumbe/vivado-batch-project-path " && " ; Temp files will be stored in this path
+           larumbe/vivado-binary-path " -mode tcl "
+           larumbe/vivado-batch-project-name
            " -source "
-           vivado-batch-script-path))))
+           larumbe/vivado-batch-script-path))))
 
 
 (defun larumbe/lfp-compile-vivado-tcl ()
   "Use TCL console to elaborate/compile a design based on previous variables."
   (interactive)
   (larumbe/lfp-compile-vivado-set-active-project)
-  (compile vivado-batch-compilation-command)
+  (compile larumbe/vivado-batch-compilation-command)
   (larumbe/show-custom-compilation-buffers vivado-error-regexp-emacs-alist-alist))
 
 
 ;;;; Vivado XSim
 ;; INFO: It is required to create the simulation first with Vivado GUI, and then run the script
-(defvar vivado-sim-project-path nil)
-(defvar vivado-sim-project-list nil)
-(defvar vivado-sim-compilation-command nil)
+(defvar larumbe/vivado-sim-project-path nil)
+(defvar larumbe/vivado-sim-project-list nil)
+(defvar larumbe/vivado-sim-compilation-command nil)
 
 (defun larumbe/lfp-sim-elab-vivado-set-active-project ()
-  "Set active project based on `vivado-sim-project-list'."
+  "Set active project based on `larumbe/vivado-sim-project-list'."
   (let (vivado-project)
-    (setq vivado-project (completing-read "Select project: " (mapcar 'car vivado-sim-project-list)))
-    (setq vivado-sim-project-path (cdr (assoc vivado-project vivado-sim-project-list)))
-    (setq vivado-sim-compilation-command
+    (setq vivado-project (completing-read "Select project: " (mapcar 'car larumbe/vivado-sim-project-list)))
+    (setq larumbe/vivado-sim-project-path (cdr (assoc vivado-project larumbe/vivado-sim-project-list)))
+    (setq larumbe/vivado-sim-compilation-command
           (concat
-           "cd " vivado-sim-project-path " && " ; Temp files will be stored in this path
+           "cd " larumbe/vivado-sim-project-path " && " ; Temp files will be stored in this path
            "source compile.sh && "
            "source elaborate.sh"))))
 
@@ -281,8 +281,8 @@ If UNIVERSAL-ARG is provided, then simulate as well."
   (larumbe/lfp-sim-elab-vivado-set-active-project)
   (let (cmd)
     (if universal-arg
-        (setq cmd (concat vivado-sim-compilation-command " && source simulate.sh"))
-      (setq cmd vivado-sim-compilation-command))
+        (setq cmd (concat larumbe/vivado-sim-compilation-command " && source simulate.sh"))
+      (setq cmd larumbe/vivado-sim-compilation-command))
     (compile cmd)
     (larumbe/show-custom-compilation-buffers vivado-error-regexp-emacs-alist-alist)))
 
@@ -347,28 +347,28 @@ If UNIVERSAL-ARG is given, elaborate the design instead."
 ;; with a clocking block), then tweak/comment temporarily files by hand.
 ;;
 ;; INFO: This is useful while developing small IPs
-(defvar verilator-project-list       nil)
-(defvar verilator-compile-lint-files nil)
-(defvar verilator-compile-lint-top   nil)
-(defvar verilator-compile-lint-cmd   nil)
+(defvar larumbe/verilator-project-list       nil)
+(defvar larumbe/verilator-compile-lint-files nil)
+(defvar larumbe/verilator-compile-lint-top   nil)
+(defvar larumbe/verilator-compile-lint-cmd   nil)
 
 (defun larumbe/verilator-lint-set-active-project ()
-  "Set active project based on `verilator-project-list'."
+  "Set active project based on `larumbe/verilator-project-list'."
   (let (verilator-project)
-    (setq verilator-project (completing-read "Select project: " (mapcar 'car verilator-project-list)))
-    (setq verilator-compile-lint-files (nth 0 (cdr (assoc verilator-project verilator-project-list))))
-    (setq verilator-compile-lint-top   (nth 1 (cdr (assoc verilator-project verilator-project-list))))
-    (setq verilator-compile-lint-cmd
+    (setq verilator-project (completing-read "Select project: " (mapcar 'car larumbe/verilator-project-list)))
+    (setq larumbe/verilator-compile-lint-files (nth 0 (cdr (assoc verilator-project larumbe/verilator-project-list))))
+    (setq larumbe/verilator-compile-lint-top   (nth 1 (cdr (assoc verilator-project larumbe/verilator-project-list))))
+    (setq larumbe/verilator-compile-lint-cmd
           (concat "verilator --lint-only +1800-2012ext+sv -f "
-                  verilator-compile-lint-files " "
-                  "--top-module " verilator-compile-lint-top))))
+                  larumbe/verilator-compile-lint-files " "
+                  "--top-module " larumbe/verilator-compile-lint-top))))
 
 (defun larumbe/compile-verilator-lint ()
   "Files created with ggtags and renamed (useful for small projects).
 It's faster than Vivado elaboration since it does not elaborate design"
   (interactive)
   (larumbe/verilator-lint-set-active-project)
-  (setq compile-command verilator-compile-lint-cmd)
+  (setq compile-command larumbe/verilator-compile-lint-cmd)
   (compile compile-command)
   (larumbe/show-custom-compilation-buffers verilator-error-regexp-emacs-alist-alist))
 
@@ -380,12 +380,12 @@ It's faster than Vivado elaboration since it does not elaborate design"
 ;; 2) Path to the RDL definition
 ;; 3) Name of address map
 ;; 4) Output directory
-(defvar larumbe-reggen-tool-path        nil)
-(defvar larumbe-reggen-projects         nil)
-(defvar larumbe-reggen-input-file       nil)
-(defvar larumbe-reggen-address-map-name nil)
-(defvar larumbe-reggen-output-path      nil)
-(defvar larumbe-reggen-template-types
+(defvar larumbe/reggen-tool-path        nil)
+(defvar larumbe/reggen-projects         nil)
+(defvar larumbe/reggen-input-file       nil)
+(defvar larumbe/reggen-address-map-name nil)
+(defvar larumbe/reggen-output-path      nil)
+(defvar larumbe/reggen-template-types
   '("c_header"
     "docbook"
     "verilog_header"
@@ -396,62 +396,62 @@ It's faster than Vivado elaboration since it does not elaborate design"
 
 
 (defun larumbe/reggen-set-active-project ()
-  "Set active project based on `larumbe-reggen-projects'."
+  "Set active project based on `larumbe/reggen-projects'."
   (interactive)
   (let (reggen files-list)
     ;; Get Project name
-    (if (bound-and-true-p larumbe-reggen-input-file)
-        (setq reggen (completing-read "Select project: " (mapcar 'car larumbe-reggen-projects)))
-      (setq reggen (car (car larumbe-reggen-projects))))  ; If no project is defined, use default (first one)
-    (setq files-list (cdr (assoc reggen larumbe-reggen-projects)))
+    (if (bound-and-true-p larumbe/reggen-input-file)
+        (setq reggen (completing-read "Select project: " (mapcar 'car larumbe/reggen-projects)))
+      (setq reggen (car (car larumbe/reggen-projects))))  ; If no project is defined, use default (first one)
+    (setq files-list (cdr (assoc reggen larumbe/reggen-projects)))
     ;; Set parameters accordingly
-    (setq larumbe-reggen-input-file       (nth 0 files-list))
-    (setq larumbe-reggen-address-map-name (nth 1 files-list))
-    (setq larumbe-reggen-output-path      (nth 2 files-list))))
+    (setq larumbe/reggen-input-file       (nth 0 files-list))
+    (setq larumbe/reggen-address-map-name (nth 1 files-list))
+    (setq larumbe/reggen-output-path      (nth 2 files-list))))
 
 
 (defun larumbe/reggen ()
-  "Generate reggen outputs according to `larumbe-reggen-projects' and derived."
+  "Generate reggen outputs according to `larumbe/reggen-projects' and derived."
   (interactive)
-  (let ((larumbe-reggen-command)
-        (larumbe-reggen-output-file)
-        (larumbe-reggen-output-filename)
-        (larumbe-reggen-template))
+  (let ((larumbe/reggen-command)
+        (larumbe/reggen-output-file)
+        (larumbe/reggen-output-filename)
+        (larumbe/reggen-template))
     (larumbe/reggen-set-active-project)
     ;; Check which type of output has to be generated
-    (setq larumbe-reggen-template (completing-read "Select template: " larumbe-reggen-template-types))
+    (setq larumbe/reggen-template (completing-read "Select template: " larumbe/reggen-template-types))
     ;; Set output filename extension
-    (pcase larumbe-reggen-template
+    (pcase larumbe/reggen-template
       ("c_header"
-       (setq larumbe-reggen-output-filename (concat larumbe-reggen-address-map-name ".h")))
+       (setq larumbe/reggen-output-filename (concat larumbe/reggen-address-map-name ".h")))
       ("docbook"
-       (setq larumbe-reggen-output-filename (concat larumbe-reggen-address-map-name ".xml")))
+       (setq larumbe/reggen-output-filename (concat larumbe/reggen-address-map-name ".xml")))
       ("verilog_header"
-       (setq larumbe-reggen-output-filename (concat larumbe-reggen-address-map-name ".vh")))
+       (setq larumbe/reggen-output-filename (concat larumbe/reggen-address-map-name ".vh")))
       ("verilog_regcomponent_simple"
-       (setq larumbe-reggen-output-filename (concat larumbe-reggen-address-map-name ".sv")))
+       (setq larumbe/reggen-output-filename (concat larumbe/reggen-address-map-name ".sv")))
       ("verilog_regcomponent_regbusitf"
-       (setq larumbe-reggen-output-filename (concat larumbe-reggen-address-map-name "_regbus.sv")))
+       (setq larumbe/reggen-output-filename (concat larumbe/reggen-address-map-name "_regbus.sv")))
       ("verilog_regcomponent_axilite"
-       (setq larumbe-reggen-output-filename (concat larumbe-reggen-address-map-name "_axi.sv")))
+       (setq larumbe/reggen-output-filename (concat larumbe/reggen-address-map-name "_axi.sv")))
       ("verilog_defspkg"
-       (setq larumbe-reggen-output-filename (concat larumbe-reggen-address-map-name "_defs_pkg.sv"))))
+       (setq larumbe/reggen-output-filename (concat larumbe/reggen-address-map-name "_defs_pkg.sv"))))
     ;; Set output filename
-    (setq larumbe-reggen-output-file
-          (concat larumbe-reggen-output-path "/" larumbe-reggen-output-filename))
+    (setq larumbe/reggen-output-file
+          (concat larumbe/reggen-output-path "/" larumbe/reggen-output-filename))
     ;; Set compilation command
-    (setq larumbe-reggen-command
+    (setq larumbe/reggen-command
           (concat
-           larumbe-reggen-tool-path " "
-           "-i " larumbe-reggen-input-file " "
-           "-o " larumbe-reggen-output-file " "
-           "-t " larumbe-reggen-template " "
-           "-a " larumbe-reggen-address-map-name " "
+           larumbe/reggen-tool-path " "
+           "-i " larumbe/reggen-input-file " "
+           "-o " larumbe/reggen-output-file " "
+           "-t " larumbe/reggen-template " "
+           "-a " larumbe/reggen-address-map-name " "
            "-m " "full "
            "-v" ; Verbose
            ))
     ;; Compile
-    (compile larumbe-reggen-command)))
+    (compile larumbe/reggen-command)))
 
 
 

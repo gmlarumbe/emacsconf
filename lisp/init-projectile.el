@@ -21,7 +21,8 @@
              larumbe/projectile-mode)
 
   :config
-  (add-to-list 'projectile-project-root-files-bottom-up ".repo") ; Detect `repo' Git sandboxes (Sandbox preference over IP)
+  (add-to-list 'projectile-project-root-files-bottom-up ".repo")
+  (add-to-list 'projectile-globally-ignored-directories ".repo")
   (setq projectile-indexing-method 'alien) ; Fastest indexing method (default), but ignores .projectile ignores
   (setq projectile-completion-system 'helm)
   (setq projectile-mode-line-prefix " P") ; Modeline
@@ -30,6 +31,7 @@
     "Report ONLY project name (without type) in the modeline.
 Replaces `projectile-default-mode-line' that also showed ':generic' type of project"
     (let ((project-name (projectile-project-name)))
+
       (format "%s[%s]"
               projectile-mode-line-prefix
               (or project-name "-"))))
