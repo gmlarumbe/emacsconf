@@ -5,7 +5,7 @@
 
 echo "Attempting startup..."
 ${EMACS:=emacs} -nw --batch \
-                --eval '(let ((debug-on-error t)
+                --eval '(let* ((debug-on-error t)
                               (user-emacs-directory (expand-file-name "~/.emacs.d/"))
                               (user-init-file (concat (file-name-as-directory user-emacs-directory) "init.el")))
                            (load-file user-init-file)
