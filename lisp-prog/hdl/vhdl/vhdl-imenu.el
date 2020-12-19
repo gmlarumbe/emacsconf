@@ -51,6 +51,8 @@
     (imenu-add-to-menubar "Index")))
 
 
+(advice-add 'vhdl-index-menu-init :override #'larumbe/vhdl-index-menu-init)
+
 
 (provide 'vhdl-imenu)
 
