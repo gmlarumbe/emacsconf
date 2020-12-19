@@ -32,8 +32,6 @@ Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
          )
   :hook ((verilog-mode . modi/verilog-mode-customization))
   :bind (:map verilog-mode-map
-              ("C-s"      . larumbe/verilog-isearch-forward)
-              ("C-r"      . larumbe/verilog-isearch-backward)
               ("<return>" . larumbe/electric-verilog-terminate-line)
               ([delete]   . delete-forward-char)
               ("C-%"      . hide/show-comments-toggle)
