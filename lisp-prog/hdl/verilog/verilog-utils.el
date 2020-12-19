@@ -2,6 +2,10 @@
 ;;; Commentary:
 ;;; Code:
 
+
+(require 'verilog-mode)
+
+
 ;;; Lint, Compilation and Simulation Tools
 ;; INFO: Discarding the following `verilog-set-compile-command' variables:
 ;; - `verilog-linter:' replaced by FlyCheck with opened buffers as additional arguments, plus custom project parsing functions

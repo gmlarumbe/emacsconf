@@ -2,6 +2,10 @@
 ;;; Commentary:
 ;;; Code:
 
+
+(require 'verilog-mode)
+(require 'verilog-modi-setup)
+
 ;;; Custom navigation functions
 (defvar larumbe/newline-or-space-optional "\\(?:[[:blank:]\n]\\)*")
 (defvar larumbe/newline-or-space-mandatory "\\(?:[[:blank:]\n]\\)+")

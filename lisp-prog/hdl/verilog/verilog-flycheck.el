@@ -2,6 +2,11 @@
 ;;; Commentary:
 ;;; Code:
 
+
+(require 'flycheck)
+(require 'verilog-mode)
+
+
 (defun larumbe/verilog-update-project-pkg-list ()
   "Update currently open packages on `larumbe/verilog-project-pkg-list'.
 

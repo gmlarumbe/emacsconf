@@ -120,7 +120,7 @@ If universal arg or TOGGLE are provided, toggle for confirmation."
     ;; If not toggling, revert
     (if larumbe/revert-buffer-confirm-p
         (revert-buffer nil nil t)
-      (revert-buffer nil t t))))
+      (revert-buffer nil t nil)))) ; When skipping confirmation, reload major-mode
 
 
 (defun larumbe/current-buffer-to-file (out-file)

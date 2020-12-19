@@ -39,6 +39,11 @@
 ;;
 ;;; Code:
 
+(require 'imenu)
+(require 'hideshow)
+(require 'verilog-mode)
+(require 'verilog-navigation)
+
 
 ;;;; Variables
 ;; Search by regexp: Used as regexps in `larumbe/verilog-imenu-generic-expression'
@@ -55,7 +60,7 @@
 (defvar larumbe/verilog-class-re    "\\(?1:\\(?:\\(?:virtual\\|interface\\)\\s-+\\)?class\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
 (defvar larumbe/verilog-top-re      "\\(?1:package\\|program\\|module\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
 
-(setq larumbe/verilog-imenu-generic-expression ; INFO: For the time being, is declared in `verilog-mode'
+(defvar larumbe/verilog-imenu-generic-expression
       `((nil                ,larumbe/verilog-imenu-top-re 2)
         ("*Localparams*"    ,larumbe/verilog-imenu-localparam-re 2)
         ("*Defines*"        ,larumbe/verilog-imenu-define-re 1)
@@ -156,7 +161,7 @@ list obtained by using the imenu generic function."
 
 ;;;; Interactive
 (defun larumbe/verilog-imenu ()
-"Wrapper interactive Imenu function for Verilog mode.
+  "Wrapper interactive Imenu function for Verilog mode.
 Checks if there is an instance with semicolon in mutiline comments of parameters."
   (interactive)
   (let (issue)

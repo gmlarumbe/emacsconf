@@ -10,6 +10,8 @@
 ;;
 ;;; Code:
 
+(require 'verilog-mode)
+
 
 ;;; Own Verilog templates
 (defvar larumbe/verilog-reset-custom "Rst_n")

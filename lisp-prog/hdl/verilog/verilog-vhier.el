@@ -2,6 +2,9 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'verilog-mode)
+
+
 ;;; Verilog-Perl hierarchy
 ;; Navigate hierarchy files easily
 (use-package vhier-outline-mode

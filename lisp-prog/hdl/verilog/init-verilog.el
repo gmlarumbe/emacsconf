@@ -5,17 +5,17 @@
 
 
 (defvar larumbe/verilog-indent-level 4)
-(defvar larumbe/verilog-use-own-custom-fontify t)
 
 (defvar larumbe/verilog-open-dirs nil
   "List with directories of current opened `verilog-mode' buffers.
-Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
+Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
 (defvar larumbe/verilog-open-pkgs nil
   "List of currently opened SystemVerilog packages.")
 (defvar larumbe/verilog-project-pkg-list nil
   "List of current open packages at projectile project.")
 
 (defvar larumbe/flycheck-verilator-include-path nil)
+
 
 
 ;;; Basic settings
