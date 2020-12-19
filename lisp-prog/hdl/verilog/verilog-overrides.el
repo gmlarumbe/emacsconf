@@ -27,26 +27,26 @@ Move backward ARG words."
       (backward-word arg))))
 
 
-;; TODO: Try with `call-interactively' to check if syntax highlighting does not break.
 (defun larumbe/verilog-isearch-forward ()
   "Make verilog Isearch word navigation stop at underscores.
-DANGER: Destroys syntax highlighting due to `syntax-table' modifying."
+DANGER: If function is not called interactively it will destroy
+syntax highlighting due to `syntax-table' modifying."
   (interactive)
   (let ((table (make-syntax-table verilog-mode-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
     (with-syntax-table table
-      (isearch-forward))))
+      (call-interactively #'isearch-forward))))
 
 
 (defun larumbe/verilog-isearch-backward ()
   "Make verilog Isearch word navigation stop at underscores.
-DANGER: Destroys syntax highlighting due to `syntax-table' modifying."
+DANGER: If function is not called interactively it will destroy
+syntax highlighting due to `syntax-table' modifying."
   (interactive)
   (let ((table (make-syntax-table verilog-mode-syntax-table)))
     (modify-syntax-entry ?_ "_" table)
     (with-syntax-table table
-      (isearch-backward))))
-;; End of TODO
+      (call-interactively #'isearch-backward))))
 
 
 (defun larumbe/verilog-isearch-forward-symbol-at-point ()

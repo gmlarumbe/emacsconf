@@ -32,10 +32,8 @@ Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
          )
   :hook ((verilog-mode . modi/verilog-mode-customization))
   :bind (:map verilog-mode-map
-              ;; TODO: Breaks highlighting of comments since it modifies syntax table with isearch
-              ;; ("C-s"      . larumbe/verilog-isearch-forward)
-              ;; ("C-r"      . larumbe/verilog-isearch-backward)
-              ;; End of TODO
+              ("C-s"      . larumbe/verilog-isearch-forward)
+              ("C-r"      . larumbe/verilog-isearch-backward)
               ("<return>" . larumbe/electric-verilog-terminate-line)
               ([delete]   . delete-forward-char)
               ("C-%"      . hide/show-comments-toggle)
