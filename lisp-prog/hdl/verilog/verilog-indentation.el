@@ -27,53 +27,6 @@
 
 
 
-;; Add LFP SV interface port declarations for auto-alignment with `verilog-pretty-declarations'
-(defconst verilog-declaration-core-re
-  (eval-when-compile
-    (verilog-regexp-words
-     '(
-       ;; port direction (by themselves)
-       "inout" "input" "output"
-       ;; integer_atom_type
-       "byte" "shortint" "int" "longint" "integer" "time"
-       ;; integer_vector_type
-       "bit" "logic" "reg"
-       ;; non_integer_type
-       "shortreal" "real" "realtime"
-       ;; net_type
-       "supply0" "supply1" "tri" "triand" "trior" "trireg" "tri0" "tri1" "uwire" "wire" "wand" "wor"
-       ;; misc
-       "string" "event" "chandle" "virtual" "enum" "genvar"
-       "struct" "union"
-       ;; builtin classes
-       "mailbox" "semaphore"
-       ;; INFO: Custom declaration constructs
-       "reg_bus_if.slave" "reg_bus_if.master"
-       "axi4_lite_if.slave" "axi4_lite_if.master"
-       "axi_full_if.master_mp" "axi_full_if.slave_mp"
-       "axi_stream_if.master_mp" "axi_stream_if.slave_mp"
-       "pbi_if.pbi_mp" "pbi_if.ser_mp"
-       ;; End of INFO
-       ))))
-(defconst verilog-declaration-re
-  (concat "\\(" verilog-declaration-prefix-re "\\s-*\\)?" verilog-declaration-core-re))
-
-(defconst verilog-declaration-re-2-no-macro
-  (concat "\\s-*" verilog-declaration-re
-          "\\s-*\\(\\(" verilog-optional-signed-range-re "\\)\\|\\(" verilog-delay-re "\\)"
-          "\\)"))
-(defconst verilog-declaration-re-2-macro
-  (concat "\\s-*" verilog-declaration-re
-          "\\s-*\\(\\(" verilog-optional-signed-range-re "\\)\\|\\(" verilog-delay-re "\\)"
-          "\\|\\(" verilog-macroexp-re "\\)"
-          "\\)"))
-(defconst verilog-declaration-re-1-macro
-  (concat "^" verilog-declaration-re-2-macro))
-
-(defconst verilog-declaration-re-1-no-macro (concat "^" verilog-declaration-re-2-no-macro))
-
-
-
 ;;;; Functions
 (defun larumbe/verilog-beg-of-statement ()
   "Move backward to beginning of statement."
