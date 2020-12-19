@@ -86,11 +86,6 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
   (setq verilog-align-ifelse                  nil)
   (setq verilog-minimum-comment-distance       10)
 
-  ;; In case no custom schema is used, take following settings into account:
-  (unless larumbe/verilog-use-own-custom-fontify
-    (setq verilog-highlight-grouping-keywords     t)  ; begin/end DANGER: Overriden in verilog-font-lock.el (has no effect nowadays...)
-    (setq verilog-highlight-translate-off         t)  ; Background highlight expressions such as // synopsys translate_off ... // synopsys translate_on
-    (setq verilog-highlight-modules             nil)) ; Analogous to `verilog-highlight-includes', would highlight module while hovering mouse. However it's experimental/incomplete as the regexp is not consistent.
 
   ;; Many thanks to Kaushal Modi (https://scripter.co/)
   (require 'verilog-modi-setup) ; Fetch from site-lisp directory
@@ -115,7 +110,8 @@ Used for verilog AUTO libraries, flycheck and Verilo-Perl hierarchy.")
   (require 'verilog-navigation)
   (require 'verilog-imenu)
   (require 'verilog-vhier)
-  (require 'verilog-flycheck))
+  (require 'verilog-flycheck)
+  (require 'verilog-font-lock))
 
 
 (provide 'init-verilog)

@@ -35,8 +35,8 @@
               ("C-M-<tab>"       . remove-tab-vhdl)
               ("C-c C-t"         . hydra-vhdl-template/body)
               ("<f8>"            . sr-speedbar-open))
-  :bind (:map vhdl-speedbar-mode-map
-              ("SPC" . speedbar-toggle-line-expansion))
+  ;; :bind (:map vhdl-speedbar-mode-map
+  ;;             ("SPC" . speedbar-toggle-line-expansion)); BUG maps this to other major modes
 
   :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
   (fset 'insert-tab-vhdl (kbd "C-u 4 SPC")) ; Custom 4 spaces TAB key
@@ -78,12 +78,15 @@
   (require 'vhdl-navigation)
   (require 'vhdl-imenu)
   (require 'vhdl-flycheck)
+  (require 'vhdl-font-lock)
 
   ;; Additional MELPA packages
   ;; INFO: Check how they work, still untested, probably there is some overlap
   ;; with my functions
   (use-package vhdl-tools)
   (use-package vhdl-capf))
+
+
 
 
 (provide 'init-vhdl)
