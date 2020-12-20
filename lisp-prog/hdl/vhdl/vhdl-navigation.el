@@ -3,6 +3,8 @@
 ;;; Code:
 
 
+(require 'ag)
+
 ;;;; Navigation
 (defun larumbe/find-vhdl-module-instance-fwd (&optional limit)
   "Search forward for a VHDL module/instance regexp.

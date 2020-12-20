@@ -84,9 +84,10 @@ Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
 
 
   ;; Many thanks to Kaushal Modi (https://scripter.co/)
-  (require 'verilog-modi-setup) ; Fetch from site-lisp directory
   ;; TODO: Fetch diff from this file and original and point to original
-
+  (require 'verilog-modi-setup) ; Fetch from site-lisp directory
+  ;; TODO: Check these requirements (needed for find references of current module)
+  (require 'ag)
   ;; Bind chords
   (bind-chord "\\\\" #'modi/verilog-jump-to-module-at-point verilog-mode-map)
   (when (executable-find "ag")
@@ -99,6 +100,8 @@ Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
   ;; Modi multi-line defines (and allegedly outshine) indentation advice: DANGER: Still issues with following lines after multiline defines!
   (advice-add 'verilog-indent-line-relative :before-until #'modi/verilog-selective-indent) ;; Advise the indentation behavior of `indent-region' done using `C-M-\'
   (advice-add 'verilog-indent-line :before-until #'modi/verilog-selective-indent)          ;; Advise the indentation done by hitting `TAB' (modi multi-line defines)
+
+  ;; End of TODO
 
   (require 'verilog-utils)
   (require 'verilog-templates)

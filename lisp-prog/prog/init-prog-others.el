@@ -83,6 +83,11 @@
 
 ;;;; PERL
 (defalias 'perl-mode 'cperl-mode)
+;; Basic initial config
+;;   - http://www.khngai.com/emacs/perl.php
+;; Interactive console
+;;   -https://stackoverflow.com/questions/73667/how-can-i-start-an-interactive-console-for-perl
+(use-package cperl-mode)
 
 
 ;;;; JSON
@@ -120,7 +125,14 @@
   :bind
   (:map php-mode-map
         ;; Overrides `c-backward-conditional' but this is only used for interactive testing of PHP functions
-        ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)))
+        ;; Requires an interactive shell running in *ansi-term* buffer. Check 'phpsh' program.
+        ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)
+        ;; INFO: For further sending to process, check `php-send-region' and `php-executable'
+        ;; These functions execute the whole code at once, they do not run in an interactive inferior process
+        )
+  :config
+  ;; Send to interactive shell in *ansi-term*
+  (require 'sh-script-utils))
 
 
 ;;;; AHK

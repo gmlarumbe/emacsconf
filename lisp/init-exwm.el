@@ -40,10 +40,8 @@
 ;;; Code:
 
 
-(use-package exwm
-  :bind (:map exwm-mode-map
-              ("C-q" . exwm-input-send-next-key))
-  :demand)
+(require 'exwm)
+(require 'init-custom-functions)
 
 
 ;;;; Variables
@@ -174,7 +172,6 @@
 
 
 ;;;; Functions
-;;;;; Setup
 (defun larumbe/exwm-set-buffer-naming ()
   "Set EXWM buffer naming depending on class/title.
 
@@ -197,6 +194,7 @@ Java applications and GIMP."
 (defun larumbe/exwm-set-keybindings ()
   "Set EXWM keybindings."
   ;; Global keybindings
+  (exwm-input-set-key (kbd "C-q") #'exwm-input-send-next-key)
   (exwm-input-set-key (kbd "s-r") #'exwm-reset)
   (exwm-input-set-key (kbd "s-w") #'exwm-workspace-switch)
   ;; + Bind "s-0" to "s-9" to switch to the corresponding workspace.
@@ -211,7 +209,6 @@ Java applications and GIMP."
   ;; Processes
   (exwm-input-set-key (kbd "s-j") #'larumbe/exwm-launch)
   (exwm-input-set-key (kbd "s-k") #'larumbe/exwm-launch-firefox)
-  (exwm-input-set-key (kbd "s-l") #'shell-command)
   (exwm-input-set-key (kbd "s-;") #'async-shell-command)
   ;; Window/Frame movement/navigation
   (exwm-input-set-key (kbd "M-o")   #'other-window) ; Replaces enriched faces

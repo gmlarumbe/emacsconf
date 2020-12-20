@@ -224,6 +224,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
              larumbe/erc-login)
   :config
   (require 'erc-sasl)
+  (setq erc-sasl-use-sasl t)
   ;; Provides a way of authenticating before actually connecting to the server.
   ;; Requires providing the nick and password in the `erc-tls' function.
   (add-to-list 'erc-sasl-server-regexp-list "irc\\.freenode\\.net")

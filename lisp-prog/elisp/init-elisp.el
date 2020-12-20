@@ -19,6 +19,7 @@
     :bind (:map edebug-mode-map
                 ("?" . hydra-edebug/body)))
 
+  (require 'flycheck)
   (setq flycheck-emacs-lisp-load-path 'inherit)
   (setq flycheck-emacs-lisp-initialize-packages t)
 

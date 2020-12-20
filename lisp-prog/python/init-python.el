@@ -37,7 +37,7 @@
     :config
     (add-hook 'python-mode-hook #'larumbe/jedi:setup))
 
-  (use-package elpy)) ; TODO: Deserves some attention if some day Python becomes a priority
+  (use-package elpy)) ; INFO: Deserves some attention if some day Python becomes a priority
 
 
 (provide 'init-python)

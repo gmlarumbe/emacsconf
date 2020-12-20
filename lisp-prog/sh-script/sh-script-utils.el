@@ -21,12 +21,6 @@
     (goto-char end)))
 
 
-(defun sh-switch-to-process-buffer ()
-  "Switch to process named 'shell'."
-  (interactive)
-  (pop-to-buffer (process-buffer (get-process "shell")) t))
-
-
 (defun my-sh-mode-hook ()
   "Sh hook."
   (set 'ac-sources '(ac-source-gtags ac-source-symbols)))

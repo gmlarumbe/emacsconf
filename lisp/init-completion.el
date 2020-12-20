@@ -56,38 +56,41 @@ ARG will be passed to `auto-complete-mode' wrapped function."
 
 ;;;; Yasnippet
 (use-package yasnippet
-    :commands (yas-expand yas-reload-all larumbe/yas-melpa-snippets-prevent-load)
-    :diminish yasnippet yas-minor-mode
-    :bind ("<C-M-return>" . yas-expand)
-    :config
-    ;; MELPA Snippets database
-    (use-package yasnippet-snippets) ; evals and initializes after yasnippet loading
+  :commands (yas-reload-all
+             yas-insert-snippet
+             yas-visit-snippet-file
+             larumbe/yas-melpa-snippets-prevent-load)
+  :diminish yasnippet yas-minor-mode
+  :bind ("<C-M-return>" . yas-expand)
+  :config
+  ;; MELPA Snippets database
+  (use-package yasnippet-snippets) ; evals and initializes after yasnippet loading
 
-    ;; `yasnippet-snippets' will add the directory of `yasnippet-snippets-dir' to
-    ;; the list of available snippets. So we advice the function and do it manually.
-    (advice-add 'yasnippet-snippets-initialize :override #'larumbe/yas-melpa-snippets-prevent-load)
-    (setq yas-snippet-dirs '(yasnippet-snippets-dir))
-    (add-to-list 'yas-snippet-dirs "~/.elisp/snippets") ; Own snippets will have precedence over MELPA ones
+  ;; `yasnippet-snippets' will add the directory of `yasnippet-snippets-dir' to
+  ;; the list of available snippets. So we advice the function and do it manually.
+  (advice-add 'yasnippet-snippets-initialize :override #'larumbe/yas-melpa-snippets-prevent-load)
+  (setq yas-snippet-dirs '(yasnippet-snippets-dir))
+  (add-to-list 'yas-snippet-dirs "~/.elisp/snippets") ; Own snippets will have precedence over MELPA ones
 
-    ;; Unmap TAB, use it for indentation only
-    (define-key yas-minor-mode-map (kbd "TAB") nil)
-    (define-key yas-minor-mode-map [tab] nil)
-    ;; Load snippets
-    (yas-reload-all)
+  ;; Unmap TAB, use it for indentation only
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
+  (define-key yas-minor-mode-map [tab] nil)
+  ;; Load snippets
+  (yas-reload-all)
 
-    (defun larumbe/yas-insert-snippet-dwim (&optional arg)
-      "Insert yasnippet snippet.
+  (defun larumbe/yas-insert-snippet-dwim (&optional arg)
+    "Insert yasnippet snippet.
 If universal ARG is provided, visit a snippet file."
-      (interactive "P")
-      (if arg
-          (call-interactively #'yas-visit-snippet-file)
-        (call-interactively #'yas-insert-snippet)))
+    (interactive "P")
+    (if arg
+        (call-interactively #'yas-visit-snippet-file)
+      (call-interactively #'yas-insert-snippet)))
 
-    (defun larumbe/yas-melpa-snippets-prevent-load ()
-      "Prevent automatic loading of MELPA snippets.
+  (defun larumbe/yas-melpa-snippets-prevent-load ()
+    "Prevent automatic loading of MELPA snippets.
 Allows a selective loading/overriding of the desired snippets/modes."
-      (interactive)
-          (message "Avoiding loading of Melpa snippets")))
+    (interactive)
+    (message "Avoiding loading of Melpa snippets")))
 
 
 

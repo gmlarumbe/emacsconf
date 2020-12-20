@@ -10,7 +10,7 @@
 
 (require 'f)
 (require 'with-editor)
-
+(require 'xref)
 
 ;;;; Restart code
 ;; https://emacs.stackexchange.com/questions/5428/restart-emacs-from-within-emacs
@@ -306,7 +306,7 @@ This is identical to what is done to to handle the `load-path' at startup."
     (if dir
         (setq cwd dir)
       (setq cwd default-directory))
-    (split-string (shell-command-to-string (concat "find " dir " -type d")))))
+    (split-string (shell-command-to-string (concat "find " cwd " -type d")))))
 
 
 

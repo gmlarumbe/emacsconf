@@ -4,6 +4,8 @@
 
 (use-package fic-mode
   :config
+  (require 'ag)
+
   (setq fic-activated-faces '(font-lock-doc-face  font-lock-comment-face))
   (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "DANGER" "INFO" "NOTE"))
 

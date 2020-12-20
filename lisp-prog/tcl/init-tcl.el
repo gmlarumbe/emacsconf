@@ -5,18 +5,20 @@
 
 (use-package tcl
   :bind (:map tcl-mode-map
+              ("C-c C-c" . inferior-tcl)
               ("C-c C-p" . larumbe/tcl-send-line-or-region-and-step)
+              ;; INFO: Check `tcl-eval-region', `tcl-eval-defun', `tcl-load-file'
               ("C-c C-k" . larumbe/tcl-send-line-or-region-and-step-vivado-shell))
   :hook ((tcl-mode . my-tcl-hook))
+  :init
+  (setq tcl-application "tclsh")
+  (setq tcl-command-switches nil)
   :config
-  ;; Reuse hdl font-lock faces
-  ;; TODO: Move them to a more generic font locking scheme for more prog languages
-  (require 'init-hdl-font-lock)
-  (defvar larumbe/tcl-font-lock-additional-keywords
-        (list
-         (list larumbe/braces-regex         0 larumbe/font-lock-braces-face)
-         (list larumbe/brackets-regex       0 larumbe/font-lock-brackets-face)
-         ))
+  (defvar larumbe/tcl-font-lock-additional-keywords ; Initially inspired hdl font lock
+    (list
+     (list "\\(\\[\\|\\]\\)" 0 '((t (:foreground "goldenrod"))))      ; Braces
+     (list "[()]"            0 '((t (:foreground "dark goldenrod")))) ; Brackets
+     ))
   (font-lock-add-keywords 'tcl-mode larumbe/tcl-font-lock-additional-keywords)
 
   (require 'tcl-utils))
