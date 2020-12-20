@@ -40,8 +40,9 @@
 ;;; Code:
 
 
-(require 'exwm)
 (require 'init-custom-functions)
+(use-package exwm
+  :demand)
 
 
 ;;;; Variables
