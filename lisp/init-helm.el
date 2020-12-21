@@ -30,6 +30,7 @@
   :config
   (use-package helm-projectile :diminish)
   (use-package helm-ag)
+  (use-package helm-rg)
   (use-package helm-org) ; Required by helm-havi
   (use-package helm-youtube)
   (use-package helm-navi
