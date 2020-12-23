@@ -3,6 +3,11 @@
 ;;; Code:
 
 
+(require 'ggtags)
+(require 'auto-complete)
+(require 'init-custom-functions)
+
+
 ;;;; Gtags
 (defun larumbe/gtags-vhdl-files-pwd-recursive ()
   "Generate gtags.files for VHDL files on current directory."
@@ -18,14 +23,9 @@
 
 
 ;;;; Others
-(defun my-vhdl-mode-hook ()
-  (set 'ac-sources '(ac-source-gtags))
-  ;; Flycheck
-  (setq flycheck-ghdl-include-path (larumbe/vhdl-list-directories-of-open-buffers))
-  (setq flycheck-ghdl-language-standard "08")
-  (setq flycheck-ghdl-work-lib vhdl-default-library) ; "xil_defaultlib"
-  (setq flycheck-ghdl-workdir (concat (projectile-project-root) "library/" vhdl-default-library)) ; Used @ axi_if_converter
-  (setq flycheck-ghdl-ieee-library "synopsys"))
+(defun larumbe/vhdl-mode-hook ()
+  "VHDL-mode hook."
+  (set 'ac-sources '(ac-source-gtags)))
 
 
 ;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)

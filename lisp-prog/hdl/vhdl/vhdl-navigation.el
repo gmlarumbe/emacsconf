@@ -4,6 +4,8 @@
 
 
 (require 'ag)
+(require 'which-func)
+(require 'init-vhdl)
 
 ;;;; Navigation
 (defun larumbe/find-vhdl-module-instance-fwd (&optional limit)
@@ -14,14 +16,14 @@ LIMIT argument is included to allow the function to be used to fontify VHDL buff
   (let ((found nil)
         (pos))
     (save-excursion
-      (when (called-interactively-p) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
+      (when (called-interactively-p 'any) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
         (forward-char))              ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
       (while (and (not found)
                   (re-search-forward larumbe/vhdl-instance-re limit t))
         (unless (or (equal (face-at-point) 'font-lock-comment-face)
                     (equal (face-at-point) 'font-lock-string-face))
           (setq found t)
-          (if (called-interactively-p)
+          (if (called-interactively-p 'any)
               (setq pos (match-beginning 6))
             (setq pos (point))))))
     (when found
@@ -36,14 +38,14 @@ LIMIT argument is included to allow the function to be used to fontify VHDL buff
   (let ((found nil)
         (pos))
     (save-excursion
-      (when (called-interactively-p) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
+      (when (called-interactively-p 'any) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
         (backward-char))             ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
       (while (and (not found)
                   (re-search-backward larumbe/vhdl-instance-re limit t))
         (unless (or (equal (face-at-point) 'font-lock-comment-face)
                     (equal (face-at-point) 'font-lock-string-face))
           (setq found t)
-          (if (called-interactively-p)
+          (if (called-interactively-p 'any)
               (setq pos (match-beginning 6))
             (setq pos (point))))))
     (when found
@@ -75,9 +77,10 @@ Fetched from `modi/verilog-jump-to-module-at-point'"
   "Find the places where the current VHDL module is instantiated in the project.
 Fetched from `modi/verilog-find-parent-module'"
   (interactive)
-  (let (module-name
-        module-instance-pcre
-        regexp)
+  (let ((module-name)
+        (module-instance-pcre)
+        (regexp)
+        (ag-arguments ag-arguments)) ; Save the global value of `ag-arguments'
     ;; Get entity name
     (save-excursion
       (re-search-backward larumbe/vhdl-entity-re))
@@ -89,11 +92,8 @@ Fetched from `modi/verilog-find-parent-module'"
                          "\\(\\(component[ ]+\\|configuration[ ]+\\|\\(entity[ ]+\\([a-zA-Z_][a-zA-Z0-9_-]*\\).\\)\\)\\)?"
                          "\\(" module-name "\\)[ ]*"))
     (setq module-instance-pcre (rxt-elisp-to-pcre regexp))
-    (let* ((ag-arguments ag-arguments)) ;Save the global value of `ag-arguments'
-      ;; Search only through vhdl type files.
-      ;; See "ag --list-file-types".
-      (append ag-arguments '("--vhdl"))
-      (ag-regexp module-instance-pcre (projectile-project-root)))))
+    (setq ag-arguments (append ag-arguments '("--vhdl")))
+    (ag-regexp module-instance-pcre (projectile-project-root))))
 
 
 

@@ -2,6 +2,13 @@
 ;;; Commentary:
 ;;; Code:
 
+
+(require 'vhdl-mode)
+(require 'flycheck)
+(require 'projectile)
+(require 'vhdl-utils)
+
+
 ;; Fetched and adapted from Flycheck Verilator
 ;; INFO: Configured @ `my-vhdl-hook'
 (flycheck-def-option-var flycheck-ghdl-include-path nil vhdl-ghdl
@@ -38,6 +45,16 @@ See URL `https://github.com/ghdl/ghdl'."
   :error-patterns
   ((error line-start (file-name) ":" line ":" column ": " (message) line-end))
   :modes vhdl-mode)
+
+
+
+(defun larumbe/vhdl-flycheck-ghdl-hook ()
+  "Set GHDL flycheck options."
+  (setq flycheck-ghdl-include-path (larumbe/vhdl-list-directories-of-open-buffers))
+  (setq flycheck-ghdl-language-standard "08")
+  (setq flycheck-ghdl-work-lib vhdl-default-library) ; "xil_defaultlib"
+  (setq flycheck-ghdl-workdir (concat (projectile-project-root) "library/" vhdl-default-library)) ; Used @ axi_if_converter
+  (setq flycheck-ghdl-ieee-library "synopsys"))
 
 
 

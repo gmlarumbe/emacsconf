@@ -19,10 +19,12 @@
 
 
 
-;;; Basic settings
 (use-package vhdl-mode
-  :commands (larumbe/vhdl-index-menu-init)
-  :hook ((vhdl-mode . my-vhdl-mode-hook))
+  :commands (larumbe/vhdl-index-menu-init
+             larumbe/vhdl-jump-to-module-at-point
+             larumbe/vhdl-find-parent-module)
+  :hook ((vhdl-mode . larumbe/vhdl-mode-hook)
+         (vhdl-mode . larumbe/vhdl-flycheck-ghdl-hook))
   :bind (:map vhdl-mode-map
               ("C-M-a"           . vhdl-beginning-of-defun)
               ("C-M-e"           . vhdl-end-of-defun)
@@ -31,45 +33,37 @@
               ("C-M-p"           . vhdl-backward-same-indent)
               ("C-M-n"           . vhdl-forward-same-indent)
               ("<f5>"            . vhdl-compile)
-              ("<C-iso-lefttab>" . insert-tab-vhdl)
-              ("C-M-<tab>"       . remove-tab-vhdl)
               ("C-c C-t"         . hydra-vhdl-template/body)
               ("<f8>"            . sr-speedbar-open))
-  ;; :bind (:map vhdl-speedbar-mode-map
-  ;;             ("SPC" . speedbar-toggle-line-expansion)); BUG maps this to other major modes
-
-  :init   ; INFO: Requires to be set before loading package in order to variables like faces to take effect
-  (fset 'insert-tab-vhdl (kbd "C-u 4 SPC")) ; Custom 4 spaces TAB key
-  (fset 'remove-tab-vhdl (kbd "C-u 4 DEL")) ; Custom remove 4 spaces TAB key
+  :bind (:map vhdl-speedbar-mode-map
+              ("SPC" . speedbar-toggle-line-expansion)) ; BUG: There was a bug that made this keybinding apply to non-spacebar modes
   :config
-  (setq vhdl-clock-edge-condition (quote function))
-  (setq vhdl-company-name "")
+  ;; Bind chords
+  (bind-chord "\\\\" #'larumbe/vhdl-jump-to-module-at-point vhdl-mode-map)
+  (bind-chord "\|\|" #'larumbe/vhdl-find-parent-module vhdl-mode-map)
+  ;; Mode config
+  (setq vhdl-clock-edge-condition 'function)
+  (setq vhdl-company-name "HP Inc")
   (setq vhdl-conditions-in-parenthesis t)
   (setq vhdl-default-library "xil_defaultlib")
   (setq vhdl-end-comment-column 120)
-  (setq vhdl-platform-spec "Debian 9.1")
-  (setq vhdl-reset-kind (quote sync))
+  (setq vhdl-platform-spec (capitalize (system-name)))
+  (setq vhdl-reset-kind 'sync)
   (setq vhdl-speedbar-auto-open nil)
   (setq vhdl-standard '(08 nil))
+  (vhdl-electric-mode -1)
   ;; Indentation
   (setq vhdl-basic-offset 4)
-  (setq tab-width 4)                    ; TAB Width for indentation
-  (setq indent-tabs-mode nil)           ; Replace TAB with Spaces when indenting
+  (setq tab-width 4)          ; TAB Width for indentation (buffer local)
+  (setq indent-tabs-mode nil) ; Replace TAB with Spaces when indenting
   ;; GHDL custom linter setup
   (setq vhdl-custom-ghdl-list
         '("GHDL-custom" "ghdl" "-i --ieee=synopsys -fexplicit -fno-color-diagnostics" "make" "-f \\1" nil "mkdir \\1" "./" "work/" "Makefile" "ghdl"
           ("ghdl_p: \\*E,\\w+ (\\([^ \\t\\n]+\\),\\([0-9]+\\)|\\([0-9]+\\)):" 1 2 3)
           ("" 0)
-          ("\\1/entity" "\\2/\\1" "\\1/configuration" "\\1/package" "\\1/body" downcase)
-          )
-        )
+          ("\\1/entity" "\\2/\\1" "\\1/configuration" "\\1/package" "\\1/body" downcase)))
   (add-to-list 'vhdl-compiler-alist vhdl-custom-ghdl-list)
   (vhdl-set-compiler "GHDL-custom")
-  (vhdl-electric-mode -1)
-  ;; Bind chords
-  (bind-chord "\\\\" #'larumbe/vhdl-jump-to-module-at-point vhdl-mode-map)
-  (when (executable-find "ag")
-    (bind-chord "\|\|" #'larumbe/vhdl-find-parent-module vhdl-mode-map))
 
   ;; Own settings
   (require 'vhdl-utils)
@@ -81,8 +75,7 @@
   (require 'vhdl-font-lock)
 
   ;; Additional MELPA packages
-  ;; INFO: Check how they work, still untested, probably there is some overlap
-  ;; with my functions
+  ;; INFO: Check how they work, still untested, probably there is some overlap with my functions
   (use-package vhdl-tools)
   (use-package vhdl-capf))
 

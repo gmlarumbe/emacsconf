@@ -69,10 +69,15 @@
 ;;; Code:
 
 
+(require 'vhdl-mode)
+
+
+;;;; Config
 (setq vhdl-project "axi_if_converter")
 (setq vhdl-project-alist
 
-      ;; MAIN Project
+
+;;;; MAIN Project
       '((;; Name
          "axi_if_converter"
          ;; Title
@@ -106,7 +111,7 @@
          "")
 
 
-        ;; SUBCOMPONENT project
+;;;; SUBCOMPONENT project
         (;; Name
          "pattern_counter"
          ;; Title

@@ -3,6 +3,9 @@
 ;;; Code:
 
 
+(require 'init-vhdl)
+
+
 (defun larumbe/vhdl-insert-instance-from-file (file)
   "Insert module instance at point from FILE.
 Copied and adapted from `larumbe/verilog-insert-instance-from-file'"
