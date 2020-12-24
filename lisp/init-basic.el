@@ -114,6 +114,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package winner
   :ensure nil
+  :demand
   :config
   (winner-mode 1))
 
@@ -155,7 +156,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package untabify-trailing-ws
   :ensure nil
-  :demand ; INFO: Assumes it's being enabled at startup!
+  :demand
   :config
   (untabify-trailing-ws 1))
 

@@ -5,7 +5,7 @@
 
 (use-package ripgrep)
 
-
+(use-package deadgrep)
 
 (provide 'init-rg)
 
