@@ -93,8 +93,20 @@ Fetched from `modi/verilog-find-parent-module'"
                          "\\(" module-name "\\)[ ]*"))
     (setq module-instance-pcre (rxt-elisp-to-pcre regexp))
     (setq ag-arguments (append ag-arguments '("--vhdl")))
+    (xref-push-marker-stack)
     (ag-regexp module-instance-pcre (projectile-project-root))))
 
+
+
+(defun larumbe/vhdl-electric-return ()
+  "Wrapper for RET key to add functionality when there is an AG search buffer.
+This will normally happen after calling `larumbe/vhdl-find-parent-module'"
+  (interactive)
+  (let* ((ag-buf "*ag search*")
+         (ag-win (get-buffer-window ag-buf)))
+    (if ag-win
+        (delete-window ag-win)
+      (vhdl-electric-return))))
 
 
 (provide 'vhdl-navigation)

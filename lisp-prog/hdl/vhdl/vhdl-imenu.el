@@ -2,7 +2,11 @@
 ;;; Commentary:
 ;;; Code:
 
-;;; Imenu
+
+(require 'vhdl-mode)
+(require 'vhdl-utils)
+
+
 (defconst larumbe/vhdl-imenu-generic-expression
   `(
     ("Subprogram"

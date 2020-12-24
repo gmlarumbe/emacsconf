@@ -6,6 +6,7 @@
 ;;; Code:
 
 (require 'init-hdl-font-lock)
+(require 'init-vhdl)
 
 ;;;; Variables
 (defvar larumbe/vhdl-common-constructs-regex
