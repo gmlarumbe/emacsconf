@@ -5,13 +5,14 @@
 (use-package elisp-mode
   :ensure nil
   :bind (:map emacs-lisp-mode-map
-              ("C-c C-l" . larumbe/load-file-current-buffer)
-              ("C-c C-b" . larumbe/byte-compile-current-buffer)
-              ("C-c C-f" . larumbe/elisp-flycheck-mode)
-              ("C-c C-t" . hydra-elisp/body)
-              ("C-c C-e" . edebug-defun)
-              ("C-c h"   . sanityinc/headerise-elisp)
-              ("C-M-z"   . eval-region))
+              ("<return>" . larumbe/newline)
+              ("C-c C-l"  . larumbe/load-file-current-buffer)
+              ("C-c C-b"  . larumbe/byte-compile-current-buffer)
+              ("C-c C-f"  . larumbe/elisp-flycheck-mode)
+              ("C-c C-t"  . hydra-elisp/body)
+              ("C-c C-e"  . edebug-defun)
+              ("C-c h"    . sanityinc/headerise-elisp)
+              ("C-M-z"    . eval-region))
   :hook ((emacs-lisp-mode . my-elisp-hook))
   :config
   (use-package edebug

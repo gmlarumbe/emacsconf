@@ -31,6 +31,19 @@ Argument ARG sets `flycheck-mode' non-interactively."
       (message "Flycheck disabled"))))
 
 
+
+(defun larumbe/newline ()
+  "Wrapper for RET key when there is an *xref* search buffer.
+This will normally happen after calling `larumbe/prog-mode-definitions' in elisp."
+  (interactive)
+  (let* ((xref-buf "*xref*")
+         (xref-win (get-buffer-window xref-buf)))
+    (if xref-win
+        (delete-window xref-win)
+      (newline))))
+
+
+
 (defun my-elisp-hook ()
   "Custom elisp hook."
   (sanityinc/enable-check-parens-on-save)
