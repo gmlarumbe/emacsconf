@@ -28,3 +28,6 @@
 [submodule "submodules/ssh-tunnels"]
 	path = submodules/ssh-tunnels
 	url = https://github.com/gmlarumbe/ssh-tunnels.git
+[submodule "submodules/kmodi"]
+	path = submodules/kmodi
+	url = https://github.com/gmlarumbe/kmodi.git

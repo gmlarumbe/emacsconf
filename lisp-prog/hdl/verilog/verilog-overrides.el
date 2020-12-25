@@ -56,17 +56,6 @@ This will normally happen after calling `modi/verilog-find-parent-module'."
 
 
 ;;;; Advising
-;; https://emacs.stackexchange.com/questions/8032/configure-indentation-logic-to-ignore-certain-lines/8033#8033
-(defun larumbe/verilog-avoid-indenting-outshine-comments (&rest args)
-  "Ignore outshine comments for indentation.
-Return t if the current line starts with '// *'."
-  (interactive)
-  (let ((match (looking-at "^[[:blank:]]*// \\*")))
-    (when match (delete-horizontal-space))
-    match))
-
-
-
 (defun larumbe/verilog-forward-sexp ()
   "Same as `verilog-forward-sexp' but with additional support for:
 - checker/endchecker

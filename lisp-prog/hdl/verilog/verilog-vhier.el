@@ -4,11 +4,11 @@
 
 (require 'verilog-mode)
 
-
-;;; Verilog-Perl hierarchy
-;; Navigate hierarchy files easily
+;; Navigate created hierarchy files easily
 (use-package vhier-outline-mode
-  :ensure nil) ; Fetch it from `load-path' and not from MELPA
+  :ensure nil  ; Fetch it from `load-path' and not from MELPA
+  :commands (vhier-outline-mode))
+
 
 
 (defvar larumbe/verilog-perl-buffer-name "Verilog-Perl"
@@ -157,7 +157,6 @@ Make an outline/outshine accessible view for use with Gtags)"
     (write-file file-path) ; Ensure ggtags working by writing hier file into projectile root
     (vhier-outline-mode)
     (setq buffer-read-only t)))
-
 
 
 

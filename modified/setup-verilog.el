@@ -1,0 +1,1 @@
+../submodules/kmodi/setup-files/setup-verilog.el

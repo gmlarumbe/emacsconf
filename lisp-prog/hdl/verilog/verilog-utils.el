@@ -3,10 +3,69 @@
 ;;; Code:
 
 
+(require 'make-mode)
+(require 'init-custom-functions)
+(require 'which-func)
 (require 'verilog-mode)
+(require 'setup-verilog) ; Modi's setup
 
 
-;;; Lint, Compilation and Simulation Tools
+;; Inspired by kmodi's variables (`modi/verilog-identifier-re')
+(defvar larumbe/newline-or-space-optional "\\(?:[[:blank:]\n]\\)*")
+(defvar larumbe/newline-or-space-mandatory "\\(?:[[:blank:]\n]\\)+")
+(defvar larumbe/verilog-identifier-re ;; Same as modi's one
+      (concat "\\_<\\(?:"
+              "\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)" ; simple identifier
+              "\\|\\(?:\\\\[!-~]+\\)"           ; escaped identifier
+              "\\)\\_>"))
+(defvar larumbe/param-port-list "([^;]+?)")
+(defvar larumbe/verilog-module-instance-re
+      (concat "^[[:blank:]]*"
+              "\\(?1:" larumbe/verilog-identifier-re "\\)" ;module name (subgroup 1)
+              larumbe/newline-or-space-optional ; For modi its mandatory, but thats a problem since it could be: btd#(
+              ;; optional port parameters
+              "\\("
+              "#" larumbe/newline-or-space-optional larumbe/param-port-list
+              "\\([[:blank:]]*//.*?\\)*"  ;followed by optional comments
+              "[^;\\./]+?"  ;followed by 'almost anything' before instance name
+              "\\)*"
+              "\\(?2:" larumbe/verilog-identifier-re "\\)" ;instance name (subgroup 2)
+              ;; Added by Larumbe
+              "\\s-*\\(\\[.*\\]\\)*"         ; SystemVerilog sometimes instantiates array of modules with brackets after instance name
+              larumbe/newline-or-space-optional
+              "(" ; And finally .. the opening parenthesis `(' before port list
+              ))
+
+(defvar larumbe/verilog-module-instance-full-re ; INFO: Not used for the time being even though it worked for a while... regex too complex
+      (concat larumbe/verilog-module-instance-re
+              ;; Includes content inside parenthesis of instance. Currently not being used
+              larumbe/newline-or-space-optional
+              ;; "[^;]+?"  ;followed by 'almost anything' before instance name -> This one requires content between brackets (instances only)
+              "[^;]*?"  ;followed by 'almost anything' before instance name -> This one does not require contents necessarily between brackets (instances+interfaces)
+              ")"
+              larumbe/newline-or-space-optional
+              ";"
+              ))
+
+(defvar larumbe/verilog-token-re
+  (regexp-opt '("module"
+                "program"
+                "package"
+                "class"
+                "function"
+                "task"
+                "initial"
+                "always"
+                "always_ff"
+                "always_comb"
+                "generate"
+                "property"
+                "sequence"
+                ) 'symbols))
+
+
+
+;;;; Lint, Compilation and Simulation Tools
 ;; INFO: Discarding the following `verilog-set-compile-command' variables:
 ;; - `verilog-linter:' replaced by FlyCheck with opened buffers as additional arguments, plus custom project parsing functions
 ;; - `verilog-simulator': replaced by XSim and ncsim sim project funcions
@@ -15,7 +74,7 @@
 ;; - `verilog-coverage' still not implemented as there are not many free alternatives...
 
 
-;;;; Preprocessor
+;;;;; Preprocessor
 (defun larumbe/verilog-preprocess ()
   "Allow choosing between programs with a wrapper of `verilog-preprocess'.
 All the libraries/incdirs are computed internally at `verilog-mode' via
@@ -31,7 +90,7 @@ INFO: `iverilog' command syntax requires writing to an output file (defaults to 
     (verilog-preprocess)))
 
 
-;;;; Iverilog/verilator Makefile development
+;;;;; Iverilog/verilator Makefile development
 (defun larumbe/verilog-makefile-create ()
   "Create Iverilog/verilator Yasnippet based Makefile.
 Create it only if in a projectile project and the Makefile does not exist already."
@@ -71,7 +130,7 @@ Create it only if in a projectile project and the Makefile does not exist alread
     (larumbe/show-custom-compilation-buffers)))
 
 
-;;; Code beautifying
+;;;; Code beautifying
 (defun larumbe/verilog-clean-parenthesis-blanks ()
   "Cleans blanks inside parenthesis blocks (Verilog port connections).
 If region is not used, then a query replacement is performed instead.
@@ -173,7 +232,7 @@ Alignment is performed between instance name and end of instantiation."
     (larumbe/verilog-align-parameters-current-module)))
 
 
-;;; Port connect/disconnect
+;;;; Port connect/disconnect
 (defvar larumbe/connect-disconnect-port-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)")
 (defvar larumbe/connect-disconnect-conn-re "\\(?4:(\\(?5:.*\\))\\)?")
 (defvar larumbe/connect-disconnect-not-found "No port detected at current line")
@@ -219,7 +278,7 @@ Ask for ports to be connected until no port is found at current line."
   (while (not (string-equal (larumbe/verilog-toggle-connect-port t) larumbe/connect-disconnect-not-found))))
 
 
-;;; Gtags
+;;;; Gtags
 ;; INFO: Global does not allow to find external definitions outside project root directory (probably due to security reasons).
 ;; In order to do so, there are 2 methods:
 ;;   - Use symbolic links to external directories.
@@ -248,23 +307,22 @@ INFO: Exclude custom '*_targets' folders."
     (ggtags-create-tags default-directory)))
 
 
-;;; Misc
-(defun my-verilog-hook ()
-  (set 'ac-sources '(ac-source-verilog ac-source-gtags)) ; Auto-complete verilog-sources
-  (setq larumbe/verilog-open-dirs (nth 0 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
-  (setq larumbe/verilog-open-pkgs (nth 1 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
-  (setq verilog-library-directories             larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
-  (flycheck-select-checker 'verilog-iverilog)  ; Default checker
-  (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs)
-  (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
-  (key-chord-mode 1)
-  (larumbe/verilog-find-semicolon-in-instance-comments))
-
-
+;;;; Misc
 ;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
+(defvar larumbe/verilog-open-dirs nil
+  "List with directories of current opened `verilog-mode' buffers.
+Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
+(defvar larumbe/verilog-open-pkgs nil
+  "List of currently opened SystemVerilog packages.")
+(defvar larumbe/verilog-project-pkg-list nil
+  "List of current open packages at projectile project.")
+
+
 (defun larumbe/verilog-dirs-and-pkgs-of-open-buffers ()
   "Return a list of directories from current verilog opened files.
-It also updates currently opened SystemVerilog packages."
+It also updates currently opened SystemVerilog packages.
+
+Used for flycheck and vhier packages."
   (let ((verilog-opened-dirs)
         (verilog-opened-pkgs)
         (pkg-regexp "^\\s-*\\(?1:package\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)"))
@@ -277,6 +335,19 @@ It also updates currently opened SystemVerilog packages."
             (when (re-search-forward pkg-regexp nil t)
               (setq verilog-opened-pkgs (push (buffer-file-name) verilog-opened-pkgs)))))))
     `(,verilog-opened-dirs ,verilog-opened-pkgs)))  ; Return list of dirs and packages
+
+
+(defun larumbe/verilog-hook ()
+  "Verilog hook."
+  (set 'ac-sources '(ac-source-verilog ac-source-gtags)) ; Auto-complete verilog-sources
+  (setq larumbe/verilog-open-dirs (nth 0 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
+  (setq larumbe/verilog-open-pkgs (nth 1 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
+  (setq verilog-library-directories larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
+  (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
+  (larumbe/verilog-find-semicolon-in-instance-comments))
+
+
+
 
 
 (provide 'verilog-utils)

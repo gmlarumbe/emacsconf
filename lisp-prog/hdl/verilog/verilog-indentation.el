@@ -376,10 +376,25 @@ INFO: -*- lexical-binding: t -*- gave some errors."
     ))
 
 
+
+;; https://emacs.stackexchange.com/questions/8032/configure-indentation-logic-to-ignore-certain-lines/8033#8033
+(defun larumbe/verilog-avoid-indenting-outshine-comments (&rest args)
+  "Ignore outshine comments for indentation.
+Return t if the current line starts with '// *'."
+  (interactive)
+  (let ((match (looking-at "^[[:blank:]]*// \\*")))
+    (when match (delete-horizontal-space))
+    match))
+
+
+
 ;;;; Config
 (advice-add 'verilog-calculate-indent :override #'larumbe/verilog-calculate-indent)
 (advice-add 'verilog-do-indent        :override #'larumbe/verilog-do-indent)
 
+;; INFO: Seems it's not having any effect as modi's already does the trick
+;; Own advice to avoid indentation of outshine (overrides modi setup of `modi/outshine-allow-space-before-heading')
+(advice-add 'verilog-indent-line-relative :before-until #'larumbe/verilog-avoid-indenting-outshine-comments)
 
 
 (provide 'verilog-indentation)

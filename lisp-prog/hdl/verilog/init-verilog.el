@@ -3,22 +3,6 @@
 ;;; Code:
 
 
-
-(defvar larumbe/verilog-indent-level 4)
-
-(defvar larumbe/verilog-open-dirs nil
-  "List with directories of current opened `verilog-mode' buffers.
-Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
-(defvar larumbe/verilog-open-pkgs nil
-  "List of currently opened SystemVerilog packages.")
-(defvar larumbe/verilog-project-pkg-list nil
-  "List of current open packages at projectile project.")
-
-(defvar larumbe/flycheck-verilator-include-path nil)
-
-
-
-;;; Basic settings
 (use-package verilog-mode
   :mode (("\\.[st]*v[hp]*\\'" . verilog-mode) ;.v, .sv, .svh, .tv, .vp
          ("\\.psl\\'"         . verilog-mode)
@@ -28,9 +12,9 @@ Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
          ("\\.vsrc\\'"        . verilog-mode)
          ("\\.vsrc.pp\\'"     . verilog-mode)
          ("\\.v.pp\\'"        . verilog-mode)
-         ("\\.ppv\\'"         . verilog-mode)
-         )
-  :hook ((verilog-mode . modi/verilog-mode-customization))
+         ("\\.ppv\\'"         . verilog-mode))
+  :hook ((verilog-mode . larumbe/verilog-hook)
+         (verilog-mode . larumbe/verilog-flycheck-hook))
   :bind (:map verilog-mode-map
               ("<return>" . larumbe/electric-verilog-terminate-line)
               ([delete]   . delete-forward-char)
@@ -59,6 +43,14 @@ Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
               ("C-c C-f"  . larumbe/verilog-flycheck-mode)
               ("<f8>"     . larumbe/verilog-vhier-current-file))
   :config
+  ;; Dependencies
+  (require 'xah-lee-functions)
+  (require 'ag)
+  ;; Bind chords
+  (bind-chord "\\\\" #'larumbe/verilog-jump-to-module-at-point verilog-mode-map)
+  (bind-chord "\|\|" #'larumbe/verilog-find-parent-module verilog-mode-map)
+  ;; Indentation
+  (defvar larumbe/verilog-indent-level 4)
   (setq verilog-indent-level             larumbe/verilog-indent-level)
   (setq verilog-indent-level-module      larumbe/verilog-indent-level)
   (setq verilog-indent-level-declaration larumbe/verilog-indent-level)
@@ -66,13 +58,6 @@ Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
   (setq verilog-indent-level-directive   larumbe/verilog-indent-level)
   (setq verilog-case-indent              larumbe/verilog-indent-level)
   (setq verilog-cexp-indent              larumbe/verilog-indent-level)
-
-  (setq verilog-auto-delete-trailing-whitespace t) ; ‘delete-trailing-whitespace’ in ‘verilog-auto’.
-  (setq verilog-auto-indent-on-newline          t) ; Self-explaining
-  (setq verilog-auto-lineup                   nil) ; other options are 'declarations or 'all
-  (setq verilog-auto-newline                  nil)
-  (setq verilog-auto-endcomments                t)
-
   (setq verilog-indent-lists                    t) ; If set to nil, indentation will not properly detect we are inside a parenthesized expression (instance or ports/parameters)
   (setq verilog-indent-begin-after-if           t)
   (setq verilog-tab-always-indent               t) ; Indent even though we are not at the beginning of line
@@ -81,28 +66,18 @@ Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
   (setq verilog-case-fold                     nil) ; Regexps should NOT ignore case
   (setq verilog-align-ifelse                  nil)
   (setq verilog-minimum-comment-distance       10)
-
-
+  ;; Verilog AUTO
+  (setq verilog-auto-delete-trailing-whitespace t) ; ‘delete-trailing-whitespace’ in ‘verilog-auto’.
+  (setq verilog-auto-indent-on-newline          t) ; Self-explaining
+  (setq verilog-auto-lineup                   nil) ; other options are 'declarations or 'all
+  (setq verilog-auto-newline                  nil)
+  (setq verilog-auto-endcomments                t)
+  ;; Mode config
+  (key-chord-mode 1)
   ;; Many thanks to Kaushal Modi (https://scripter.co/)
-  ;; TODO: Fetch diff from this file and original and point to original
-  (require 'verilog-modi-setup) ; Fetch from site-lisp directory
-  ;; TODO: Check these requirements (needed for find references of current module)
-  (require 'ag)
-  ;; Bind chords
-  (bind-chord "\\\\" #'modi/verilog-jump-to-module-at-point verilog-mode-map)
-  (when (executable-find "ag")
-    (bind-chord "\|\|" #'modi/verilog-find-parent-module verilog-mode-map))
-
-  (modi/verilog-do-not-read-includes-defines-mode -1) ;; INFO: Larumbe: For Verilog AUTO. Set to 1 by modi to: "Stop cluttering my buffer list by not opening all the `included files."
-
-  ;; Own advice to avoid indentation of outshine (overrides modi setup of `modi/outshine-allow-space-before-heading')
-  (advice-add 'verilog-indent-line-relative :before-until #'larumbe/verilog-avoid-indenting-outshine-comments)
-  ;; Modi multi-line defines (and allegedly outshine) indentation advice: DANGER: Still issues with following lines after multiline defines!
-  (advice-add 'verilog-indent-line-relative :before-until #'modi/verilog-selective-indent) ;; Advise the indentation behavior of `indent-region' done using `C-M-\'
-  (advice-add 'verilog-indent-line :before-until #'modi/verilog-selective-indent)          ;; Advise the indentation done by hitting `TAB' (modi multi-line defines)
-
-  ;; End of TODO
-
+  (require 'setup-verilog)
+  (require 'verilog-modi)
+  ;; Own functions
   (require 'verilog-utils)
   (require 'verilog-templates)
   (require 'verilog-overrides)

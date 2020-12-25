@@ -5,7 +5,18 @@
 
 (require 'flycheck)
 (require 'verilog-mode)
+(require 'verilog-utils)
 
+
+
+(defvar larumbe/flycheck-verilator-include-path nil)
+
+
+
+(defun larumbe/verilog-flycheck-hook ()
+  "Set Verilog flycheck options."
+  (flycheck-select-checker 'verilog-iverilog)
+  (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs))
 
 (defun larumbe/verilog-update-project-pkg-list ()
   "Update currently open packages on `larumbe/verilog-project-pkg-list'.

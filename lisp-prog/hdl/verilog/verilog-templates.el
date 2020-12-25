@@ -349,19 +349,19 @@ See also `verilog-header' for an alternative format."
 
 
 (defvar larumbe/verilog-auto-template-connected-ports
-      (larumbe/verilog-auto-template "
+  (larumbe/verilog-auto-template "
 /* <module> AUTO_TEMPLATE (
  .\\(.*\\) (\\1),
  ); */"))
 
 (defvar larumbe/verilog-auto-template-disconnected-ports
-      (larumbe/verilog-auto-template "
+  (larumbe/verilog-auto-template "
 /* <module> AUTO_TEMPLATE (
  .\\(.*\\) (),
  ); */"))
 
 (defvar larumbe/verilog-auto-template-connected-ports-subscripts
-      (larumbe/verilog-auto-template "
+  (larumbe/verilog-auto-template "
 /* <module> AUTO_TEMPLATE (
  .\\(.*\\) (\\1[]),
  ); */"))

@@ -268,7 +268,7 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
 
 
 ;;;; Legacy
-;; DANGER: These two methods were insufficient to implement Imenu with functions/tasks within classes.
+;; INFO: These two methods were insufficient to implement Imenu with functions/tasks within classes.
 ;; Code kept in case it is used in the future to add something new tag.
 (defun larumbe/verilog-imenu-prev-index-position-function ()
   "Function to search backwards in the buffer for Imenu alist generation."
@@ -278,7 +278,6 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
   "Function to extract the tag."
   (verilog-forward-syntactic-ws)
   (thing-at-point 'symbol t))
-;; End of DANGER
 
 
 ;;;; Provide
