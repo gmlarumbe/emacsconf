@@ -1,16 +1,112 @@
 ;;; verilog-vhier.el --- Verilog-Perl Hierarchy  -*- lexical-binding: t -*-
 ;;; Commentary:
+;;
+;; `vhier-outline-mode':
+;; Navigate with `outline-minor-mode' through extracted Verilog-Perl hierarchy.
+;;
+;; `larumbe/verilog-vhier-current-file' and `larumbe/verilog-vhier-from-project':
+;; Extract verilog hierarchy of current open files or from project list.
+;;
 ;;; Code:
 
 (require 'verilog-mode)
 
-;; Navigate created hierarchy files easily
-(use-package vhier-outline-mode
-  :ensure nil  ; Fetch it from `load-path' and not from MELPA
-  :commands (vhier-outline-mode))
+
+;;;; Hierarchy navigation
+(define-minor-mode vhier-outline-mode
+  "Frontend for Verilog-Perl `vhier' processed output for outline-minor-mode with outshine visualization."
+  :lighter " vH"
+  :keymap
+  '(;; Fetched from https://www.emacswiki.org/emacs/OutlineMinorMode
+    ;; HIDE
+    ("k" . vhier-hide-sublevels)      ; Hide everything but the top-level headings
+    ("K" . outline-hide-other)        ; Hide other branches
+    ;; SHOW
+    ("a" . outline-show-all)          ; Show (expand) everything
+    ("i" . outline-show-children)     ; Show this heading's immediate child sub-headings
+    ("I" . outline-show-branches)     ; Show all sub-headings under this heading
+    ;; MOVE
+    ("u" . vhier-up-heading)               ; Up
+    ("n" . vhier-next-visible-heading)     ; Next
+    ("p" . vhier-previous-visible-heading) ; Previous
+    ("f" . vhier-forward-same-level)       ; Forward - same level
+    ("b" . vhier-backward-same-level)      ; Backward - same level
+    ;; JUMP
+    ("j" . vhier-outline-jump-to-file)     ; INFO: Added by Larumbe
+    ))
+
+;; Still needs to be polished...
+;; For example: if added imenu-list, it would parse the vhier-outline buffer instead of the verilog one.
+;; Moreover, since there is delay in finding the tag, if set a read-only it would affect the vhier-outlin buffer as well...
+(defun vhier-outline-jump-to-file ()
+  "Jump to file at cursor on hierarchy.v file."
+  (interactive)
+  (when (not vhier-outline-mode)
+    (error "Vhier mode not enabled on current buffer"))
+  (when (not (executable-find "global"))
+    (error "Vhier mode requires global to work"))
+  (when (not (ggtags-find-project))
+    (error "Associated GTAGS file not found.  Make sure hierarchy file is in the same folder as its matching GTAGS file"))
+  (delete-other-windows)
+  (split-window-right)
+  (shrink-window-horizontally 60)
+  (other-window 1)
+  (end-of-line)
+  (ggtags-find-tag-dwim (thing-at-point 'symbol t)))
+
+
+(defun vhier-previous-visible-heading ()
+  "Move through headings and point at the beginning of the tag.
+This way gtags can be easily integrated in the workflow."
+  (interactive)
+  (call-interactively #'outline-previous-visible-heading)
+  (skip-chars-forward "/ *"))
+
+
+(defun vhier-next-visible-heading ()
+  "Move through headings and point at the beginning of the tag.
+This way gtags can be easily integrated in the workflow."
+  (interactive)
+  (call-interactively #'outline-next-visible-heading)
+  (skip-chars-forward "/ *"))
+
+
+(defun vhier-up-heading ()
+  "Move through headings and point at the beginning of the tag.
+This way gtags can be easily integrated in the workflow."
+  (interactive)
+  (call-interactively #'outline-up-heading)
+  (skip-chars-forward "/ *"))
+
+
+(defun vhier-forward-same-level ()
+  "Move through headings and point at the beginning of the tag.
+This way gtags can be easily integrated in the workflow."
+  (interactive)
+  (call-interactively #'outline-forward-same-level)
+  (skip-chars-forward "/ *"))
+
+
+(defun vhier-backward-same-level ()
+  "Move through headings and point at the beginning of the tag.
+This way gtags can be easily integrated in the workflow."
+  (interactive)
+  (call-interactively #'outline-backward-same-level)
+  (skip-chars-forward "/ *"))
+
+
+(defun vhier-hide-sublevels ()
+  "Move through headings and point at the beginning of the tag.
+This way gtags can be easily integrated in the workflow."
+  (interactive)
+  (beginning-of-line)
+  (call-interactively #'outline-hide-sublevels)
+  (skip-chars-forward "/ *"))
 
 
 
+
+;;;; Hierarchy extraction
 (defvar larumbe/verilog-perl-buffer-name "Verilog-Perl"
   "Initial buffer name to use for the hierarchy file.")
 
@@ -118,6 +214,8 @@ Make an outline/outshine accessible view for use with Gtags)"
 (defun larumbe/verilog-vhier-from-project ()
   "Extract hierarchy of top level module using Verilog-Perl backend."
   (interactive)
+  (unless (executable-find "vhier")
+    (error "Executable vhier not found"))
   (larumbe/verilog-vhier-set-active-project)
   (larumbe/verilog-vhier-preprocess-hierarchy)
   (shell-command
@@ -135,6 +233,8 @@ Make an outline/outshine accessible view for use with Gtags)"
 (defun larumbe/verilog-vhier-current-file ()
   "Extract hierarchy of current file module using Verilog-Perl backend."
   (interactive)
+  (unless (executable-find "vhier")
+    (error "Executable vhier not found"))
   (let* ((library-args (verilog-expand-command "__FLAGS__"))
          (pkg-files (mapconcat #'identity (larumbe/verilog-update-project-pkg-list) " "))
          (top-module (file-title))
