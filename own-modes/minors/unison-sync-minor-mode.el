@@ -2,7 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
-;;; Basic info
+;;;; Basic info
 ;; Minor Mode created by Larumbe for Local/Remote unison synchronization
 ;; Fetched from: http://nullprogram.com/blog/2013/02/06/
 ;;
@@ -11,17 +11,19 @@
 ;; requires selecting a profile available at '~/.unison/'.
 ;; Do not forget to SYNC manually at the beginning with the `unison-manually-sync-projects'!!!
 ;;
-;;; Merging with unison:
+;;;; Merging with unison:
 ;; Merging was very tricky to set up since emacsclient coordination with server required 'unison' to wait for emacsclient's merge.
 ;; Afterwards unison would update both sides. However, if the merge option uses only emacsclient --eval parameters, it returns immediately (before merge has been done) and unison triggers and error.
 ;; Using 'emacsclient -c' option makes unison wait for emacs, but (maybe because of EXWM) after killing that new frame no finish signal is sent back to unison.
 ;; Therefore, the only workaround is to make a script that waits until merge file is created/updated after ediff and then synchronized.
 ;; INFO: https://superuser.com/questions/81958/how-to-make-emacsclient-wait-when-using-the-eval-option/81980
 ;;
-;;; Integration with EXWM
+;;;; Integration with EXWM
 ;; Be careful to override unison-run command to use start-process instead of EXWM blocking shell-command.
-
+;;
 ;;; Code
+
+
 ;;;; Variables and profiles
 (make-variable-buffer-local (defvar unison-active-profile nil))
 (defvar larumbe/unison-show-process-window nil)

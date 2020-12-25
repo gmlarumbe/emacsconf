@@ -39,7 +39,9 @@ This will normally happen after calling `larumbe/prog-mode-definitions' in elisp
   (let* ((xref-buf "*xref*")
          (xref-win (get-buffer-window xref-buf)))
     (if xref-win
-        (delete-window xref-win)
+        (progn
+          (delete-window xref-win)
+          (kill-buffer xref-buf))
       (newline))))
 
 

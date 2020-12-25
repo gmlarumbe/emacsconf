@@ -32,8 +32,11 @@
   (auto-package-update-maybe))
 
 (use-package gnu-elpa-keyring-update)    ; Update elpa keys to avoid signature issues
-(use-package quelpa-use-package :demand) ; Allow for :quelpa keyword with `use-package'
+
 (use-package use-package-chords :demand) ; Allow for :chords keyword with `use-package' (only to global keymap)
+(use-package quelpa-use-package :demand  ; Allow for :quelpa keyword with `use-package'
+  :init
+  (setq quelpa-use-package-inhibit-loading-quelpa t))
 
 
 
