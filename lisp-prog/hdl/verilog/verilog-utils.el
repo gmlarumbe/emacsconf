@@ -123,11 +123,8 @@ Create it only if in a projectile project and the Makefile does not exist alread
     (setq cmd (concat "make " target))
     (cd (projectile-project-root))
     (compile cmd)
-    (larumbe/custom-error-regexp-set-emacs
-     (append iverilog-error-regexp-emacs-alist-alist
-             verilator-error-regexp-emacs-alist-alist
-             vivado-error-regexp-emacs-alist-alist))
-    (larumbe/show-custom-compilation-buffers)))
+    (larumbe/compilation-error-re-set "verilog-make")
+    (larumbe/compilation-show-buffer)))
 
 
 ;;;; Code beautifying

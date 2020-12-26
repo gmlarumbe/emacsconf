@@ -63,6 +63,20 @@ Use `C-w' instead of `M-w' to check that link is being killed properly."
        "*youtube-dl*"))))
 
 
+
+(defun larumbe/show-only-vivado-warnings ()
+    "Filter *compilation* buffer to parse only Vivado warnings and critical warnings"
+    (interactive)
+    (select-window (get-buffer-window "*compilation*"))
+    (setq truncate-lines t)
+    (goto-char (point-min))
+    (setq inhibit-read-only t)
+    (keep-lines "WARNING")
+    (setq inhibit-read-only nil)
+    (goto-char (point-max)))
+
+
+
 ;; DANGER: Legacy. Use only as a reference to create other macros!
 (defun larumbe/show-svn-buffers-hp ()
   "Show SVN buffers."

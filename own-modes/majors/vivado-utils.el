@@ -477,8 +477,8 @@ Autocompletion based on `vivado' package keywords. "
   (interactive)
   (let ((command (concat tcl-application " " (mapconcat 'identity tcl-command-switches " ")))
         (bufname larumbe/vivado-tcl-shell-buffer)
-        (re-func 'larumbe/vivado-error-regexp-set-emacs))
-    (larumbe/compilation-interactive command bufname re-func)
+        (parser  "vivado"))
+    (larumbe/compilation-interactive command bufname parser)
     (larumbe/vivado-shell-auto-complete-mode 1)))
 
 

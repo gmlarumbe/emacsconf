@@ -253,7 +253,7 @@ INFO: Useful function for Verilog-Perl hierarchy extraction."
   (interactive)
   (larumbe/vivado-set-active-project)
   (compile larumbe/vivado-batch-compilation-command)
-  (larumbe/show-custom-compilation-buffers vivado-error-regexp-emacs-alist-alist))
+  (larumbe/compilation-show-buffer "vivado"))
 
 
 ;;;; Vivado XSim
@@ -284,7 +284,7 @@ If UNIVERSAL-ARG is provided, then simulate as well."
         (setq cmd (concat larumbe/vivado-sim-compilation-command " && source simulate.sh"))
       (setq cmd larumbe/vivado-sim-compilation-command))
     (compile cmd)
-    (larumbe/show-custom-compilation-buffers vivado-error-regexp-emacs-alist-alist)))
+    (larumbe/compilation-show-buffer "vivado")))
 
 
 ;;;; Irun
@@ -350,7 +350,7 @@ If UNIVERSAL-ARG is given, elaborate the design instead."
       (setq cmd larumbe/irun-command))
     (set (make-local-variable 'compile-command) cmd)
     (compile (concat "cd " larumbe/irun-compilation-dir " && " compile-command))
-    (larumbe/show-custom-compilation-buffers irun-error-regexp-emacs-alist-alist)))
+    (larumbe/compilation-show-buffer "irun")))
 
 
 
@@ -385,7 +385,7 @@ It's faster than Vivado elaboration since it does not elaborate design"
   (larumbe/verilator-lint-set-active-project)
   (setq compile-command larumbe/verilator-compile-lint-cmd)
   (compile compile-command)
-  (larumbe/show-custom-compilation-buffers verilator-error-regexp-emacs-alist-alist))
+  (larumbe/compilation-show-buffer "verilator"))
 
 
 ;;;; Reggen
