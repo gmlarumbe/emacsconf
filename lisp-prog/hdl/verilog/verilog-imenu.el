@@ -40,7 +40,6 @@
 ;;; Code:
 
 (require 'imenu)
-(require 'hideshow)
 (require 'verilog-mode)
 (require 'verilog-navigation)
 

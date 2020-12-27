@@ -121,6 +121,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package beacon
   :demand
+  :diminish
   :config
   (beacon-mode 1))
 
@@ -260,6 +261,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 ;;;; Misc
 (use-package simple
+  :diminish auto-fill-function
   :ensure nil
   :bind (("M-n"     . next-error)     ; M-n and M-p are already overwritten at mode-line.el.
          ("M-p"     . previous-error) ; This mapping allows to step through errors in a non-compilation buffer
@@ -285,6 +287,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package which-key
+  :diminish
   :demand
   :config
   (which-key-mode 1))
@@ -307,6 +310,11 @@ C-s C-w [C-w] [C-w]... behaviour. "
               ("M-w" . pdf-view-kill-ring-save))
   :config
   (pdf-loader-install t))
+
+
+(use-package autorevert
+  :ensure nil
+  :diminish auto-revert-mode)
 
 
 (use-package so-long

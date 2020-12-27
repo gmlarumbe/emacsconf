@@ -7,6 +7,7 @@
 
 
 (use-package projectile
+  :diminish projectile-mode       ; Also diminishes `larumbe/projectile-custom-mode-line', as it is already available at the left corner
   :bind (:map projectile-mode-map ; Projectile 2.0 removes automatic keybindings
               ("C-c p j" . projectile-find-tag)
               ("C-c p r" . projectile-regenerate-tags)
@@ -29,17 +30,16 @@
   (setq projectile-indexing-method 'hybrid) ; `alien' is the fastest indexing method (default), but ignores .projectile ignores
   (setq projectile-completion-system 'helm)
   (setq projectile-mode-line-prefix " P") ; Modeline
+  (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line)
+
 
   (defun larumbe/projectile-custom-mode-line ()
     "Report ONLY project name (without type) in the modeline.
 Replaces `projectile-default-mode-line' that also showed ':generic' type of project"
     (let ((project-name (projectile-project-name)))
-
       (format "%s[%s]"
               projectile-mode-line-prefix
               (or project-name "-"))))
-
-  (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line)
 
 
   (defun larumbe/projectile-mode (&optional arg)

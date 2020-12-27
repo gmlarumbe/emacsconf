@@ -28,9 +28,25 @@ in order to check pending project actions. "
       (ag-regexp kwd path))))
 
 
+
+(use-package hideshow
+  :ensure nil
+  :diminish hs-minor-mode)
+
+
+
+(use-package outline
+  :ensure nil
+  :diminish outline-minor-mode)
+
+
+(use-package outshine
+  :diminish outshine-mode)
+
+
 (use-package flycheck
-  :commands (flycheck-display-error-messages-unless-error-list)
   :diminish
+  :commands (flycheck-display-error-messages-unless-error-list)
   :config
   (setq flycheck-display-errors-function ; Seems it shows full error if multiline
         #'flycheck-display-error-messages-unless-error-list))
@@ -78,6 +94,7 @@ in order to check pending project actions. "
 
 
 (use-package wide-column
+  :diminish
   :commands (wide-column-mode))
 
 

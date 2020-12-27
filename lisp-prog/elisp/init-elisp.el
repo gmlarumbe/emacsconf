@@ -4,6 +4,7 @@
 
 (use-package elisp-mode
   :ensure nil
+  :diminish eldoc-mode
   :bind (:map emacs-lisp-mode-map
               ("<return>" . larumbe/newline)
               ("C-c C-l"  . larumbe/load-file-current-buffer)
