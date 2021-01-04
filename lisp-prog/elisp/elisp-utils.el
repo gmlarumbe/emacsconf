@@ -20,7 +20,7 @@ Argument ARG sets `flycheck-mode' non-interactively."
   (if arg
       (progn
         (flycheck-mode arg)
-        (eldoc-mode    (* -1 arg)))
+        (eldoc-mode (* -1 arg)))
     ;; Interactive
     (if eldoc-mode
         (progn
@@ -30,7 +30,6 @@ Argument ARG sets `flycheck-mode' non-interactively."
       (eldoc-mode 1)
       (flycheck-mode -1)
       (message "Flycheck disabled"))))
-
 
 
 (defun larumbe/newline ()
@@ -46,8 +45,14 @@ This will normally happen after calling `larumbe/prog-mode-definitions' in elisp
       (newline))))
 
 
+(defun larumbe/insert-time-stamp-elisp ()
+  "Insert time-stamp for Elisp buffers.
+Try to add it before Commentary section."
+  (interactive)
+  (larumbe/insert-time-stamp "^;;; Commentary:"))
 
-(defun my-elisp-hook ()
+
+(defun larumbe/elisp-hook ()
   "Custom elisp hook."
   (sanityinc/enable-check-parens-on-save)
   (prettify-symbols-mode 1)

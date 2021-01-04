@@ -334,6 +334,19 @@ Used for flycheck and vhier packages."
     `(,verilog-opened-dirs ,verilog-opened-pkgs)))  ; Return list of dirs and packages
 
 
+
+;; Own projects verilog timestamp header
+(defvar larumbe/verilog-time-stamp-regex   "^// Last modified : ")
+(defvar larumbe/verilog-time-stamp-pattern (concat larumbe/verilog-time-stamp-regex "%%$"))
+(defvar larumbe/verilog-time-stamp-format  "%:y/%02m/%02d")
+
+(defun larumbe/verilog-time-stamp-setup ()
+  "Setup Time-stamp format for Verilog files."
+  (setq-local time-stamp-pattern larumbe/verilog-time-stamp-pattern)
+  (setq-local time-stamp-format  larumbe/verilog-time-stamp-format))
+
+
+
 (defun larumbe/verilog-hook ()
   "Verilog hook."
   (set 'ac-sources '(ac-source-verilog ac-source-gtags)) ; Auto-complete verilog-sources
@@ -341,6 +354,7 @@ Used for flycheck and vhier packages."
   (setq larumbe/verilog-open-pkgs (nth 1 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
   (setq verilog-library-directories larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
   (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
+  (larumbe/verilog-time-stamp-setup)
   (larumbe/verilog-find-semicolon-in-instance-comments))
 
 

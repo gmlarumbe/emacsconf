@@ -14,8 +14,9 @@
               ("C-c C-o"  . hydra-command-log/body)
               ("C-c C-e"  . edebug-defun)
               ("C-c h"    . sanityinc/headerise-elisp)
+              ("C-c t"    . larumbe/insert-time-stamp-elisp)
               ("C-M-z"    . eval-region))
-  :hook ((emacs-lisp-mode . my-elisp-hook))
+  :hook ((emacs-lisp-mode . larumbe/elisp-hook))
   :config
   (use-package edebug
     :ensure nil

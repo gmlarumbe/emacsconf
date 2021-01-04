@@ -211,6 +211,20 @@ INFO: Will use global/ggtags as a backend if configured."
   (kill-sexp -1))
 
 
+(defun larumbe/insert-time-stamp (&optional regex)
+  "Insert time-stamp at header comments.
+Try to add it in line before matching REGEX.
+If REGEX is nil or not found, add it at the beginning."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (when regex
+      (re-search-forward regex nil t))
+    (beginning-of-line)
+    (open-line 1)
+    (insert ";;\n;; Time-stamp: <>\n;; ")))
+
+
 
 ;;;; Lists/regexp/strings/files/directories
 ;; http://ergoemacs.org/emacs/elisp_read_file_content.html

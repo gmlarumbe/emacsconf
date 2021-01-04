@@ -54,6 +54,7 @@ in order to check pending project actions. "
 
 (use-package flyspell
   :ensure nil
+  :commands (flyspell-toggle)
   :config
   (defun flyspell-toggle ()
     "Toggle flyspell mode on current buffer."
@@ -100,6 +101,12 @@ in order to check pending project actions. "
 
 (use-package devdocs)
 
+
+(use-package time-stamp
+  :ensure nil
+  :config
+  (setq time-stamp-format "%:y-%02m-%02d %02H:%02M:%02S") ; Do not include user
+  (setq time-stamp-line-limit 20)) ; Default 8
 
 
 (provide 'prog-packages)
