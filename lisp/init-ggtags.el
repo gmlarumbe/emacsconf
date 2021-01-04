@@ -22,6 +22,8 @@
   :bind (:map ggtags-mode-map
               ("M-."     . nil)
               ("M-?"     . nil))
+  :bind (:map ggtags-global-mode-map
+              ("r"       . ggtags-query-replace))
   :config
   (setq ggtags-sort-by-nearness t) ; Enabling nearness requires global 6.5+
   (setq ggtags-navigation-mode-lighter nil)

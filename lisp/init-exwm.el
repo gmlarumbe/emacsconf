@@ -205,7 +205,7 @@ Java applications and GIMP."
                            (interactive)
                            (exwm-workspace-switch-create ,i))))
   ;; + 'slock' is a simple X display locker provided by suckless tools.
-  (exwm-input-set-key (kbd "s-<f2>")
+  (exwm-input-set-key (kbd "s-l")
                       (lambda () (interactive) (start-process "" nil "slock")))
   ;; Processes
   (exwm-input-set-key (kbd "s-j") #'larumbe/exwm-launch)
@@ -299,9 +299,18 @@ show stdout in BUFFER and pop to this window (for debug mainly)."
 
 
 (defun larumbe/exwm-launch-firefox ()
-  "Launch Firefox."
+  "Launch Firefox.
+If it is already running, set to current window.
+It there is universal argument, open new instance of Firefox."
   (interactive)
-  (larumbe/exwm-launch "firefox"))
+  (let* ((bufs         (mapcar 'get-buffer larumbe/exwm-firefox-class-names))
+         (bufs-active  (seq-remove (lambda (elt) (eq elt nil)) bufs))
+         (buf-selected (car bufs-active))) ; Select the first non-nil buffer of `larumbe/exwm-firefox-class-names' buffers
+    (if buf-selected
+        (if current-prefix-arg
+            (larumbe/exwm-launch "firefox")
+          (switch-to-buffer buf-selected))
+      (larumbe/exwm-launch "firefox"))))
 
 
 ;;;; xrandr

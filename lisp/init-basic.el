@@ -123,6 +123,8 @@ C-s C-w [C-w] [C-w]... behaviour. "
   :demand
   :diminish
   :config
+  (setq beacon-size 20)
+  (add-to-list 'beacon-dont-blink-major-modes 'term-mode)
   (beacon-mode 1))
 
 

@@ -73,7 +73,6 @@ as well as for C/C++ or Python..."
   (fic-mode                   1)
   (yas-minor-mode             1)
   (hs-minor-mode              1)
-  (auto-fill-mode             1)
   (wide-column-mode           1)
   (setq truncate-lines        t)
   (setq fill-column          80))

@@ -98,6 +98,10 @@ in order to check pending project actions. "
   :commands (wide-column-mode))
 
 
+(use-package devdocs)
+
+
+
 (provide 'prog-packages)
 
 ;;; prog-packages.el ends here

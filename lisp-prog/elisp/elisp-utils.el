@@ -3,6 +3,7 @@
 ;;; Code:
 
 
+;;;; Own functions
 (defun larumbe/byte-compile-current-buffer ()
   "Byte-compile file of current visited buffer."
   (interactive)
@@ -55,7 +56,8 @@ This will normally happen after calling `larumbe/prog-mode-definitions' in elisp
   (set 'ac-sources '(ac-source-gtags ac-source-symbols)))
 
 
-;; Thanks to Steve Purcell
+
+;;;; Steve Purcell
 (defun sanityinc/headerise-elisp ()
   "Add minimal header and footer to an elisp buffer in order to placate flycheck."
   (interactive)
@@ -77,6 +79,33 @@ This will normally happen after calling `larumbe/prog-mode-definitions' in elisp
 (defun sanityinc/enable-check-parens-on-save ()
   "Run `check-parens' when the current buffer is saved."
   (add-hook 'after-save-hook #'check-parens nil t))
+
+
+
+
+
+;;;; Packages
+;; Many thanks to Kaushal Modi
+(use-package command-log-mode
+  :commands (hydra-command-log/body)
+  :init
+  ;; Do not bind `clm/open-command-log-buffer' by default to "C-c o"
+  (setq command-log-mode-key-binding-open-log nil)
+  :config
+  (setq command-log-mode-window-size 60)
+
+  (defhydra hydra-command-log (:color teal
+                                      :columns 6)
+    "Command Log"
+    ("c" command-log-mode "toggle mode")
+    ("o" clm/open-command-log-buffer "open log buffer")
+    ("l" clm/open-command-log-buffer "open log buffer")
+    ("C" clm/command-log-clear "clear log buffer")
+    ("t" clm/toggle-command-log-buffer "toggle log buffer")
+    ("s" clm/save-command-log "save log")
+    ("x" clm/close-command-log-buffer "close log buffer")
+    ("q" nil "cancel" :color blue)))
+
 
 
 (provide 'elisp-utils)

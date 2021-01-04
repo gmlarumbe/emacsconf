@@ -11,6 +11,7 @@
               ("C-c C-b"  . larumbe/byte-compile-current-buffer)
               ("C-c C-f"  . larumbe/elisp-flycheck-mode)
               ("C-c C-t"  . hydra-elisp/body)
+              ("C-c C-o"  . hydra-command-log/body)
               ("C-c C-e"  . edebug-defun)
               ("C-c h"    . sanityinc/headerise-elisp)
               ("C-M-z"    . eval-region))

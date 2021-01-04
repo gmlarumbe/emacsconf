@@ -7,18 +7,6 @@
              larumbe/ag-search-file-list
              projectile-project-root)
   :config
-  (setq ag-arguments           ; Fetched from modi verilog config
-        '("--nogroup"          ; mandatory argument for ag.el as per https://github.com/Wilfred/ag.el/issues/41
-          "--skip-vcs-ignores" ; Ignore files/dirs ONLY from `.ignore'
-          "--numbers"          ; Line numbers
-          "--smart-case"
-          "--follow"           ; Follow symlinks
-          "--ignore" "#*#"     ; Adding "*#*#" or "#*#" to .ignore does not work for ag (works for rg)
-          "--ignore" "*~"
-          "--stats"))
-  (setq ag-reuse-buffers t)
-  (setq ag-reuse-window t)
-
   (defun larumbe/ag-search-file-list (regex file directory)
     "Search REGEX limited to the files included in FILE in DIRECTORY.
 INFO: Might block Emacs for large filelists during search as it is not
@@ -41,7 +29,50 @@ List of files provided by project's 'gtags.file' will filter the search."
            (gtags-file (concat proj-dir "gtags.files")))
       (unless (file-exists-p gtags-file)
         (error "Error: gtags.files not found for current project"))
-      (larumbe/ag-search-file-list (thing-at-point 'symbol) gtags-file proj-dir))))
+      (larumbe/ag-search-file-list (thing-at-point 'symbol) gtags-file
+    proj-dir)))
+
+
+
+  ;; Thanks to Kaushal Modi
+  (defun ag/jump-to-result-if-only-one-match ()
+    "Jump to the first ag result if that ag search came up with just one match."
+    (let (only-one-match)
+      (when (member "--stats" ag-arguments)
+        (save-excursion
+          (goto-char (point-min))
+          (setq only-one-match (re-search-forward "^1 matches\\s-*$" nil :noerror)))
+        (when only-one-match
+          (next-error)
+          (kill-buffer (current-buffer))
+          (message (concat "ag: Jumping to the only found match and "
+                           "killing the *ag* buffer."))))))
+
+
+  ;; wgrep-ag
+  ;; Allow editing in *ag* buffers
+  ;; https://github.com/mhayashi1120/Emacs-wgrep
+  (use-package wgrep-ag
+    :config
+    (add-hook 'ag-mode-hook #'wgrep-ag-setup)
+    :bind (:map wgrep-mode-map
+                ("C-x s" . wgrep-save-all-buffers)))
+
+
+;;;; Config
+  (setq ag-arguments           ; Fetched from modi verilog config
+        '("--nogroup"          ; mandatory argument for ag.el as per https://github.com/Wilfred/ag.el/issues/41
+          "--skip-vcs-ignores" ; Ignore files/dirs ONLY from `.ignore'
+          "--numbers"          ; Line numbers
+          "--smart-case"
+          "--follow"           ; Follow symlinks
+          "--ignore" "#*#"     ; Adding "*#*#" or "#*#" to .ignore does not work for ag (works for rg)
+          "--ignore" "*~"
+          "--stats"))
+  (setq ag-reuse-buffers t)
+  (setq ag-reuse-window t)
+  (setq ag-highlight-search t)
+  (add-hook 'ag-search-finished-hook #'ag/jump-to-result-if-only-one-match))
 
 
 (provide 'init-ag)
