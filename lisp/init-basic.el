@@ -181,6 +181,18 @@ C-s C-w [C-w] [C-w]... behaviour. "
   :bind (("C-w" . whole-line-or-region-kill-region)))
 
 
+(use-package delsel
+  :ensure nil
+  :demand
+  :config
+  (delete-selection-mode 1))
+
+
+(use-package smart-mark
+  :demand
+  :config
+  (smart-mark-mode 1))
+
 
 
 ;;;; Sysadmin
@@ -262,13 +274,23 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 ;;;; Misc
+;; GUI and Clipboard
+(use-package select
+  :ensure nil
+  :config
+  (setq select-enable-clipboard t) ; Clipboard enabling: default = t
+  (setq select-enable-primary t))  ; Primary clipboard:  default = nil
+
+
 (use-package simple
   :diminish auto-fill-function
   :ensure nil
   :bind (("M-n"     . next-error)     ; M-n and M-p are already overwritten at mode-line.el.
          ("M-p"     . previous-error) ; This mapping allows to step through errors in a non-compilation buffer
          ("C-<f12>" . auto-fill-mode)
-         ("<f12>"   . toggle-truncate-lines)))
+         ("<f12>"   . toggle-truncate-lines))
+  :config
+  (setq save-interprogram-paste-before-kill t))
 
 
 (use-package hi-lock
@@ -347,6 +369,9 @@ C-s C-w [C-w] [C-w]... behaviour. "
 (use-package xah-lee-functions
   :ensure nil)
 
+
+(use-package modi-functions
+  :ensure nil)
 
 
 

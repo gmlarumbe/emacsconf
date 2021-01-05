@@ -184,7 +184,8 @@ INFO: Will use global/ggtags as a backend if configured."
 ;;;; Editing
 ;; https://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs
 (defun duplicate-line()
-  "Duplicate current line."
+  "Duplicate current line.
+Deprecated by `duplicate-current-line-or-region'."
   (interactive)
   (move-beginning-of-line 1)
   (kill-line)
@@ -193,6 +194,29 @@ INFO: Will use global/ggtags as a backend if configured."
   (forward-line 1)
   (yank)
   (move-beginning-of-line 1))
+
+
+;; http://tuxicity.se/emacs/elisp/2010/03/11/duplicate-current-line-or-region-in-emacs.html
+(defun duplicate-current-line-or-region (arg)
+  "Duplicates the current line or region ARG times.
+
+If there's no region, the current line will be duplicated. However, if
+there's a region, all lines that region covers will be duplicated."
+  (interactive "p")
+  (let (beg end (origin (point)))
+    (if (and mark-active (> (point) (mark)))
+        (exchange-point-and-mark))
+    (setq beg (line-beginning-position))
+    (if mark-active
+        (exchange-point-and-mark))
+    (setq end (line-end-position))
+    (let ((region (buffer-substring-no-properties beg end)))
+      (dotimes (i arg)
+        (goto-char end)
+        (newline)
+        (insert region)
+        (setq end (point)))
+      (goto-char (+ origin (* (length region) arg) arg)))))
 
 
 (defun larumbe/copy-region-or-symbol-at-point ()
@@ -338,6 +362,17 @@ This is identical to what is done to to handle the `load-path' at startup."
       (shell-command "setxkbmap us")
       (message "Switched to US"))))
 
+
+;; http://stackoverflow.com/a/3035574/1219634
+(defun eval-and-replace-last-sexp ()
+  "Replace an emacs lisp expression (s-expression aka sexp) with its result.
+
+How to use: Put the cursor at the end of an expression like (+ 1 2) and call
+this command."
+  (interactive)
+  (let ((value (eval (preceding-sexp))))
+    (kill-sexp -1)
+    (insert (format "%s" value))))
 
 
 
@@ -517,7 +552,7 @@ is no include option for `diff' utils."
 
 
 ;;;; Keybindings
-(global-set-key (kbd "C-x d")           #'duplicate-line)                         ; Replaces Dired (C-x C-j works better)
+(global-set-key (kbd "C-x d")           #'duplicate-current-line-or-region)       ; Replaces Dired (C-x C-j works better)
 (global-set-key (kbd "M-w")             #'larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
 (global-set-key (kbd "C-z")             #'larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
 (global-set-key (kbd "C-x C-z")         #'larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
