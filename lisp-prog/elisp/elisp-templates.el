@@ -4,7 +4,7 @@
 
 
 (defhydra hydra-elisp (:color blue
-                              :hint  nil)
+                       :hint  nil)
   "
     EMACS LISP
 
@@ -51,12 +51,11 @@ _ie_  : if-else
   ;; quitting and stopping
   ("q"   nil nil :color blue)
   ("C-g" nil nil :color blue))
+
+
 ;; Thanks to Kaushal Modi
-
-
-
 (defhydra hydra-edebug (:color amaranth
-                               :hint  nil)
+                        :hint  nil)
   "
     EDEBUG MODE
 ^^_<SPC>_ step             ^^_f_ forward sexp         _b_reakpoint set                previous _r_esult      _w_here                    ^^_d_ebug backtrace
