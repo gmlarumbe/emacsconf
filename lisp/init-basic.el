@@ -64,7 +64,8 @@
 (use-package isearch
   :ensure nil
   :bind (:map isearch-mode-map
-              ("C-w" . my-isearch-yank-word-or-char-from-beginning)) ; Override `isearch-yank-word-or-char'
+              ("C-w" . my-isearch-yank-word-or-char-from-beginning) ; Override `isearch-yank-word-or-char'
+              ("C-j" . isearch-exit)) ; Overrides `isearch-printing-char' to search for newlines
   :config
   ;; https://www.emacswiki.org/emacs/SearchAtPoint
   (defun my-isearch-yank-word-or-char-from-beginning ()
@@ -148,6 +149,15 @@ C-s C-w [C-w] [C-w]... behaviour. "
 (use-package bind-chord)
 
 
+(use-package hardcore-mode
+  :demand
+  :diminish hardcore-mode
+  :init
+  (setq too-hardcore-backspace t)
+  (setq too-hardcore-return    t)
+  :config
+  (global-hardcore-mode 1))
+
 
 
 ;;;; Editing
@@ -173,6 +183,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package elec-pair
   :ensure nil
+  :demand
   :config
   (electric-pair-mode 1))
 
@@ -181,17 +192,27 @@ C-s C-w [C-w] [C-w]... behaviour. "
   :bind (("C-w" . whole-line-or-region-kill-region)))
 
 
+;; INFO: `delete-selection-mode' prevented operating on regions,
+;; such as adding parenthesis after selecting a sexp.
+;; Disabled by default at load-up.
 (use-package delsel
-  :ensure nil
-  :demand
-  :config
-  (delete-selection-mode 1))
+  :ensure nil)
 
 
 (use-package smart-mark
   :demand
   :config
   (smart-mark-mode 1))
+
+
+;; INFO: Decided not to use `region-bindings-mode-map' to avoid conflicts with `elec-pair'
+(use-package multiple-cursors
+  :bind (("C-S-c C-S-c"   . mc/edit-lines)
+         ("C->"           . mc/mark-next-like-this)
+         ("C-<"           . mc/mark-previous-like-this)
+         ("C-c C-<"       . mc/mark-all-like-this)
+         ("C-C C-#"       . mc/insert-numbers)
+         ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
 
 
 
@@ -296,7 +317,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 (use-package hi-lock
   :ensure nil
   :bind (("C-\\" . highlight-symbol-at-point)
-         ("C-'"  . unhighlight-regexp)))
+         ("C-'" . unhighlight-regexp)))
 
 
 (use-package re-builder
@@ -371,6 +392,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package modi-functions
+  :bind (("C-]" . modi/pull-up-line))
   :ensure nil)
 
 

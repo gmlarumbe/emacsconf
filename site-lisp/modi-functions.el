@@ -110,9 +110,6 @@ the cons elements are strings."
     (message "Finished %d replacements" cnt)))
 
 
-;;;; Keybindings
-(global-set-key (kbd "C-]") #'modi/pull-up-line) ; Unmaps `abort-recursive-edit'
-
 
 
 (provide 'modi-functions)
