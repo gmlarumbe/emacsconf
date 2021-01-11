@@ -21,7 +21,9 @@
 ;;
 ;;; Code:
 
-(use-package elmacro :demand)
+(use-package elmacro
+  :demand
+  :diminish elmacro-mode)
 
 
 ;; Recorded from insert-kbd-macro
