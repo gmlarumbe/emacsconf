@@ -57,14 +57,23 @@
     :demand
     :hook (dired-mode . diredfl-mode)
     :config
-    (setq diredfl-file-name              '(t (:inherit default)))
-    (setq diredfl-symlink                '(t (:inherit dired-symlink)))
-    (setq diredfl-dir-name               '(t (:inherit dired-directory)))
-    (setq diredfl-file-suffix            '(t (:foreground "navajo white")))
-    (setq diredfl-compressed-file-suffix '(t (:foreground "steel blue")))
-    (setq diredfl-flag-mark-line         '(t (:background "dark blue")))
-    (setq diredfl-exec-priv              '(t (:background "medium blue")))
-    (setq diredfl-dir-priv               '(t (:inherit dired-directory :weight bold))))
+    (defface larumbe/diredfl-file-name              '((t (:inherit default)))                      "Face" :group 'diredfl)
+    (defface larumbe/diredfl-symlink                '((t (:inherit dired-symlink)))                "Face" :group 'diredfl)
+    (defface larumbe/diredfl-dir-name               '((t (:inherit dired-directory)))              "Face" :group 'diredfl)
+    (defface larumbe/diredfl-file-suffix            '((t (:foreground "navajo white")))            "Face" :group 'diredfl)
+    (defface larumbe/diredfl-compressed-file-suffix '((t (:foreground "steel blue")))              "Face" :group 'diredfl)
+    (defface larumbe/diredfl-flag-mark-line         '((t (:background "dark blue")))               "Face" :group 'diredfl)
+    (defface larumbe/diredfl-exec-priv              '((t (:background "medium blue")))             "Face" :group 'diredfl)
+    (defface larumbe/diredfl-dir-priv               '((t (:inherit dired-directory :weight bold))) "Face" :group 'diredfl)
+
+    (setq diredfl-file-name              'larumbe/diredfl-file-name)
+    (setq diredfl-symlink                'larumbe/diredfl-symlink)
+    (setq diredfl-dir-name               'larumbe/diredfl-dir-name)
+    (setq diredfl-file-suffix            'larumbe/diredfl-file-suffix)
+    (setq diredfl-compressed-file-suffix 'larumbe/diredfl-compressed-file-suffix)
+    (setq diredfl-flag-mark-line         'larumbe/diredfl-flag-mark-line)
+    (setq diredfl-exec-priv              'larumbe/diredfl-exec-priv)
+    (setq diredfl-dir-priv               'larumbe/diredfl-dir-priv))
 
 
   (use-package dired-single
