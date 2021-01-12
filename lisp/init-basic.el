@@ -215,6 +215,13 @@ C-s C-w [C-w] [C-w]... behaviour. "
          ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
 
 
+(use-package expand-region
+  :bind (("C-=" . er/expand-region))
+  :config
+  (setq expand-region-contract-fast-key "|")
+  (setq expand-region-reset-fast-key "<ESC><ESC>"))
+
+
 
 ;;;; Sysadmin
 (use-package sudo-ext)

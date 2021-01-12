@@ -66,6 +66,18 @@ since it needs to be set for the whole magit session, not only for the command."
 
 
 
+;;;;; Other packages
+;; Create URLs for files and commits in GitHub/Bitbucket/GitLab/... repositories.
+(use-package git-link
+  :bind ("C-c g l" . git-link))
+
+;; Fast browsing of Git historic versions of a file.
+(use-package git-timemachine
+  :hook ((git-timemachine-mode . linum-mode))
+  :config
+  (add-hook 'git-timemachine-mode-hook '(lambda () (setq truncate-lines t))))
+
+
 
 ;;;;; Aux functions
 (defun larumbe/git-find-changed-files-between-branches (rev-a rev-b)

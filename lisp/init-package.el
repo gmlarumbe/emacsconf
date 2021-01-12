@@ -25,11 +25,13 @@
 ;;  :ensure nil - to avoid downloading the package. If deferred, rely on load-path set properly, otherwise :demand it.
 
 
+;; Provides `auto-package-update-maybe' to update installed packages
 (use-package auto-package-update
   :config
   (setq auto-package-update-delete-old-versions t)
   (setq auto-package-update-hide-results t)
-  (auto-package-update-maybe))
+  (use-package quelpa :demand))
+
 
 (use-package gnu-elpa-keyring-update)    ; Update elpa keys to avoid signature issues
 
