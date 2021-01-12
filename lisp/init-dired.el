@@ -8,12 +8,14 @@
 (use-package dired
   :ensure nil
   :bind (:map dired-mode-map
-              ("l" . recenter-top-bottom)
-              ("J" . dired-goto-file)                                ; Switch from 'j' to 'J'
-              ("j" . larumbe/dired-do-async-shell-command-or-okular) ; Open file-at-point directly with Okular if is a PDF and delete async process window. Otherwise it will ask for default program
-              ("," . larumbe/dired-toggle-deletion-confirmer)        ; https://superuser.com/questions/332590/how-to-prevent-delete-confirmation-in-emacs-dired
-              ("I" . dired-kill-subdir))                             ; Replaces `dired-info', requires `dired-aux', mapping in dired-aux use-package didn't work
-
+         ("C-x C-j" . larumbe/dired-jump)
+         ("b"       . dired-up-directory)
+         ("l"       . recenter-top-bottom)
+         ("J"       . dired-goto-file)                                ; Switch from 'j' to 'J'
+         ("j"       . larumbe/dired-do-async-shell-command-or-okular) ; Open file-at-point directly with Okular if is a PDF and delete async process window. Otherwise it will ask for default program
+         (","       . larumbe/dired-toggle-deletion-confirmer)        ; https://superuser.com/questions/332590/how-to-prevent-delete-confirmation-in-emacs-dired
+         ("I"       . dired-kill-subdir))                             ; Replaces `dired-info', requires `dired-aux', mapping in dired-aux use-package didn't work
+  :bind (("C-x C-j" . larumbe/dired-jump))
   :hook ((dired-mode . larumbe/dired-hook))
   :commands (dired-do-async-shell-command dired-hide-details-mode)
   :config
@@ -76,34 +78,6 @@
     (setq diredfl-dir-priv               'larumbe/diredfl-dir-priv))
 
 
-  (use-package dired-single
-    :bind (:map dired-mode-map
-                ("<return>" . dired-single-buffer)
-                ("f"        . dired-single-buffer)
-                ("v"        . larumbe/dired-single-buffer-view)
-                ("b"        . dired-single-up-directory))
-    :bind (("C-x C-j" . larumbe/dired-single-jump)
-           ("C-x C-d" . dired-single-magic-buffer))
-    :config
-    (defun dired-single-magic-buffer-current-dir ()
-      "Open a single magic dired buffer for the current buffer directory."
-      (interactive)
-      (dired-single-magic-buffer default-directory))
-
-    (defun larumbe/dired-single-buffer-view ()
-      "View mode after opening a dired in single buffer mode."
-      (interactive)
-      (call-interactively #'dired-single-buffer)
-      (view-mode 1))
-
-    (defun larumbe/dired-single-jump (arg)
-      "Execute `dired-single-magic-buffer-current-dir' to have only 1 dired buffer.
-With universal ARG, open a new dired buffer"
-      (interactive "P")
-      (if arg
-          (dired-jump)
-        (dired-single-magic-buffer-current-dir))))
-
 
   (use-package dired-quick-sort
     :demand
@@ -115,15 +89,30 @@ With universal ARG, open a new dired buffer"
   ;; https://github.com/Fuco1/dired-hacks
   (use-package dired-narrow
     :bind (:map dired-mode-map
-                ("/" . dired-narrow-regexp)))
+           ("/" . dired-narrow-regexp)))
 
 
   (use-package dired-collapse
     :demand
-    :hook ((dired-mode . dired-collapse-mode)))
+    :hook ((dired-mode . dired-collapse-mode))
+    :bind (:map dired-mode-map
+           (";" . dired-collapse-mode)))
 
 
   ;; Functionality
+  (defun larumbe/dired-jump (arg)
+    "Execute `dired-jump'.
+With universal ARG, delete every dired-mode buffer to have only 1 dired buffer.
+Provides a more convenient solution to cluttering dired buffers than `dired-single'."
+    (interactive "P")
+    (when arg
+      (dolist ($buf (buffer-list (current-buffer)))
+        (with-current-buffer $buf
+          (when (string= major-mode "dired-mode")
+            (kill-buffer $buf)))))
+    (dired-jump))
+
+
   (defun larumbe/dired-toggle-deletion-confirmer ()
     "Toggles deletion confirmer for dired from (y-or-n) to nil and viceversa."
     (interactive)
