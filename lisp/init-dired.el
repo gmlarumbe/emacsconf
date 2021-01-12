@@ -73,7 +73,7 @@
                 ("f"        . dired-single-buffer)
                 ("v"        . larumbe/dired-single-buffer-view)
                 ("b"        . dired-single-up-directory))
-    :bind (("C-x C-j" . dired-single-magic-buffer-current-dir)
+    :bind (("C-x C-j" . larumbe/dired-single-jump)
            ("C-x C-d" . dired-single-magic-buffer))
     :config
     (defun dired-single-magic-buffer-current-dir ()
@@ -85,7 +85,15 @@
       "View mode after opening a dired in single buffer mode."
       (interactive)
       (call-interactively #'dired-single-buffer)
-      (view-mode 1)))
+      (view-mode 1))
+
+    (defun larumbe/dired-single-jump (arg)
+      "Execute `dired-single-magic-buffer-current-dir' to have only 1 dired buffer.
+With universal ARG, open a new dired buffer"
+      (interactive "P")
+      (if arg
+          (dired-jump)
+        (dired-single-magic-buffer-current-dir))))
 
 
   (use-package dired-quick-sort
