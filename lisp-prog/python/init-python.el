@@ -18,7 +18,6 @@
               ;; Send text to an *ansi-term* running a Python interpreter and ignore indentation (that may run in a remote machine)
               ("C-c C-l"     . larumbe/python-send-line-ansi-term-no-indent-ignore-comment)) ; Overrides `python-shell-send-file'
   :bind (:map jedi-mode-map ("<C-tab>" . nil)) ; Let C-tab to HideShow
-  :custom-face (py-object-reference-face ((t (:foreground "dark olive green"))))
   :config
   (setq python-check-command     "pylint")
   (setq py-number-face           font-lock-doc-face)
@@ -27,6 +26,9 @@
   (setq py-variable-name-face    font-lock-variable-name-face)
   (setq py-use-font-lock-doc-face-p t)
   (define-key python-mode-map "\C-c@\C-\M-h" #'larumbe/python-hs-hide-all) ; Overrides `hs-hide-all' (Error if declaring with use-package :bind - Key sequence C-c @  starts with non-prefix key C-c @
+
+  (defface larumbe/py-object-reference-face '((t (:foreground "dark olive green"))) "Face" :group 'python-faces)
+  (setq py-object-reference-face 'larumbe/py-object-reference-face)
 
   (require 'python-utils)
   (larumbe/python-fix-hs-special-modes-alist) ; BUG Fix (check function docstring for more info)
