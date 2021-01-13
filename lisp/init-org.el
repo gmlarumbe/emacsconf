@@ -14,6 +14,7 @@
               ("C-c l" . org-store-link)
               ("C-c a" . org-agenda))
   :bind (("C-x l" . larumbe/org-show-todos-agenda))
+  :hook ((org-agenda-mode . larumbe/org-agenda-mode-hook))
   :config
   (setq org-log-done 'time)
   (setq org-agenda-files (list "~/TODO.org"))
@@ -27,6 +28,7 @@
           ("POSTPONED"   . "cyan")
           ("INFO"        . "light blue")))
 
+
   (defun larumbe/org-show-todos-agenda ()
     "Show `org-mode' TODOs and agenda."
     (interactive)
@@ -35,7 +37,13 @@
       (when (not (get-buffer buf))
         (find-file file))
       (switch-to-buffer buf)
-      (call-interactively #'org-agenda-list))))
+      (call-interactively #'org-agenda-list)))
+
+
+  (defun larumbe/org-agenda-mode-hook ()
+    "`org-agenda-mode' own hook."
+    (interactive)
+    (hardcore-mode -1)))
 
 
 
