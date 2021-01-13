@@ -7,12 +7,12 @@
 (use-package nxml-mode
   :ensure nil
   :after (auto-complete)
-  :hook ((nxml-mode . my-xml-mode-hook)
-         (nxml-mode . my-prog-mode-hook)) ; Since it is not a child of prog-mode, requires common configuration settings
+  :hook ((nxml-mode . larumbe/xml-mode-hook)
+         (nxml-mode . larumbe/prog-mode-hook)) ; Since it is not a child of prog-mode, requires common configuration settings
   :config
   (setq nxml-child-indent 4)
 
-  (defun my-xml-mode-hook ()
+  (defun larumbe/xml-mode-hook ()
     (set 'ac-sources '(ac-source-gtags
                        ac-source-symbols))))
 
@@ -72,7 +72,7 @@
          ("\\.sby\\'"          . conf-mode)
          ("\\reg.sim.files\\'" . conf-mode)
          )
-  :hook ((conf-mode . my-prog-mode-hook))) ; Since it is not a childe of prog-mode, requires common configuration settings
+  :hook ((conf-mode . larumbe/prog-mode-hook))) ; Since it is not a childe of prog-mode, requires common configuration settings
 
 
 ;;;; MAKEFILE
@@ -138,7 +138,7 @@
 ;;;; AHK
 (use-package ahk-mode
   ;; DANGER: Even though it is defined as prog-mode derived, hooks are not automatically loaded
-  :hook ((ahk-mode . my-prog-mode-hook))
+  :hook ((ahk-mode . larumbe/prog-mode-hook))
   :config
   (setq ahk-indentation 2))
 

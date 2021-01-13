@@ -62,7 +62,7 @@ as well as for C/C++ or Python..."
     (local-set-key (kbd "C-c C-f") #'flycheck-mode)))
 
 
-(defun my-prog-mode-hook ()
+(defun larumbe/prog-mode-hook ()
   "Basic Hook for derived programming modes."
   (larumbe/ggtags-mode        1)
   (larumbe/projectile-mode    1)
