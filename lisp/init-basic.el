@@ -58,6 +58,30 @@
 (use-package diminish)
 
 
+(use-package ibuffer
+  :bind (("C-x C-b" . ibuffer))
+  :config
+  (setq ibuffer-default-sorting-mode 'major-mode)
+  (setq ibuffer-expert t))
+
+
+(use-package ibuffer-projectile
+  :hook ((ibuffer . modi/ibuffer-customization))
+  :config
+  (defun modi/ibuffer-customization ()
+    "My customization for `ibuffer'."
+    ;; ibuffer-projectile setup
+    (ibuffer-projectile-set-filter-groups)
+    (unless (eq ibuffer-sorting-mode 'alphabetic)
+      (ibuffer-do-sort-by-alphabetic) ; first do alphabetic sort
+      (ibuffer-do-sort-by-major-mode))))
+
+
+(use-package ibuf-ext
+  :ensure nil
+  :config
+  (setq ibuffer-show-empty-filter-groups nil))
+
 
 
 ;;;; Navigation
