@@ -33,6 +33,25 @@
   (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line)
 
 
+  ;; Fetched from modi
+  (setq projectile-enable-caching t) ; Enable caching, otherwise
+                                        ; `projectile-find-file' is really slow
+                                        ; for large projects.
+  (dolist (item '("GTAGS" "GRTAGS" "GPATH"))
+    (add-to-list 'projectile-globally-ignored-files item))
+
+  ;; Git projects should be marked as projects in top-down fashion,
+  ;; so that each git submodule can be a projectile project.
+  (setq projectile-project-root-files-bottom-up
+        (delete ".git" projectile-project-root-files-bottom-up))
+  (add-to-list 'projectile-project-root-files ".git")
+
+  (setq projectile-project-root-files-functions
+        '(projectile-root-local
+          projectile-root-top-down ; First look for projects in top-down order
+          projectile-root-bottom-up)) ; Then in bottom-up order
+
+
   (defun larumbe/projectile-custom-mode-line ()
     "Report ONLY project name (without type) in the modeline.
 Replaces `projectile-default-mode-line' that also showed ':generic' type of project"
