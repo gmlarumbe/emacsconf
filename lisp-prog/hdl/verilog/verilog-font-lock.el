@@ -10,7 +10,7 @@
 ;;;; Variables
 ;; Some regexps come from evaluated `(concat larumbe/verilog-identifier-re "\\s-+" larumbe/verilog-identifier-re)' with capture groups and additions depending on what they might detect.
 (defvar larumbe/verilog-system-task-regex "\\$[a-zA-Z][a-zA-Z0-9_\\$]*")
-(defvar larumbe/verilog-port-connection-regex "[([:blank:]]\\.\\([0-9a-zA-Z*_-]*\\)")
+(defvar larumbe/verilog-port-connection-regex "^[[:blank:]]*\\.\\([0-9a-zA-Z*_-]*\\)")
 (defvar larumbe/verilog-dot-itf-struct-regex "\\([a-zA-Z*_-][0-9a-zA-Z*_-]+\\)\\.\\([0-9a-zA-Z*_-]+\\)")
 (defvar larumbe/verilog-braces-content-regex "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
 (defvar larumbe/verilog-width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xz]+\\)")
