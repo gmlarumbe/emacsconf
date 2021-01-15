@@ -88,8 +88,8 @@
 (use-package isearch
   :ensure nil
   :bind (:map isearch-mode-map
-              ("C-w" . my-isearch-yank-word-or-char-from-beginning) ; Override `isearch-yank-word-or-char'
-              ("C-j" . isearch-exit)) ; Overrides `isearch-printing-char' to search for newlines
+         ("C-w" . my-isearch-yank-word-or-char-from-beginning) ; Override `isearch-yank-word-or-char'
+         ("C-j" . isearch-exit)) ; Overrides `isearch-printing-char' to search for newlines
   :config
   ;; https://www.emacswiki.org/emacs/SearchAtPoint
   (defun my-isearch-yank-word-or-char-from-beginning ()
@@ -101,7 +101,8 @@ C-s C-w [C-w] [C-w]... behaviour. "
     ;; is too hard to do, so work only when search string is empty.
     (if (= 0 (length isearch-string))
         (beginning-of-thing 'word))
-    (isearch-yank-word-or-char)))
+    ;; DANGER: At some point in Emacs it required a '1' argument to fix a "Wrong type argument: number-or-marker-p, nil" error
+    (isearch-yank-word-or-char 1)))
 
 
 (use-package view
