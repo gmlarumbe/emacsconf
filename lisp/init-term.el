@@ -10,6 +10,7 @@
               ("M-<" . beginning-of-buffer))
   :bind (("C-," . larumbe/ansi-term-dwim)
          ("C-." . larumbe/ansi-term-new))
+  :hook ((term-mode . larumbe/term-hook))
   :config
   (setq comint-process-echoes t)
 
@@ -27,7 +28,13 @@ If not visible open on the same window. Otherwise create it."
   (defun larumbe/ansi-term-new ()
     "Spawn a new Bash *ansi-term* shell."
     (interactive)
-    (ansi-term "/bin/bash")))
+    (ansi-term "/bin/bash"))
+
+
+  (defun larumbe/term-hook ()
+    "`term-hode' own hook"
+    (interactive)
+    (hardcore-mode -1)))
 
 
 (provide 'init-term)
