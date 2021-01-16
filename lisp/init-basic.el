@@ -352,6 +352,18 @@ C-s C-w [C-w] [C-w]... behaviour. "
          ("C-'" . unhighlight-regexp)))
 
 
+(use-package auto-highlight-symbol
+  :bind (("<f11>" . auto-highlight-symbol-mode))
+  :bind (:map auto-highlight-symbol-mode-map
+         ("M-<"     . ahs-backward)
+         ("M->"     . ahs-forward)
+         ("M--"     . ahs-back-to-start)
+         ("C-x C-'" . ahs-change-range)
+         ("C-x C-a" . ahs-edit-mode))
+  :config
+  (setq ahs-default-range 'ahs-range-whole-buffer))
+
+
 (use-package re-builder
   :config
   (setq reb-re-syntax 'read))  ;; Emacs double escaping (for single escaping use 'string)

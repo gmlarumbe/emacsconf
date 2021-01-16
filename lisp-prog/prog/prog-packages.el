@@ -81,10 +81,51 @@ in order to check pending project actions. "
 
 
 (use-package imenu-list
-  :bind (("M-i" . imenu-list))
+  :bind (("M-i" . modi/imenu-list-display-toggle))
+  :bind ((:map imenu-list-major-mode-map
+          ("C-<return>" . modi/imenu-list-goto-entry-and-hide)))
   :config
   (setq imenu-list-size 0.15)
-  (setq imenu-auto-rescan t))
+  (setq imenu-auto-rescan t)
+
+  (defun modi/imenu-list-hide ()
+    (interactive)
+    (switch-to-buffer-other-window imenu-list-buffer-name)
+    (quit-window))
+
+  (defun modi/imenu-list-visible-p ()
+    "Returns `t' if the `imenu-list' buffer is visible."
+    (catch 'break
+      (dolist (win (window-list))
+        (when (string= imenu-list-buffer-name (buffer-name (window-buffer win)))
+          (throw 'break t)))))
+
+  (defun modi/imenu-list-display-toggle (noselect)
+    "Toggle the display of Imenu-list buffer.
+
+If NOSELECT is non-nil, do not select the imenu-list buffer."
+    (interactive "P")
+    (if (modi/imenu-list-visible-p)
+        (modi/imenu-list-hide)
+      (if noselect
+          (imenu-list-noselect)
+        (imenu-list))))
+
+  (defun modi/imenu-list-goto-entry-and-hide ()
+    "Execute `imenu-list-goto-entry' and hide the imenu-list buffer."
+    (interactive)
+    (imenu-list-goto-entry)
+    (modi/imenu-list-hide))
+
+  (defun modi/imenu-auto-update (orig-fun &rest args)
+    "Auto update the *Ilist* buffer if visible."
+    (prog1 ; Return value of the advising fn needs to be the same as ORIG-FUN
+        (apply orig-fun args)
+      (when (modi/imenu-list-visible-p)
+        (imenu-list-update-safe)))) ; update `imenu-list' buffer
+
+  (advice-add 'switch-to-buffer :around #'modi/imenu-auto-update)
+  (advice-add 'revert-buffer    :around #'modi/imenu-auto-update))
 
 
 (use-package hide-comnt

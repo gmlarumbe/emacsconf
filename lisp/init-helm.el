@@ -26,7 +26,7 @@
          ("C-x c p" . helm-list-emacs-process)
          ("C-x c t" . helm-top)
          ("C-x c y" . helm-youtube)
-         ("C-x C-h" . larumbe/helm-help-major-mode)) ; TODO: Deprecate it after `which-key'
+         ("C-x C-h" . larumbe/helm-help-major-mode-or-scratch)) ; Could be deprecated after `which-key'
   :config
   (use-package helm-projectile :diminish)
   (use-package helm-ag)
@@ -45,16 +45,22 @@
   (helm-mode 1)
   (helm-autoresize-mode 1)
 
-  (defun larumbe/helm-help-major-mode ()
+  (defun larumbe/helm-help-major-mode-or-scratch (&optional arg)
     "Get helm `M-x' commands list/shortcuts for the last time it was used.
-It is assumed to be used after a `M-x' then e.g. `org-', then `C-g' and finally this function for window arrangement."
-    (interactive)
+It is assumed to be used after a `M-x' then e.g. `org-', then `C-g' and finally this function for window arrangement.
+
+If universal ARG is provided, then switch to *scratch* buffer instead."
+    (interactive "P")
     (delete-other-windows)
     (split-window-right)
     (other-window 1)
     (shrink-window 40 t)
-    (switch-to-buffer "*helm M-x*")
-    (other-window 1))
+    (if (not arg)
+        (progn
+          (switch-to-buffer "*helm M-x*")
+          (other-window 1))
+      (switch-to-buffer "*scratch*")
+      (shrink-window -40 t)))
 
   ;; Function redefinitions for advising
   (defun larumbe/helm-occur (&optional prefix)

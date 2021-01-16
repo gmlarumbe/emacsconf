@@ -102,6 +102,7 @@
     ;; Deleting words
     ([?\M-d]     . (S-C-right delete))
     ;; ([?\M-\d] . (S-C-left delete))  ; INFO: Could not make it work (not even with binary value, with backspace, with delete...): Note (http://ergoemacs.org/emacs/keystroke_rep.html)
+    ;; \d stands for backspace, and the command "(global-set-key [?\M-\d] #'newline)" actually works, so it's an EXWM thing...
     ;; Key-Scripting -> With '-' and between parenthesis they will be pressed in that order "simultaneously"
     ([?\C-j]     . tab)
     ([?\C-\;]    . (S-tab))
