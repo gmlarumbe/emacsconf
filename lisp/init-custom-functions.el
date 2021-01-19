@@ -480,6 +480,7 @@ If optional EXCLUDE-RE is set, delete paths with that regexp from generated file
         (mapc
          (lambda (dir) (insert (mapconcat #'identity (directory-files-recursively dir re) "\n")))
          (list base-dir))
+        (larumbe/buffer-expand-filenames)
         ;; Append to existing file
         (when (and (file-exists-p (concat base-dir file))
                    append)
