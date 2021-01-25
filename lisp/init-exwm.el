@@ -205,9 +205,6 @@ Java applications and GIMP."
                         `(lambda ()
                            (interactive)
                            (exwm-workspace-switch-create ,i))))
-  ;; + 'slock' is a simple X display locker provided by suckless tools.
-  (exwm-input-set-key (kbd "s-l")
-                      (lambda () (interactive) (start-process "" nil "slock")))
   ;; Processes
   (exwm-input-set-key (kbd "s-j") #'larumbe/exwm-launch)
   (exwm-input-set-key (kbd "s-k") #'larumbe/exwm-launch-firefox)
