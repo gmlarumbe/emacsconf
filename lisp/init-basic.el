@@ -83,6 +83,9 @@
   (setq ibuffer-show-empty-filter-groups nil))
 
 
+(use-package indent-guide
+  :bind (("C-<f10>" . indent-guide-global-mode)))
+
 
 ;;;; Navigation
 (use-package isearch
@@ -418,7 +421,27 @@ C-s C-w [C-w] [C-w]... behaviour. "
   :ensure nil)
 
 
+(use-package keyfreq
+  :demand
   :config
+  (setq keyfreq-file      (locate-user-emacs-file "keyfreq"))
+  (setq keyfreq-file-lock (locate-user-emacs-file "keyfreq.lock"))
+  (setq keyfreq-excluded-commands
+        '(self-insert-command
+          outshine-self-insert-command
+          forward-char
+          backward-char
+          previous-line
+          next-line
+          exwm-input-send-simulation-key))
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1)
+
+  (defun my/keyfreq-save-html ()
+    "Save the table of frequently used commands (and their associated bindings
+to an html file in `user-emacs-directory'."
+    (interactive)
+    (keyfreq-html (locate-user-emacs-file "keyfreq.html"))))
 
 
 (use-package xah-lee-functions
