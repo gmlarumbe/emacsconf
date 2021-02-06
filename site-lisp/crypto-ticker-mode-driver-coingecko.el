@@ -1,1 +1,0 @@
-../submodules/crypto-ticker-mode/crypto-ticker-mode-driver-coingecko.el

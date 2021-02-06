@@ -413,22 +413,12 @@ C-s C-w [C-w] [C-w]... behaviour. "
   (global-so-long-mode 1))
 
 
-;; API of `coin-ticker' was outdated
+;; API of `coin-ticker' was outdated. Also tried `crypto-ticker-mode' but was a bit more complex than this one
 (use-package btc-ticker
   :ensure nil)
 
 
-;; TODO error with `crypto-ticker-mode-modeline-text'
-(use-package crypto-ticker-mode
-  :ensure nil
   :config
-  (require 'crypto-ticker-mode-driver-coingecko)
-  (setq crypto-ticker-mode-from-symbol "BTC")
-  (setq crypto-ticker-mode-to-symbol   "$")
-  ;; Configure the driver.
-  (setq crypto-ticker-mode-driver-coingecko-from-currency "bitcoin")
-  (setq crypto-ticker-mode-driver-coingecko-to-currency   "usd"))
-
 
 
 (use-package xah-lee-functions

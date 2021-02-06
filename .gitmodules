@@ -19,9 +19,6 @@
 [submodule "submodules/emacs"]
 	path = submodules/emacs
 	url = https://github.com/gmlarumbe/emacs.git
-[submodule "submodules/crypto-ticker-mode"]
-	path = submodules/crypto-ticker-mode
-	url = https://github.com/Sodaware/crypto-ticker-mode.git
 [submodule "submodules/emacs-btc-ticker"]
 	path = submodules/emacs-btc-ticker
 	url = https://github.com/gmlarumbe/emacs-btc-ticker.git
