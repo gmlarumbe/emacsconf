@@ -158,7 +158,8 @@
 ;;;; POLYMODE
 ;; https://polymode.github.io/defining-polymodes
 (use-package polymode
-  :mode (("\\.xml\\.ep" . poly-nxml-mode))
+  :mode (("\\.xml\\.ep"           . poly-nxml-mode)
+         ("reg\.sim\.files\\.ep" . poly-conf-mode))
   :hook (poly-nxml-mode . larumbe/poly-nxml-mode-hook)
   :config
 ;;;;; nXML + Perl
@@ -179,7 +180,23 @@
   (defun larumbe/poly-nxml-mode-hook ()
     "nXML + Perl Hook."
     (interactive)
-    (rng-validate-mode -1))) ; Do not parse Perl preprocessor headers in XML files
+    (rng-validate-mode -1)) ; Do not parse Perl preprocessor headers in XML files
+
+
+;;;;; Conf + Perl
+  (define-hostmode poly-conf-hostmode
+    :mode 'conf-mode)
+
+  (define-innermode poly-conf-perl-innermode
+    :mode 'perl-mode
+    :head-matcher "%"
+    :tail-matcher "\n"
+    :head-mode 'host
+    :tail-mode 'host)
+
+  (define-polymode poly-conf-mode
+    :hostmode 'poly-conf-hostmode
+    :innermodes '(poly-nxml-perl-innermode)))
 
 
 (provide 'init-prog-others)
