@@ -155,6 +155,32 @@
 (use-package sed-mode)
 
 
+;;;; POLYMODE
+;; https://polymode.github.io/defining-polymodes
+(use-package polymode
+  :mode (("\\.xml\\.ep" . poly-nxml-mode))
+  :hook (poly-nxml-mode . larumbe/poly-nxml-mode-hook)
+  :config
+;;;;; nXML + Perl
+  (define-hostmode poly-nxml-hostmode
+    :mode 'nxml-mode)
+
+  (define-innermode poly-nxml-perl-innermode
+    :mode 'perl-mode
+    :head-matcher "%"
+    :tail-matcher "\n"
+    :head-mode 'host
+    :tail-mode 'host)
+
+  (define-polymode poly-nxml-mode
+    :hostmode 'poly-nxml-hostmode
+    :innermodes '(poly-nxml-perl-innermode))
+
+  (defun larumbe/poly-nxml-mode-hook ()
+    "nXML + Perl Hook."
+    (interactive)
+    (rng-validate-mode -1))) ; Do not parse Perl preprocessor headers in XML files
+
 
 (provide 'init-prog-others)
 
