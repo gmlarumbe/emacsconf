@@ -159,7 +159,8 @@
 ;; https://polymode.github.io/defining-polymodes
 (use-package polymode
   :mode (("\\.xml\\.ep"           . poly-nxml-mode)
-         ("reg\.sim\.files\\.ep" . poly-conf-mode))
+         ("reg\.sim\.files\\.ep" . poly-conf-perl-mode)
+         ("\.ini"               . poly-conf-c-mode))
   :hook (poly-nxml-mode . larumbe/poly-nxml-mode-hook)
   :config
 ;;;;; nXML + Perl
@@ -194,9 +195,25 @@
     :head-mode 'host
     :tail-mode 'host)
 
-  (define-polymode poly-conf-mode
+  (define-polymode poly-conf-perl-mode
     :hostmode 'poly-conf-hostmode
-    :innermodes '(poly-nxml-perl-innermode)))
+    :innermodes '(poly-conf-perl-innermode)))
+
+
+;;;;; Conf + C
+  (define-hostmode poly-conf-c-hostmode
+    :mode 'conf-mode)
+
+  (define-innermode poly-conf-c-innermode
+    :mode 'c-mode
+    :head-matcher (cons "\\(?1:\\)#\\(if\\|else\\|endif\\|elsif\\|include\\)" 1) ; Capture group 1 is a hack to also include the #(word) inside the C mode
+    :tail-matcher "\n"
+    :head-mode 'host
+    :tail-mode 'host)
+
+  (define-polymode poly-conf-c-mode
+    :hostmode 'poly-conf-c-hostmode
+    :innermodes '(poly-conf-c-innermode))
 
 
 (provide 'init-prog-others)
