@@ -10,12 +10,12 @@
 
 
 (defvar larumbe/flycheck-verilator-include-path nil)
-
+(defvar larumbe/flycheck-active-linter nil) ; Flycheck will automaticall set its default, avoiding potential errors when executables are not found
 
 
 (defun larumbe/verilog-flycheck-hook ()
   "Set Verilog flycheck options."
-  (flycheck-select-checker 'verilog-iverilog)
+  (flycheck-select-checker larumbe/flycheck-active-linter)
   (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs))
 
 (defun larumbe/verilog-update-project-pkg-list ()
@@ -49,10 +49,10 @@ If called with UARG, select among available linters."
           (pcase (completing-read "Select linter: " linters)
             ("verilator" (setq active-linter 'verilog-verilator))
             ("iverilog"  (setq active-linter 'verilog-iverilog)))
+          (setq larumbe/flycheck-active-linter active-linter)
           (flycheck-select-checker active-linter))
-      (progn
-        (larumbe/verilog-update-project-pkg-list)
-        (call-interactively #'flycheck-mode)))))
+      (larumbe/verilog-update-project-pkg-list)
+      (call-interactively #'flycheck-mode))))
 
 
 ;;; Verilator override
