@@ -35,6 +35,7 @@
     :hook ((dired-mode . dired-omit-mode)) ; hide backup, autosave, *.*~ files
     :config
     (setq dired-omit-verbose nil)
+    (delete ".bin" dired-omit-extensions)
     (setq dired-guess-shell-alist-user ; Program mappings to dired-do-shell-command (precedence over `dired-guess-shell-alist-default')
           '(("\\.pdf\\'"  "okular")
             ("\\.lxt2\\'" "gtkwave")))
