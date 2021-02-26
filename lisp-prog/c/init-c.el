@@ -11,11 +11,6 @@
               )
   :hook ((c-mode-common . my-cc-mode-hook))
   :config
-  (use-package semantic
-    :bind (:map semantic-mode-map
-                ("C-c ," . nil)) ; INFO: Unbinds ALL semantic commands, since C-c , is the prefix
-    :hook ((c-mode-common . larumbe/semantic-mode)))
-
   (setq c-default-style "linux") ; Indent and style
   (setq c-basic-offset 4)
 

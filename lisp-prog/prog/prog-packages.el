@@ -150,6 +150,26 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
   (setq time-stamp-line-limit 20)) ; Default 8
 
 
+;; Global mode used by C, Python, HTML and others
+(use-package semantic
+  :bind (:map semantic-mode-map
+         ("C-c ," . nil)) ; INFO: Unbinds ALL semantic commands, since C-c , is the prefix
+  :hook ((c-mode-common . larumbe/semantic-mode))
+  :config
+  (defvar larumbe/semantic-enable t
+    "Conditionally determine in a hook if mode is enabled.")
+
+  (defun larumbe/semantic-mode (&optional arg)
+    "Enable semantic depending on value of `larumbe/semantic-enable'.
+
+Purpose is to use this function as a conditional hook.
+ARG will be passed to wrapped function `semantic-mode'."
+    (interactive)
+    (if larumbe/semantic-enable
+        (semantic-mode arg)
+      (semantic-mode -1))))
+
+
 (provide 'prog-packages)
 
 ;;; prog-packages.el ends here

@@ -40,7 +40,9 @@ as well as for C/C++ or Python..."
   (interactive)
   (let ((file (thing-at-point 'filename))
         (ref  (thing-at-point 'symbol)))
-    (cond ((string= major-mode "emacs-lisp-mode")
+    (cond ((or (string= major-mode "c-mode")
+               (string= major-mode "python-mode")
+               (string= major-mode "emacs-lisp-mode"))
            (if ref
                (xref-find-references ref)
              (call-interactively #'xref-find-references)))
