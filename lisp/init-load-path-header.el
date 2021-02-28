@@ -27,6 +27,7 @@ For Linux, the use of ' $ find DIR -type d ' was sufficient."
       (setq dir default-directory))
     (setq subdirs-and-files (directory-files-recursively (expand-file-name dir) "" t))
     ;; Filter files to return only directories...
+    (require 'seq)
     (setq subdirs (seq-remove
                    (lambda (x) (not (file-directory-p x)))
                    subdirs-and-files))
