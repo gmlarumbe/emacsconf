@@ -68,9 +68,9 @@
 
 ;;;; CONF
 (use-package conf-mode
-  :mode (("\\.service\\'"      . conf-mode)
-         ("\\.sby\\'"          . conf-mode)
-         ("\\reg.sim.files\\'" . conf-mode)
+  :mode (("\\.service\\'"        . conf-mode)
+         ("\\.sby\\'"            . conf-mode)
+         ("\\reg\\.sim\\.files\\'" . conf-mode)
          )
   :hook ((conf-mode . larumbe/prog-mode-hook))) ; Since it is not a childe of prog-mode, requires common configuration settings
 
@@ -158,9 +158,9 @@
 ;;;; POLYMODE
 ;; https://polymode.github.io/defining-polymodes
 (use-package polymode
-  :mode (("\\.xml\\.ep"           . poly-nxml-mode)
-         ("reg\.sim\.files\\.ep" . poly-conf-perl-mode)
-         ("\.ini"               . poly-conf-c-mode))
+  :mode (("\\.xml\\.ep\\'"           . poly-nxml-mode)
+         ("reg\\.sim\\.files\\.ep\\'" . poly-conf-perl-mode)
+         ("\\.ini\\'"               . poly-conf-c-mode))
   :hook (poly-nxml-mode . larumbe/poly-nxml-mode-hook)
   :config
 ;;;;; nXML + Perl
