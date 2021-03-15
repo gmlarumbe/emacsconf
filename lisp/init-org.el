@@ -29,6 +29,7 @@
           ("POSTPONED"   . "cyan")
           ("INFO"        . "light blue")))
 
+  (add-to-list 'org-export-backends 'md) ; Add markdown to export backends
 
   (defun larumbe/org-show-todos-agenda ()
     "Show `org-mode' TODOs and agenda."
