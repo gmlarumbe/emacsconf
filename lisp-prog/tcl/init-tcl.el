@@ -9,7 +9,7 @@
               ("C-c C-p" . larumbe/tcl-send-line-or-region-and-step)
               ;; INFO: Check `tcl-eval-region', `tcl-eval-defun', `tcl-load-file'
               ("C-c C-k" . larumbe/tcl-send-line-or-region-and-step-vivado-shell))
-  :hook ((tcl-mode . my-tcl-hook))
+  :hook ((tcl-mode . larumbe/tcl-mode-hook))
   :init
   (setq tcl-application "tclsh")
   (setq tcl-command-switches nil)

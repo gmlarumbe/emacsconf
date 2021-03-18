@@ -3,7 +3,7 @@
 ;;; Code:
 
 
-(defun my-tcl-hook ()
+(defun larumbe/tcl-mode-hook ()
   "Tcl mode hook."
   (modify-syntax-entry ?$ "."))
 

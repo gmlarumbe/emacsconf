@@ -21,7 +21,7 @@
     (goto-char end)))
 
 
-(defun my-sh-mode-hook ()
+(defun larumbe/sh-mode-hook ()
   "Sh hook."
   (set 'ac-sources '(ac-source-gtags ac-source-symbols)))
 
