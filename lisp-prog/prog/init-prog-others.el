@@ -155,6 +155,22 @@
 (use-package sed-mode)
 
 
+;;;; HEXL
+(use-package hexl
+  :ensure nil
+  :config
+  ;; INFO: `hexl-mode' uses Emacs 'hexl' by default. Check `(executable-find "hexl")'
+  ;; At some point I tried to add some options to `hexl-options' but only -de or -iso seemed possible.
+
+  ;; Modify attributes of existing faces associated to font-lock, instead of declaring new ones
+  (set-face-attribute 'hexl-address-region nil
+                      :foreground "light green"
+                      :inherit nil)
+  (set-face-attribute 'hexl-ascii-region nil
+                      :foreground "light yellow"
+                      :inherit nil))
+
+
 ;;;; POLYMODE
 ;; https://polymode.github.io/defining-polymodes
 (use-package polymode
