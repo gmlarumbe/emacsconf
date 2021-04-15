@@ -28,3 +28,6 @@
 [submodule "submodules/kmodi"]
 	path = submodules/kmodi
 	url = https://github.com/gmlarumbe/kmodi.git
+[submodule "submodules/ejira"]
+	path = submodules/ejira
+	url = https://github.com/nyyManni/ejira
