@@ -8,6 +8,7 @@
   :ensure nil
   :after (auto-complete)
   :hook ((nxml-mode . larumbe/xml-mode-hook)
+	 (nxml-mode . larumbe/prog-mode-keys)
          (nxml-mode . larumbe/prog-mode-hook)) ; Since it is not a child of prog-mode, requires common configuration settings
   :config
   (setq nxml-child-indent 4)
