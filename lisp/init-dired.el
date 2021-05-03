@@ -33,6 +33,8 @@
     :demand
     :diminish dired-omit-mode
     :hook ((dired-mode . dired-omit-mode)) ; hide backup, autosave, *.*~ files
+    :init
+    (setq dired-bind-jump nil) ; Prevents overriding of `larumbe/dired-jump' for C-x C-j keybinding
     :config
     (setq dired-omit-verbose nil)
     (delete ".bin" dired-omit-extensions)
