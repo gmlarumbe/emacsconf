@@ -269,8 +269,20 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package jenkins
   :bind (:map jenkins-job-view-mode-map
-              ("n" . next-line)
-              ("p" . previous-line)))
+         ("n" . next-line)
+         ("p" . previous-line))
+
+  :config
+  (defun larumbe/jenkins-switch-regex-parsing ()
+    "Switch Jenkins regexp parsing for large files to save loading time.
+This is because regexp parsing blocks Emacs execution and might not be useful for large files."
+    (interactive)
+    (if larumbe/jenkins-compilation-parse-console-output
+        (progn
+          (setq larumbe/jenkins-compilation-parse-console-output nil)
+          (message "Disabling parsing of Jenkins console output"))
+      (setq larumbe/jenkins-compilation-parse-console-output t)
+      (message "Enabling parsing of Jenkins console output"))))
 
 
 (use-package unison-mode
