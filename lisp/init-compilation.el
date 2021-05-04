@@ -75,7 +75,15 @@
     (scons-target-ok     "\\(?1:OK\\)$"                                   1 nil nil 0 nil (1 compilation-info-face))))
 
 (defvar larumbe/compilation-error-re-pax
-  '((pax-assert-err  "** \\(?1:assertion failure\\) at time \\(?2:[0-9.]+\\)"   1 nil nil 2 nil (2 compilation-line-face))))
+  '((pax-assert-err  "** \\(?1:assertion failure\\) at time \\(?2:[0-9.]+\\)"   1 nil nil 2 nil (2 compilation-line-face))
+    (pax-tb-note     "\\(?1:^TB_NOTE\\) @ [0-9\.]+:"                            1 nil nil 0 nil)
+    (pax-tb-warning  "\\(?1:^TB_WARNING\\) @ [0-9\.]+:"                         1 nil nil 1 nil)
+    (pax-tb-err      "\\(?1:^TB_ERROR\\) @ [0-9\.]+:"                           1 nil nil 2 nil)
+    (pax-tb-fatal    "\\(?1:^TB_FATAL\\) @ [0-9\.]+:"                           1 nil nil 2 nil)))
+
+(defvar larumbe/compilation-error-re-gcc
+  '((gcc-warning "^\\(?1:[0-9a-zA-Z\/\._-]+\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:warning\\):" 1 2 3 1 nil)
+    (gcc-error   "^\\(?1:[0-9a-zA-Z\/\._-]+\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:error\\):"   1 2 3 2 nil)))
 
 
 ;; INFO: To be used with: `C-u M-x compile RET tail -f Log.txt'
@@ -96,7 +104,7 @@
     ("iverilog"     . (larumbe/compilation-error-re-iverilog))
     ("synopsys-dc"  . (larumbe/compilation-error-re-synopsys-dc))
     ("scons"        . (larumbe/compilation-error-re-irun larumbe/compilation-error-re-vivado larumbe/compilation-error-re-scons larumbe/compilation-error-re-python))
-    ("pax"          . (larumbe/compilation-error-re-irun larumbe/compilation-error-re-pax))
+    ("pax"          . (larumbe/compilation-error-re-irun larumbe/compilation-error-re-pax larumbe/compilation-error-re-gcc))
     ("ableton"      . (larumbe/compilation-error-re-python larumbe/compilation-error-re-ableton))))
 
 (defvar larumbe/compilation-custom-regexp-active nil)
