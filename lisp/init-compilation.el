@@ -142,6 +142,7 @@
   (setq compilation-skip-threshold 2) ; Compilation error jumping settings
 
 
+;;;; Defuns
   ;; Master function
   (defun larumbe/compilation-error-re-set (parser)
     "Sets variables `compilation-error-regexp-alist' and `compilation-error-regexp-alist-alist' according to parser."
@@ -219,7 +220,7 @@ If passed PARSER, set corresponding regexp to be evaluated at the header."
     (interactive)
     (unless parser
       (setq parser (completing-read "Select parser: " (mapcar 'car larumbe/compilation-custom-regexp-sets))))
-    (let ((header (concat "-*- mode: compilation; default-directory: \"" default-directory "\"; eval: (" (symbol-name 'larumbe/compilation-error-re-set) " " parser ") -*-")))
+    (let ((header (concat "-*- mode: compilation; default-directory: \"" default-directory "\"; eval: (" (symbol-name 'larumbe/compilation-error-re-set) " \"" parser "\") -*-")))
       (read-only-mode -1)
       (goto-char (point-min))
       (open-line 2)

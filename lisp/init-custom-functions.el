@@ -220,13 +220,15 @@ there's a region, all lines that region covers will be duplicated."
 
 
 (defun larumbe/copy-region-or-symbol-at-point ()
-  "Copy symbol under cursor.  If region is active, copy it instead."
+  "Copy symbol under cursor.  If region is active, copy it instead.
+If there is no symbol at point, just skip functionality."
   (interactive)
   (let ((symbol (thing-at-point 'symbol t)))
-    (if (use-region-p)
-        (call-interactively #'kill-ring-save)
-      (kill-new symbol)
-      (message symbol))))
+    (when symbol
+      (if (use-region-p)
+          (call-interactively #'kill-ring-save)
+	(kill-new symbol)
+	(message symbol)))))
 
 
 (defun larumbe/kill-sexp-backwards ()
