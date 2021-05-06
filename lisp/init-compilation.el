@@ -16,6 +16,7 @@
 
 
 (require 'popwin)
+(require 'ansi-color) ; Buffer colorizing
 
 
 (defvar larumbe/compilation-error-re-vivado
@@ -123,7 +124,8 @@
   :bind (:map comint-mode-map
               ("TAB" . completion-at-point)                  ; Similar to ansi-term (e.g. for vivado tcl-shell)
               ("C-j" . larumbe/compilation-interactive-recompile)) ; sandbox oriented
-  :hook ((compilation-mode . larumbe/compilation-hook))
+  :hook ((compilation-mode . larumbe/compilation-hook)
+	 (compilation-filter . colorize-compilation-buffer))
   :commands (recompile
              larumbe/compilation-show-buffer
              larumbe/compilation-error-re-set
@@ -229,6 +231,12 @@ If passed PARSER, set corresponding regexp to be evaluated at the header."
 
   (defun larumbe/compilation-hook ()
     (setq truncate-lines t)) ; Do not enable linum-mode since it slows down large compilation buffers
+
+
+  ;; https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode  
+  (defun colorize-compilation-buffer ()
+    "Apply color to comint buffers (e.g. convert '\033[0;31m' to red)."
+    (ansi-color-apply-on-region compilation-filter-start (point)))
 
 
 ;;;; Interactive comint library
