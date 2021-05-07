@@ -224,9 +224,12 @@ there's a region, all lines that region covers will be duplicated."
 If there is no symbol at point, just skip functionality."
   (interactive)
   (let ((symbol (thing-at-point 'symbol t)))
-    (when symbol
-      (if (use-region-p)
+    (if (use-region-p)
+	(progn
           (call-interactively #'kill-ring-save)
+	  (deactivate-mark))
+      ;; If there is no region case, must be a symbol in order to do something relevant
+      (when symbol
 	(kill-new symbol)
 	(message symbol)))))
 
