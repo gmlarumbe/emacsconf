@@ -81,7 +81,8 @@
     (pax-tb-warning  "\\(?1:^TB_WARNING\\) @ [0-9\.]+:"                         1 nil nil 1 nil)
     (pax-tb-err      "\\(?1:^TB_ERROR\\) @ [0-9\.]+:"                           1 nil nil 2 nil)
     (pax-tb-fatal    "\\(?1:^TB_FATAL\\) @ [0-9\.]+:"                           1 nil nil 2 nil)
-    (pax-perl-err    "\\(?1:^ERROR\\):"                                         1 nil nil 2 nil)))
+    (pax-perl-err    "\\(?1:^ERROR\\):"                                         1 nil nil 2 nil)
+    (pax-perl-err2   "\\(?1:^ERROR\\)!"                                         1 nil nil 2 nil)))
 
 (defvar larumbe/compilation-error-re-gcc
   '((gcc-warning "^\\(?1:[0-9a-zA-Z\/\._-]+\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:warning\\):" 1 2 3 1 nil)
