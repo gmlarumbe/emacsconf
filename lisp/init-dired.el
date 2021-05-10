@@ -101,6 +101,11 @@
            (";" . dired-collapse-mode)))
 
 
+  ;; Run asynchronously dired commands for copying, renaming and symlinking (through async library)
+  ;; To cancel a copy call `dired-async-kill-process'
+  (dired-async-mode 1)
+
+
   ;; Functionality
   (defun larumbe/dired-jump (arg)
     "Execute `dired-jump'.
