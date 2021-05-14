@@ -14,10 +14,14 @@
   (setq tcl-application "tclsh")
   (setq tcl-command-switches nil)
   :config
+  (defvar larumbe/tcl-braces-face    'larumbe/tcl-braces-face)
+  (defvar larumbe/tcl-brackets-face  'larumbe/tcl-brackets-face)
+  (defface larumbe/tcl-braces-face   '((t (:foreground "goldenrod")))      "Face for TCL Braces"   :group 'tcl-custom-faces)
+  (defface larumbe/tcl-brackets-face '((t (:foreground "dark goldenrod"))) "Face for TCL Brackets" :group 'tcl-custom-faces)
   (defvar larumbe/tcl-font-lock-additional-keywords ; Initially inspired hdl font lock
     (list
-     (list "\\(\\[\\|\\]\\)" 0 '((t (:foreground "goldenrod"))))      ; Braces
-     (list "[()]"            0 '((t (:foreground "dark goldenrod")))) ; Brackets
+     (list "\\(\\[\\|\\]\\)" 0 'larumbe/tcl-braces-face)
+     (list "[()]"            0 'larumbe/tcl-brackets-face)
      ))
   (font-lock-add-keywords 'tcl-mode larumbe/tcl-font-lock-additional-keywords)
 
