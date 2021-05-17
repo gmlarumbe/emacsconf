@@ -297,6 +297,7 @@ If UNIVERSAL-ARG is provided, then simulate as well."
 (defvar larumbe/irun-sources-file       nil)
 (defvar larumbe/irun-top-module         nil)
 (defvar larumbe/irun-compilation-dir    nil)
+(defvar larumbe/irun-library-name       nil)
 (defvar larumbe/irun-opts (concat "-64bit "
                                   "-v93 "
                                   "-relax "
@@ -324,7 +325,7 @@ If UNIVERSAL-ARG is provided, then simulate as well."
           larumbe/irun-opts
           (larumbe/irun-vivado-build-simlib-args)
           "-f " larumbe/irun-sources-file " "
-          "-top xil_defaultlib." larumbe/irun-top-module " "
+          "-top " larumbe/irun-library-name "." larumbe/irun-top-module " "
           "-top glbl " larumbe/irun-glbl-path))
 
 
@@ -336,6 +337,7 @@ If UNIVERSAL-ARG is provided, then simulate as well."
     (setq larumbe/irun-sources-file    (nth 0 files-list))
     (setq larumbe/irun-top-module      (nth 1 files-list))
     (setq larumbe/irun-compilation-dir (nth 2 files-list))
+    (setq larumbe/irun-library-name    (nth 3 files-list))
     (setq larumbe/irun-command (larumbe/irun-build-command))))
 
 
