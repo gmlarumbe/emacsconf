@@ -298,6 +298,7 @@ If UNIVERSAL-ARG is provided, then simulate as well."
 (defvar larumbe/irun-top-module         nil)
 (defvar larumbe/irun-compilation-dir    nil)
 (defvar larumbe/irun-library-name       nil)
+(defvar larumbe/irun-uvm-test-name      nil)
 (defvar larumbe/irun-opts (concat "-64bit "
                                   "-v93 "
                                   "-relax "
@@ -321,12 +322,15 @@ If UNIVERSAL-ARG is provided, then simulate as well."
 
 (defun larumbe/irun-build-command ()
   "Irun build command."
-  (concat "irun "
-          larumbe/irun-opts
-          (larumbe/irun-vivado-build-simlib-args)
-          "-f " larumbe/irun-sources-file " "
-          "-top " larumbe/irun-library-name "." larumbe/irun-top-module " "
-          "-top glbl " larumbe/irun-glbl-path))
+  (let (uvm-args)
+    (when larumbe/irun-uvm-test-name
+      (setq uvm-args (concat "-uvm +UVM_TESTNAME=" larumbe/irun-uvm-test-name)))
+    (concat "irun "
+            larumbe/irun-opts
+            (larumbe/irun-vivado-build-simlib-args)
+            "-f " larumbe/irun-sources-file " "
+            "-top " larumbe/irun-library-name "." larumbe/irun-top-module " "
+            "-top glbl " larumbe/irun-glbl-path " " uvm-args)))
 
 
 (defun larumbe/irun-set-active-project ()
@@ -338,6 +342,7 @@ If UNIVERSAL-ARG is provided, then simulate as well."
     (setq larumbe/irun-top-module      (nth 1 files-list))
     (setq larumbe/irun-compilation-dir (nth 2 files-list))
     (setq larumbe/irun-library-name    (nth 3 files-list))
+    (setq larumbe/irun-uvm-test-name   (nth 4 files-list))
     (setq larumbe/irun-command (larumbe/irun-build-command))))
 
 
