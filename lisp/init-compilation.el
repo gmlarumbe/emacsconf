@@ -82,7 +82,8 @@
     (pax-tb-err      "\\(?1:^TB_ERROR\\) @ [0-9\.]+:"                           1 nil nil 2 nil)
     (pax-tb-fatal    "\\(?1:^TB_FATAL\\) @ [0-9\.]+:"                           1 nil nil 2 nil)
     (pax-perl-err    "\\(?1:^ERROR\\):"                                         1 nil nil 2 nil)
-    (pax-perl-err2   "\\(?1:^ERROR\\)!"                                         1 nil nil 2 nil)))
+    (pax-perl-err2   "\\(?1:^ERROR\\)!"                                         1 nil nil 2 nil)
+    (pax-gasearch    "^\\(?1:[0-9]+\\) \\(?2:[a-zA-Z0-9\\_\\-\\.\\/]+\\)+ \"\\(?3:[a-zA-Z0-9\\_\\-\\.]+\\)+\" \\(?4:[0-9]+\\)" 2 nil nil 2 nil (1 compilation-info-face) (3 compilation-warning-face) (4 compilation-info-face))))
 
 (defvar larumbe/compilation-error-re-gcc
   '((gcc-warning "^\\(?1:[0-9a-zA-Z\/\._-]+\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): \\(?4:warning\\):" 1 2 3 1 nil)
