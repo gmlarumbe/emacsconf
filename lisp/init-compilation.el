@@ -78,6 +78,7 @@
 (defvar larumbe/compilation-error-re-pax
   '((pax-assert-err  "** \\(?1:assertion failure\\) at time \\(?2:[0-9.]+\\)"   1 nil nil 2 nil (2 compilation-line-face))
     (pax-tb-note     "\\(?1:^TB_NOTE\\) @ [0-9\.]+:"                            1 nil nil 0 nil)
+    (pax-tb-debug    "\\(?1:^TB_DEBUG\\) @ [0-9\.]+:"                           1 nil nil 0 nil (1 compilation-line-face))
     (pax-tb-warning  "\\(?1:^TB_WARNING\\) @ [0-9\.]+:"                         1 nil nil 1 nil)
     (pax-tb-err      "\\(?1:^TB_ERROR\\) @ [0-9\.]+:"                           1 nil nil 2 nil)
     (pax-tb-fatal    "\\(?1:^TB_FATAL\\) @ [0-9\.]+:"                           1 nil nil 2 nil)
