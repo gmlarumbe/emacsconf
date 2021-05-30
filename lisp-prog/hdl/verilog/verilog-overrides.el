@@ -51,7 +51,7 @@ This will normally happen after calling `modi/verilog-find-parent-module'."
          (ag-win (get-buffer-window ag-buf)))
     (if ag-win
         (delete-window ag-win)
-      (electric-verilog-terminate-line))))
+      (call-interactively #'electric-verilog-terminate-line))))
 
 
 

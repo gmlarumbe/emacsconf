@@ -42,7 +42,7 @@ This will normally happen after calling `larumbe/prog-mode-definitions' in elisp
         (progn
           (delete-window xref-win)
           (kill-buffer xref-buf))
-      (newline))))
+      (call-interactively #'newline))))
 
 
 (defun larumbe/insert-time-stamp-elisp ()
