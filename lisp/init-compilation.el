@@ -22,8 +22,8 @@
 (defvar larumbe/compilation-error-re-vivado
   '((vivado-error     "^\\(?1:^ERROR: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)"            3   4   nil 2 nil (1 compilation-error-face))
     (vivado-error2    "^\\(?1:^ERROR:\\) "                                                        1   nil nil 2 nil)
-    (vivado-critical  "^\\(?1:^CRITICAL WARNING: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)" 3   4   nil 2 nil (1 compilation-error-face))
-    (vivado-critical2 "^\\(?1:^CRITICAL WARNING:\\) "                                             1   nil nil 2 nil)
+    (vivado-critical  "^\\(?1:^CRITICAL WARNING: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)" 3   4   nil 1 nil (1 compilation-error-face))
+    (vivado-critical2 "^\\(?1:^CRITICAL WARNING:\\) "                                             1   nil nil 1 nil)
     (vivado-warning   "^\\(?1:^WARNING: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)"          3   4   nil 1 nil (1 compilation-warning-face))
     (vivado-warning2  "^\\(?1:^WARNING:\\) "                                                      1   nil nil 1 nil)
     (vivado-info      "^\\(?1:^INFO: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)"             3   4   nil 0 nil (1 compilation-info-face))
@@ -42,8 +42,8 @@
 
 ;; Fetched from verilog-mode variable: `verilog-error-regexp-emacs-alist'.
 (defvar larumbe/compilation-error-re-verilator
-  '((verilator-warning "%?\\(Error\\)\\(-[^:]+\\|\\):[\n ]*\\([^ \t:]+\\):\\([0-9]+\\):"    3 4 nil 2 nil (1 compilation-error-face) (2 compilation-line-face))
-    (verilator-error   "%?\\(Warning\\)\\(-[^:]+\\|\\):[\n ]*\\([^ \t:]+\\):\\([0-9]+\\):"  3 4 nil 1 nil (1 compilation-warning-face) (2 compilation-line-face))))
+  '((verilator-error   "%?\\(Error\\)\\(-[^:]+\\|\\):[\n ]*\\([^ \t:]+\\):\\([0-9]+\\):"    3 4 nil 2 nil (1 compilation-error-face)   (2 compilation-line-face))
+    (verilator-warning "%?\\(Warning\\)\\(-[^:]+\\|\\):[\n ]*\\([^ \t:]+\\):\\([0-9]+\\):"  3 4 nil 1 nil (1 compilation-warning-face) (2 compilation-line-face))))
 
 (defvar larumbe/compilation-error-re-iverilog
   '((iverilog-unsupported  "\\(?1:.*\\):\\(?2:[0-9]+\\):.*sorry:"            1 2 nil   0 nil (1 compilation-info-face) (2 compilation-line-face))
@@ -72,7 +72,7 @@
 (defvar larumbe/compilation-error-re-scons
   '((scons-target-cmd    "\\(?1:^[a-zA-Z_-]+\\)(\\[\"\\(?2:.*\\)\"\\],"   2 nil nil 0 nil (1 compilation-line-face))
     (scons-target-err    "\\(?1:NOK\\)$"                                  1 nil nil 2 nil (1 compilation-error-face))
-    (scons-target-cw     "\\(?1:critical warning\\)$"                     1 nil nil 2 nil (1 compilation-warning-face))
+    (scons-target-cw     "\\(?1:critical warning\\)$"                     1 nil nil 1 nil (1 compilation-warning-face))
     (scons-target-ok     "\\(?1:OK\\)$"                                   1 nil nil 0 nil (1 compilation-info-face))))
 
 (defvar larumbe/compilation-error-re-pax
@@ -129,7 +129,7 @@
               ("TAB" . completion-at-point)                  ; Similar to ansi-term (e.g. for vivado tcl-shell)
               ("C-j" . larumbe/compilation-interactive-recompile)) ; sandbox oriented
   :hook ((compilation-mode . larumbe/compilation-hook)
-	 (compilation-filter . colorize-compilation-buffer))
+         (compilation-filter . colorize-compilation-buffer))
   :commands (recompile
              larumbe/compilation-show-buffer
              larumbe/compilation-error-re-set
@@ -145,6 +145,7 @@
   ;; 0 -- don't skip any messages.
   (setq compilation-skip-threshold 2) ; Compilation error jumping settings
 
+  (setq compilation-scroll-output 'first-error)
 
 ;;;; Defuns
   ;; Master function
@@ -238,7 +239,7 @@ If passed PARSER, set corresponding regexp to be evaluated at the header."
     (setq truncate-lines t)) ; Do not enable linum-mode since it slows down large compilation buffers
 
 
-  ;; https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode  
+  ;; https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode
   (defun colorize-compilation-buffer ()
     "Apply color to comint buffers (e.g. convert '\033[0;31m' to red)."
     (ansi-color-apply-on-region compilation-filter-start (point)))
