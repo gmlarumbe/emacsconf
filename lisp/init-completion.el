@@ -5,53 +5,31 @@
 ;;
 ;;; Code:
 
-;;;; Auto-complete
-(defvar larumbe/auto-complete-enable t
+;;;; Company
+(defvar larumbe/company-enable t
   "Conditionally determine in a hook if mode is enabled.")
 
 
-(use-package auto-complete
+(use-package company
   :diminish
-  :commands (larumbe/auto-complete-mode)
-  :bind ("<S-return>" . auto-complete)
-  :bind (:map ac-completing-map
-              ("C-n" . ac-next)
-              ("C-p" . ac-previous)
-              ("C-j" . ac-complete)
-              ("C-g" . ac-stop) ; Prevents aborting YAsnippet if occurs at the same time as autocompleting
-              ("RET" . ac-complete))
+  :commands (larumbe/company-mode)
+  :bind ("<S-return>" . company-complete-common)
+  :bind (:map company-active-map
+         ("C-n" . company-select-next-or-abort)
+         ("C-p" . company-select-previous-or-abort)
+         ("C-j" . company-complete-selection))
   :config
-  (setq ac-delay 1.3)
-  ;; INFO: Auto-complete has 3 mode-maps: https://emacs.stackexchange.com/questions/3958/remove-tab-trigger-from-auto-complete
-  (define-key ac-mode-map       (kbd "TAB") nil)
-  (define-key ac-completing-map (kbd "TAB") nil)
-  (define-key ac-completing-map [tab] nil)
+  (setq company-idle-delay nil) ; Disable auto complete
 
-  ;; AC-Sources
-  ;; Default sources will be `ac-source-words-in-same-mode-buffers'
-
-  ;; Provides `ac-source-gtags'
-  (use-package auto-complete-gtags
-    :demand
-    :ensure nil
-    :config
-    (setq ac-gtags-modes '(c-mode cc-mode c++-mode verilog-mode emacs-lisp-mode vhdl-mode sh-mode python-mode tcl-mode)))
-
-  ;; Provides `ac-source-verilog'
-  (use-package auto-complete-verilog
-    :demand
-    :ensure nil)
-
-  (defun larumbe/auto-complete-mode (&optional arg)
-    "Enable auto-complete-mode depending on value of `larumbe/auto-complete-enable'.
+  (defun larumbe/company-mode (&optional arg)
+    "Enable company-mode depending on value of `larumbe/company-enable'.
 
 Purpose is to use this function as a conditional hook.
-ARG will be passed to `auto-complete-mode' wrapped function."
+ARG will be passed to `company-mode' wrapped function."
     (interactive)
-    (if larumbe/auto-complete-enable
-        (auto-complete-mode arg)
-      (auto-complete-mode -1))))
-
+    (if larumbe/company-enable
+        (company-mode arg)
+      (company-mode -1))))
 
 
 ;;;; Yasnippet

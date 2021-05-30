@@ -68,7 +68,7 @@ as well as for C/C++ or Python..."
   "Basic Hook for derived programming modes."
   (larumbe/ggtags-mode        1)
   (larumbe/projectile-mode    1)
-  (larumbe/auto-complete-mode 1)
+  (larumbe/company-mode       1)
   (show-paren-mode            1)
   (linum-mode                 1)
   (outshine-mode              1)
