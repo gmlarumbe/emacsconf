@@ -15,8 +15,12 @@
   ;; and therefore its not possible to make use of buffer killing while switching.
   ;; Enable, so that commands like `ido-kill-buffer-at-head' can be performed
   (ido-mode 1)
+  (ido-everywhere -1)
+  ;; INFO: Theoretically, `helm-mode--disable-ido-maybe' will try to disable ido when `ido-everywhere' is set.
+  ;; However, with previous statement only `ido-mode' but not `ido-everywhere' so everything should work just fine.
 
   :bind (("M-x"     . helm-M-x)
+         ("C-x k"   . helm-mini)       ; Relay on ido for switch-buffer and C-k for individual kills
          ("C-x C-f" . helm-find-files)
          ("C-x r b" . helm-filtered-bookmarks)
          ("M-s o"   . helm-occur)      ; Might be advised
@@ -41,7 +45,6 @@
 
   ;; Actual config
   (add-to-list 'helm-completing-read-handlers-alist '(switch-to-buffer . ido))
-  (add-to-list 'helm-completing-read-handlers-alist '(kill-buffer      . ido))
   (helm-mode 1)
   (helm-autoresize-mode 1)
 
