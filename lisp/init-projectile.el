@@ -10,12 +10,13 @@
   :diminish projectile-mode       ; Also diminishes `larumbe/projectile-custom-mode-line', as it is already available at the left corner
   :bind (:map projectile-mode-map ; Projectile 2.0 removes automatic keybindings
               ("C-c p j" . projectile-find-tag)
-              ("C-c p r" . projectile-regenerate-tags)
+              ("C-c p u" . projectile-regenerate-tags)
               ("C-c p c" . projectile-compile-project)
               ("C-c p f" . projectile-find-file)
               ("C-c p s" . projectile-switch-project)
               ("C-c p a" . helm-projectile-ag)
-              ("C-c p g" . helm-projectile-grep))
+              ("C-c p g" . helm-projectile-grep)
+              ("C-c p r" . helm-projectile-rg))
 
   :commands (projectile-project-name
              larumbe/projectile-custom-mode-line

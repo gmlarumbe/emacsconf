@@ -25,6 +25,7 @@
          ("C-x r b" . helm-filtered-bookmarks)
          ("M-s o"   . helm-occur)      ; Might be advised
          ("M-g a"   . helm-do-grep-ag) ; Avoid `C-x c' prefix
+         ("M-g r"   . helm-rg)
          ("M-I"     . helm-imenu)
          ("C-x c /" . helm-find) ; Enable C-x c prefix commands
          ("C-x c p" . helm-list-emacs-process)

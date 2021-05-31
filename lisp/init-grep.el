@@ -1,7 +1,9 @@
-;;; init-ag.el --- Silver Searcher  -*- lexical-binding: t -*-
+;;; init-grep.el --- Grep/Silver Searcher/RipGrep  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;; Code:
 
+
+;;;; Silver-searcher
 (use-package ag
   :commands (ag/search
              larumbe/ag-search-file-list
@@ -59,7 +61,7 @@ List of files provided by project's 'gtags.file' will filter the search."
                 ("C-x s" . wgrep-save-all-buffers)))
 
 
-;;;; Config
+;;;;; Config
   (setq ag-arguments           ; Fetched from modi verilog config
         '("--nogroup"          ; mandatory argument for ag.el as per https://github.com/Wilfred/ag.el/issues/41
           "--skip-vcs-ignores" ; Ignore files/dirs ONLY from `.ignore'
@@ -75,6 +77,16 @@ List of files provided by project's 'gtags.file' will filter the search."
   (add-hook 'ag-search-finished-hook #'ag/jump-to-result-if-only-one-match))
 
 
-(provide 'init-ag)
 
-;;; init-ag.el ends here
+;;;; RipGrep
+(use-package ripgrep)
+
+(use-package deadgrep)
+
+;; INFO: Even though these two packages are downloaded,
+;; `helm-rg' and `helm-projectile-rg' seem to be just enough
+
+
+(provide 'init-grep)
+
+;;; init-grep.el ends here
