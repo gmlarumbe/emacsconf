@@ -140,7 +140,7 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
   :commands (wide-column-mode))
 
 
-(use-package devdocs)
+;; (use-package devdocs)
 
 
 (use-package time-stamp
