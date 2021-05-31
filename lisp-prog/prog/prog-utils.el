@@ -2,15 +2,16 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'init-completion)
 
 (defun larumbe/prog-mode-definitions ()
   "Find definition of symbol at point.
 If pointing a URL/file, visit that URL/file instead.
 
-Selects between ggtags/xref to find definitions based on major-mode.
+Selects between ggtags/xref to find definitions based on `major-mode'.
 
 INFO: For some major-modes, xref will use global/ggtags as a backend
-if configured. However, for elisp seems it's not the default engine,
+if configured.  However, for elisp seems it's not the default engine,
 as well as for C/C++ or Python..."
   (interactive)
   (let ((file (thing-at-point 'filename))
@@ -32,14 +33,13 @@ as well as for C/C++ or Python..."
 (defun larumbe/prog-mode-references ()
   "Find references of symbol at point.
 
-Selects between ggtags/xref to find references based on major-mode.
+Selects between ggtags/xref to find references based on `major-mode'.
 
 INFO: For some major-modes, xref will use global/ggtags as a backend
-if configured. However, for elisp seems it's not the default engine,
+if configured.  However, for elisp seems it's not the default engine,
 as well as for C/C++ or Python..."
   (interactive)
-  (let ((file (thing-at-point 'filename))
-        (ref  (thing-at-point 'symbol)))
+  (let ((ref  (thing-at-point 'symbol)))
     (cond ((or (string= major-mode "c-mode")
                (string= major-mode "python-mode")
                (string= major-mode "emacs-lisp-mode"))
