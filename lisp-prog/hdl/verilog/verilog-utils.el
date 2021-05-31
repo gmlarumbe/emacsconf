@@ -349,7 +349,6 @@ Used for flycheck and vhier packages."
 
 (defun larumbe/verilog-hook ()
   "Verilog hook."
-  (set 'ac-sources '(ac-source-verilog ac-source-gtags)) ; Auto-complete verilog-sources
   (setq larumbe/verilog-open-dirs (nth 0 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
   (setq larumbe/verilog-open-pkgs (nth 1 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
   (setq verilog-library-directories larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)

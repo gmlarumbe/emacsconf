@@ -2,10 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(defun my-cc-mode-hook ()
-  "C/C++ hook."
-  (set 'ac-sources '(ac-source-semantic-raw ac-source-gtags)))
-
 
 ;;;; Gtags
 (defun larumbe/gtags-c-files-pwd-recursive ()

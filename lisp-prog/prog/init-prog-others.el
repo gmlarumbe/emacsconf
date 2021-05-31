@@ -6,16 +6,10 @@
 ;;;; XML
 (use-package nxml-mode
   :ensure nil
-  :after (auto-complete)
-  :hook ((nxml-mode . larumbe/xml-mode-hook)
-	 (nxml-mode . larumbe/prog-mode-keys)
+  :hook ((nxml-mode . larumbe/prog-mode-keys)
          (nxml-mode . larumbe/prog-mode-hook)) ; Since it is not a child of prog-mode, requires common configuration settings
   :config
-  (setq nxml-child-indent 4)
-
-  (defun larumbe/xml-mode-hook ()
-    (set 'ac-sources '(ac-source-gtags
-                       ac-source-symbols))))
+  (setq nxml-child-indent 4))
 
 
 ;;;; DOCBOOK
@@ -30,13 +24,8 @@
   :commands (vivado-xdc-mode
              larumbe/vivado-shell
              larumbe/vivado-shell-tcl-send-line-or-region-and-step
-             larumbe/vivado-shell-auto-complete-mode)
-  :mode (("\\.xdc\\'" . vivado-xdc-mode))
-  :hook ((vivado-mode . my-vivado-mode-hook))
-  :config
-  (defun my-vivado-mode-hook ()
-    (set 'ac-sources '(ac-source-gtags
-                       ac-source-symbols))))
+             larumbe/vivado-shell-completion-at-point-mode)
+  :mode (("\\.xdc\\'" . vivado-xdc-mode)))
 
 
 ;;;; HTML
@@ -44,13 +33,8 @@
   :bind (:map mhtml-mode-map
               ("C-M-u" . sgml-skip-tag-backward)
               ("C-M-d" . sgml-skip-tag-forward))
-  :hook ((mthml-mode . my-mhtml-mode-hook))
   :config
   (setq sgml-basic-offset 4) ; Indentation of parent mode
-  (defun my-mhtml-mode-hook ()
-    (set 'ac-sources
-         '(ac-source-gtags
-           ac-source-symbols)))
 
   (use-package web-beautify
     ;; Requires 'js-beautify' binary installed from npm (nodejs)

@@ -35,11 +35,6 @@
 
 
 ;;;; Others
-(defun larumbe/vhdl-mode-hook ()
-  "VHDL-mode hook."
-  (set 'ac-sources '(ac-source-gtags)))
-
-
 ;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
 (defun larumbe/vhdl-list-directories-of-open-buffers ()
   "Return a list of directories from current VHDL open files.

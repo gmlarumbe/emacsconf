@@ -63,9 +63,7 @@ Try to add it before Commentary section."
                   lisp-interaction-mode-hook
                   ielm-mode-hook
                   eval-expression-minibuffer-setup-hook))
-    (add-hook hook #'eldoc-mode))
-  ;; Auto-complete
-  (set 'ac-sources '(ac-source-gtags ac-source-symbols)))
+    (add-hook hook #'eldoc-mode)))
 
 
 

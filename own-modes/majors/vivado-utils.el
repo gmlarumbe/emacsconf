@@ -455,7 +455,7 @@
     (comint-send-string proc "\n")))
 
 
-(define-minor-mode larumbe/vivado-shell-auto-complete-mode
+(define-minor-mode larumbe/vivado-shell-completion-at-point-mode
   "Add extensions for Xilinx Vivado TCL shell.
 Autocompletion based on `vivado' package keywords. "
   :keymap
@@ -463,7 +463,7 @@ Autocompletion based on `vivado' package keywords. "
   (when (not (equal (buffer-name (current-buffer)) larumbe/vivado-tcl-shell-buffer))
     (error "Not in Vivado shell buffer!"))
   (make-local-variable 'comint-dynamic-complete-functions) ; Use this variable instead of `completion-at-point-functions' to preserve file-name expansion
-  (if larumbe/vivado-shell-auto-complete-mode
+  (if larumbe/vivado-shell-completion-at-point-mode
       (add-to-list 'comint-dynamic-complete-functions #'larumbe/vivado-shell-completion-at-point t)
     (delete #'larumbe/vivado-shell-completion-at-point comint-dynamic-complete-functions)))
 
@@ -479,7 +479,7 @@ Autocompletion based on `vivado' package keywords. "
         (bufname larumbe/vivado-tcl-shell-buffer)
         (parser  "vivado"))
     (larumbe/compilation-interactive command bufname parser)
-    (larumbe/vivado-shell-auto-complete-mode 1)))
+    (larumbe/vivado-shell-completion-at-point-mode 1)))
 
 
 ;; Same as `larumbe/tcl-send-line-or-region-and-step'  but intended for sending text to a *compilation* Vivado Shell with regexps

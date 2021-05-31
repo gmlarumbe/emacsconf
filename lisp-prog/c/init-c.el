@@ -9,7 +9,6 @@
               ("C-c ." . semantic-ia-fast-jump)
               ("C-c ," . pop-global-mark) ; Requires unbinding of <C-c ,> at semantic-mode-map
               )
-  :hook ((c-mode-common . my-cc-mode-hook))
   :config
   (setq c-default-style "linux") ; Indent and style
   (setq c-basic-offset 4)

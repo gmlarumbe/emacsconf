@@ -1,7 +1,7 @@
 ;;; init-completion.el --- Completion  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;
-;; Auto-complete + Yasnippet + Hydra
+;; Company + Yasnippet + Hydra
 ;;
 ;;; Code:
 
@@ -20,6 +20,9 @@
          ("C-j" . company-complete-selection))
   :config
   (setq company-idle-delay nil) ; Disable auto complete
+  (defvar larumbe/company-backends-common '((company-keywords
+                                             company-capf
+                                             company-gtags)))
 
   (defun larumbe/company-mode (&optional arg)
     "Enable company-mode depending on value of `larumbe/company-enable'.

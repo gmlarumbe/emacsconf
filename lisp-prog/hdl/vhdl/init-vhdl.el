@@ -7,8 +7,7 @@
   :commands (larumbe/vhdl-index-menu-init
              larumbe/vhdl-jump-to-module-at-point
              larumbe/vhdl-find-parent-module)
-  :hook ((vhdl-mode . larumbe/vhdl-mode-hook)
-         (vhdl-mode . larumbe/vhdl-flycheck-ghdl-hook))
+  :hook ((vhdl-mode . larumbe/vhdl-flycheck-ghdl-hook))
   :bind (:map vhdl-mode-map
               ("<return>"        . larumbe/vhdl-electric-return)
               ("C-M-a"           . vhdl-beginning-of-defun)

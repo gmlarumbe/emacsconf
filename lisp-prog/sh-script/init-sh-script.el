@@ -9,7 +9,6 @@
               ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)
               ("C-c C-k" . sh-send-line-or-region-and-step)
               ("C-c C-t" . hydra-sh/body))
-  :hook ((sh-mode . larumbe/sh-mode-hook))
   :config
   (require 'sh-script-utils)
   (require 'sh-script-templates))

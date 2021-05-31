@@ -77,7 +77,8 @@ as well as for C/C++ or Python..."
   (hs-minor-mode              1)
   (wide-column-mode           1)
   (setq truncate-lines        t)
-  (setq fill-column          80))
+  (setq fill-column          80)
+  (setq-local company-backends larumbe/company-backends-common))
 
 
 (provide 'prog-utils)
