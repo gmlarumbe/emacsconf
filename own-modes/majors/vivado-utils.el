@@ -438,6 +438,16 @@
 
 
 
+;; INFO: This function has some limitations because of `larumbe/vivado-shell-completion-at-point' and possibly `comint-dynamic-complete-functions'
+;;
+;;       Vivado% |
+;;       <C-return> would show a list with all posible completions
+;;
+;;       Vivado% get|
+;;       <C-return> wouldn'r return anything (seems that `larumbe/vivado-shell-completion-at-point' is not even executed)
+;;
+;;       Vivado% |get
+;;       <C-return> would show a list with all completions starting with "get"
 (defun larumbe/vivado-shell-completion-at-point ()
   "Used as an element of `completion-at-point-functions'."
   (let* ((b (save-excursion (skip-chars-backward "a-zA-Z0-9_") (point)))
