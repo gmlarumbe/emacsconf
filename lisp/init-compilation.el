@@ -126,9 +126,9 @@
               ("j"   . larumbe/recompile-with-regexp-alist)
               ("t"   . larumbe/compilation-threshold))
   :bind (:map comint-mode-map
-              ("TAB" . completion-at-point)                  ; Similar to ansi-term (e.g. for vivado tcl-shell)
+              ("TAB" . completion-at-point) ; Similar to ansi-term (e.g. for vivado tcl-shell)
               ("C-j" . larumbe/compilation-interactive-recompile)) ; sandbox oriented
-  :hook ((compilation-mode . larumbe/compilation-hook)
+  :hook ((compilation-mode   . larumbe/compilation-hook)
          (compilation-filter . colorize-compilation-buffer))
   :commands (recompile
              larumbe/compilation-show-buffer
@@ -291,6 +291,8 @@ of commands to be executed by sending them through `comint-send-string'"
     "Will only work in `comint-mode' after `larumbe/compilation-interactive-sandbox' was executed.
 Makes use of buffer-local variable `larumbe/compilation-interactive-buildcmd' to rebuild a target."
     (interactive)
+    (unless larumbe/compilation-interactive-buildcmd
+      (error "No interactive recompile command was set"))
     (let (proc)
       (when (string= major-mode "comint-mode")
         (setq proc (get-buffer-process (current-buffer)))

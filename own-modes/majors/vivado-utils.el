@@ -438,16 +438,6 @@
 
 
 
-;; INFO: This function has some limitations because of `larumbe/vivado-shell-completion-at-point' and possibly `comint-dynamic-complete-functions'
-;;
-;;       Vivado% |
-;;       <C-return> would show a list with all posible completions
-;;
-;;       Vivado% get|
-;;       <C-return> wouldn'r return anything (seems that `larumbe/vivado-shell-completion-at-point' is not even executed)
-;;
-;;       Vivado% |get
-;;       <C-return> would show a list with all completions starting with "get"
 (defun larumbe/vivado-shell-completion-at-point ()
   "Used as an element of `completion-at-point-functions'."
   (let* ((b (save-excursion (skip-chars-backward "a-zA-Z0-9_") (point)))
@@ -474,7 +464,9 @@ Autocompletion based on `vivado' package keywords. "
     (error "Not in Vivado shell buffer!"))
   (make-local-variable 'comint-dynamic-complete-functions) ; Use this variable instead of `completion-at-point-functions' to preserve file-name expansion
   (if larumbe/vivado-shell-completion-at-point-mode
-      (add-to-list 'comint-dynamic-complete-functions #'larumbe/vivado-shell-completion-at-point t)
+      ;; INFO: It seems that without appending, the `larumbe/vivado-shell-completion-at-point' will have precedence
+      ;; over other functions present in `comint-dynamic-complete-functions'
+      (add-to-list 'comint-dynamic-complete-functions #'larumbe/vivado-shell-completion-at-point)
     (delete #'larumbe/vivado-shell-completion-at-point comint-dynamic-complete-functions)))
 
 
@@ -489,7 +481,8 @@ Autocompletion based on `vivado' package keywords. "
         (bufname larumbe/vivado-tcl-shell-buffer)
         (parser  "vivado"))
     (larumbe/compilation-interactive command bufname parser)
-    (larumbe/vivado-shell-completion-at-point-mode 1)))
+    (larumbe/vivado-shell-completion-at-point-mode 1)
+    (company-mode 1)))
 
 
 ;; Same as `larumbe/tcl-send-line-or-region-and-step'  but intended for sending text to a *compilation* Vivado Shell with regexps
