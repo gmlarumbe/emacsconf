@@ -70,10 +70,10 @@
     (python-log-info    "\\(?1:[0-9-]+ [0-9:,]+\\) - \\(?2:[a-zA-Z0-9.]+\\) - \\(?3:INFO\\) - "    3 nil nil 0 2 (1 compilation-line-face) (3 compilation-info-face))))
 
 (defvar larumbe/compilation-error-re-scons
-  '((scons-target-cmd    "\\(?1:^[a-zA-Z_-]+\\)(\\[\"\\(?2:.*\\)\"\\],"   2 nil nil 0 nil (1 compilation-line-face))
-    (scons-target-err    "\\(?1:NOK\\)$"                                  1 nil nil 2 nil (1 compilation-error-face))
-    (scons-target-cw     "\\(?1:critical warning\\)$"                     1 nil nil 1 nil (1 compilation-warning-face))
-    (scons-target-ok     "\\(?1:OK\\)$"                                   1 nil nil 0 nil (1 compilation-info-face))))
+  '((scons-target-cmd    "\\(?1:^[a-zA-Z_-]+\\)(\\(?2:.*\\))$" nil nil nil 0 nil (1 compilation-line-face) (2 compilation-info-face))
+    (scons-target-err    "\\(?1:NOK\\)$"                         1 nil nil 2 nil (1 compilation-error-face))
+    (scons-target-cw     "\\(?1:critical warning\\)$"            1 nil nil 1 nil (1 compilation-warning-face))
+    (scons-target-ok     "\\(?1:OK\\)$"                          1 nil nil 0 nil (1 compilation-info-face))))
 
 (defvar larumbe/compilation-error-re-pax
   '((pax-assert-err  "** \\(?1:assertion failure\\) at time \\(?2:[0-9.]+\\)"   1 nil nil 2 nil (2 compilation-line-face))
