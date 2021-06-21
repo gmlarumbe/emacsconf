@@ -29,7 +29,7 @@
     (vivado-info      "^\\(?1:^INFO: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)"             3   4   nil 0 nil (1 compilation-info-face))
     (vivado-info2     "^\\(?1:^INFO:\\) "                                                         1   nil nil 0 nil)))
 
-;; Leveraged from verilog-mode (verilog-IES: Incisive Enterprise Simulator)
+;; Leveraged from verilog-mode (verilog-IES: Incisive Enterprise Simulator) and extended for UVM
 (defvar larumbe/compilation-error-re-irun
   '((verilog-IES-fatal    "^[a-z]+: \\(?1:\\*F\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)" 2 3 nil 2 nil (1 compilation-error-face))
     (verilog-IES-fatal2   "^[a-z]+: \\(?1:\\*F\\),[0-9A-Z]+: " 1 nil nil 2 nil)
@@ -38,7 +38,12 @@
     (verilog-IES-warning  "^[a-z]+: \\(?1:\\*W\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)" 2 3 nil 1 nil (1 compilation-warning-face))
     (verilog-IES-warning2 "^[a-z]+: \\(?1:\\*W\\),[0-9A-Z]+: " 1 nil nil 1 nil)
     (verilog-IES-note     "^[a-z]+: \\(?1:\\*N\\),[0-9A-Z]+\\(?:\\(?:\\[[0-9A-Z_,]+\\]\\)? (\\(?2:[^ \t,]+\\),\\(?3:[0-9]+\\)\\)" 2 3 nil 0 nil (1 compilation-info-face))
-    (verilog-IES-note2    "^[a-z]+: \\(?1:\\*N\\),[0-9A-Z]+: " 1 nil nil 0 nil)))
+    (verilog-IES-note2    "^[a-z]+: \\(?1:\\*N\\),[0-9A-Z]+: " 1 nil nil 0 nil)
+    ;; UVM
+    (uvm-fatal   "^\\(?1:UVM_FATAL\\) \\(?2:[a-zA-Z0-9\./_-]+\\)(\\(?3:[0-9]+\\))"   2 3 nil 2 nil (1 compilation-error-face))
+    (uvm-error   "^\\(?1:UVM_ERROR\\) \\(?2:[a-zA-Z0-9\./_-]+\\)(\\(?3:[0-9]+\\))"   2 3 nil 2 nil (1 compilation-error-face))
+    (uvm-warning "^\\(?1:UVM_WARNING\\) \\(?2:[a-zA-Z0-9\./_-]+\\)(\\(?3:[0-9]+\\))" 2 3 nil 1 nil (1 compilation-warning-face))
+    (uvm-info    "^\\(?1:UVM_INFO\\) \\(?2:[a-zA-Z0-9\./_-]+\\)(\\(?3:[0-9]+\\))"    2 3 nil 0 nil (1 compilation-info-face))))
 
 ;; Fetched from verilog-mode variable: `verilog-error-regexp-emacs-alist'.
 (defvar larumbe/compilation-error-re-verilator
