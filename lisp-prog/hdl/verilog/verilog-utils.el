@@ -354,7 +354,8 @@ Used for flycheck and vhier packages."
   (setq verilog-library-directories larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
   (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
   (larumbe/verilog-time-stamp-setup)
-  (larumbe/verilog-find-semicolon-in-instance-comments))
+  (larumbe/verilog-find-semicolon-in-instance-comments)
+  (setq-local yas-indent-line 'fixed))
 
 
 
