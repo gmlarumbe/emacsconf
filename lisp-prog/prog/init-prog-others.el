@@ -207,7 +207,7 @@
 
   (define-innermode poly-conf-c-innermode
     :mode 'c-mode
-    :head-matcher (cons "\\(?1:\\)#\\(if\\|else\\|endif\\|elsif\\|include\\)" 1) ; Capture group 1 is a hack to also include the #(word) inside the C mode
+    :head-matcher (cons "\\(?1:\\)#\\(if\\|else\\|endif\\|elsif\\|include\\|ITERATE\\)" 1) ; Capture group 1 is a hack to also include the #(word) inside the C mode
     :tail-matcher "\n"
     :head-mode 'host
     :tail-mode 'host)
