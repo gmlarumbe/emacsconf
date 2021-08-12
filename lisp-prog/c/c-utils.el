@@ -3,6 +3,12 @@
 ;;; Code:
 
 
+;;;; Hook
+(defun larumbe/c-or-c++-mode-hook ()
+  "Custom C/C++ hook."
+  (hide-ifdef-mode 1))
+
+
 ;;;; Gtags
 (defun larumbe/gtags-c-files-pwd-recursive ()
   "Generate gtags.files for C files on current directory (.c .h and .cpp extensions)."
