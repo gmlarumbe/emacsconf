@@ -72,11 +72,43 @@ in order to check pending project actions. "
   :bind (:map diff-mode-map
               ("M-o" . other-window)) ; Remove `M-o' binding (Overrides 'diff-goto-source, which is defined by `o' as well)
   :hook ((diff-mode . (lambda () (setq truncate-lines t)))
-         (diff-mode . linum-mode))
+         (diff-mode . linum-mode)))
+
+(use-package ediff
   :config
+  ;; Layout configuration
   (require 'ediff-wind)
   (setq ediff-split-window-function #'split-window-horizontally)
-  (setq ediff-window-setup-function #'ediff-setup-windows-plain))
+  (setq ediff-window-setup-function #'ediff-setup-windows-plain)
+
+  ;; Restoring windows and layout after an Ediff session:
+  ;; https://emacs.stackexchange.com/questions/7482/restoring-windows-and-layout-after-an-ediff-session
+  (defvar larumbe/ediff-last-windows nil)
+
+  (defun larumbe/store-pre-ediff-winconfig ()
+    (setq larumbe/ediff-last-windows (current-window-configuration)))
+
+  (defun larumbe/restore-pre-ediff-winconfig ()
+    (set-window-configuration larumbe/ediff-last-windows))
+
+  (add-hook 'ediff-before-setup-hook #'larumbe/store-pre-ediff-winconfig)
+  (add-hook 'ediff-quit-hook         #'larumbe/restore-pre-ediff-winconfig)
+
+
+  ;; INFO: Face highlighting color fix due to theme customization
+  ;; These faces were set by 'deeper-blue-theme.el': /home/martigon/.elisp/submodules/emacs/etc/themes/deeper-blue-theme.el:57
+  ;; Ediff comparison of buffers in Magit assumes the following Git convention to compare old to new: revision^..revision
+  ;; This caused that when comparing with ediff with the same range the diffB color was orange and diffA green.
+  ;; That was misleading since it showed adittions in orange and removed things in green.
+  (set-face-attribute 'ediff-current-diff-B nil :background "green4"      :foreground "white" :inherit nil)
+  (set-face-attribute 'ediff-fine-diff-B    nil :background "skyblue4"    :foreground "white" :inherit nil)
+  (set-face-attribute 'ediff-odd-diff-B     nil :background "Grey50"      :foreground "White" :inherit nil)
+  (set-face-attribute 'ediff-current-diff-A nil :background "darkorange3" :foreground "white" :inherit nil)
+  (set-face-attribute 'ediff-fine-diff-A    nil :background "cyan4"       :foreground "white" :inherit nil)
+  (set-face-attribute 'ediff-even-diff-A    nil :background "Grey50"      :foreground "White" :inherit nil)
+  ;; Last tweak to show green changes at the left
+  ;; Meant to be used for 2 buffers. If three are used then it will rotate just once after startup.
+  (add-hook 'ediff-startup-hook #'ediff-swap-buffers))
 
 
 
