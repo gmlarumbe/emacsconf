@@ -64,6 +64,51 @@ ARG will be passed to `ggtags-mode' wrapped function."
 
 
 
+;;;; Global/ctags
+;; INFO: Global does not allow to find external definitions outside project root directory (probably due to security reasons).
+;; In order to do so, there are 2 methods:
+;;   - Use symbolic links to external directories.
+;;   - Make use of GTAGSLIBPATH environment variable.
+;; Associated thread: https://emacs.stackexchange.com/questions/13254/find-external-definition-with-gtags-or-ggtags
+  (defun larumbe/gtags-filelist-create (regex &optional exclude-re dir append)
+    "Generate gtags.files for current directory, unless optional DIR is set.
+Include files that match REGEX.
+If EXCLUDE-RE is set, delete paths with that regexp from generated file.
+If DIR is not specified, use current-directory.
+If APPEND is set, append directory files to already existing tags file."
+    (let (tags-dir)
+      (if dir
+          (setq tags-dir dir)
+        (setq tags-dir default-directory))
+      (message "Creating gtags.files ...")
+      (larumbe/directory-files-recursively-to-file tags-dir "gtags.files" regex append exclude-re)))
+
+
+  (defun larumbe/gtags-create-tags-async-sentinel (process signal)
+    "Sentinel for asynchronous gtags creation."
+    (let ((buf (process-buffer process)))
+      (cond
+       ((equal signal "finished\n")
+        (pop-to-buffer buf)
+        (message "GTAGS generated in %s" buf))
+       ;; Error handling
+       ('t
+        (message "Unison process open message got signal %s" signal)
+        (display-buffer (process-buffer process))))))
+
+
+  (defun larumbe/gtags-create-tags-async (dir)
+    "Similar to `ggtags-create-tags' but asynchronously and adapted to Global+Ctags+Pygments workflow"
+    (interactive "DRoot directory: ")
+    (let ((gtags-cmd "gtags -v")
+          (output-buffer (concat "*gtags-" (file-name-nondirectory (directory-file-name dir)) "*")))
+      (save-window-excursion
+        (async-shell-command (concat "cd " dir " && " gtags-cmd) output-buffer))
+      (message "Started gtags at buffer %s" output-buffer)
+      (set-process-sentinel (get-buffer-process output-buffer) #'larumbe/gtags-create-tags-async-sentinel)))
+
+
+
 ;;;; Auxiliar functions
   (defun larumbe/ggtags-backend-switch ()
     "Switch between diferent backends for Global and ggtags.

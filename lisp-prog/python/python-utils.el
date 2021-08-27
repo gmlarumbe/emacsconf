@@ -138,18 +138,12 @@ If called witih prefix arg HIDEALL, execute `hs-hide-all' (including classes)"
 
 
 ;;;; Gtags
-(defun larumbe/gtags-python-files-pwd-recursive ()
-  "Generate gtags.files for Python files on current directory."
-  (interactive)
-  (larumbe/directory-files-recursively-to-file default-directory "gtags.files" ".py$"))
-
-
 (defun larumbe/ggtags-create-python-tags-recursive ()
   "Create global GTAGS of every Python file in the directory."
   (interactive)
-  (shell-command "touch GTAGS")
-  (larumbe/gtags-python-files-pwd-recursive)
-  (ggtags-create-tags default-directory))
+  (let ((python-file-re "\\.py$"))
+    (larumbe/gtags-filelist-create python-file-re)
+    (larumbe/gtags-create-tags-async default-directory)))
 
 
 

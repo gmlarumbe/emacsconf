@@ -8,6 +8,7 @@
 (require 'which-func)
 (require 'verilog-mode)
 (require 'setup-verilog) ; Modi's setup
+(require 'init-ggtags)
 
 
 ;; Inspired by kmodi's variables (`modi/verilog-identifier-re')
@@ -276,32 +277,15 @@ Ask for ports to be connected until no port is found at current line."
 
 
 ;;;; Gtags
-;; INFO: Global does not allow to find external definitions outside project root directory (probably due to security reasons).
-;; In order to do so, there are 2 methods:
-;;   - Use symbolic links to external directories.
-;;   - Make use of GTAGSLIBPATH environment variable.
-;; Associated thread: https://emacs.stackexchange.com/questions/13254/find-external-definition-with-gtags-or-ggtags
-(defun larumbe/gtags-verilog-files-pwd-recursive (&optional exclude-re dir append)
-  "Generate gtags.files for current directory, unless optional DIR is set.
-If EXCLUDE-RE is set, delete paths with that regexp from generated file.
-If DIR is not specified, use current-directory.
-If APPEND is set, append directory files to already existing tags file."
-  (let (tags-dir)
-    (if dir
-        (setq tags-dir dir)
-      (setq tags-dir default-directory))
-    (larumbe/directory-files-recursively-to-file tags-dir "gtags.files" ".[s]?v[h]?$" append exclude-re)))
-
-
 (defun larumbe/ggtags-create-verilog-tags-recursive ()
   "Create Verilog gtags.files for current directory.
 
 INFO: Exclude custom '*_targets' folders."
   (interactive)
-  (let ((exclude-re (concat (projectile-project-root) "[^/]+_targets")))
-    (shell-command "touch GTAGS")
-    (larumbe/gtags-verilog-files-pwd-recursive exclude-re)
-    (ggtags-create-tags default-directory)))
+  (let ((verilog-file-re "\\.[s]?v[h]?$")
+        (exclude-re      "[^/]+_targets"))
+    (larumbe/gtags-filelist-create verilog-file-re exclude-re)
+    (larumbe/gtags-create-tags-async default-directory)))
 
 
 ;;;; Misc

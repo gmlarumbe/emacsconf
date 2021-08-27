@@ -21,17 +21,13 @@
 
 
 ;;;; Gtags
-(defun larumbe/gtags-vhdl-files-pwd-recursive ()
-  "Generate gtags.files for VHDL files on current directory."
-  (larumbe/directory-files-recursively-to-file default-directory "gtags.files" ".vhd[l]?$"))
-
-
 (defun larumbe/ggtags-create-vhdl-tags-recursive ()
   "Create global GTAGS of every VHDL file in the directory."
   (interactive)
-  (shell-command "touch GTAGS")
-  (larumbe/gtags-vhdl-files-pwd-recursive)
-  (ggtags-create-tags default-directory))
+  (let ((vhdl-file-re "\\.vhd[l]?$"))
+    (larumbe/gtags-filelist-create vhdl-file-re)
+    (larumbe/gtags-create-tags-async default-directory)))
+
 
 
 ;;;; Others

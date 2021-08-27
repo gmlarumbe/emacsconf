@@ -225,13 +225,13 @@ If there is no symbol at point, just skip functionality."
   (interactive)
   (let ((symbol (thing-at-point 'symbol t)))
     (if (use-region-p)
-	(progn
+        (progn
           (call-interactively #'kill-ring-save)
-	  (deactivate-mark))
+          (deactivate-mark))
       ;; If there is no region case, must be a symbol in order to do something relevant
       (when symbol
-	(kill-new symbol)
-	(message symbol)))))
+        (kill-new symbol)
+        (message symbol)))))
 
 
 (defun larumbe/kill-sexp-backwards ()
@@ -444,15 +444,18 @@ DANGER: Comment needs to be substituted from '--' to  mode-specific comment."
       (forward-line 1))))
 
 
-(defun larumbe/buffer-expand-filenames ()
-  "Expands filenames paths present in `current-buffer' line by line."
+(defun larumbe/buffer-expand-filenames (&optional absolute)
+  "Expands filenames paths present in `current-buffer' line by line.
+If ABSOLUTE is set to non-nil filenames will expand to their absolute paths."
   (interactive)
   (let (cur-line)
     (save-excursion
       (goto-char (point-min))
       (while (< (point) (point-max))
         (delete-horizontal-space)
-        (setq cur-line (expand-file-name (thing-at-point 'line) default-directory))
+        (if absolute
+            (setq cur-line (expand-file-name (thing-at-point 'line) default-directory))
+          (setq cur-line (file-relative-name (thing-at-point 'line) default-directory)))
         (kill-line 1)
         (insert cur-line)))))
 
@@ -474,18 +477,22 @@ For example, in SystemVerilog,packages might need to be included before other fi
       (yank))))
 
 
-(defun larumbe/directory-files-recursively-to-file (base-dir file re &optional append exclude-re)
+
+(defun larumbe/directory-files-recursively-to-file (base-dir file re &optional append exclude-re abs-path)
   "Retrieve all files matching regexp RE of a specified BASE-DIR to output FILE.
 If optional APPEND is set to non-nil, append result to existing FILE.
 Otherwise, overwrite old existing FILE with new results.
-If optional EXCLUDE-RE is set, delete paths with that regexp from generated file."
+If optional EXCLUDE-RE is set, delete paths with that regexp from generated file.
+If ABS-PATH is set to non-nil the directory files will be shown as relative paths."
   (let (buf)
     (save-window-excursion
       (with-temp-buffer
         (mapc
          (lambda (dir) (insert (mapconcat #'identity (directory-files-recursively dir re) "\n")))
          (list base-dir))
-        (larumbe/buffer-expand-filenames)
+        (if abs-path
+            (larumbe/buffer-expand-filenames t)
+          (larumbe/buffer-expand-filenames))
         ;; Append to existing file
         (when (and (file-exists-p (concat base-dir file))
                    append)

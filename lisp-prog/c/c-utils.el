@@ -10,18 +10,13 @@
 
 
 ;;;; Gtags
-(defun larumbe/gtags-c-files-pwd-recursive ()
-  "Generate gtags.files for C files on current directory (.c .h and .cpp extensions)."
-  (interactive)
-  (larumbe/directory-files-recursively-to-file default-directory "gtags.files" "\\.[ch]\\\(pp\\)?$"))
-
-
 (defun larumbe/ggtags-create-c-tags-recursive ()
   "Create global GTAGS of every C file in the directory."
   (interactive)
-  (shell-command "touch GTAGS")
-  (larumbe/gtags-c-files-pwd-recursive)
-  (ggtags-create-tags default-directory))
+  (let ((c-file-re "\\.[ch]\\\(pp\\)?$"))
+    (larumbe/gtags-filelist-create c-file-re)
+    (larumbe/gtags-create-tags-async default-directory)))
+
 
 
 (provide 'c-utils)
