@@ -55,8 +55,7 @@
   ;; INFO: Auhentication through .authinfo file
   ;; Plus, the variable `org-jira-users' does not have the expected behaviour
   ;; if the accountId is not findable (that is the case for HP)
-  :config
-  (setq jiralib-url "https://jira.cso-hp.com"))
+  :config)
 
 
 (use-package ejira
@@ -68,6 +67,7 @@
   (use-package dash-functional :demand)
   (use-package jiralib2        :demand)
 
+  (setq ejira-org-directory "~/.ejira")
   (setq ejira-priorities-alist    '(("Highest" . ?A)
                                     ("High"    . ?B)
                                     ("Medium"  . ?C)
