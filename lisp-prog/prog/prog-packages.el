@@ -25,7 +25,15 @@ in order to check pending project actions. "
       ;; ag glob search
       (setq ag-arguments (append ag-arguments '("-G")))
       (setq ag-arguments (append ag-arguments (list regex)))
-      (ag-regexp kwd path))))
+      (ag-regexp kwd path)))
+
+
+  (defun larumbe/wrap-danger-region ()
+    "Wrap current line or region with DANGER comments for `fic-mode' highlighting."
+    (interactive)
+    (let ((text-begin "DANGER")
+          (text-end   "End of DANGER"))
+      (larumbe/comment-tag-line-or-region text-begin text-end))))
 
 
 

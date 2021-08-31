@@ -254,6 +254,43 @@ If REGEX is nil or not found, add it at the beginning."
     (insert ";;\n;; Time-stamp: <>\n;; ")))
 
 
+(defun larumbe/comment-tag-line-or-region (text-begin text-end)
+  "Surround current line or region with commented TEXT-BEGIN and TEXT-END.
+Makes use of `comment-dwim' because the approach of using the variables
+`comment-start' and `comment-end' was more complicated than it seemed.
+For example, `verilog-mode' or `python-mode' have no `comment-end' defined.
+This approach works well for line-style as well as for block-style comments
+(e.g. block-style /* Comment */ in C-mode). However, line-style are preferred."
+  (interactive)
+  (let (beg end)
+    (if (use-region-p)
+        (progn
+          (setq beg (region-beginning))
+          (setq end (region-end))
+          (deactivate-mark)
+          (goto-char end)
+          (beginning-of-line)
+          (open-line 1)
+          (call-interactively #'comment-dwim)
+          (insert text-end)
+          (goto-char beg)
+          (beginning-of-line)
+          (open-line 1)
+          (call-interactively #'comment-dwim)
+          (insert text-begin)
+          (forward-line 1))
+      ;; If not using the region wrap around current line
+      (beginning-of-line)
+      (open-line 1)
+      (call-interactively #'comment-dwim)
+      (insert text-begin)
+      (beginning-of-line)
+      (forward-line 2)
+      (open-line 1)
+      (call-interactively #'comment-dwim)
+      (insert text-end)
+      (forward-line -1))))
+
 
 ;;;; Lists/regexp/strings/files/directories
 ;; http://ergoemacs.org/emacs/elisp_read_file_content.html
