@@ -4,9 +4,10 @@
 
 
 ;;;; Hook
-(defun larumbe/c-or-c++-mode-hook ()
+(defun larumbe/c-and-c++-mode-hook ()
   "Custom C/C++ hook."
-  (hide-ifdef-mode 1))
+  (hide-ifdef-mode 1)
+  (c-toggle-comment-style -1)) ; Default to line-style comment instead of block-style
 
 
 ;;;; Gtags
