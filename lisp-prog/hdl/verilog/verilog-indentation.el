@@ -27,6 +27,54 @@
 
 
 
+;; Following section is intended to add a hook via `larumbe/verilog-custom-declaration-core-re'
+;; variable to add new keywords for indentation of SystemVerilog interface port declarations.
+(defvar larumbe/verilog-custom-declaration-core-re nil
+  "Verilog custom declaration keywords used for indentation.")
+
+;; Same as original `verilog-mode' constant but appending list of strings
+;; `larumbe/verilog-custom-declaration-core-re' to existent list of strings.
+(defconst verilog-declaration-core-re
+  (eval-when-compile
+    (verilog-regexp-words
+     (append '(;; port direction (by themselves)
+               "inout" "input" "output"
+               ;; integer_atom_type
+               "byte" "shortint" "int" "longint" "integer" "time"
+               ;; integer_vector_type
+               "bit" "logic" "reg"
+               ;; non_integer_type
+               "shortreal" "real" "realtime"
+               ;; net_type
+               "supply0" "supply1" "tri" "triand" "trior" "trireg" "tri0" "tri1" "uwire" "wire" "wand" "wor"
+               ;; misc
+               "string" "event" "chandle" "virtual" "enum" "genvar"
+               "struct" "union"
+               ;; builtin classes
+               "mailbox" "semaphore")
+             ;; INFO: Custom declaration constructs hook
+             larumbe/verilog-custom-declaration-core-re))))
+
+
+(defconst verilog-declaration-re
+  (concat "\\(" verilog-declaration-prefix-re "\\s-*\\)?" verilog-declaration-core-re))
+
+(defconst verilog-declaration-re-2-no-macro
+  (concat "\\s-*" verilog-declaration-re
+          "\\s-*\\(\\(" verilog-optional-signed-range-re "\\)\\|\\(" verilog-delay-re "\\)"
+          "\\)"))
+(defconst verilog-declaration-re-2-macro
+  (concat "\\s-*" verilog-declaration-re
+          "\\s-*\\(\\(" verilog-optional-signed-range-re "\\)\\|\\(" verilog-delay-re "\\)"
+          "\\|\\(" verilog-macroexp-re "\\)"
+          "\\)"))
+(defconst verilog-declaration-re-1-macro
+  (concat "^" verilog-declaration-re-2-macro))
+
+(defconst verilog-declaration-re-1-no-macro (concat "^" verilog-declaration-re-2-no-macro))
+
+
+
 ;;;; Functions
 (defun larumbe/verilog-beg-of-statement ()
   "Move backward to beginning of statement."
