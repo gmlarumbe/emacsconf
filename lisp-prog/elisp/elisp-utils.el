@@ -76,7 +76,7 @@ However, uninstrumentation is done by evaluating the whole buffer."
   (interactive "P")
   (if arg
       (call-interactively #'modi/toggle-edebug)
-    (edebug-defun)))
+    (call-interactively #'edebug-defun)))
 
 
 
