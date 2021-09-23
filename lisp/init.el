@@ -24,6 +24,7 @@
 (require 'init-completion)
 (require 'init-dired)
 (require 'init-org)
+(require 'init-jira)
 (require 'init-term)
 (require 'init-version-control)
 (require 'init-compilation)

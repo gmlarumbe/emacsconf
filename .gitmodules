@@ -31,3 +31,6 @@
 [submodule "submodules/ejira"]
 	path = submodules/ejira
 	url = https://github.com/nyyManni/ejira
+[submodule "submodules/org-jira"]
+	path = submodules/org-jira
+	url = https://github.com/gmlarumbe/org-jira.git

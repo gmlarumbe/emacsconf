@@ -74,47 +74,6 @@ Meant to be used as a hook for `org-insert-heading-hook'"
 
 
 
-;;;; Jira
-(use-package org-jira
-  ;; INFO: Auhentication through .authinfo file
-  ;; Plus, the variable `org-jira-users' does not have the expected behaviour
-  ;; if the accountId is not findable (that is the case for HP)
-  :config)
-
-
-(use-package ejira
-  :ensure nil
-  :commands (ejira-update-my-projects)
-  :config
-  ;; Dependencies (handled manually)
-  (use-package ox-jira         :demand)
-  (use-package dash-functional :demand)
-  (use-package jiralib2        :demand)
-
-  (setq ejira-org-directory "~/.ejira")
-  (setq ejira-priorities-alist    '(("Highest" . ?A)
-                                    ("High"    . ?B)
-                                    ("Medium"  . ?C)
-                                    ("Low"     . ?D)
-                                    ("Lowest"  . ?E)))
-  (setq ejira-todo-states-alist   '(("To Do"       . 1)
-                                    ("In Progress" . 2)
-                                    ("Done"        . 3)))
-  ;; Sync only the tickets assigned to me
-  (setq ejira-update-jql-unresolved-fn #'ejira-jql-my-unresolved-project-tickets)
-  ;; Tries to auto-set custom fields by looking into /editmeta of an issue and an epic.
-  (add-hook 'jiralib2-post-login-hook #'ejira-guess-epic-sprint-fields)
-
-  ;; Agenda
-  (require 'ejira-agenda)
-  (add-to-list 'org-agenda-files ejira-org-directory) ; Make the issues visisble in the agenda
-  ;; Add an agenda view to browse the issues assigned to me
-  (org-add-agenda-custom-command
-   '("j" "My JIRA issues"
-     ((ejira-jql "resolution = unresolved and assignee = currentUser()"
-                 ((org-agenda-overriding-header "Assigned to me")))))))
-
-
 (provide 'init-org)
 
 ;;; init-org.el ends here
