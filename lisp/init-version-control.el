@@ -40,6 +40,23 @@
     ;; Setting following variable maps it to ";" instead
     (setq magit-lfs-suffix ";"))
 
+  ;; INFO: MagitHub basic setup and configuration:
+  ;;   - https://github.com/vermiculus/magithub/blob/master/magithub.org
+  ;;
+  ;; Authentication: Magithub looks at variable `auth-sources', normally at ./authinfo
+  ;; Within that file, the following structure is required:
+  ;;  - machine api.github.com login user^magithub password ***
+  ;;
+  ;; Plus, the [github] section in .gitconfig is not used by Git by defult,
+  ;; but is instead a section of .gitconfig (global) used by Magithub.
+  ;; In this section, there are two fields that can be configured:
+  ;;   - user = <github_user>
+  ;;   - host = <github_api_host> (default api.github.com)
+  ;;
+  ;; This will make Magithub dashboard work by user globally (not by repo).
+  ;; If instead of a regular user, other account with GHE needs to be set,
+  ;; configure previous fields but with proper user/host in .gitconfig and .authinfo,
+  ;; plus setting the `magithub-github-hosts'
   (use-package magithub
     :config
     (magithub-feature-autoinject t)
