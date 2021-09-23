@@ -25,7 +25,10 @@
   :bind (("C-x g"   . magit-status)
          ("C-x M-g" . magit-dispatch)
          ("C-x t"   . larumbe/repohome-magit-status)
-         ("C-x y"   . larumbe/repohome-magit-reset-args))
+         ("C-x y"   . larumbe/repohome-magit-reset-args)
+         :map magit-file-section-map ("RET" . magit-diff-visit-file-other-window)
+         :map magit-hunk-section-map ("RET" . magit-diff-visit-file-other-window))
+
   :commands (magit-list-branch-names
              magit-get-current-branch)
   :config
