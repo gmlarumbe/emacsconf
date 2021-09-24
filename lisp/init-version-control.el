@@ -41,7 +41,10 @@
     (setq magit-lfs-suffix ";"))
 
 
-  (use-package forge)
+  (use-package forge
+    :config
+    ;; Database storage in SQL
+    (use-package emacsql))
   ;; INFO: Magithub is broken and unmaintained, using `forge' instead.
   ;;  It seems `forge' is heavily based on what what's been done in Magithub.
   ;;
