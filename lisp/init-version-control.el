@@ -40,27 +40,45 @@
     ;; Setting following variable maps it to ";" instead
     (setq magit-lfs-suffix ";"))
 
-  ;; INFO: MagitHub basic setup and configuration:
+
+  (use-package forge)
+  ;; INFO: Magithub is broken and unmaintained, using `forge' instead.
+  ;;  It seems `forge' is heavily based on what what's been done in Magithub.
+  ;;
+  ;; Forge basic setup and configuration:
   ;;   - https://github.com/vermiculus/magithub/blob/master/magithub.org
   ;;
-  ;; Authentication: Magithub looks at variable `auth-sources', normally at ./authinfo
+  ;; Authentication: Forge looks at variable `auth-sources', normally at ./authinfo
   ;; Within that file, the following structure is required:
-  ;;  - machine api.github.com login user^magithub password ***
+  ;;  - machine api.github.com login user^forge password ***
   ;;
   ;; Plus, the [github] section in .gitconfig is not used by Git by defult,
-  ;; but is instead a section of .gitconfig (global) used by Magithub.
+  ;; but is instead a section of .gitconfig (global) used by Forge.
   ;; In this section, there are two fields that can be configured:
   ;;   - user = <github_user>
-  ;;   - host = <github_api_host> (default api.github.com)
+  ;;   - host (default is api.github.com, so not needed so far)
   ;;
-  ;; This will make Magithub dashboard work by user globally (not by repo).
-  ;; If instead of a regular user, other account with GHE needs to be set,
-  ;; configure previous fields but with proper user/host in .gitconfig and .authinfo,
-  ;; plus setting the `magithub-github-hosts'
-  (use-package magithub
-    :config
-    (magithub-feature-autoinject t)
-    (setq magithub-clone-default-directory "~/github"))
+  ;; If besides a regular user, other account with GHE needs to be added,
+  ;; customize previous fields but with proper user/host in .gitconfig and .authinfo.
+  ;;  Add to .authinfo:
+  ;;  - machine ghe.example.domain login user^forge password ***
+  ;;
+  ;;  .gitconfig:
+  ;;  [github]
+  ;;    user = <regular_user>
+  ;;
+  ;;  [github "<ghe_host>"]
+  ;;    user = <ghe_user>
+  ;;
+  ;; And add the GHE host to the variable `forge-alist'
+  ;; (with-eval-after-load 'forge
+  ;;   (push '("<host>" "<host_api>" "<id_for_local_database>" forge-github-repository) forge-alist))
+  ;;
+  ;; Finally, take into account that to get list of assignable issues, the github.user needs
+  ;; to be set properly locally (otherwise it will take the global value)
+  ;;   $ git config github.user <user_for_current_repo>
+  ;;
+  ;; NOTE: Issue creation/modification did not work properly with older versions of git (e.g. 2.11)
 
 
   ;; Magit config
