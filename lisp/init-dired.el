@@ -14,7 +14,8 @@
          ("J"       . dired-goto-file)                                ; Switch from 'j' to 'J'
          ("j"       . larumbe/dired-do-async-shell-command-or-okular) ; Open file-at-point directly with Okular if is a PDF and delete async process window. Otherwise it will ask for default program
          (","       . larumbe/dired-toggle-deletion-confirmer)        ; https://superuser.com/questions/332590/how-to-prevent-delete-confirmation-in-emacs-dired
-         ("I"       . dired-kill-subdir))                             ; Replaces `dired-info', requires `dired-aux', mapping in dired-aux use-package didn't work
+         ("I"       . dired-kill-subdir)                              ; Replaces `dired-info', requires `dired-aux', mapping in dired-aux use-package didn't work
+         ("C-x C-q" . wdired-change-to-wdired-mode))                  ; Previously overriden by EXWM global keybinding
   :bind (("C-x C-j" . larumbe/dired-jump))
   :hook ((dired-mode . larumbe/dired-hook))
   :commands (dired-do-async-shell-command dired-hide-details-mode)
