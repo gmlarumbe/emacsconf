@@ -209,6 +209,10 @@ Compares same file of revisions REVA and REVB using `magit-ediff-compare'"
 
 
 ;;;; Repo
+(use-package repo
+  :bind (("C-x j" . repo-status)))
+
+
 (defun larumbe/repo-sync-sandboxes (repo-paths)
   "Update all .repo sandboxes passed REPO-PATHS parameters.
 Meant to be used in local and remote."
@@ -223,7 +227,6 @@ Meant to be used in local and remote."
 
 ;;;; SVN
 (use-package dsvn
-  :bind (("C-x j" . larumbe/svn-status)) ; Setting a hook for `svn-status-mode' did not seem to work
   :commands (svn-status
              larumbe/update-svn-repos)
   :config
@@ -235,6 +238,9 @@ Meant to be used in local and remote."
     (interactive)
     (svn-status default-directory)
     (setq truncate-lines t))
+
+  ;; Override `svn-status' for current directory and truncating lines
+  (advice-add 'svn-status :override #'larumbe/svn-status)
 
 
   (defun larumbe/update-svn-repos (repo-paths)
