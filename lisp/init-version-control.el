@@ -210,7 +210,70 @@ Compares same file of revisions REVA and REVB using `magit-ediff-compare'"
 
 ;;;; Repo
 (use-package repo
-  :bind (("C-x j" . repo-status)))
+  :bind (("C-x j" . repo-status))
+  :bind (:map repo-mode-map
+         ("p" . previous-line)
+         ("n" . next-line)
+         ("f" . forward-char)
+         ("b" . backward-char)
+         ("C-c C-p" . larumbe/repo-previous-project)
+         ("C-c C-n" . larumbe/repo-next-project)
+         )
+  :config
+  (setq larumbe/repo-font-lock-keywords
+        '(("^\\(?1:project\\) \\(?2:[^ ]+\\)/\\W+\\(?3:branch \\(?4:\\w+\\)\\)"            (1 font-lock-function-name-face) (2 font-lock-variable-name-face) (4 font-lock-variable-name-face))
+          ("^\\(?1:project\\) \\(?2:[^ ]+\\)/\\W+\\(?3:(\\*\\*\\* NO BRANCH \\*\\*\\*)\\)" (1 font-lock-function-name-face) (2 font-lock-variable-name-face) (3 font-lock-comment-face))
+          ("^Workspace: +\\(.*\\)$" 1 font-lock-function-name-face)
+          ("^Manifest.* branch: +\\(.*\\)$" 1 font-lock-keyword-face)
+          ("^ \\(?1:--\\)" 1 font-lock-comment-face) ; Untracked changes
+          ("^ \\(?1:-\\)\\(?2:[amdrctu]\\)" (1 font-lock-comment-face)  (2 font-lock-builtin-face)) ; Only unstaged changes
+          ("^ \\(?1:[AMDRCTU]\\)\\(?2:-\\)" (1 font-lock-variable-name-face) (2 font-lock-comment-face)) ; Only staged changes
+          ("^ \\(?1:[AMDRCTU]\\)\\(?2:[amdrctu]\\)" (1 font-lock-variable-name-face) (2 font-lock-builtin-face)) ; Staged and unstaged changes in the same file
+          ))
+
+  ;; Override default font-lock
+  (font-lock-add-keywords 'repo-mode larumbe/repo-font-lock-keywords 'set)
+
+  ;; Redefine function (TODO: Advice or modify in forked version eventually)
+  (defun repo-status (workspace)
+    "Show the status of the Repo WORKSPACE in a buffer.
+
+With a prefix argument prompt for a directory to be used as workspace."
+    (interactive
+     (list (or (and (not current-prefix-arg) (repo-toplevel))
+               (repo-read-workspace))))
+    (unless (repo-workspace-p workspace)
+      (unless (repo-call-init-default-directory workspace)
+        (user-error "Repo needs an initialized workspace")))
+    (let ((status-buffer (get-buffer (repo-status-buffer-name workspace))))
+      (when status-buffer
+        (switch-to-buffer status-buffer)))
+    ;; DANGER: Added for debugging
+    (message "repo status @ %s" (file-name-nondirectory (directory-file-name workspace)))
+    ;; End of DANGER
+    (repo-status-exec-info workspace))
+
+
+  ;; Move between projects
+  (defvar larumbe/repo-project-regexp "^\\(?1:project\\) \\(?2:[^ ]+\\)/\\W+")
+
+  (defun larumbe/repo-next-project ()
+    "Move to next project in repo list."
+    (interactive)
+    (let ((pos (point)))
+      (save-excursion
+        (forward-line)
+        (when (re-search-forward larumbe/repo-project-regexp nil t)
+          (setq pos (point))))
+      (when (> pos (point))
+        (goto-char pos)
+        (beginning-of-line))))
+
+  (defun larumbe/repo-previous-project ()
+    "Move to previous project in repo list."
+    (interactive)
+    (re-search-backward larumbe/repo-project-regexp nil t)))
+
 
 
 (defun larumbe/repo-sync-sandboxes (repo-paths)
