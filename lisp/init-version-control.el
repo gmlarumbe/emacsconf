@@ -254,6 +254,18 @@ With a prefix argument prompt for a directory to be used as workspace."
     (repo-status-exec-info workspace))
 
 
+  ;; Redefine function due to obsoleted variables
+  ;; TODO: Change in forked version when available
+  ;; Replace obsolote `magit-status-internal' alias with `magit-status-setup-buffer'
+  (defun repo-internal-vc-function ()
+    "Return the function to call for opening git status buffer."
+    (if repo-vc-function
+        repo-vc-function
+      (if (fboundp 'magit-status-setup-buffer)
+          (function magit-status-setup-buffer)
+        (function vc-dir))))
+
+
   ;; Move between projects
   (defvar larumbe/repo-project-regexp "^\\(?1:project\\) \\(?2:[^ ]+\\)/\\W+")
 
