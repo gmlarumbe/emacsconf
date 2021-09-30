@@ -251,6 +251,28 @@ If passed PARSER, set corresponding regexp to be evaluated at the header."
     (setq-local split-width-threshold nil))
 
 
+
+  ;; Print elapsed time in compilation buffer
+  ;; https://emacs.stackexchange.com/questions/31493/print-elapsed-time-in-compilation-buffer
+  (defvar larumbe/compilation-start-time)
+
+  (defun larumbe/compilation-start-hook (proc)
+    (setq-local larumbe/compilation-start-time (current-time)))
+
+  (defun larumbe/compilation-finish-function (buf why)
+    (let* ((elapsed  (time-subtract nil larumbe/compilation-start-time))
+           (msg (format "Compilation elapsed time: %s" (format-seconds "%Y, %D, %H, %M, %z%S" elapsed))))
+      (save-excursion
+        (goto-char (point-max))
+        (insert "\n")
+        (insert msg))))
+
+  ;; Add hooks outside of use-package because `compilation-finish-functions' name does not end in -hook
+  (add-hook 'compilation-start-hook       #'larumbe/compilation-start-hook)
+  (add-hook 'compilation-finish-functions #'larumbe/compilation-finish-function)
+
+
+
   ;; https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode
   (defun colorize-compilation-buffer ()
     "Apply color to comint buffers (e.g. convert '\033[0;31m' to red)."
