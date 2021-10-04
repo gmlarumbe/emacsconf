@@ -260,12 +260,13 @@ If passed PARSER, set corresponding regexp to be evaluated at the header."
     (setq-local larumbe/compilation-start-time (current-time)))
 
   (defun larumbe/compilation-finish-function (buf why)
-    (let* ((elapsed  (time-subtract nil larumbe/compilation-start-time))
-           (msg (format "Compilation elapsed time: %s" (format-seconds "%Y, %D, %H, %M, %z%S" elapsed))))
-      (save-excursion
-        (goto-char (point-max))
-        (insert "\n")
-        (insert msg))))
+    (when (boundp 'larumbe/compilation-start-time) ; When finding definitions/references with ggtags, somehow compilation is used under the hood, and `larumbe/compilation-start-time' is not defined (nor is required)
+      (let* ((elapsed (time-subtract nil larumbe/compilation-start-time))
+             (msg (format "Compilation elapsed time: %s" (format-seconds "%Y, %D, %H, %M, %z%S" elapsed))))
+	(save-excursion
+          (goto-char (point-max))
+          (insert "\n")
+          (insert msg)))))
 
   ;; Add hooks outside of use-package because `compilation-finish-functions' name does not end in -hook
   (add-hook 'compilation-start-hook       #'larumbe/compilation-start-hook)
