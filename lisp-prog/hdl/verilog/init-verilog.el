@@ -13,6 +13,7 @@
          ("\\.vsrc.pp\\'"     . verilog-mode)
          ("\\.v.pp\\'"        . verilog-mode)
          ("\\.ppv\\'"         . verilog-mode))
+  :commands (larumbe/ggtags-create-verilog-tags-recursive)
   :hook ((verilog-mode . larumbe/verilog-hook)
          (verilog-mode . larumbe/verilog-flycheck-hook))
   :bind (:map verilog-mode-map
