@@ -4,20 +4,21 @@
 ;; Inspiration came from: https://emacs.stackexchange.com/questions/6104/reload-environment-variables
 ;;
 ;; Needs to work in conjunction with an update script that provides environment variables to the Emacs server
-;; through a emacsclient call that evaluates `larumbe/update-env' (many thanks to Håkon Hægland)
+;; through an emacsclient call that evaluates `larumbe/update-env' (many thanks to Håkon Hægland)
 ;;
 ;; TODO: Still need to know how to handle aliases and imported functions
 ;; aliases: $ alias
 ;; functions: $ declare -f
 ;;
-;; INFO: The thing with BASH_FUNC and modules below has to do with following issue:
-;; https://github.com/drush-ops/drush/issues/2065
-;; Check 'dirkd' comments below
+;; INFO: The thing with BASH_FUNC and modules below has to do with following issue (check 'dirkd' comments below):
+;;   https://github.com/drush-ops/drush/issues/2065
+;;
 ;; Modules will export a function as a multiline environment variable
 ;; (could be one-line but it is done like that with export -f in /p/lfp/common/asic_tools/Modules/3.2.10/init/bash:11
+;;
 ;; More info about functions in shell variables: https://unix.stackexchange.com/questions/233091/bash-functions-in-shell-variables
 ;;
-;; Plus `exec-path-from-shell' was not useful for what I wanted to do in batch
+;; Also tried `exec-path-from-shell' but was not useful for my use case.
 ;;
 ;;; Code:
 
@@ -28,7 +29,7 @@
 
 
 (defun larumbe/env-to-alist (env)
-  "docstring"
+  "Convert ENV list of strings with variables/values to an alist."
   (let ((var-re larumbe/env-var-re)
         (fun-re larumbe/env-fun-re)
         (var)
@@ -44,25 +45,27 @@
 
 
 (defun larumbe/env-set-from-alist (alist)
-  "docstring"
+  "Set env variables with their corresponding values for each element of ALIST."
   (mapcar (lambda (pair)
             (setenv (car pair) (cdr pair)))
           alist))
 
 
 (defun larumbe/env-get-current ()
-  "docstring"
+  "Get current env through a shell command and return an alist.
+Update the variable `larumbe/current-environment'."
   (let ((cur-env (split-string (shell-command-to-string "printenv") "\n")))
     (setq larumbe/current-environment (larumbe/env-to-alist cur-env))))
 
 
 (defun larumbe/env-get-initial ()
-  "docstring"
+  "Convert `initial-environment' into an associative array."
   (larumbe/env-to-alist initial-environment))
 
 
 (defun larumbe/env-set-initial ()
-  "docstring"
+  "Set environment to initial status.
+Call this function before sourcing new environments to avoid cluttering (e.g. in the PATH var)."
   (interactive)
   (let ((env-to-unset (seq-difference
                        (mapcar 'car (larumbe/env-get-current))
@@ -75,7 +78,7 @@
 
 
 (defun larumbe/env-update-from-subshell (fn)
-  "To be used from outside of Emacs to update inner Emacs."
+  "Function to be called from outside of Emacs to update Emacs server environment."
   (let* ((env-str (with-temp-buffer
                     (insert-file-contents fn)
                     (buffer-string)))
