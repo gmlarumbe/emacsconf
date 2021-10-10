@@ -195,10 +195,45 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 ;;;; Editing
-(use-package move-lines
-  :bind (("<C-M-up>"   . move-lines-up)
-         ("<C-M-down>" . move-lines-down))
-  :straight nil)
+
+(use-package drag-stuff
+  :bind (("<C-M-up>"   . drag-stuff-up)
+         ("<C-M-down>" . drag-stuff-down))
+  :hook ((drag-stuff-before-drag . modi/drag-stuff--adj-pt-pre-drag)
+         (drag-stuff-after-drag  . modi/drag-stuff--rst-pt-post-drag))
+  :config
+  ;; kmodi hack to avoid dragging line of where currently point is
+  ;; https://emacs.stackexchange.com/questions/13941/move-selected-lines-up-and-down
+  (defvar modi/drag-stuff--point-adjusted nil)
+  (defvar modi/drag-stuff--point-mark-exchanged nil)
+
+  (defun modi/drag-stuff--adj-pt-pre-drag ()
+    "If a region is selected AND the `point' is in the first column, move
+back the point by one char so that it ends up on the previous line. If the
+point is above the mark, exchange the point and mark temporarily."
+    (when (region-active-p)
+      (when (< (point) (mark)) ; selection is done starting from bottom to up
+        (exchange-point-and-mark)
+        (setq modi/drag-stuff--point-mark-exchanged t))
+      (if (zerop (current-column))
+          (progn
+            (backward-char 1)
+            (setq modi/drag-stuff--point-adjusted t))
+        ;; If point did not end up being on the first column after the
+        ;; point/mark exchange, revert that exchange.
+        (when modi/drag-stuff--point-mark-exchanged
+          (exchange-point-and-mark) ; restore the original point and mark loc
+          (setq modi/drag-stuff--point-mark-exchanged nil)))))
+
+  (defun modi/drag-stuff--rst-pt-post-drag ()
+    "Restore the `point' to where it was by forwarding it by one char after
+the vertical drag is done."
+    (when modi/drag-stuff--point-adjusted
+      (forward-char 1)
+      (setq modi/drag-stuff--point-adjusted nil))
+    (when modi/drag-stuff--point-mark-exchanged
+      (exchange-point-and-mark) ; restore the original point and mark loc
+      (setq modi/drag-stuff--point-mark-exchanged nil))))
 
 
 (use-package untabify-trailing-ws
@@ -415,10 +450,6 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   (setq browse-url-browser-function 'browse-url-firefox))
 
 
-(use-package jpeg-mode
-  :straight nil)
-
-
 (use-package pdf-tools
   :bind (:map pdf-view-mode-map
               ("j"   . pdf-view-next-line-or-next-page)
@@ -433,11 +464,10 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   :diminish auto-revert-mode)
 
 
-;; (use-package so-long
-;;   :diminish
-;;   :quelpa (so-long :url "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/so-long.el" :fetcher url)
-;;   :config
-;;   (global-so-long-mode 1))
+(use-package so-long
+  :diminish
+  :config
+  (global-so-long-mode 1))
 
 
 ;; API of `coin-ticker' was outdated. Also tried `crypto-ticker-mode' but was a bit more complex than this one
