@@ -88,7 +88,7 @@ Allows a selective loading/overriding of the desired snippets/modes."
 
 ;;;; Hippie-expand
 (use-package hippie-expand
-  :ensure nil
+  :straight nil
   :bind ([remap dabbrev-expand] . hippie-expand))
 
 

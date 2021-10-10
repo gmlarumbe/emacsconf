@@ -3,7 +3,7 @@
 ;;; Code:
 
 (use-package elisp-mode
-  :ensure nil
+  :straight nil
   :diminish eldoc-mode
   :commands (larumbe/lively-dwim
              hydra-command-log/body)
@@ -24,7 +24,7 @@
          (emacs-lisp-mode . modi/set-emacs-lisp-indentation))
   :config
   (use-package edebug
-    :ensure nil
+    :straight nil
     :bind (:map edebug-mode-map
            ("?" . hydra-edebug/body)))
 

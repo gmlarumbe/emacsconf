@@ -4,6 +4,7 @@
 
 
 (use-package vhdl-mode
+  :straight (:host github :repo "emacs-mirror/emacs" :files ("lisp/progmodes/vhdl-mode.el"))
   :commands (larumbe/vhdl-index-menu-init
              larumbe/vhdl-jump-to-module-at-point
              larumbe/vhdl-find-parent-module)
@@ -19,9 +20,9 @@
               ("<f5>"            . vhdl-compile)
               ("C-c C-t"         . hydra-vhdl-template/body)
               ("<f8>"            . sr-speedbar-open))
-  :bind (:map vhdl-speedbar-mode-map
-              ("SPC" . speedbar-toggle-line-expansion)) ; BUG: There was a bug that made this keybinding apply to non-spacebar modes
   :config
+  ;; BUG: When used use-package :bind to `vhdl-speedbar-mode-map' this keybinding applied to non-spacebar modes
+  (define-key vhdl-speedbar-mode-map [? ] #'speedbar-toggle-line-expansion)
   ;; INFO: Using `bind-chord' instead of use-package :chords as the latter does
   ;; a global mapping (not to `vhdl-mode')
   (bind-chord "\\\\" #'larumbe/vhdl-jump-to-module-at-point vhdl-mode-map)

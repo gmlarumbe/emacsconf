@@ -6,7 +6,7 @@
 
 
 (use-package dired
-  :ensure nil
+  :straight nil
   :bind (:map dired-mode-map
          ("C-x C-j" . larumbe/dired-jump)
          ("b"       . dired-up-directory)
@@ -26,11 +26,11 @@
   ;;
   ;; less commonly used parts of dired (autoloads for native dired functions)
   (use-package dired-aux
-    :ensure nil)
+    :straight nil)
 
   ;; extra Dired functionality
   (use-package dired-x
-    :ensure nil
+    :straight nil
     :demand
     :diminish dired-omit-mode
     :hook ((dired-mode . dired-omit-mode)) ; hide backup, autosave, *.*~ files
@@ -48,7 +48,7 @@
   ;; EmacsWiki: `dired+'
   ;; INFO: Not enabled since it maps important keys to this non-required functionality
   ;; Package `dired+' added lots of extra functionality in a very large package.
-  ;; Not available in MELPA due to security reasons for some years.
+  ;; Available in EmacsWiki.org but not in MELPA due to security reasons for some years.
 
 
   ;; +-------+

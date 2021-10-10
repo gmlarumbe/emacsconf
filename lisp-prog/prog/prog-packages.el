@@ -38,13 +38,13 @@ in order to check pending project actions. "
 
 
 (use-package hideshow
-  :ensure nil
+  :straight nil
   :diminish hs-minor-mode)
 
 
 
 (use-package outline
-  :ensure nil
+  :straight nil
   :diminish outline-minor-mode)
 
 
@@ -61,7 +61,7 @@ in order to check pending project actions. "
 
 
 (use-package flyspell
-  :ensure nil
+  :straight nil
   :commands (flyspell-toggle)
   :config
   (defun flyspell-toggle ()
@@ -169,7 +169,7 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
 
 
 (use-package hide-comnt
-  :ensure nil)
+  :straight (:host github :repo "emacsmirror/emacswiki.org" :branch "master" :files ("hide-comnt.el")))
 
 
 (use-package rainbow-delimiters)
@@ -181,7 +181,7 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
 
 
 (use-package time-stamp
-  :ensure nil
+  :straight nil
   :config
   (setq time-stamp-format "%:y-%02m-%02d %02H:%02M:%02S") ; Do not include user
   (setq time-stamp-line-limit 20)) ; Default 8

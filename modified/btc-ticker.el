@@ -1,1 +1,0 @@
-../submodules/emacs-btc-ticker/btc-ticker.el

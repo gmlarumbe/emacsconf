@@ -5,7 +5,7 @@
 
 ;;;; XML
 (use-package nxml-mode
-  :ensure nil
+  :straight nil
   :hook ((nxml-mode . larumbe/prog-mode-keys)
          (nxml-mode . larumbe/prog-mode-hook)) ; Since it is not a child of prog-mode, requires common configuration settings
   :config
@@ -14,13 +14,13 @@
 
 ;;;; DOCBOOK
 (use-package docbook-mode
-  :ensure nil
+  :straight nil
   :mode (("\\.docbook\\.xml" . docbook-mode)))
 
 
 ;;;; VIVADO
 (use-package vivado-utils
-  :ensure nil
+  :straight nil
   :commands (vivado-xdc-mode
              larumbe/vivado-shell
              larumbe/vivado-shell-tcl-send-line-or-region-and-step
@@ -63,7 +63,7 @@
 ;;;; MAKEFILE
 (use-package make-mode
   :mode (("\\.mf\\'" . makefile-mode))
-  :ensure nil)
+  :straight nil)
 
 
 ;;;; PERL
@@ -85,7 +85,7 @@
 
 ;;;; MATLAB
 (use-package matlab
-  :ensure matlab-mode
+  :straight matlab-mode
   :defines (matlab-indent-function
             matlab-shell-command)
   :mode (("\\.m\\'" . matlab-mode))
@@ -96,7 +96,7 @@
 
 ;;;; NASL
 (use-package nasl-mode
-  :ensure nil)
+  :straight (:host github :repo "tenable/emacs-nasl"))
 
 
 ;;;; Yocto
@@ -142,7 +142,7 @@
 
 ;;;; HEXL
 (use-package hexl
-  :ensure nil
+  :straight nil
   :config
   ;; INFO: `hexl-mode' uses Emacs 'hexl' by default. Check `(executable-find "hexl")'
   ;; At some point I tried to add some options to `hexl-options' but only -de or -iso seemed possible.

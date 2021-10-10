@@ -4,6 +4,8 @@
 
 
 (use-package verilog-mode
+  :straight (:repo "veripool/verilog-mode"
+             :fork (:repo "gmlarumbe/verilog-mode" :branch "bug-sexp"))
   :mode (("\\.[st]*v[hp]*\\'" . verilog-mode) ;.v, .sv, .svh, .tv, .vp
          ("\\.psl\\'"         . verilog-mode)
          ("\\.vams\\'"        . verilog-mode)
@@ -76,8 +78,12 @@
   ;; Mode config
   (key-chord-mode 1)
   ;; Many thanks to Kaushal Modi (https://scripter.co/)
-  (require 'setup-verilog)
-  (require 'verilog-modi)
+  (use-package setup-verilog
+    :straight (:host github :repo "kaushalmodi/.emacs.d" :local-repo "kmodi"
+               :fork (:repo "gmlarumbe/kmodi" :branch "larumbe")
+               :files ("setup-files/setup-verilog.el"))
+    :config
+    (require 'verilog-modi))
   ;; Own functions
   (require 'verilog-utils)
   (require 'verilog-templates)

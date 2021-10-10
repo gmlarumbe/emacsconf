@@ -3,7 +3,7 @@
 ;;; Code:
 
 (use-package sh-script
-  :ensure nil
+  :straight nil
   :bind (:map sh-mode-map
               ("C-c C-c" . sh-show-shell)
               ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)

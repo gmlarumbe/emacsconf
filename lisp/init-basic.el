@@ -27,7 +27,7 @@
 
 
 (use-package minibuffer
-  :ensure nil
+  :straight nil
   :bind ("<C-return>" . completion-at-point))
 
 
@@ -78,7 +78,7 @@
 
 
 (use-package ibuf-ext
-  :ensure nil
+  :straight nil
   :config
   (setq ibuffer-show-empty-filter-groups nil))
 
@@ -89,7 +89,7 @@
 
 ;;;; Navigation
 (use-package isearch
-  :ensure nil
+  :straight nil
   :bind (:map isearch-mode-map
          ("C-w" . my-isearch-yank-word-or-char-from-beginning) ; Override `isearch-yank-word-or-char'
          ("C-j" . isearch-exit)) ; Overrides `isearch-printing-char' to search for newlines
@@ -109,7 +109,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package view
-  :ensure nil
+  :straight nil
   :diminish
   :bind (:map view-mode-map
               ("n"   . next-line)
@@ -142,7 +142,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package winner
-  :ensure nil
+  :straight nil
   :demand
   :config
   (winner-mode 1))
@@ -158,6 +158,8 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package sr-speedbar
+  ;; Default would be fetched from emacsorphanage
+  :straight (:host github :repo "emacsmirror/emacswiki.org" :branch "master" :files ("sr-speedbar.el"))
   :bind (:map speedbar-mode-map
               ("q"   . larumbe/kill-current-buffer)
               ("j"   . speedbar-edit-line))
@@ -172,6 +174,10 @@ C-s C-w [C-w] [C-w]... behaviour. "
   :demand
   :config
   (google-this-mode 1))
+
+
+(use-package howdoi
+  :straight (:host github :repo "arthurnn/howdoi-emacs"))
 
 
 (use-package bind-chord)
@@ -192,25 +198,25 @@ C-s C-w [C-w] [C-w]... behaviour. "
 (use-package move-lines
   :bind (("<C-M-up>"   . move-lines-up)
          ("<C-M-down>" . move-lines-down))
-  :ensure nil)
+  :straight nil)
 
 
 (use-package untabify-trailing-ws
-  :ensure nil
+  :straight nil
   :demand
   :config
   (untabify-trailing-ws 1))
 
 
 (use-package align
-  :ensure nil
+  :straight nil
   :config
   (setq align-default-spacing 1)
   (setq align-to-tab-stop nil))
 
 
 (use-package elec-pair
-  :ensure nil
+  :straight nil
   :demand
   :config
   (electric-pair-mode 1))
@@ -224,7 +230,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 ;; such as adding parenthesis after selecting a sexp.
 ;; Disabled by default at load-up.
 (use-package delsel
-  :ensure nil)
+  :straight nil)
 
 
 (use-package smart-mark
@@ -256,6 +262,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package tramp
+  :straight nil
   :config
   (setq tramp-own-remote-path nil) ; `tramp-remote-path': List of directories to search for executables on remote host.
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
@@ -268,6 +275,8 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package jenkins
+  :straight (:repo "rmuslimov/jenkins.el"
+             :fork (:repo "gmlarumbe/jenkins.el" :branch "deferred"))
   :bind (:map jenkins-job-view-mode-map
          ("n" . next-line)
          ("p" . previous-line))
@@ -292,22 +301,25 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   :mode (("\\.prf\\'" . unison-mode))
   :config
   (use-package unison-sync-minor-mode
-    :ensure nil
+    :straight nil
     :bind (:map unison-mode-map
            ("C-c C-c" . unison-my-run))
     :hook ((unison-mode . unison-sync-minor-mode))))
 
 
 (use-package ssh-tunnels
-  :ensure nil)
+  :straight (:repo "death/ssh-tunnels"
+             :fork (:repo "gmlarumbe/ssh-tunnels" :branch "larumbe")))
 
 
 (use-package erc
-  :ensure nil
+  :straight nil
   :commands (erc-login
              larumbe/erc-login)
   :config
-  (require 'erc-sasl)
+  (use-package erc-sasl
+    :straight (:host github :repo "psachin/erc-sasl")
+    :demand)
   (setq erc-sasl-use-sasl t)
   ;; Provides a way of authenticating before actually connecting to the server.
   ;; Requires providing the nick and password in the `erc-tls' function.
@@ -344,7 +356,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 ;;;; Misc
 ;; GUI and Clipboard
 (use-package select
-  :ensure nil
+  :straight nil
   :config
   (setq select-enable-clipboard t) ; Clipboard enabling: default = t
   (setq select-enable-primary t))  ; Primary clipboard:  default = nil
@@ -352,7 +364,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 (use-package simple
   :diminish auto-fill-function
-  :ensure nil
+  :straight nil
   :bind (("M-n"     . next-error)     ; M-n and M-p are already overwritten at mode-line.el.
          ("M-p"     . previous-error) ; This mapping allows to step through errors in a non-compilation buffer
          ("C-<f12>" . auto-fill-mode)
@@ -362,7 +374,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 (use-package hi-lock
-  :ensure nil
+  :straight nil
   :bind (("C-\\" . highlight-symbol-at-point)
          ("C-'" . unhighlight-regexp)))
 
@@ -385,7 +397,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 (use-package man
-  :ensure nil
+  :straight nil
   :config
   (setq Man-notify-method 'pushy))
 
@@ -398,13 +410,13 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 (use-package browse-url
-  :ensure nil
+  :straight nil
   :config
   (setq browse-url-browser-function 'browse-url-firefox))
 
 
 (use-package jpeg-mode
-  :ensure nil)
+  :straight nil)
 
 
 (use-package pdf-tools
@@ -417,20 +429,21 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 (use-package autorevert
-  :ensure nil
+  :straight nil
   :diminish auto-revert-mode)
 
 
-(use-package so-long
-  :diminish
-  :quelpa (so-long :url "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/so-long.el" :fetcher url)
-  :config
-  (global-so-long-mode 1))
+;; (use-package so-long
+;;   :diminish
+;;   :quelpa (so-long :url "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/so-long.el" :fetcher url)
+;;   :config
+;;   (global-so-long-mode 1))
 
 
 ;; API of `coin-ticker' was outdated. Also tried `crypto-ticker-mode' but was a bit more complex than this one
 (use-package btc-ticker
-  :ensure nil)
+  :straight (:repo "niedbalski/emacs-btc-ticker"
+             :fork (:repo "gmlarumbe/emacs-btc-ticker" :branch "larumbe")))
 
 
 (use-package keyfreq
@@ -457,12 +470,12 @@ to an html file in `user-emacs-directory'."
 
 
 (use-package xah-lee-functions
-  :ensure nil)
+  :straight nil)
 
 
 (use-package modi-functions
   :bind (("C-]" . modi/pull-up-line))
-  :ensure nil)
+  :straight nil)
 
 
 

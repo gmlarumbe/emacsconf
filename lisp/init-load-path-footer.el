@@ -16,8 +16,7 @@
 
 ;; Following dirs are expected to be 3rd-party or modified packages that may
 ;; contain more than one file (through symlinks)
-(defvar larumbe/load-path-dirs-recursive-deferred '("~/.elisp/site-lisp"
-                                                    "~/.elisp/modified"))
+(defvar larumbe/load-path-dirs-recursive-deferred '("~/.elisp/site-lisp"))
 (larumbe/add-to-load-path larumbe/load-path-dirs-recursive-deferred t)
 
 

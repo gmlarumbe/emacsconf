@@ -127,7 +127,7 @@
 
 ;;; Use-package setup
 (use-package compile
-  :ensure nil
+  :straight nil
   :bind (([f5]  . compile)
          ("C-*" . larumbe/compilation-show-buffer))
   :bind (:map compilation-mode-map
@@ -263,7 +263,7 @@ If passed PARSER, set corresponding regexp to be evaluated at the header."
     (when (boundp 'larumbe/compilation-start-time) ; When finding definitions/references with ggtags, somehow compilation is used under the hood, and `larumbe/compilation-start-time' is not defined (nor is required)
       (let* ((elapsed (time-subtract nil larumbe/compilation-start-time))
              (msg (format "Compilation elapsed time: %s" (format-seconds "%Y, %D, %H, %M, %z%S" elapsed))))
-	(save-excursion
+        (save-excursion
           (goto-char (point-max))
           (insert "\n")
           (insert msg)))))

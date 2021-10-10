@@ -1,1 +1,0 @@
-../submodules/emacswiki.org/sr-speedbar.el

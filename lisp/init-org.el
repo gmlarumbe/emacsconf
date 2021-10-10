@@ -5,7 +5,7 @@
 
 ;;;; Org
 (use-package org
-  :ensure nil
+  :straight nil
   :bind (:map org-mode-map
               ("C-c c" . org-capture)
               ("C-c b" . org-iswitchb)

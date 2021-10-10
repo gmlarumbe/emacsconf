@@ -6,7 +6,7 @@
 (require 'prog-packages)
 
 (use-package prog-mode
-  :ensure nil
+  :straight nil
   ;; INFO: If declaring with :bind, the keybindings will be overriden by major-mode keybindings
   ;;       To override minor-mode keybindings, use :bind*
   ;;       To override major-mode derived keybindings, use prog-mode-hook

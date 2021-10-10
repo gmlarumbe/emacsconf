@@ -6,6 +6,8 @@
 ;; INFO: Using a customized version of `org-jira' for non-Atlassian domain
 
 (use-package org-jira
+  :straight (:repo "ahungry/org-jira"
+             :fork (:repo "gmlarumbe/org-jira" :branch "hp"))
   :config
   ;; At some point there was a race condition with cURL.
   ;; Set the variable `request-backend' to 'url-retrieve if it happens again.
@@ -143,7 +145,7 @@ Issue needs to be updated manually later via `org-jira-update-issue'."
 
 ;;;; Ejira
 (use-package ejira
-  :ensure nil
+  :straight (:host github :repo "nyyManni/ejira")
   :commands (ejira-update-my-projects)
   :config
   ;; Dependencies (handled manually)
