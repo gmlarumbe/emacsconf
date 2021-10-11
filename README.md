@@ -9,7 +9,7 @@ Main focus on **Verilog/SystemVerilog** HDL, **scripting** and **compilation** f
 
 ## How-To ##
 
-  * Root config file is **init.el**. A symbolic link at *~/.emacs.d/init.el* is required for configuration to be loaded. This file loads configuration from other files in a modular way.
+  * Root config file is **init.el**. Symbolic links at *~/.emacs.d/init.el* and *~/.emacs.d/early-init.el* are required for configuration to be loaded. This file loads configuration from other files in a modular way.
 
   * [EXWM](https://github.com/ch11ng/exwm) is set as the default configuration display manager. If you want to use it read the [documentation](https://github.com/ch11ng/exwm/wiki) and customize *exwm-config.el* with the proper **xrandr** resolution of your screen. Besides, other display managers might be disabled first and **.xinitrc** file should look similar to the following:
 

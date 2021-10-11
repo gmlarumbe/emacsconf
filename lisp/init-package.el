@@ -1,22 +1,31 @@
 ;;; init-package.el --- Package Init settings  -*- lexical-binding: t -*-
 ;;; Commentary:
-
-;; TODO: Fill documentation of (use-package and package)
-
-;; Seems keyword :host needs to be filled since it's not a MELPA package...
-
-;; Plus, set also :local-repo to clone into "kmodi" instead of generic-name".emacs.d" directory
-
-;; :straight nil seems to have the same effect as :straight (type: built-in) with use-package
-
-;; Plus, for cases such as emacswiki, when we only want one file for the build,
-;; use the :files section to avoid autoloading all the .el of the the root dir
-
-;; If package name is different than mode,
+;;
+;; Package configuration is based upon straight.el and use-package
+;;  - https://github.com/raxod502/straight.el
+;;  - https://github.com/jwiegley/use-package
+;;
+;; Straight completely replaces Emacs default `package' system.
+;; Instead of fetching tarballs from MELPA, straight clones Git repos into
+;; `straight-base-dir'/repo directory and creates symlinks/autoloads in the build directory.
+;; It easily integrates with `use-package' macro to make it less verbose and more readable.
+;;
+;; For built-in packages, straight documentation says that :straight (type: built-in) will
+;; avoid trying to download the package.  However, :straight nil seems to have the same effect.
+;;
+;; Normally, for packages that are present in MELPA the :host keyword is not required.
+;; If it is not present at MELPA it will normally be set to :host github.
+;;
+;; If the default name of the repo needs to be different (e.g. an .emacs.d named repo), the
+;; keywords :local-repo can be used to set the local copy name.
+;;
+;; There might be cases (e.g. emacswiki.org) where we only want one file for the build.
+;; Using the :files section avoids autoloading all the .el of the the Git root directory.
+;;
+;; If package name is different than mode name (e.g. Matlab):
 ;; (use-package matlab
-  ;; :straight matlab-mode
-
-
+;;   :straight matlab-mode)
+;;
 ;;; Code:
 
 ;;;; Straight bootstrap
@@ -33,6 +42,7 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+
 ;;;; Use-package integration
 (straight-use-package 'use-package)
 (use-package straight
@@ -40,8 +50,6 @@
   (setq straight-use-package-by-default t)
   (setq straight-host-usernames
         '((github . "gmlarumbe"))))
-
-(use-package use-package-chords :demand) ; Allow for :chords keyword with `use-package' (only to global keymap)
 
 
 (provide 'init-package)
