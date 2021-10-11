@@ -97,7 +97,6 @@
 
 
   (use-package dired-collapse
-    :demand
     :bind (:map dired-mode-map
            (";" . dired-collapse-mode)))
 

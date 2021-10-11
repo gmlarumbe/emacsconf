@@ -28,6 +28,7 @@
             xah-right-brackets)))
   (setq xah-right-brackets (reverse xah-right-brackets)))
 
+;;;###autoload
 (defun xah-backward-left-bracket ()
   "Move cursor to the previous occurrence of left bracket.
 The list of brackets to jump to is defined by `xah-left-brackets'.
@@ -36,6 +37,7 @@ Version 2015-10-01"
   (interactive)
   (search-backward-regexp (regexp-opt xah-left-brackets) nil t))
 
+;;;###autoload
 (defun xah-forward-right-bracket ()
   "Move cursor to the next occurrence of right bracket.
 The list of brackets to jump to is defined by `xah-right-brackets'.
@@ -44,6 +46,8 @@ Version 2015-10-01"
   (interactive)
   (re-search-forward (regexp-opt xah-right-brackets) nil t))
 
+
+;;;###autoload
 (defun xah-goto-matching-bracket ()
   "Move cursor to the matching bracket.
 If cursor is not on a bracket, call `backward-up-list'.
@@ -64,6 +68,7 @@ Version 2016-11-22"
 
 
 ;;;;; Quote Movement
+;;;###autoload
 (defun xah-forward-quote-smart ()
   "Move cursor to the current or next string quote.
 Place cursor at the position after the left quote.
@@ -81,6 +86,7 @@ Version 2016-11-22"
     (when (<= (point) $pos)
       (progn (re-search-forward "\\\"" nil t)))))
 
+;;;###autoload
 (defun xah-backward-quote ()
   "Move cursor to the previous occurrence of \".
 If there are consecutive quotes of the same char, keep moving until none.
@@ -99,6 +105,7 @@ Version 2016-07-23"
 
 
 ;;;;; Text Selecting
+;;;###autoload
 (defun xah-select-text-in-quote ()
   "Select text between the nearest left and right delimiters.
 Delimiters here includes the following chars: \"<>(){}[]“”‘’‹›«»「」『』【】〖〗《》〈〉〔〕（）
@@ -123,6 +130,7 @@ Version 2016-12-18"
     (skip-chars-forward $skipChars)
     (set-mark $pos)))
 
+;;;###autoload
 (defun xah-select-line ()
   "Select current line. If region is active, extend selection downward by line.
 URL `http://ergoemacs.org/emacs/modernization_mark-word.html'
@@ -136,6 +144,7 @@ Version 2017-11-01"
       (end-of-line)
       (set-mark (line-beginning-position)))))
 
+;;;###autoload
 (defun xah-select-current-line ()
   "Select current line.
 URL `http://ergoemacs.org/emacs/modernization_mark-word.html'
@@ -144,6 +153,7 @@ Version 2016-07-22"
   (end-of-line)
   (set-mark (line-beginning-position)))
 
+;;;###autoload
 (defun xah-select-block ()
   "Select the current/next block of text between blank lines.
 If region is active, extend selection downward by block.
@@ -160,6 +170,7 @@ Version 2017-11-01"
       (push-mark (point) t t)
       (re-search-forward "\n[ \t]*\n" nil "move"))))
 
+;;;###autoload
 (defun xah-select-current-block ()
   "Select the current block of text between blank lines.
 
@@ -174,6 +185,7 @@ Version 2017-07-02"
     (re-search-forward "\n[ \t]*\n" nil "move")))
 
 
+;;;###autoload
 (defun xah-extend-selection ()
   "Select the current word, bracket/quote expression, or expand selection.
 Subsequent calls expands the selection.
@@ -281,6 +293,7 @@ Version 2017-01-15"
 
 
 ;;;;; Bracket deletion
+;;;###autoload
 (defun xah-delete-backward-char-or-bracket-text ()
   "Delete backward 1 character, but if it's a \"quote\" or bracket ()[]{}【】「」 etc, delete bracket and the inner text, push the deleted text to `kill-ring'.
 
@@ -316,6 +329,7 @@ Version 2017-07-02"
      (t
       (delete-char -1)))))
 
+;;;###autoload
 (defun xah-delete-backward-bracket-text ()
   "Delete the matching brackets/quotes to the left of cursor, including the inner text.
 
@@ -331,6 +345,7 @@ Version 2017-07-02"
     (mark-sexp)
     (kill-region (region-beginning) (region-end))))
 
+;;;###autoload
 (defun xah-delete-backward-bracket-pair ()
   "Delete the matching brackets/quotes to the left of cursor.
 
@@ -353,6 +368,7 @@ Version 2017-07-02"
     (push-mark (point) t)
     (goto-char (- $p0 2))))
 
+;;;###autoload
 (defun xah-delete-forward-bracket-pairs ( &optional @delete-inner-text-p)
   "Delete the matching brackets/quotes to the right of cursor.
 If *delete-inner-text-p is true, also delete the inner text.

@@ -5,8 +5,6 @@
 (use-package elisp-mode
   :straight nil
   :diminish eldoc-mode
-  :commands (larumbe/lively-dwim
-             hydra-command-log/body)
   :bind (:map emacs-lisp-mode-map
          ("<return>" . larumbe/newline)
          ("C-c C-l"  . larumbe/load-file-current-buffer)

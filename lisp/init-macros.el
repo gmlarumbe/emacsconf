@@ -22,7 +22,6 @@
 ;;; Code:
 
 (use-package elmacro
-  :demand
   :diminish elmacro-mode)
 
 

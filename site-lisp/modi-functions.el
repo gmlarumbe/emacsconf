@@ -10,6 +10,7 @@
   "Default number by which the number suffixes will increment in the
 replacements.")
 
+;;;###autoload
 (defun modi/replace-with-incr-num-suffix (start)
   "Replace selected region/symbol at point with incrementing number suffixes.
 
@@ -65,6 +66,7 @@ Note that the selected region cannot contain any spaces."
 
 
 ;; http://emacs.stackexchange.com/q/7519/115
+;;;###autoload
 (defun modi/pull-up-line ()
   "Join the following line onto the current one.
 
@@ -90,6 +92,7 @@ comment, remove the leading comment characters from that line."
 
 ;; Example:
 ;; (modi/search-replace-pairs '(("larumbe/" . "someone/") ("modi/" . "kmodi/")))
+;;;###autoload
 (defun modi/search-replace-pairs (sr-pairs)
   "Search/replace in the buffer/region using SR-PAIRS.
 SR-PAIRS is a list of cons (SEARCH-REGEX . REPLACE-EXPR) where

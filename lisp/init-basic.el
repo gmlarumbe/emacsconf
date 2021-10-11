@@ -171,9 +171,20 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package google-this
   :diminish
-  :demand
+  :bind (("C-c / t" . google-this)
+         ("C-c / c" . google-this-translate-query-or-region))
   :config
-  (google-this-mode 1))
+  ;; Once a command present in :bind is executed the rest of `google-this-mode' commands will be available
+  (google-this-mode 1)
+
+  ;; Google translate
+  ;; BUG: https://github.com/atykhonov/google-translate/issues/52
+  (use-package google-translate
+    :config
+    (defun google-translate--search-tkk ()
+      "Search TKK."
+      (list 430675 2721866130))
+    (setq google-translate-backend-method 'curl)))
 
 
 (use-package howdoi
@@ -477,7 +488,6 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 (use-package keyfreq
-  :demand
   :config
   (setq keyfreq-file      (locate-user-emacs-file "keyfreq"))
   (setq keyfreq-file-lock (locate-user-emacs-file "keyfreq.lock"))

@@ -29,7 +29,6 @@
   :config
   ;; Subpackages
   (use-package magit-lfs
-    :demand ; Use :demand inside :config instead of :after magit due to load issues
     :init
     ;; INFO: Magit Remaps ':' key from `magit-git-command' to `magit-lfs'
     ;; Setting following variable maps it to ";" instead

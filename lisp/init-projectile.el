@@ -32,6 +32,14 @@
       (add-to-list 'projectile-globally-ignored-directories dir)))
 
   (setq projectile-indexing-method 'hybrid) ; `alien' is the fastest indexing method (default), but ignores .projectile ignores
+  ;; INFO: hybrid works fine for most of the cases allowing for ignoring of specific dirs.
+  ;; Plus, to quickly fetch the file-list, ripgrep based functions are used in conjunction with .global_gitignore
+  ;;
+  ;; To change indexing method per-project, set the following in the .dir-locals.el:
+  ;;  ((nil . ((projectile-indexing-method . alien))))
+  ;;
+  ;; Source: http://joelmccracken.github.io/entries/project-local-variables-in-projectile-with-dirlocals/
+
   (setq projectile-completion-system 'helm)
   (setq projectile-mode-line-prefix " P") ; Modeline
   (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line)
@@ -77,7 +85,7 @@ ARG will be passed to `projectile-mode' wrapped function."
     "Default rg arguments used in the functions in `projectile'package.")
 
   (defun larumbe/projectile-rg-command ()
-    "Fetched from `modi/advice-projectile-use-rg.
+    "Copied/adapted from `modi/advice-projectile-use-rg'.
 Use `rg' for getting a list of all files in the project."
     (mapconcat #'shell-quote-argument
                (append '("rg")
