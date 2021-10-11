@@ -39,19 +39,19 @@ ARG will be passed to `company-mode' wrapped function."
 (use-package yasnippet
   :commands (yas-reload-all
              yas-insert-snippet
-             yas-visit-snippet-file
-             larumbe/yas-melpa-snippets-prevent-load)
+             yas-visit-snippet-file)
   :diminish yasnippet yas-minor-mode
   :bind ("<C-M-return>" . yas-expand)
   :config
   ;; MELPA Snippets database
-  (use-package yasnippet-snippets) ; evals and initializes after yasnippet loading
-
-  ;; `yasnippet-snippets' will add the directory of `yasnippet-snippets-dir' to
-  ;; the list of available snippets. So we advice the function and do it manually.
-  (advice-add 'yasnippet-snippets-initialize :override #'larumbe/yas-melpa-snippets-prevent-load)
-  (setq yas-snippet-dirs '(yasnippet-snippets-dir))
-  (add-to-list 'yas-snippet-dirs "~/.elisp/snippets") ; Own snippets will have precedence over MELPA ones
+  (use-package yasnippet-snippets
+    :straight (:repo "AndreaCrotti/yasnippet-snippets"
+               :fork (:repo "gmlarumbe/yasnippet-snippets"))
+    :config
+    ;; Snippets directories are set in `yas-snippet-dirs' variable.
+    ;; `yasnippet-snippets' will add the directory of `yasnippet-snippets-dir' to
+    ;; the list of available snippets. So we reset it's value to look only in one directory.
+    (setq yas-snippet-dirs '(yasnippet-snippets-dir)))
 
   ;; Unmap TAB, use it for indentation only
   (define-key yas-minor-mode-map (kbd "TAB") nil)
@@ -65,14 +65,7 @@ If universal ARG is provided, visit a snippet file."
     (interactive "P")
     (if arg
         (call-interactively #'yas-visit-snippet-file)
-      (call-interactively #'yas-insert-snippet)))
-
-  (defun larumbe/yas-melpa-snippets-prevent-load ()
-    "Prevent automatic loading of MELPA snippets.
-Allows a selective loading/overriding of the desired snippets/modes."
-    (interactive)
-    (message "Avoiding loading of Melpa snippets")))
-
+      (call-interactively #'yas-insert-snippet))))
 
 
 ;;;; Hydra

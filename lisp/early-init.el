@@ -50,8 +50,8 @@ Add subdirectories if RECURSIVE is non-nil."
                                  "~/.elisp/lisp-prog"
                                  "~/.elisp/site-lisp"
                                  "~/.elisp/own-modes"))
+(larumbe/add-to-load-path larumbe/load-path-dirs t) ; Add recursively
 
-(larumbe/add-to-load-path larumbe/load-path-dirs t)
 
 
 ;;;; Straight

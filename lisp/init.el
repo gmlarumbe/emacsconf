@@ -30,7 +30,7 @@
 (require 'init-fpga-projects)
 (require 'init-prog)
 (require 'init-exwm)
-(require 'init-load-path-footer)
+(require 'init-machine)
 
 
 (provide 'init)

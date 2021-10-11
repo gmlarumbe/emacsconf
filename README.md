@@ -39,20 +39,10 @@ Main focus on **Verilog/SystemVerilog** HDL, **scripting** and **compilation** f
     * Subdir **prog** holds config generic to all languages, plus some config for the less frequently used.
     * Subid **hdl** holds config to Verilog/VHDL, both specific and common, such as font-locking.
 
-  * **site_lisp**: third party elisp files found on the Internet and not available at MELPA.
-
-  * **snippets**: YASnippet snippets for some major-modes.
-
-  * **submodules**: Git submodules required for the configuration.
+  * **site_lisp**: third party elisp files and code snippets/functions found on the Internet and not available at MELPA/GitHub.
 
   * **own-modes**: my own major and minor modes.
 
-  * **modified**: forked modified versions of some packages and 3rd party config files.
-
   * **scripts**: auxiliary files for CI.
-
-
-
-  * **snippets** includes additional yasnippet snippets, some of them found on the internet and some of them customized.
 
 
