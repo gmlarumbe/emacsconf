@@ -13,7 +13,6 @@
 ;;;; Packages
 (require 'init-package)
 (require 'init-basic)
-(require 'init-env)
 (require 'init-custom-functions)
 (require 'init-macros)
 (require 'init-helm)

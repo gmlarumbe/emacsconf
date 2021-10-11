@@ -515,7 +515,7 @@ to an html file in `user-emacs-directory'."
 (use-package with-editor)
 (use-package request)
 (use-package bind-key)
-
+(use-package env-switch :straight nil)
 
 
 (provide 'init-basic)
