@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <colspec colname="..." colnum="..." colwidth="..." />
-# key: colspec
-# --
-<colspec colname="$1" colnum="$2" colwidth="$3" />$0

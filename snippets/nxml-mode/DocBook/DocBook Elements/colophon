@@ -1,7 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <colophon id="...">
-# key: colophon
-# --
-<colophon id="$1">
-	$0
-</colophon>

@@ -1,7 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <synopfragmentref linkend="...">
-# key: synopfragmentref
-# --
-<synopfragmentref linkend="$1">
-	$0
-</synopfragmentref>

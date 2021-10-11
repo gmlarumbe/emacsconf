@@ -1,5 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <bridgehead id="...">
-# key: bridgehead
-# --
-<bridgehead id="$1">$2</bridgehead>$0

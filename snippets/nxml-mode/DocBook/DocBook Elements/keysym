@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <keysym>
-# key: keysym
-# --
-<keysym>$1</keysym>$0

@@ -1,5 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <systemitem class="osname">
-# key: osname
-# --
-<systemitem class="osname">$1</systemitem>$0

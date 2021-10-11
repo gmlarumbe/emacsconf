@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <interface>
-# key: interface
-# --
-<interface>$1</interface>$0

@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <country>
-# key: country
-# --
-<country>$1</country>$0

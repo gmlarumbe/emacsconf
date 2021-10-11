@@ -1,5 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <systemitem class="event">
-# key: event
-# --
-<systemitem class="event">$1</systemitem>$0

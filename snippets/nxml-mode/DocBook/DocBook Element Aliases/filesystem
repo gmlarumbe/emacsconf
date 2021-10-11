@@ -1,5 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <systemitem class="filesystem">
-# key: filesystem
-# --
-<systemitem class="filesystem">$1</systemitem>$0

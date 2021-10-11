@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# contributor: Daniel Hitzel
-# key: up
-# --
-(use-package ${1:package-name}
-  :config
-  $0)

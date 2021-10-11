@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <parameter class="...">
-# key: parameter
-# --
-<parameter class="${1:command|function|option}">$2</parameter>$0

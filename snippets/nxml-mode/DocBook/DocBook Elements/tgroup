@@ -1,7 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <tgroup cols="...">
-# key: tgroup
-# --
-<tgroup cols="$1">
-	$0
-</tgroup>

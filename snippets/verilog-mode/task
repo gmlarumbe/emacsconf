@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# key: ta
-# --
-
-
-task ${1:task_name} ($2);
-  $0
-endtask: $1

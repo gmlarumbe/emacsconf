@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <pubsnumber>
-# key: pubsnumber
-# --
-<pubsnumber>$1</pubsnumber>$0

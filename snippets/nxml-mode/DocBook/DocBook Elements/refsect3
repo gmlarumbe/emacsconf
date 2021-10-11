@@ -1,7 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <refsect3 id="...">
-# key: refsect3
-# --
-<refsect3 id="$1">
-	$0
-</refsect3>

@@ -1,7 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <areaset id="...">
-# key: areaset
-# --
-<areaset id="$1">
-	$0
-</areaset>

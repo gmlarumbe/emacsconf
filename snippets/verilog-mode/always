@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# key: aa
-# --
-
-always begin
-   $0
-end

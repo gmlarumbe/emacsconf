@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <glossterm>
-# key: glossterm
-# --
-<glossterm>$1</glossterm>$0

@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <code language="...">
-# key: code
-# --
-<code language="$1">$2</code>$0

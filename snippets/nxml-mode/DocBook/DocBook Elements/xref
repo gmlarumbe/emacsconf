@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <xref linkend="..." />
-# key: xref
-# --
-<xref linkend="$1" />$0

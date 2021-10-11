@@ -1,7 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <simplesect id="...">
-# key: simplesect
-# --
-<simplesect id="$1">
-	$0
-</simplesect>

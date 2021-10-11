@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <command>
-# key: command
-# --
-<command>$1</command>$0

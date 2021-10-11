@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# contributor: Gonzalo Larumbe
-# name: require
-# key: rq
-# --
-(require '${1:package})$0

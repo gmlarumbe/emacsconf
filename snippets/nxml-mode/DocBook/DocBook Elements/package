@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <package>
-# key: package
-# --
-<package>$1</package>$0

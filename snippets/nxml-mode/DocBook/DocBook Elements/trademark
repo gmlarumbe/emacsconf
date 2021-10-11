@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <trademark class="...">
-# key: trademark
-# --
-<trademark class="${1:trade}">$2</trademark>$0

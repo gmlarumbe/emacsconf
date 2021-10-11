@@ -1,7 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <task id="...">
-# key: task
-# --
-<task id="$1">
-	$0
-</task>

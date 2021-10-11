@@ -1,5 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <systemitem class="newsgroup">
-# key: newsgroup
-# --
-<systemitem class="newsgroup">$1</systemitem>$0

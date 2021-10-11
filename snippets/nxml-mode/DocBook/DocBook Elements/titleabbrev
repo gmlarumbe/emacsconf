@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <titleabbrev>
-# key: titleabbrev
-# --
-<titleabbrev>$1</titleabbrev>$0

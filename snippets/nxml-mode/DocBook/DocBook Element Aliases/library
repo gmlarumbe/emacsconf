@@ -1,5 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <systemitem class="library">
-# key: library
-# --
-<systemitem class="library">$1</systemitem>$0

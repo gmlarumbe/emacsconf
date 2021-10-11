@@ -1,7 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <refsection id="...">
-# key: refsection
-# --
-<refsection id="$1">
-	$0
-</refsection>

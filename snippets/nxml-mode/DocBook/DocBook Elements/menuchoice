@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <menuchoice>
-# key: menuchoice
-# --
-<menuchoice>$1</menuchoice>$0

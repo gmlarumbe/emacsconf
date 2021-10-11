@@ -1,5 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <systemitem class="domainname">
-# key: domainname
-# --
-<systemitem class="domainname">$1</systemitem>$0

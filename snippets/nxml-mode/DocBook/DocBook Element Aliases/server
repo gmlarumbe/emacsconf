@@ -1,5 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <systemitem class="server">
-# key: server
-# --
-<systemitem class="server">$1</systemitem>$0

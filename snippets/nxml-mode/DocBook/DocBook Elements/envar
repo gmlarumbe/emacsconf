@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <envar>
-# key: envar
-# --
-<envar>$1</envar>$0

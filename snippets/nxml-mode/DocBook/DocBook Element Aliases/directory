@@ -1,5 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <filename class='directory'>
-# key: directory
-# --
-<filename class="directory">$1</filename>$0

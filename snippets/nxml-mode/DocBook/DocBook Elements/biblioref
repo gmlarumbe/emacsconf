@@ -1,5 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <biblioref linkend="..." />
-# key: biblioref
-# --
-<biblioref linkend="$1" />$0

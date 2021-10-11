@@ -1,7 +1,0 @@
-# contributor: Martin Prpic <martin.prpic@gmail.com>
-# name: <areaspec units="...">
-# key: areaspec
-# --
-<areaspec units="$1">
-	$0
-</areaspec>

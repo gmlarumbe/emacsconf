@@ -1,5 +1,0 @@
-# contributor: Jaromir Hradilek <jhradilek@gmail.com>
-# name: <?xml version='...' encoding='...' ?>
-# key: xml
-# --
-<?xml version='${1:1.0}' encoding='${2:utf-8}' ?>
