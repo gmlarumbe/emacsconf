@@ -12,5 +12,7 @@ fi
 
 echo "Link to emacs init folder..."
 ln -s ${PWD}/.elisp/lisp/init.el ${HOME}/.emacs.d/init.el
+ln -s ${PWD}/.elisp/lisp/early-init.el ${HOME}/.emacs.d/early-init.el
 
-git -C .elisp submodule update --init --recursive --jobs 8
+# INFO: Uncomment if using git submodules
+# git -C .elisp submodule update --init --recursive --jobs 8
