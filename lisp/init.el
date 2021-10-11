@@ -10,8 +10,6 @@
 ;;
 ;;; Code:
 
-(load "~/.elisp/lisp/init-load-path-header.el")
-
 ;;;; Packages
 (require 'init-package)
 (require 'init-basic)

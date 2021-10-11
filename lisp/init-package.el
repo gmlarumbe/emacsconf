@@ -1,7 +1,20 @@
 ;;; init-package.el --- Package Init settings  -*- lexical-binding: t -*-
 ;;; Commentary:
-;;; Code:
 
+;; TODO: Fill documentation of (use-package and package)
+
+;; Seems keyword :host needs to be filled since it's not a MELPA package...
+
+;; Plus, set also :local-repo to clone into "kmodi" instead of generic-name".emacs.d" directory
+
+;; :straight nil seems to have the same effect as :straight (type: built-in) with use-package
+
+;; Plus, for cases such as emacswiki, when we only want one file for the build,
+;; use the :files section to avoid autoloading all the .el of the the root dir
+
+;; If package name is different than mode,
+;; (use-package matlab
+  ;; :straight matlab-mode
 
 
 ;;; Code:

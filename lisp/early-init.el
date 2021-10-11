@@ -1,8 +1,8 @@
-;;; init-load-path-header.el --- Load-path Header  -*- lexical-binding: t -*-
+;;; early-init.el --- Early Init  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;; Code:
 
-;;;; Load path
+;;;; Load-path
 ;; Order of packages within `load-path' actually matters.
 ;; If there is one package present in more than one directory of `load-path',
 ;; only the first in the list will be used to load the package.
@@ -46,13 +46,16 @@ Add subdirectories if RECURSIVE is non-nil."
         (add-to-list 'load-path (expand-file-name dir))))))
 
 
-(defvar larumbe/load-path-dirs-recursive '("~/.elisp/lisp"
-                                           "~/.elisp/lisp-prog"
-                                           "~/.elisp/own-modes"))
+(defvar larumbe/load-path-dirs '("~/.elisp/lisp"
+                                 "~/.elisp/lisp-prog"
+                                 "~/.elisp/site-lisp"
+                                 "~/.elisp/own-modes"))
 
-(larumbe/add-to-load-path larumbe/load-path-dirs-recursive t)
+(larumbe/add-to-load-path larumbe/load-path-dirs t)
 
 
-(provide 'init-load-path-header)
+;;;; Straight
+(setq package-enable-at-startup nil) ;; Disable package.el in favor of straight.el
 
-;;; init-load-path-header.el ends here
+
+;;; early-init.el ends here
