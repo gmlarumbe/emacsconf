@@ -414,6 +414,10 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
          ("C-'" . unhighlight-regexp)))
 
 
+(use-package elmacro
+  :diminish elmacro-mode)
+
+
 (use-package auto-highlight-symbol
   :bind (("<f11>" . auto-highlight-symbol-mode))
   :bind (:map auto-highlight-symbol-mode-map
@@ -510,6 +514,10 @@ to an html file in `user-emacs-directory'."
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/modi-functions.el"))
   :bind (("C-]" . modi/pull-up-line)))
 
+(use-package others-functions
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/others-functions.el"))
+  :bind (("C-x d" . duplicate-current-line-or-region))) ; Replaces Dired (C-x C-j works better)
+
 (use-package larumbe-functions
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/larumbe-functions.el"))
   :bind (("M-w"             . larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
@@ -519,10 +527,8 @@ to an html file in `user-emacs-directory'."
          ("C-x C-,"         . larumbe/revert-buffer-maybe-no-confirm)
          ("C-M-<backspace>" . larumbe/kill-sexp-backwards)))
 
-(use-package others-functions
-  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/others-functions.el"))
-  :bind (("C-x d" . duplicate-current-line-or-region))) ; Replaces Dired (C-x C-j works better)
-
+(use-package larumbe-macros
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("macros/larumbe-macros.el")))
 
 
 

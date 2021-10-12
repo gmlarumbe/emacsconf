@@ -13,7 +13,6 @@
 ;;;; Packages
 (require 'init-package)
 (require 'init-basic)
-(require 'init-macros)
 (require 'init-helm)
 (require 'init-grep)
 (require 'init-projectile)
