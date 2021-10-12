@@ -52,11 +52,11 @@
 ;; Avoids use of following keys inside an  *EXWM* buffer in line-mode
 (defvar larumbe/exwm-common-input-prefix-keys
   '(?\C-q  ; Free `exwm-input-send-next-key'
-    'f3    ; Macro defining
-    'f4
-    '?\C-, ; Ansi-term
-    '?\C-.
-    'f9))  ; Other various functions
+    f3    ; Macro defining
+    f4
+    ?\C-, ; Ansi-term
+    ?\C-.
+    f9))  ; Other various functions
 
 
 (defvar larumbe/exwm-common-input-simulation-keys
