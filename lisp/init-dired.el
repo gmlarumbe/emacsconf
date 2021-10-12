@@ -28,7 +28,7 @@
   (use-package dired-aux
     :straight nil)
 
-  ;; extra Dired functionality
+  ;; X-tra Dired functionality
   (use-package dired-x
     :straight nil
     :demand

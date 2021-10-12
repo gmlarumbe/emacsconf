@@ -14,7 +14,7 @@
 ;;     be recognized, and there wont be any chance of skip to the next.  It will be missed.
 ;;
 ;; 4 - A first solution seemed to be executing `imenu' after erasing comments from current buffer and then returning it to its initial state
-;;     But that would require use of `larumbe/delete-comments-from-buffer' (very slow) and `undo', with some issues programatically.
+;;     But that would require use of `delete-comments-from-buffer' (very slow) and `undo', with some issues programatically.
 ;;     That would need  to be done with `larumbe/find-verilog-module-instance-fwd' as well.
 ;;     The profit would not be worth the effort due to an extreme fall in performance.
 ;;
