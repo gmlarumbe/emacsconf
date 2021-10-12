@@ -21,7 +21,8 @@
 ;;;; Window/Frame Display
 (menu-bar-mode -1)
 (tool-bar-mode -1)
-(scroll-bar-mode -1)
+(when (featurep 'scroll-bar)
+  (scroll-bar-mode -1))
 
 
 (use-package smart-mode-line
