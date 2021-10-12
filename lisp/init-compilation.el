@@ -129,7 +129,7 @@
 (use-package compile
   :straight nil
   :bind (([f5]  . compile)
-         ("C-*" . larumbe/compilation-show-buffer))
+         ("C-)" . larumbe/compilation-show-buffer))
   :bind (:map compilation-mode-map
               ("r"   . rename-buffer)
               ("j"   . larumbe/recompile-with-regexp-alist)

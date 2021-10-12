@@ -5,7 +5,6 @@
 
 (require 'ggtags)
 (require 'auto-complete)
-(require 'init-custom-functions)
 
 
 ;;;; Variables

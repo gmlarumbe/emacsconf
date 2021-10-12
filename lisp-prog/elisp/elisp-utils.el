@@ -4,6 +4,14 @@
 
 
 ;;;; Own functions
+(defun larumbe/load-file-current-buffer ()
+  "Load current buffer .el file."
+  (interactive)
+  (if (string-equal "el" (file-name-extension buffer-file-name))
+      (load-file buffer-file-name)
+    (error "Cannot load non-Elisp files")))
+
+
 (defun larumbe/byte-compile-current-buffer ()
   "Byte-compile file of current visited buffer."
   (interactive)

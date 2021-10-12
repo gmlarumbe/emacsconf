@@ -40,7 +40,6 @@
 ;;; Code:
 
 
-(require 'init-custom-functions)
 (use-package exwm
   :demand)
 

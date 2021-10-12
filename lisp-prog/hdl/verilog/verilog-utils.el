@@ -4,7 +4,6 @@
 
 
 (require 'make-mode)
-(require 'init-custom-functions)
 (require 'which-func)
 (require 'verilog-mode)
 (require 'setup-verilog) ; Modi's setup

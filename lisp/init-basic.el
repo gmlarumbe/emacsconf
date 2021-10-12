@@ -3,32 +3,25 @@
 ;;; Code:
 
 ;;;; Basics
-(if (and (fboundp 'server-running-p)           ; Server start for emacsclient support
-         (not (server-running-p)))
-    (server-start))
+(require 'server)
+(unless (server-running-p)                     ; Server start for emacsclient support
+  (server-start))
 (setq custom-file "~/.emacs.d/custom-file.el") ; Custom file does not need to be in version control.
 (unless (file-exists-p custom-file)            ; It will only hold a list with safe variables, `package-selected-packages' for autoremove and custom set variables.
   (write-region "" nil custom-file))           ; All of these are actually local to a machine.
 (load custom-file)                             ; Create file if it doesn't exist in emacs directory, and load it
 (load-theme 'deeper-blue t)                    ; Load theme
 (desktop-save-mode 1)                          ; Autosave Desktop
+(defalias 'yes-or-no-p 'y-or-n-p)              ; Globally set y-or-n-p
 (setq confirm-kill-emacs #'y-or-n-p)           ; Avoid closing Emacs unexpectedly (helm prefix C-x c)
 (setq inhibit-startup-screen t)                ; Inhibit startup screen
 (setq disabled-command-function 'ignore)       ; Enable all commands
-(defalias 'yes-or-no-p 'y-or-n-p)              ; Globally set y-or-n-p
 
 
 ;;;; Window/Frame Display
 (menu-bar-mode -1)
-(when (featurep 'tool-bar)
-  (tool-bar-mode -1))
-(when (featurep 'scroll-bar)
-  (scroll-bar-mode -1))
-
-
-(use-package minibuffer
-  :straight nil
-  :bind ("<C-return>" . completion-at-point))
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
 
 
 (use-package smart-mode-line
@@ -41,6 +34,11 @@
   (setq line-number-mode nil) ; Hide current line number from mode-line
   (setq display-time-default-load-average nil) ; Display time on the status bar
   (display-time-mode t))
+
+
+(use-package minibuffer
+  :straight nil
+  :bind ("<C-return>" . completion-at-point))
 
 
 (use-package popwin
@@ -62,19 +60,19 @@
   :bind (("C-x C-b" . ibuffer))
   :config
   (setq ibuffer-default-sorting-mode 'major-mode)
-  (setq ibuffer-expert t))
+  (setq ibuffer-expert t)
 
-
-(use-package ibuffer-projectile
-  :hook ((ibuffer . modi/ibuffer-customization))
-  :config
-  (defun modi/ibuffer-customization ()
-    "My customization for `ibuffer'."
-    ;; ibuffer-projectile setup
-    (ibuffer-projectile-set-filter-groups)
-    (unless (eq ibuffer-sorting-mode 'alphabetic)
-      (ibuffer-do-sort-by-alphabetic) ; first do alphabetic sort
-      (ibuffer-do-sort-by-major-mode))))
+  ;; Projectile-sorted buffers
+  (use-package ibuffer-projectile
+    :hook ((ibuffer . modi/ibuffer-customization))
+    :config
+    (defun modi/ibuffer-customization ()
+      "My customization for `ibuffer'."
+      ;; ibuffer-projectile setup
+      (ibuffer-projectile-set-filter-groups)
+      (unless (eq ibuffer-sorting-mode 'alphabetic)
+        (ibuffer-do-sort-by-alphabetic) ; first do alphabetic sort
+        (ibuffer-do-sort-by-major-mode)))))
 
 
 (use-package ibuf-ext
@@ -104,7 +102,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
     ;; is too hard to do, so work only when search string is empty.
     (if (= 0 (length isearch-string))
         (beginning-of-thing 'word))
-    ;; DANGER: At some point in Emacs it required a '1' argument to fix a "Wrong type argument: number-or-marker-p, nil" error
+    ;; At some point in Emacs it required a '1' argument to fix a "Wrong type argument: number-or-marker-p, nil" error
     (isearch-yank-word-or-char 1)))
 
 
@@ -121,7 +119,6 @@ C-s C-w [C-w] [C-w]... behaviour. "
               ("j"   . View-scroll-line-forward)
               ("k"   . View-scroll-line-backward)
               ("l"   . recenter-top-bottom))
-  :bind (("C-x C-q" . view-mode))
   :config
   (setq view-read-only t))
 
@@ -138,7 +135,7 @@ C-s C-w [C-w] [C-w]... behaviour. "
 (use-package ido
   :config
   (setq ido-everywhere nil)
-  (setq ido-default-buffer-method "selected-window"))
+  (setq ido-default-buffer-method 'selected-window))
 
 
 (use-package winner
@@ -169,28 +166,6 @@ C-s C-w [C-w] [C-w]... behaviour. "
   (setq sr-speedbar-right-side t))
 
 
-(use-package google-this
-  :diminish
-  :bind (("C-c / t" . google-this)
-         ("C-c / c" . google-this-translate-query-or-region))
-  :config
-  ;; Once a command present in :bind is executed the rest of `google-this-mode' commands will be available
-  (google-this-mode 1)
-
-  ;; Google translate
-  ;; BUG: https://github.com/atykhonov/google-translate/issues/52
-  (use-package google-translate
-    :config
-    (defun google-translate--search-tkk ()
-      "Search TKK."
-      (list 430675 2721866130))
-    (setq google-translate-backend-method 'curl)))
-
-
-(use-package howdoi
-  :straight (:host github :repo "arthurnn/howdoi-emacs"))
-
-
 (use-package bind-chord)
 
 
@@ -206,7 +181,6 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 ;;;; Editing
-
 (use-package drag-stuff
   :bind (("<C-M-up>"   . drag-stuff-up)
          ("<C-M-down>" . drag-stuff-down))
@@ -248,7 +222,7 @@ the vertical drag is done."
 
 
 (use-package untabify-trailing-ws
-  :straight nil
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("minor-modes/untabify-trailing-ws.el"))
   :demand
   :config
   (untabify-trailing-ws 1))
@@ -272,27 +246,18 @@ the vertical drag is done."
   :bind (("C-w" . whole-line-or-region-kill-region)))
 
 
-;; INFO: `delete-selection-mode' prevented operating on regions,
-;; such as adding parenthesis after selecting a sexp.
-;; Disabled by default at load-up.
-(use-package delsel
-  :straight nil)
-
-
 (use-package smart-mark
   :demand
   :config
   (smart-mark-mode 1))
 
 
-;; INFO: Decided not to use `region-bindings-mode-map' to avoid conflicts with `elec-pair'
 (use-package multiple-cursors
-  :bind (("C-S-c C-S-c"   . mc/edit-lines)
-         ("C->"           . mc/mark-next-like-this)
-         ("C-<"           . mc/mark-previous-like-this)
-         ("C-c C-<"       . mc/mark-all-like-this)
-         ("C-C C-#"       . mc/insert-numbers)
-         ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
+  :bind (("C->"     . mc/mark-next-like-this)
+         ("C-<"     . mc/mark-previous-like-this)
+         ("C-c C->" . mc/edit-lines)
+         ("C-c C-<" . mc/mark-all-like-this)
+         ("C-c #"   . mc/insert-numbers)))
 
 
 (use-package expand-region
@@ -304,6 +269,27 @@ the vertical drag is done."
 
 
 ;;;; Sysadmin
+(use-package google-this
+  :diminish
+  :bind (("C-c / t" . google-this)
+         ("C-c / c" . google-this-translate-query-or-region))
+  :config
+  ;; Once a command present in :bind is executed the rest of `google-this-mode' commands will be available
+  (google-this-mode 1)
+  ;; Google translate
+  (use-package google-translate
+    :config
+    ;; BUG: https://github.com/atykhonov/google-translate/issues/52
+    (defun google-translate--search-tkk ()
+      "Search TKK."
+      (list 430675 2721866130))
+    (setq google-translate-backend-method 'curl)))
+
+
+(use-package howdoi
+  :straight (:host github :repo "arthurnn/howdoi-emacs"))
+
+
 (use-package sudo-ext)
 
 
@@ -326,7 +312,6 @@ the vertical drag is done."
   :bind (:map jenkins-job-view-mode-map
          ("n" . next-line)
          ("p" . previous-line))
-
   :config
   (defun larumbe/jenkins-switch-regex-parsing ()
     "Switch Jenkins regexp parsing for large files to save loading time.
@@ -347,7 +332,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   :mode (("\\.prf\\'" . unison-mode))
   :config
   (use-package unison-sync-minor-mode
-    :straight nil
+    :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("minor-modes/unison-sync-minor-mode.el"))
     :bind (:map unison-mode-map
            ("C-c C-c" . unison-my-run))
     :hook ((unison-mode . unison-sync-minor-mode))))
@@ -398,6 +383,10 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   (advice-add 'erc-login :override #'larumbe/erc-login))
 
 
+(use-package env-switch
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/env-switch.el")))
+
+
 
 ;;;; Misc
 ;; GUI and Clipboard
@@ -431,7 +420,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
          ("M-<"     . ahs-backward)
          ("M->"     . ahs-forward)
          ("M--"     . ahs-back-to-start)
-         ("C-x C-'" . ahs-change-range)
+         ("C-x C-'" . ahs-change-range) ; This might be only function that I still do not know how to achieve with Isearch
          ("C-x C-a" . ahs-edit-mode))
   :config
   (setq ahs-default-range 'ahs-range-whole-buffer))
@@ -475,10 +464,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   :diminish auto-revert-mode)
 
 
-(use-package so-long
-  :diminish
-  :config
-  (global-so-long-mode 1))
+(use-package so-long :diminish)
 
 
 ;; API of `coin-ticker' was outdated. Also tried `crypto-ticker-mode' but was a bit more complex than this one
@@ -509,15 +495,6 @@ to an html file in `user-emacs-directory'."
     (keyfreq-html (locate-user-emacs-file "keyfreq.html"))))
 
 
-(use-package xah-lee-functions
-  :straight nil)
-
-
-(use-package modi-functions
-  :bind (("C-]" . modi/pull-up-line))
-  :straight nil)
-
-
 
 ;;;; Libraries
 (use-package f)
@@ -525,9 +502,31 @@ to an html file in `user-emacs-directory'."
 (use-package with-editor)
 (use-package request)
 (use-package bind-key)
-(use-package env-switch :straight nil)
+
+(use-package xah-lee-functions
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/xah-lee-functions.el")))
+
+(use-package modi-functions
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/modi-functions.el"))
+  :bind (("C-]" . modi/pull-up-line)))
+
+(use-package larumbe-functions
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/larumbe-functions.el"))
+  :bind (("M-w"             . larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
+         ("C-z"             . larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
+         ("C-x C-z"         . larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
+         ("C-x C-/"         . larumbe/pwd-to-kill-ring)
+         ("C-x C-,"         . larumbe/revert-buffer-maybe-no-confirm)
+         ("C-M-<backspace>" . larumbe/kill-sexp-backwards)))
+
+(use-package others-functions
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/others-functions.el"))
+  :bind (("C-x d" . duplicate-current-line-or-region))) ; Replaces Dired (C-x C-j works better)
 
 
+
+
+;;;; Provide package
 (provide 'init-basic)
 
 ;;; init-basic.el ends here

@@ -43,9 +43,7 @@ Add subdirectories if RECURSIVE is non-nil."
 
 
 (defvar larumbe/load-path-dirs '("~/.elisp/lisp"
-                                 "~/.elisp/lisp-prog"
-                                 "~/.elisp/site-lisp"
-                                 "~/.elisp/own-modes"))
+                                 "~/.elisp/lisp-prog"))
 (larumbe/add-to-load-path larumbe/load-path-dirs t) ; Add recursively
 
 

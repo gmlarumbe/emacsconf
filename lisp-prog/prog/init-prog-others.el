@@ -14,13 +14,13 @@
 
 ;;;; DOCBOOK
 (use-package docbook-mode
-  :straight nil
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/docbook-mode.el"))
   :mode (("\\.docbook\\.xml" . docbook-mode)))
 
 
 ;;;; VIVADO
 (use-package vivado-utils
-  :straight nil
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/vivado-utils.el"))
   :commands (vivado-xdc-mode
              larumbe/vivado-shell
              larumbe/vivado-shell-tcl-send-line-or-region-and-step
