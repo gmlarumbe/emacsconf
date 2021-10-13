@@ -11,6 +11,7 @@
 ;;; Code:
 
 ;;;; Packages
+(require 'init-basic)
 (require 'init-straight)
 (require 'init-org)
 (require 'init-packages)
