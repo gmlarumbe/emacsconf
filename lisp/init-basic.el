@@ -23,7 +23,8 @@
 
 ;; Save some screen real estate
 (menu-bar-mode -1)
-(tool-bar-mode -1)
+(when (featurep 'tool-bar)
+  (tool-bar-mode -1))
 (when (featurep 'scroll-bar)
   (scroll-bar-mode -1))
 
