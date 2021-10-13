@@ -12,6 +12,7 @@
 
 ;;;; Packages
 (require 'init-straight)
+(require 'init-org)
 (require 'init-packages)
 (require 'init-helm)
 (require 'init-grep)
@@ -19,7 +20,6 @@
 (require 'init-ggtags)
 (require 'init-completion)
 (require 'init-dired)
-(require 'init-org)
 (require 'init-jira)
 (require 'init-term)
 (require 'init-version-control)

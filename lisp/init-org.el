@@ -1,11 +1,42 @@
 ;;; init-org.el --- Org  -*- lexical-binding: t -*-
 ;;; Commentary:
+;;
+;;  INFO: NEEDS to be loaded right AFTER Straight bootstraping!
+;;
+;; If this doesn't happen and another package that has org as
+;; a dependency (helm-org, outorg, etc...) gets loaded, it will in turn
+;; load the built-in org package and there will be mismatches between
+;; outdated built-in version and up to date straight version.
+;;
+;; There are some related threads due to some variables not being defined,
+;; (Symbol’s value as variable is void: org-priority-highest):
+;;  - https://github.com/raxod502/straight.el/commit/3190d95ee0556233624a4fb3bd2342e1fcb516b1
+;;  - https://github.com/raxod502/straight.el/issues/211
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; If by any case the built-in Emacs bundled version is preferred, the order
+;; when it is loaded should not matter and the following should be placed within
+;; the use-package declaration:
+;;   :straight (:type built-in)
+;;
+;; NOTE: However this built-in thing did not work possibly due to an already loaded package
+;; from straight that had org as a dependency.
+;;
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; To use the org-contrib repo:
+;;   (use-package org
+;;     :straight org-plus-contrib
+;;     :config
+;;     ...)
+;;
 ;;; Code:
 
 
 ;;;; Org
 (use-package org
-  :straight nil
   :bind (:map org-mode-map
               ("C-c c" . org-capture)
               ("C-c b" . org-iswitchb)
