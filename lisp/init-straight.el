@@ -1,4 +1,4 @@
-;;; init-package.el --- Package Init settings  -*- lexical-binding: t -*-
+;;; init-straight.el --- Straight Package Manager Init settings  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;
 ;; Package configuration is based upon straight.el and use-package
@@ -52,6 +52,6 @@
         '((github . "gmlarumbe"))))
 
 
-(provide 'init-package)
+(provide 'init-straight)
 
-;;; init-package.el ends here
+;;; init-straight.el ends here

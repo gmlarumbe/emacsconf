@@ -11,8 +11,8 @@
 ;;; Code:
 
 ;;;; Packages
-(require 'init-package)
-(require 'init-basic)
+(require 'init-straight)
+(require 'init-packages)
 (require 'init-helm)
 (require 'init-grep)
 (require 'init-projectile)

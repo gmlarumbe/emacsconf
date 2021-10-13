@@ -1,4 +1,4 @@
-;;; init-basic.el --- Basic configuration  -*- lexical-binding: t -*-
+;;; init-packages.el --- Basic Packages configuration  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;; Code:
 
@@ -534,6 +534,6 @@ to an html file in `user-emacs-directory'."
 
 
 ;;;; Provide package
-(provide 'init-basic)
+(provide 'init-packages)
 
-;;; init-basic.el ends here
+;;; init-packages.el ends here
