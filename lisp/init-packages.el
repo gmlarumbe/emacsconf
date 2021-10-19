@@ -367,6 +367,10 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/env-switch.el")))
 
 
+;; Updates `exec-path' from $PATH.
+;; More info: https://emacs.stackexchange.com/questions/550/exec-path-and-path
+(use-package exec-path-from-shell)
+
 
 ;;;; Misc
 ;; GUI and Clipboard
