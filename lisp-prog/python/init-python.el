@@ -17,7 +17,9 @@
               ("C-c C-k"     . larumbe/python-send-line-or-region-ansi-term)
               ;; Send text to an *ansi-term* running a Python interpreter and ignore indentation (that may run in a remote machine)
               ("C-c C-l"     . larumbe/python-send-line-ansi-term-no-indent-ignore-comment)) ; Overrides `python-shell-send-file'
-  :bind (:map jedi-mode-map ("<C-tab>" . nil)) ; Let C-tab to HideShow
+  :bind (:map jedi-mode-map
+         ("<C-tab>" . nil) ; Let C-tab to HideShow
+         ("C-c RET" . company-jedi))
   :config
   (setq python-check-command     "pylint")
   (setq py-number-face           font-lock-doc-face)
@@ -37,6 +39,8 @@
   (use-package jedi-core
     :demand
     :config
+    (use-package company-jedi)
+    ;; Add 'company-jedi to `company-backends' list to autocomplete with <S-RET> instead of <C-c RET>
     (add-hook 'python-mode-hook #'larumbe/jedi:setup))
 
   (use-package elpy)) ; INFO: Deserves some attention if some day Python becomes a priority
