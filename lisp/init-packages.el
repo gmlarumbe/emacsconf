@@ -517,6 +517,8 @@ to an html file in `user-emacs-directory'."
 (use-package larumbe-macros
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("macros/larumbe-macros.el")))
 
+(use-package fpga-utils
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/fpga-utils.el")))
 
 
 ;;;; Provide package

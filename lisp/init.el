@@ -26,7 +26,6 @@
 (require 'init-term)
 (require 'init-version-control)
 (require 'init-compilation)
-(require 'init-fpga-projects)
 (require 'init-prog)
 (require 'init-exwm)
 (require 'init-machine)
