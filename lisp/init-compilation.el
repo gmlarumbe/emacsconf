@@ -15,10 +15,6 @@
 ;;; Code:
 
 
-(require 'popwin)
-(require 'ansi-color) ; Buffer colorizing
-
-
 (defvar larumbe/compilation-error-re-vivado
   '((vivado-error     "^\\(?1:^ERROR: \\)\\(?2:.*\\[\\(?3:.*\\):\\(?4:[0-9]+\\)\\]\\)"            3   4   nil 2 nil (1 compilation-error-face))
     (vivado-error2    "^\\(?1:^ERROR:\\) "                                                        1   nil nil 2 nil)
@@ -146,6 +142,9 @@
              larumbe/compilation-interactive
              comint-send-string)
   :config
+  (require 'popwin)
+  (require 'ansi-color) ; Buffer colorizing
+
   (add-to-list 'popwin:special-display-config '(compilation-mode :stick t))
 
   ;; Compilation motion commands skip less important messages. The value can be either
