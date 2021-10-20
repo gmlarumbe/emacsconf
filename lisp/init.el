@@ -16,6 +16,7 @@
 (require 'init-org)
 (require 'init-packages)
 (require 'init-helm)
+(require 'init-ivy)
 (require 'init-grep)
 (require 'init-projectile)
 (require 'init-ggtags)
