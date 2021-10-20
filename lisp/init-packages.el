@@ -283,6 +283,9 @@ the vertical drag is done."
 (use-package deferred)
 
 
+(use-package async)
+
+
 (use-package pcap-mode)
 
 

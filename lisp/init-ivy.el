@@ -2,42 +2,47 @@
 ;;; Commentary:
 ;;; Code:
 
+
 (use-package ivy
-  :bind (("C-x C-b" . ivy-switch-buffer))
+  :diminish
+  :bind (("C-x b" . ivy-switch-buffer))
   :config
   (setq ivy-use-virtual-buffers t)
-  (setq enable-recursive-minibuffers t))
-
-(use-package swiper)
-
-(use-package counsel)
-
-(use-package ivy-hydra)
+  (setq enable-recursive-minibuffers t)
+  (ivy-mode -1) ; Do not break compatibility with Helm
+  (use-package ivy-hydra))
 
 
-;; (ivy-mode)
-;; enable this if you want `swiper' to use it
-;; (setq search-default-mode #'char-fold-to-regexp)
+;; INFO: Gave it a try at 10/2021 but it seemed I still was in love with Helm
+;; Left it here to be enabled conditionally via these 2 variables in case
+;; some day i want to play around again.
+(defvar larumbe/force-use-counsel nil "Override usage of Helm with Ivy/Counsel")
+(defvar larumbe/force-use-swiper nil  "Override usage of Isearch with Swiper")
 
-;; (global-set-key "\C-s" 'swiper)
-;; (global-set-key (kbd "C-c C-r") 'ivy-resume)
-;; (global-set-key (kbd "<f6>") 'ivy-resume)
-;; (global-set-key (kbd "M-x") 'counsel-M-x)
-;; (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-;; (global-set-key (kbd "<f1> f") 'counsel-describe-function)
-;; (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-;; (global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
-;; (global-set-key (kbd "<f1> l") 'counsel-find-library)
-;; (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-;; (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-;; (global-set-key (kbd "C-c g") 'counsel-git)
-;; (global-set-key (kbd "C-c j") 'counsel-git-grep)
-;; (global-set-key (kbd "C-c k") 'counsel-ag)
-;; (global-set-key (kbd "C-x l") 'counsel-locate)
-;; (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-;; (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 
-;; (ivy-read "My buffers: " (mapcar #'buffer-name (buffer-list)))
+(when larumbe/force-use-swiper
+  (use-package swiper
+    :bind (("C-s" . swiper))
+    :config
+    ;; enable this if you want `swiper' to use it
+    (setq search-default-mode #'char-fold-to-regexp)))
+
+
+(when larumbe/force-use-counsel
+  (use-package counsel
+    :bind (("M-x"     . counsel-M-x)
+           ("C-x C-f" . counsel-find-file)
+           ("C-x r b" . counsel-bookmark)
+           ("M-g a"   . counsel-ag)
+           ("M-g r"   . counsel-rg)
+           ("M-I"     . counsel-imenu)
+           ("C-x c /" . counsel-file-jump)
+           ("C-x c p" . counsel-list-processes)
+           ("C-#"     . counsel-outline)
+           ("M-s o"   . ivy-occur))
+    :bind (:map minibuffer-local-map
+           ("C-r" . counsel-minibuffer-history))))
+
 
 
 (provide 'init-ivy)

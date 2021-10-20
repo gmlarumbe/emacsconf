@@ -8,20 +8,15 @@
 
 (use-package projectile
   :diminish projectile-mode       ; Also diminishes `larumbe/projectile-custom-mode-line', as it is already available at the left corner
+
   :bind (:map projectile-mode-map ; Projectile 2.0 removes automatic keybindings
-              ("C-c p j" . projectile-find-tag)
-              ("C-c p u" . projectile-regenerate-tags)
-              ("C-c p c" . projectile-compile-project)
-              ("C-c p f" . projectile-find-file)
-              ("C-c p s" . projectile-switch-project)
-              ("C-c p a" . helm-projectile-ag)
-              ("C-c p g" . helm-projectile-grep)
-              ("C-c p r" . helm-projectile-rg))
+         ("C-c p j" . projectile-find-tag)
+         ("C-c p u" . projectile-regenerate-tags)
+         ("C-c p c" . projectile-compile-project))
 
   :commands (projectile-project-name
              larumbe/projectile-custom-mode-line
              larumbe/projectile-mode)
-
   :config
   (setq projectile-enable-caching t) ; Enable caching, otherwise `projectile-find-file' is really slow for large projects.
 
@@ -109,7 +104,29 @@ Use `rg' for getting a list of all files in the project."
           "fdfind . -0 --type f --color=never")
          ;; with find we have to be careful to strip the ./ from the paths
          ;; see https://stackoverflow.com/questions/2596462/how-to-strip-leading-in-unix-find
-         (t "find . -type f | cut -c3- | tr '\\n' '\\0'"))))
+         (t "find . -type f | cut -c3- | tr '\\n' '\\0'")))
+
+
+  ;; INFO: Needs to be placed inside projectile :config as otherwise
+  ;; projectile would disable these keybindings
+  (use-package helm-projectile
+    :diminish
+    :bind (:map projectile-mode-map
+           ("C-c p s" . helm-projectile-switch-project)
+           ("C-c p f" . helm-projectile-find-file)
+           ("C-c p a" . helm-projectile-ag)
+           ("C-c p g" . helm-projectile-grep)
+           ("C-c p r" . helm-projectile-rg)))
+
+
+  (when larumbe/force-use-counsel
+    (use-package counsel-projectile
+      :bind (:map projectile-mode-map
+             ("C-c p s" . counsel-projectile-switch-project)
+             ("C-c p f" . counsel-projectile-find-file)
+             ("C-c p a" . counsel-projectile-ag)
+             ("C-c p g" . counsel-projectile-grep)
+             ("C-c p r" . counsel-projectile-rg)))))
 
 
 

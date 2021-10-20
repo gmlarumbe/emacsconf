@@ -10,14 +10,15 @@
   :init
   (require 'helm-mode)   ; Required config/definitions (like `helm-completing-read-handlers-alist')
   (require 'helm-config) ; Helm autoloads
-  ;; ;; INFO: ido should not be enabled since compatibility with helm is managed by `helm-completing-read-handlers-alist'
-  ;; ;; However, if ido is not enabled, `ido-buffer-completion-map' does not get loaded
-  ;; ;; and therefore its not possible to make use of buffer killing while switching.
-  ;; ;; Enable, so that commands like `ido-kill-buffer-at-head' can be performed
-  ;; (ido-mode 1)
-  ;; (ido-everywhere -1)
-  ;; ;; INFO: Theoretically, `helm-mode--disable-ido-maybe' will try to disable ido when `ido-everywhere' is set.
-  ;; ;; However, with previous statement only `ido-mode' but not `ido-everywhere' so everything should work just fine.
+  ;; INFO: ido should not be enabled since compatibility with helm is managed by `helm-completing-read-handlers-alist'
+  ;; However, if ido is not enabled, `ido-buffer-completion-map' does not get loaded
+  ;; and therefore its not possible to make use of buffer killing while switching.
+  ;;
+  ;; If enabled, at some point the function `helm--generic-read-file-name' will disable it.
+  ;; Besides, `helm-mode--disable-ido-maybe' will try to disable ido when `ido-everywhere' is set.
+  ;;
+  ;; Best solution is to use `ivy-switch-buffer' to switch buffers with ivy-mode disabled
+  ;;
   :bind (("M-x"     . helm-M-x)
          ("C-x k"   . helm-mini)       ; Relay on ido for switch-buffer and C-k for individual kills
          ("C-x C-f" . helm-find-files)
@@ -32,12 +33,12 @@
          ("C-x c y" . helm-youtube)
          ("C-x C-h" . larumbe/helm-help-major-mode-or-scratch)) ; Could be deprecated after `which-key'
   :config
-  (use-package helm-projectile :diminish)
-  (use-package helm-ag)
-  (use-package helm-rg)
-  (use-package helm-org) ; Required by helm-havi
   (use-package helm-youtube)
 
+  (use-package helm-ag)
+  (use-package helm-rg)
+
+  (use-package helm-org) ; Required by helm-havi
   (use-package helm-navi
     :straight (:repo "emacs-helm/helm-navi"
                :fork (:repo "gmlarumbe/helm-navi" :branch "fix-headings"))
@@ -45,10 +46,11 @@
            ("M-#" . helm-navi))
     :diminish outshine-mode outline-minor-mode)
 
+
   ;; Actual config
-  ;; (add-to-list 'helm-completing-read-handlers-alist '(switch-to-buffer . ido))
   (helm-mode 1)
   (helm-autoresize-mode 1)
+
 
   (defun larumbe/helm-help-major-mode-or-scratch (&optional arg)
     "Get helm `M-x' commands list/shortcuts for the last time it was used.
