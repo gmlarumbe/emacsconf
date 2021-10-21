@@ -14,7 +14,8 @@
              ggtags-find-reference
              modi/ggtags-tag-at-point
              larumbe/ggtags-mode
-             larumbe/gtags-create-tags-async)
+             larumbe/gtags-create-tags-async
+             larumbe/ggtags-backend-switch)
   :bind (:map ggtags-navigation-map
          ("M-o"     . nil)
          ("C-c C-k" . nil) ; EXWM character mode

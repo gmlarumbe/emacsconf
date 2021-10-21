@@ -13,6 +13,11 @@
 ;;; Code:
 
 
+;; Variable used by `helm-rg' and `init-projectile'
+;; Declared here as this file is loaded before.
+(defvar larumbe/gitignore-global-file (larumbe/path-join (getenv "HOME") ".gitignore_global"))
+
+
 ;;;; Helm
 (use-package helm
   :diminish
@@ -34,8 +39,12 @@
          ("C-x C-h" . larumbe/helm-help-major-mode-or-scratch)) ; Could be deprecated after `which-key'
   :config
   (use-package helm-youtube)
+
   (use-package helm-ag)
-  (use-package helm-rg)
+  (use-package helm-rg
+    :config
+    (setq helm-rg-default-extra-args `("--ignore-file" ,larumbe/gitignore-global-file)))
+
   (use-package helm-org) ; Required by helm-havi
   (use-package helm-navi
     :straight (:repo "emacs-helm/helm-navi"

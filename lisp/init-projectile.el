@@ -14,7 +14,8 @@
          ("C-c p u" . projectile-regenerate-tags)
          ("C-c p c" . projectile-compile-project))
 
-  :commands (projectile-project-name
+  :commands (projectile-project-root ; used by many larumbe functions
+             projectile-project-name
              larumbe/projectile-custom-mode-line
              larumbe/projectile-mode)
   :config
@@ -66,10 +67,6 @@ ARG will be passed to `projectile-mode' wrapped function."
       (projectile-mode -1)))
 
 
-  ;; https://emacs.stackexchange.com/questions/16497/how-to-exclude-files-from-projectile
-  ;; Inspired also by kmodi/setup-files/setup-projectile.el:71
-  (defvar larumbe/gitignore-global-file (larumbe/path-join (getenv "HOME") ".gitignore_global"))
-
   (defvar larumbe/rg-arguments
     `("--no-ignore-vcs"     ; Ignore files/dirs ONLY from `.ignore'
       "--line-number"       ; Line numbers
@@ -79,6 +76,8 @@ ARG will be passed to `projectile-mode' wrapped function."
       "--ignore-file" ,larumbe/gitignore-global-file)
     "Default rg arguments used in the functions in `projectile'package.")
 
+  ;; https://emacs.stackexchange.com/questions/16497/how-to-exclude-files-from-projectile
+  ;; Inspired also by kmodi/setup-files/setup-projectile.el:71
   (defun larumbe/projectile-rg-command ()
     "Copied/adapted from `modi/advice-projectile-use-rg'.
 Use `rg' for getting a list of all files in the project."

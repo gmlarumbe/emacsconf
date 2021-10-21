@@ -45,6 +45,11 @@
 
 ;;;; Use-package integration
 (straight-use-package 'use-package)
+
+(use-package use-package
+  :config
+  (setq use-package-always-defer t))
+
 (use-package straight
   :config
   (setq straight-use-package-by-default t)

@@ -39,7 +39,8 @@ ARG will be passed to `company-mode' wrapped function."
 (use-package yasnippet
   :commands (yas-reload-all
              yas-insert-snippet
-             yas-visit-snippet-file)
+             yas-visit-snippet-file
+             larumbe/yas-insert-snippet-dwim)
   :diminish yasnippet yas-minor-mode
   :bind ("<C-M-return>" . yas-expand)
   :config
@@ -70,6 +71,7 @@ If universal ARG is provided, visit a snippet file."
 
 ;;;; Hydra
 (use-package hydra
+  :commands (larumbe/hydra-yasnippet)
   :config
   (defun larumbe/hydra-yasnippet (snippet)
     "Function/Macro to integrate YASnippet within Hydra."

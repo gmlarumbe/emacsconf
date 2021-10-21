@@ -3,6 +3,8 @@
 ;;; Code:
 
 (use-package fic-mode
+  :commands (larumbe/clean-fic-keywords-dir
+             larumbe/wrap-danger-region)
   :config
   (require 'ag)
 

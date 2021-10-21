@@ -7,7 +7,7 @@
 (use-package ag
   :commands (ag/search
              larumbe/ag-search-file-list
-             projectile-project-root)
+             larumbe/ag-search-project-gtags)
   :config
   (defun larumbe/ag-search-file-list (regex file directory)
     "Search REGEX limited to the files included in FILE in DIRECTORY.
