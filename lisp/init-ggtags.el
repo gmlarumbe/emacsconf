@@ -13,17 +13,18 @@
              ggtags-current-project-root
              ggtags-find-reference
              modi/ggtags-tag-at-point
-             larumbe/ggtags-mode)
+             larumbe/ggtags-mode
+             larumbe/gtags-create-tags-async)
   :bind (:map ggtags-navigation-map
-              ("M-o"     . nil)
-              ("C-c C-k" . nil) ; EXWM character mode
-              ("M->"     . nil)
-              ("M-<"     . nil))
+         ("M-o"     . nil)
+         ("C-c C-k" . nil) ; EXWM character mode
+         ("M->"     . nil)
+         ("M-<"     . nil))
   :bind (:map ggtags-mode-map
-              ("M-."     . nil)
-              ("M-?"     . nil))
+         ("M-."     . nil)
+         ("M-?"     . nil))
   :bind (:map ggtags-global-mode-map
-              ("r"       . ggtags-query-replace))
+         ("r"       . ggtags-query-replace))
   :config
   (setq ggtags-sort-by-nearness t) ; Enabling nearness requires global 6.5+
   (setq ggtags-navigation-mode-lighter nil)
@@ -65,11 +66,11 @@ ARG will be passed to `ggtags-mode' wrapped function."
 
 
 ;;;; Global/ctags
-;; INFO: Global does not allow to find external definitions outside project root directory (probably due to security reasons).
-;; In order to do so, there are 2 methods:
-;;   - Use symbolic links to external directories.
-;;   - Make use of GTAGSLIBPATH environment variable.
-;; Associated thread: https://emacs.stackexchange.com/questions/13254/find-external-definition-with-gtags-or-ggtags
+  ;; INFO: Global does not allow to find external definitions outside project root directory (probably due to security reasons).
+  ;; In order to do so, there are 2 methods:
+  ;;   - Use symbolic links to external directories.
+  ;;   - Make use of GTAGSLIBPATH environment variable.
+  ;; Associated thread: https://emacs.stackexchange.com/questions/13254/find-external-definition-with-gtags-or-ggtags
   (defun larumbe/gtags-filelist-create (regex &optional exclude-re dir append)
     "Generate gtags.files for current directory, unless optional DIR is set.
 Include files that match REGEX.
@@ -97,16 +98,71 @@ If APPEND is set, append directory files to already existing tags file."
         (display-buffer (process-buffer process))))))
 
 
-  (defun larumbe/gtags-create-tags-async (dir)
-    "Similar to `ggtags-create-tags' but asynchronously and adapted to Global+Ctags+Pygments workflow"
-    (interactive "DRoot directory: ")
+  ;; List of available regexps for different languages gtags extraction
+  ;; If cdr of an element is a string use it as the regexp of the file extension
+  ;; If cdr of an element is a cons cell, use first element as the regexp and second as the exclude-re
+  (defvar larumbe/gtags-create-tags-lang-regexps
+    '(("(System)Verilog" . ("\\.[s]?v[h]?$" . "[^/]+_targets")) ; Exclude re
+      ("Python"          . "\\.py$")
+      ("Elisp"           . "\\.el$")
+      ("c"               . "\\.[ch]\\\(pp\\)?$")
+      ("VHDL"            . "\\.vhd[l]?$")
+      ("other"           . nil)))
+
+  (defun larumbe/gtags-create-tags-async (&optional dir lang)
+    "Similar to `ggtags-create-tags' but asynchronously and adapted to Global+Ctags+Pygments workflow.
+
+Create tags at DIR for language LANG.
+If DIR is nil create tags at `default-directory'.
+If LANG is nil default to first language in `larumbe/gtags-create-tags-lang-regexps'.
+
+If called interactively, default to create tags for first language in `larumbe/gtags-create-tags-lang-regexps'
+at `default-directory'. If called interactively with prefix, prompt for DIR and LANG."
+    (interactive "P")
     (let ((gtags-cmd "gtags -v")
-          (output-buffer (concat "*gtags-" (file-name-nondirectory (directory-file-name dir)) "*")))
+          (lang-regexps larumbe/gtags-create-tags-lang-regexps)
+          (output-buffer)
+          (regex)
+          (regex-lang-cdr) ; cdr of element of `larumbe/gtags-create-tags-lang-regexps' (listp or stringp)
+          (exclude-re))
+      ;; Default dir and lang
+      (unless dir
+        (setq dir default-directory))
+      (unless lang
+        (setq lang (car (car lang-regexps))))
+      ;; Prompt for dir and lang if called interactively with prefix
+      (when (and current-prefix-arg
+                 (called-interactively-p))
+        (setq dir (read-directory-name "Directory: "))
+        (setq lang (completing-read "Lang: " (mapcar #'car lang-regexps))))
+      ;; Set variable values
+      (setq dir (expand-file-name dir)) ; Expand in case tags are created at ~ or something similar
+      (setq output-buffer (concat "*gtags-" (file-name-nondirectory (directory-file-name dir)) "*"))
+      (setq regex-lang-cdr (cdr (assoc lang lang-regexps)))
+      ;; Set proper regexp
+      (cond
+       ;; If cdr is a string, use it as the regex for file creation
+       ((stringp regex-lang-cdr)
+        (setq regex regex-lang-cdr))
+       ;; If cdr is a list (non-nil, e.g. "other"), use first elm as the regex and second as the exclude-re
+       ((and (listp regex-lang-cdr)
+             regex-lang-cdr)
+        (setq regex      (car regex-lang-cdr))
+        (setq exclude-re (cdr regex-lang-cdr)))
+       ;; Other language: cdr should be nil, prompt for regex for file creation
+       ((string= lang "other")
+        (when regex-lang-cdr
+          (error "If selecting other languaage, regexp must be nil!"))
+        (setq regex (read-string "Lang file extension regexp: " "\\.{ext}$")))
+       ;; Default (throw error)
+       (t (error "Should have not arrived here!")))
+      ;; Create filelist
+      (larumbe/gtags-filelist-create regex exclude-re dir) ; Do not append created tags to existing file
+      ;; Execute gtags
       (save-window-excursion
         (async-shell-command (concat "cd " dir " && " gtags-cmd) output-buffer))
       (message "Started gtags at buffer %s" output-buffer)
       (set-process-sentinel (get-buffer-process output-buffer) #'larumbe/gtags-create-tags-async-sentinel)))
-
 
 
 ;;;; Auxiliar functions

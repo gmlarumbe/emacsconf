@@ -275,17 +275,6 @@ Ask for ports to be connected until no port is found at current line."
   (while (not (string-equal (larumbe/verilog-toggle-connect-port t) larumbe/connect-disconnect-not-found))))
 
 
-;;;; Gtags
-(defun larumbe/ggtags-create-verilog-tags-recursive ()
-  "Create Verilog gtags.files for current directory.
-
-INFO: Exclude custom '*_targets' folders."
-  (interactive)
-  (let ((verilog-file-re "\\.[s]?v[h]?$")
-        (exclude-re      "[^/]+_targets"))
-    (larumbe/gtags-filelist-create verilog-file-re exclude-re)
-    (larumbe/gtags-create-tags-async default-directory)))
-
 
 ;;;; Misc
 ;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)

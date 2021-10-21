@@ -137,16 +137,6 @@ If called witih prefix arg HIDEALL, execute `hs-hide-all' (including classes)"
 
 
 
-;;;; Gtags
-(defun larumbe/ggtags-create-python-tags-recursive ()
-  "Create global GTAGS of every Python file in the directory."
-  (interactive)
-  (let ((python-file-re "\\.py$"))
-    (larumbe/gtags-filelist-create python-file-re)
-    (larumbe/gtags-create-tags-async default-directory)))
-
-
-
 ;;;; Jedi hook
 (defun larumbe/jedi:setup ()
   "Enable jedi:setup depending on value of `larumbe/jedi:setup-enable'.

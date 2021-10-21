@@ -19,15 +19,6 @@
           "\\(--[^\n]*" larumbe/vhdl-blank-mand-re "\\)*\\(generic\\|port\\)\\s-+map\\>"))
 
 
-;;;; Gtags
-(defun larumbe/ggtags-create-vhdl-tags-recursive ()
-  "Create global GTAGS of every VHDL file in the directory."
-  (interactive)
-  (let ((vhdl-file-re "\\.vhd[l]?$"))
-    (larumbe/gtags-filelist-create vhdl-file-re)
-    (larumbe/gtags-create-tags-async default-directory)))
-
-
 
 ;;;; Others
 ;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
