@@ -99,6 +99,17 @@ If APPEND is set, append directory files to already existing tags file."
         (display-buffer (process-buffer process))))))
 
 
+  (defun larumbe/gtags-create-tags-async-process (dir)
+    "Spawn shell and execute gtags asynchronously at directory DIR."
+    (let ((gtags-cmd "gtags -v")
+          (output-buffer (concat "*gtags-" (file-name-nondirectory (directory-file-name dir)) "*")))
+      (save-window-excursion
+        (async-shell-command (concat "cd " dir " && " gtags-cmd) output-buffer))
+      (message "Started gtags at buffer %s" output-buffer)
+      (set-process-sentinel (get-buffer-process output-buffer) #'larumbe/gtags-create-tags-async-sentinel)))
+
+
+
   ;; List of available regexps for different languages gtags extraction
   ;; If cdr of an element is a string use it as the regexp of the file extension
   ;; If cdr of an element is a cons cell, use first element as the regexp and second as the exclude-re
@@ -120,9 +131,7 @@ If LANG is nil default to first language in `larumbe/gtags-create-tags-lang-rege
 If called interactively, default to create tags for first language in `larumbe/gtags-create-tags-lang-regexps'
 at `default-directory'. If called interactively with prefix, prompt for DIR and LANG."
     (interactive "P")
-    (let ((gtags-cmd "gtags -v")
-          (lang-regexps larumbe/gtags-create-tags-lang-regexps)
-          (output-buffer)
+    (let ((lang-regexps larumbe/gtags-create-tags-lang-regexps)
           (regex)
           (regex-lang-cdr) ; cdr of element of `larumbe/gtags-create-tags-lang-regexps' (listp or stringp)
           (exclude-re))
@@ -138,7 +147,6 @@ at `default-directory'. If called interactively with prefix, prompt for DIR and 
         (setq lang (completing-read "Lang: " (mapcar #'car lang-regexps))))
       ;; Set variable values
       (setq dir (expand-file-name dir)) ; Expand in case tags are created at ~ or something similar
-      (setq output-buffer (concat "*gtags-" (file-name-nondirectory (directory-file-name dir)) "*"))
       (setq regex-lang-cdr (cdr (assoc lang lang-regexps)))
       ;; Set proper regexp
       (cond
@@ -160,10 +168,7 @@ at `default-directory'. If called interactively with prefix, prompt for DIR and 
       ;; Create filelist
       (larumbe/gtags-filelist-create regex exclude-re dir) ; Do not append created tags to existing file
       ;; Execute gtags
-      (save-window-excursion
-        (async-shell-command (concat "cd " dir " && " gtags-cmd) output-buffer))
-      (message "Started gtags at buffer %s" output-buffer)
-      (set-process-sentinel (get-buffer-process output-buffer) #'larumbe/gtags-create-tags-async-sentinel)))
+      (larumbe/gtags-create-tags-async-process dir)))
 
 
 ;;;; Auxiliar functions
