@@ -16,6 +16,9 @@
 ;;;; Helm
 (use-package helm
   :diminish
+  :init
+  (require 'helm-mode)   ; Required config/definitions (like `helm-completing-read-handlers-alist')
+  (require 'helm-config) ; Helm autoloads
   :bind (("M-x"     . helm-M-x)
          ("C-x k"   . helm-mini)       ; Relay on ido for switch-buffer and C-k for individual kills
          ("C-x C-f" . helm-find-files)
@@ -30,8 +33,6 @@
          ("C-x c y" . helm-youtube)
          ("C-x C-h" . larumbe/helm-help-major-mode-or-scratch)) ; Could be deprecated after `which-key'
   :config
-  (require 'helm-mode)   ; Required config/definitions (like `helm-completing-read-handlers-alist')
-  (require 'helm-config) ; Helm autoloads
   (use-package helm-youtube)
   (use-package helm-ag)
   (use-package helm-rg)
