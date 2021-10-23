@@ -112,12 +112,6 @@ C-s C-w [C-w] [C-w]... behaviour. "
 (use-package navi-mode)
 
 
-(use-package ido
-  :config
-  (setq ido-everywhere nil)
-  (setq ido-default-buffer-method 'selected-window))
-
-
 (use-package winner
   :straight nil
   :demand

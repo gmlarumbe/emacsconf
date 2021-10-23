@@ -28,6 +28,10 @@
 (when (featurep 'scroll-bar)
   (scroll-bar-mode -1))
 
+;; Conf tweaking variables
+;; Variable used by `helm-rg' and `init-projectile' TODO: Probably by counsel-rg as well
+(defvar larumbe/gitignore-global-file "~/.gitignore_global")
+(defvar larumbe/completion-framework 'ivy) ; 'ivy or 'helm are allowed values (helm will coexist with `ivy-switch-buffer')
 
 (provide 'init-basic)
 

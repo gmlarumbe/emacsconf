@@ -108,17 +108,18 @@ Use `rg' for getting a list of all files in the project."
 
   ;; INFO: Needs to be placed inside projectile :config as otherwise
   ;; projectile would disable these keybindings
-  (use-package helm-projectile
-    :diminish
-    :bind (:map projectile-mode-map
-           ("C-c p s" . helm-projectile-switch-project)
-           ("C-c p f" . helm-projectile-find-file)
-           ("C-c p a" . helm-projectile-ag)
-           ("C-c p g" . helm-projectile-grep)
-           ("C-c p r" . helm-projectile-rg)))
+  (when (equal larumbe/completion-framework 'helm)
+    (use-package helm-projectile
+      :diminish
+      :bind (:map projectile-mode-map
+             ("C-c p s" . helm-projectile-switch-project)
+             ("C-c p f" . helm-projectile-find-file)
+             ("C-c p a" . helm-projectile-ag)
+             ("C-c p g" . helm-projectile-grep)
+             ("C-c p r" . helm-projectile-rg))))
 
 
-  (when larumbe/force-use-counsel
+  (when (equal larumbe/completion-framework 'ivy)
     (use-package counsel-projectile
       :bind (:map projectile-mode-map
              ("C-c p s" . counsel-projectile-switch-project)
