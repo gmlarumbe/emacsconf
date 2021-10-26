@@ -162,7 +162,7 @@ Name of the project (+plus)
 (defun larumbe/verilog-vhier-preprocess-hierarchy ()
   "Preprocess hierarchy of top level module for `includes and `defines.
 Only used if hierarchy is extracted in project mode."
-  (let ((processed-files (concat larumbe/verilog-perl-project-vhier-path "vhier.files")))
+  (let ((processed-files (larumbe/path-join larumbe/verilog-perl-project-vhier-path "vhier.files")))
     (shell-command
      (concat "mkdir -p " larumbe/verilog-perl-project-vhier-path)) ; Create vhier folder if it did not exist
     (with-temp-buffer
@@ -170,7 +170,7 @@ Only used if hierarchy is extracted in project mode."
       ;; (clone-indirect-buffer-other-window "*debug*" t) ; INFO: Debug for `with-temp-buffer'
       (insert-file-contents larumbe/verilog-perl-hier-input-files)
       (larumbe/replace-regexp-whole-buffer "\\(.*/\\).*\.[s]?vh$" "-y \\1") ; Replace header `include' files with -y library flag
-      (larumbe/sort-regexp-at-the-beginning-of-file "_defs_pkg.sv") ;; Move every _defs_pkg.sv at the beginning
+      ;; (larumbe/sort-regexp-at-the-beginning-of-file "_defs_pkg.sv") ;; Move every _defs_pkg.sv at the beginning
       (write-file processed-files))
     ;; Eecute preprocess command
     (shell-command
@@ -219,7 +219,8 @@ Make an outline/outshine accessible view for use with Gtags)"
   (larumbe/verilog-vhier-set-active-project)
   (larumbe/verilog-vhier-preprocess-hierarchy)
   (shell-command
-   (concat "vhier "
+   (concat "cd " larumbe/verilog-perl-project-vhier-path " && "
+           "vhier "
            larumbe/verilog-perl-outargs
            larumbe/verilog-perl-preprocessed-file)
    larumbe/verilog-perl-buffer-name)

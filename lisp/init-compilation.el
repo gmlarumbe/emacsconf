@@ -136,7 +136,6 @@
   :hook ((compilation-mode   . larumbe/compilation-hook)
          (compilation-filter . colorize-compilation-buffer))
   :commands (recompile
-             larumbe/compilation-show-buffer
              larumbe/compilation-error-re-set
              larumbe/recompile-set-active-regexp-alist
              larumbe/compilation-interactive
