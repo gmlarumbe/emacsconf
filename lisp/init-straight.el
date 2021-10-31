@@ -54,7 +54,27 @@
   :config
   (setq straight-use-package-by-default t)
   (setq straight-host-usernames
-        '((github . "gmlarumbe"))))
+        '((github . "gmlarumbe")))
+
+  (defun larumbe/straight-check-dirty-repos ()
+    "Show dirty straight repos/files in *straight-dirty* buffer."
+    (interactive)
+    (unless (executable-find "git")
+      (error "Git is not installed!"))
+    (unless straight-base-dir
+      (error "Variable `straight-base-dir' not set!"))
+    (let ((buf "*straight-dirty*")
+          (shell-command-dont-erase-buffer t) ; Append output to buffer
+          (repos (delete "." (delete ".." (directory-files (concat (file-name-as-directory straight-base-dir) "straight/repos")))))
+          (dir)
+          (cmd))
+      (dolist (repo repos)
+        (message "Checking %s..." repo)
+        (setq dir (concat (file-name-as-directory straight-base-dir) "straight/repos/" repo))
+        (setq cmd (concat "git -C " dir " update-index --refresh >> /dev/null || "
+                          "{ echo \"Repo " repo " has uncommitted changes!\" && git -C " dir " update-index --refresh; git -C " dir " diff-index --quiet HEAD --; echo \"\"; }"))
+        (shell-command cmd buf buf))
+      (pop-to-buffer buf))))
 
 
 (provide 'init-straight)
