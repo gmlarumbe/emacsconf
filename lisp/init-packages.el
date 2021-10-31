@@ -243,6 +243,12 @@ the vertical drag is done."
 
 
 ;;;; Sysadmin
+(use-package arch-packer)
+
+(use-package aurel
+  ;; :config
+  )
+
 (use-package google-this
   :diminish
   :bind (("C-c / t" . google-this)

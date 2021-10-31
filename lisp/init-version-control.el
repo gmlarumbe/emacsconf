@@ -128,18 +128,15 @@ since it needs to be set for the whole magit session, not only for the command."
 (use-package dsvn
   :commands (svn-status
              larumbe/update-svn-repos)
+  :bind (("C-x ;" . larumbe/svn-status)) ; Overrides `set-comment-column'
   :config
   (define-obsolete-function-alias 'string-to-int 'string-to-number "22.1")
-
 
   (defun larumbe/svn-status ()
     "Perform svn status via `dsvn' on `default-directory'."
     (interactive)
     (svn-status default-directory)
     (setq truncate-lines t))
-
-  ;; Override `svn-status' for current directory and truncating lines
-  (advice-add 'svn-status :override #'larumbe/svn-status)
 
 
   (defun larumbe/update-svn-repos (repo-paths)
@@ -150,7 +147,6 @@ Meant to be used in local and remote."
        (concat "svn update " (nth 0 (car repo-paths)))
        (concat "*svn-update" "<" (nth 1 (car repo-paths)) ">" "*"))
       (setq repo-paths (cdr repo-paths)))))
-
 
 
 

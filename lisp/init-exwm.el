@@ -85,7 +85,7 @@
 
 
 ;;;;; Firefox
-(defvar larumbe/exwm-firefox-class-names '("Firefox" "Firefox-esr" "Tor Browser"))
+(defvar larumbe/exwm-firefox-class-names '("Firefox" "firefox" "Firefox-esr" "Tor Browser"))
 (defvar larumbe/exwm-firefox-prefix-keys '(f8 f7)) ; Just to test these keys, nothing important is done...
 (defvar larumbe/exwm-firefox-simulation-keys
   '(([?\C-w]     . ?\C-w)         ; Keep value for window closing
