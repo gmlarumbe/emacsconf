@@ -139,6 +139,7 @@
              larumbe/compilation-error-re-set
              larumbe/recompile-set-active-regexp-alist
              larumbe/compilation-interactive
+             larumbe/compilation-interactive-sandbox
              comint-send-string)
   :config
   (require 'popwin)

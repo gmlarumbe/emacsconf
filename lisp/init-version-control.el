@@ -19,8 +19,6 @@
 (use-package magit
   :bind (("C-x g"   . magit-status)
          ("C-x M-g" . magit-dispatch)
-         ("C-x t"   . larumbe/repohome-magit-status)
-         ("C-x y"   . larumbe/repohome-magit-reset-args)
          :map magit-file-section-map ("RET" . magit-diff-visit-file-other-window)
          :map magit-hunk-section-map ("RET" . magit-diff-visit-file-other-window))
 
@@ -33,7 +31,6 @@
     ;; INFO: Magit Remaps ':' key from `magit-git-command' to `magit-lfs'
     ;; Setting following variable maps it to ";" instead
     (setq magit-lfs-suffix ";"))
-
 
   (use-package forge
     :config
@@ -77,32 +74,11 @@
   ;;
   ;; NOTE: Issue creation/modification did not work properly with older versions of git (e.g. 2.11)
 
-
-  ;; Magit config
-  (setq magit-diff-refine-hunk t) ; Highlight differences of selected hunk
-
-  ;; Repohome
-  (defvar larumbe/gite-work-tree (expand-file-name "~"))
-  (defvar larumbe/gite-repo-path (expand-file-name "~/.repohome"))
-
-  (defun larumbe/repohome-magit-status ()
-    "Perform `magit-status' with `git-dir' and `work-tree' changed accordingly.
-INFO: Is not possible to use `magit-git-global-arguments' as a local variable,
-since it needs to be set for the whole magit session, not only for the command."
-    (interactive)
-    (let ((gite-args (concat "--git-dir=" larumbe/gite-repo-path " --work-tree=" larumbe/gite-work-tree)))
-      (larumbe/repohome-magit-reset-args)
-      (setq magit-git-global-arguments (append magit-git-global-arguments (split-string gite-args))) ; Append `gite' args
-      (magit-status-setup-buffer larumbe/gite-work-tree)
-      (message "Gite arguments set...")))
-
-  ;; https://emacs.stackexchange.com/questions/3022/reset-custom-variable-to-default-value-programmatically
-  (defun larumbe/repohome-magit-reset-args ()
-    "Reset git global arguments to switch between `gite' workspace and the rest."
-    (interactive)
-    (setq magit-git-global-arguments (eval (car (get 'magit-git-global-arguments 'standard-value))))
-    (message "Git arguments reset!")))
-
+  ;;;;;;;;;;;;;;;;;;
+  ;; Magit config ;;
+  ;;;;;;;;;;;;;;;;;;
+  ;; Highlight differences of selected hunk
+  (setq magit-diff-refine-hunk t))
 
 
 ;;;;; Other packages
@@ -126,8 +102,7 @@ since it needs to be set for the whole magit session, not only for the command."
 
 ;;;; SVN
 (use-package dsvn
-  :commands (svn-status
-             larumbe/update-svn-repos)
+  :commands (svn-status)
   :bind (("C-x ;" . larumbe/svn-status)) ; Overrides `set-comment-column'
   :config
   (define-obsolete-function-alias 'string-to-int 'string-to-number "22.1")
@@ -136,18 +111,15 @@ since it needs to be set for the whole magit session, not only for the command."
     "Perform svn status via `dsvn' on `default-directory'."
     (interactive)
     (svn-status default-directory)
-    (setq truncate-lines t))
+    (setq truncate-lines t)))
 
 
-  (defun larumbe/update-svn-repos (repo-paths)
-    "Update all svn-repos passed as REPO-PATHS parameter.
-Meant to be used in local and remote."
-    (while repo-paths
-      (async-shell-command
-       (concat "svn update " (nth 0 (car repo-paths)))
-       (concat "*svn-update" "<" (nth 1 (car repo-paths)) ">" "*"))
-      (setq repo-paths (cdr repo-paths)))))
 
+;;;; Own utils
+(use-package larumbe-vc-utils
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/larumbe-vc-utils.el"))
+  :bind (("C-x t"   . larumbe/repohome-magit-status)
+         ("C-x y"   . larumbe/repohome-magit-reset-args)))
 
 
 
