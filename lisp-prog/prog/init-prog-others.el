@@ -9,13 +9,56 @@
   :hook ((nxml-mode . larumbe/prog-mode-keys)
          (nxml-mode . larumbe/prog-mode-hook)) ; Since it is not a child of prog-mode, requires common configuration settings
   :config
-  (setq nxml-child-indent 4))
+  (setq nxml-child-indent 4)
+
+  ;; INFO: Relax NG validation through the following variables/modes:
+  ;; `rng-nxml-auto-validate-flag' and `rng-validate-mode'
+
+  (defun larumbe/rng-nxml-mode-init ()
+    "Initialize `nxml-mode' to take advantage of `rng-validate-mode'.
+This is typically called from `nxml-mode-hook'.
+Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
+    (interactive)
+    (define-key nxml-mode-map "\C-c\C-v" 'rng-validate-mode)
+    (define-key nxml-mode-map "\C-c\C-n" 'rng-next-error)
+    ;; INFO: Removed all the keys that began with C-c C-s that conflicted with `larumbe/yas-insert-snippet-dwim':
+    `rng-what-schema', `rng-auto-set-schema-and-validate', `rng-set-schema-file-and-validate', `rng-save-schema-location',
+    `rng-set-document-type-and-validate'
+    (easy-menu-define rng-nxml-menu nxml-mode-map
+      "Menu for nxml-mode used with rng-validate-mode."
+      rng-nxml-easy-menu)
+    (add-to-list 'mode-line-process
+                 '(rng-validate-mode (:eval (rng-compute-mode-line-string)))
+                 'append)
+    (cond (rng-nxml-auto-validate-flag
+           (rng-validate-mode 1)
+           (add-hook 'completion-at-point-functions #'rng-completion-at-point nil t)
+           (add-hook 'nxml-in-mixed-content-hook #'rng-in-mixed-content-p nil t))
+          (t
+           (rng-validate-mode 0)
+           (remove-hook 'completion-at-point-functions #'rng-completion-at-point t)
+           (remove-hook 'nxml-in-mixed-content-hook #'rng-in-mixed-content-p t))))
+
+  ;; Override function
+  (advice-add 'rng-nxml-mode-init :override #'larumbe/rng-nxml-mode-init))
+
 
 
 ;;;; DOCBOOK
+;; Own package with some utils and hydra templates for DocBook
 (use-package docbook-mode
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/docbook-mode.el"))
   :mode (("\\.docbook\\.xml" . docbook-mode)))
+
+;; Written by Francis Litterio. Located at Sourceforge and characteristically inactive.
+;; INFO: Haven't tested it, but left here if some of their functions can be taken as a reference.
+(use-package docbook-xml-mode
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/docbook-xml-mode.el")))
+
+;; Info-like viewer for DocBook
+;; INFO: Gave it a try but got some errors with function `docbook-find-file'
+(use-package docbook)
+
 
 
 ;;;; VIVADO
