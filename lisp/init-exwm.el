@@ -45,9 +45,6 @@
 
 
 ;;;; Variables
-(defvar larumbe/exwm-active-processes nil
-  "List of registered processes for EXWM remapping of prefix/simulation keys.")
-
 ;;;;; Common
 ;; Avoids use of following keys inside an  *EXWM* buffer in line-mode
 (defvar larumbe/exwm-common-input-prefix-keys
@@ -83,113 +80,97 @@
     ;; search
     ([?\C-s] . ?\C-f)))
 
+;;;;; Programs
+;; Structure of this extensible variable:
+;; Association list, cars are the name of the program and cdrs are a list with the following elements:
+;;  1) EXWM class names: name given to the EXWM buffer. Needed to assign the sim keys to the proper buffer
+;;  2) Prefix keys
+;;  3) Simulation keys
+(defvar larumbe/exwm-programs
+  '(("Firefox" .
+     (("Firefox" "firefox" "Firefox-esr" "Tor Browser")
+      (f8 f7)
+      (([?\C-w]     . ?\C-w)         ; Keep value for window closing
+       ([?\C-k]     . (S-end ?\C-x)) ; It kills, not simply deletes
+       ;; search
+       ([?\C-\M-s]  . ?\C-F)         ; Find
+       ([?\C-\M-r]  . ?\C-F)         ; Find
+       ([?\C-s]     . ?\C-G)         ; Find Next (forward search)
+       ([?\C-r]     . (S-f3))        ; Find Previous (backwards search)
+       ;; TABs navigation
+       ([?\C-\M-l]  . (C-next))
+       ([?\C-\M-h]  . (C-prior))
+       ;; Deleting words
+       ([?\M-d]     . (S-C-right delete))
+       ;; ([?\M-\d] . (S-C-left delete))  ; INFO: Could not make it work (not even with binary value, with backspace, with delete...): Note (http://ergoemacs.org/emacs/keystroke_rep.html)
+       ;; \d stands for backspace, and the command "(global-set-key [?\M-\d] #'newline)" actually works, so it's an EXWM thing...
+       ;; Key-Scripting -> With '-' and between parenthesis they will be pressed in that order "simultaneously"
+       ([?\C-j]     . tab)
+       ([?\C-\;]    . (S-tab))
+       ;; Toggle link/page view
+       ([?\C-l]     . f6))
+      ))
 
-;;;;; Firefox
-(defvar larumbe/exwm-firefox-class-names '("Firefox" "firefox" "Firefox-esr" "Tor Browser"))
-(defvar larumbe/exwm-firefox-prefix-keys '(f8 f7)) ; Just to test these keys, nothing important is done...
-(defvar larumbe/exwm-firefox-simulation-keys
-  '(([?\C-w]     . ?\C-w)         ; Keep value for window closing
-    ([?\C-k]     . (S-end ?\C-x)) ; It kills, not simply deletes
-    ;; search
-    ([?\C-\M-s]  . ?\C-F)         ; Find
-    ([?\C-\M-r]  . ?\C-F)         ; Find
-    ([?\C-s]     . ?\C-G)         ; Find Next (forward search)
-    ([?\C-r]     . (S-f3))        ; Find Previous (backwards search)
-    ;; TABs navigation
-    ([?\C-\M-l]  . (C-next))
-    ([?\C-\M-h]  . (C-prior))
-    ;; Deleting words
-    ([?\M-d]     . (S-C-right delete))
-    ;; ([?\M-\d] . (S-C-left delete))  ; INFO: Could not make it work (not even with binary value, with backspace, with delete...): Note (http://ergoemacs.org/emacs/keystroke_rep.html)
-    ;; \d stands for backspace, and the command "(global-set-key [?\M-\d] #'newline)" actually works, so it's an EXWM thing...
-    ;; Key-Scripting -> With '-' and between parenthesis they will be pressed in that order "simultaneously"
-    ([?\C-j]     . tab)
-    ([?\C-\;]    . (S-tab))
-    ;; Toggle link/page view
-    ([?\C-l]     . f6)))
+    ("Okular" .
+     (("Okular" "okular")
+      nil
+      (;; Keep original values
+       ([?\C-a] . ?\C-a)    ; Select all
+       ([?\C-e] . ?\C-e)
+       ;; search (manually assigned at Okular)
+       ([?\C-s] . ?\C-')    ; Forward
+       ([?\C-r] . ?\C-\\)) ; Backward
+      ))
 
-(defvar larumbe/exwm-firefox-list '(larumbe/exwm-firefox-class-names larumbe/exwm-firefox-simulation-keys larumbe/exwm-firefox-prefix-keys))
+    ("Vivado" .
+     (("Vivado")
+      nil
+      (;; Keep original values
+       ([?\M-<] . ?\M-<) ; Don't remember well why these two...
+       ([?\M->] . ?\M->)
+       ([?\C-s] . ?\C-s) ; Forward -> Avoid it since C-s should be better saving than searching (use C-r instead)
+       ;; Search
+       ([?\C-r] . ?\C-f)
+       ;; Undo
+       ([?\C-\/] . ?\C-z))
+      ))
 
+    ("Gtkwave" .
+     (("Gtkwave")
+      nil
+      (;; Keep original values
+       ([?\C-k] . ?\C-k)
+       ([?\C-w] . ?\C-w)
+       ([?\C-s] . ?\C-s) ; Forward -> Avoid it since C-s should be better saving than searching (use C-r instead)
+       ([?\C-r] . ?\C-r)
+       ;; Selection/highlight
+       ([?\C-a] . ?\C-a))
+      ))
 
-;;;;; Okular
-(defvar larumbe/exwm-okular-class-names '("Okular" "okular"))
-(defvar larumbe/exwm-okular-prefix-keys nil)
-(defvar larumbe/exwm-okular-simulation-keys
-  '(;; Keep original values
-    ([?\C-a] . ?\C-a)    ; Select all
-    ([?\C-e] . ?\C-e)
-    ;; search (manually assigned at Okular)
-    ([?\C-s] . ?\C-')    ; Forward
-    ([?\C-r] . ?\C-\\))) ; Backward
-
-(defvar larumbe/exwm-okular-list '(larumbe/exwm-okular-class-names larumbe/exwm-okular-simulation-keys larumbe/exwm-okular-prefix-keys))
-
-
-;;;;; Vivado
-(defvar larumbe/exwm-vivado-class-names '("Vivado"))
-(defvar larumbe/exwm-vivado-prefix-keys nil)
-(defvar larumbe/exwm-vivado-simulation-keys
-  '(;; Keep original values
-    ([?\M-<] . ?\M-<) ; Don't remember well why these two...
-    ([?\M->] . ?\M->)
-    ([?\C-s] . ?\C-s) ; Forward -> Avoid it since C-s should be better saving than searching (use C-r instead)
-    ;; Search
-    ([?\C-r] . ?\C-f)
-    ;; Undo
-    ([?\C-\/] . ?\C-z)))
-
-(defvar larumbe/exwm-vivado-list '(larumbe/exwm-vivado-class-names larumbe/exwm-vivado-simulation-keys larumbe/exwm-vivado-prefix-keys))
-
-
-;;;;; Gtkwave
-(defvar larumbe/exwm-gtkwave-class-names '("Gtkwave"))
-(defvar larumbe/exwm-gtkwave-prefix-keys nil)
-(defvar larumbe/exwm-gtkwave-simulation-keys
-  '(;; Keep original values
-    ([?\C-k] . ?\C-k)
-    ([?\C-w] . ?\C-w)
-    ([?\C-s] . ?\C-s) ; Forward -> Avoid it since C-s should be better saving than searching (use C-r instead)
-    ([?\C-r] . ?\C-r)
-    ;; Selection/highlight
-    ([?\C-a] . ?\C-a)))
-
-(defvar larumbe/exwm-gtkwave-list '(larumbe/exwm-gtkwave-class-names larumbe/exwm-gtkwave-simulation-keys larumbe/exwm-gtkwave-prefix-keys))
-
-
-;;;;; Novas
-(defvar larumbe/exwm-novas-class-names '("Novas"))
-(defvar larumbe/exwm-novas-prefix-keys nil)
-(defvar larumbe/exwm-novas-simulation-keys
-  '(;; Keep original values
-    ([?\C-k] . ?\C-k)
-    ([?\C-w] . ?\C-w)
-    ([?\C-s] . ?\C-s) ; Forward -> Avoid it since C-s should be better saving than searching (use C-r instead)
-    ([?\C-r] . ?\C-r)
-    ;; Selection/highlight
-    ([?\C-a] . ?\C-a)))
-
-(defvar larumbe/exwm-novas-list '(larumbe/exwm-novas-class-names larumbe/exwm-novas-simulation-keys larumbe/exwm-novas-prefix-keys))
+    ("Novas" .
+     (("Novas")
+      nil
+      (;; Keep original values
+       ([?\C-k] . ?\C-k)
+       ([?\C-w] . ?\C-w)
+       ([?\C-s] . ?\C-s) ; Forward -> Avoid it since C-s should be better saving than searching (use C-r instead)
+       ([?\C-r] . ?\C-r)
+       ;; Selection/highlight
+       ([?\C-a] . ?\C-a))
+      ))
+    ))
 
 
 
 ;;;; Functions
 (defun larumbe/exwm-set-buffer-naming ()
-  "Set EXWM buffer naming depending on class/title.
-
-Example: use class names for all windows expect for
-Java applications and GIMP."
+  "Set EXWM buffer naming depending on class/title."
   (interactive)
-  (add-hook 'exwm-update-class-hook
-            (lambda ()
-              (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                          (string= "gimp" exwm-instance-name))
-                (exwm-workspace-rename-buffer exwm-class-name))))
-  (add-hook 'exwm-update-title-hook
-            (lambda ()
-              (when (or (not exwm-instance-name)
-                        (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                        (string= "gimp" exwm-instance-name))
-                (exwm-workspace-rename-buffer exwm-title)))))
+  (add-hook 'exwm-update-class-hook (lambda ()
+                                      (exwm-workspace-rename-buffer exwm-class-name)))
+  (add-hook 'exwm-update-title-hook (lambda ()
+                                      (when (not exwm-instance-name)
+                                        (exwm-workspace-rename-buffer exwm-title)))))
 
 
 (defun larumbe/exwm-set-keybindings ()
@@ -220,15 +201,6 @@ Java applications and GIMP."
   (exwm-input-set-key (kbd "s-SPC") #'larumbe/toggle-keyboard-layout))
 
 
-(defun larumbe/exwm-register-active-processes ()
-  "Register processes that will remap prefix/simulation keybindings."
-  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-firefox-list)
-  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-okular-list)
-  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-vivado-list)
-  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-gtkwave-list)
-  (add-to-list 'larumbe/exwm-active-processes 'larumbe/exwm-novas-list))
-
-
 
 (defun larumbe/exwm-set-layout ()
   "Set layout of EXWM."
@@ -252,18 +224,19 @@ set previously through pushes.
 These keys are meant to be set everytime an EXWM buffer is created."
   (let ((class-names-list)
         (simulation-keys)
-        (prefix-keys))
+        (prefix-keys)
+        (programs-params (mapcar #'cdr larumbe/exwm-programs)))
     (catch 'sim-keys-set ; If keys are set for a buffer, break the dolist loop
-      (dolist (program larumbe/exwm-active-processes)
-        (setq class-names-list (nth 0 (eval program)))
-        (setq simulation-keys  (nth 1 (eval program)))
-        (setq prefix-keys      (nth 2 (eval program)))
+      (dolist (params programs-params)
+        (setq class-names-list (nth 0 params))
+        (setq prefix-keys      (nth 1 params))
+        (setq simulation-keys  (nth 2 params))
         (when (and exwm-class-name
-                   (member exwm-class-name (eval class-names-list)))
-          (setq simulation-keys (append larumbe/exwm-common-input-simulation-keys (eval simulation-keys)))
-          (exwm-input-set-local-simulation-keys simulation-keys)
-          (setq prefix-keys (append exwm-input-prefix-keys (eval prefix-keys)))
+                   (member exwm-class-name class-names-list))
+          (setq prefix-keys (append exwm-input-prefix-keys prefix-keys))
           (setq-local exwm-input-prefix-keys prefix-keys)
+          (setq simulation-keys (append larumbe/exwm-common-input-simulation-keys simulation-keys))
+          (exwm-input-set-local-simulation-keys simulation-keys)
           (throw 'sim-keys-set nil))))))
 
 
@@ -273,7 +246,6 @@ These keys are meant to be set everytime an EXWM buffer is created."
   (larumbe/exwm-set-keybindings)
   (dolist (key larumbe/exwm-common-input-prefix-keys)
     (push key exwm-input-prefix-keys))
-  (larumbe/exwm-register-active-processes)
   (larumbe/exwm-set-layout)
   (add-hook 'exwm-manage-finish-hook #'larumbe/exwm-set-keys-hook))
 
@@ -300,9 +272,10 @@ show stdout in BUFFER and pop to this window (for debug mainly)."
 If it is already running, set to current window.
 It there is universal argument, open new instance of Firefox."
   (interactive)
-  (let* ((bufs         (mapcar 'get-buffer larumbe/exwm-firefox-class-names))
-         (bufs-active  (seq-remove (lambda (elt) (eq elt nil)) bufs))
-         (buf-selected (car bufs-active))) ; Select the first non-nil buffer of `larumbe/exwm-firefox-class-names' buffers
+  (let* ((ff-class-names (nth 1 (assoc "Firefox" larumbe/exwm-programs)))
+         (bufs           (mapcar 'get-buffer ff-class-names))
+         (bufs-active    (seq-remove (lambda (elt) (eq elt nil)) bufs))
+         (buf-selected   (car bufs-active))) ; Select the first non-nil buffer of Firefox class-names buffers
     (if buf-selected
         (if current-prefix-arg
             (larumbe/exwm-launch "firefox")
