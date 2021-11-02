@@ -36,7 +36,10 @@
 ;;
 ;;  Check `larumbe/exwm-set-buffer-naming' example
 ;;
+;;;; Some combinations not-used anymore
 ;;
+;; ([?\C-\;] . (S-tab))
+
 ;;; Code:
 
 
@@ -58,6 +61,8 @@
 
 (defvar larumbe/exwm-common-input-simulation-keys
   '(([?\C-g] . escape)
+    ([?\C-m] . return)
+    ([?\C-j] . return)
     ;; movement
     ([?\C-b] . left)
     ([?\M-b] . C-left)
@@ -105,8 +110,6 @@
        ;; ([?\M-\d] . (S-C-left delete))  ; INFO: Could not make it work (not even with binary value, with backspace, with delete...): Note (http://ergoemacs.org/emacs/keystroke_rep.html)
        ;; \d stands for backspace, and the command "(global-set-key [?\M-\d] #'newline)" actually works, so it's an EXWM thing...
        ;; Key-Scripting -> With '-' and between parenthesis they will be pressed in that order "simultaneously"
-       ([?\C-j]     . tab)
-       ([?\C-\;]    . (S-tab))
        ;; Toggle link/page view
        ([?\C-l]     . f6))
       ))
