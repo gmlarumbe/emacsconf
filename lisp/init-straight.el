@@ -51,30 +51,27 @@
   (setq use-package-always-defer t))
 
 (use-package straight
+  :commands (larumbe/straight-packages
+             larumbe/straight-check-dirty-repos)
   :config
   (setq straight-use-package-by-default t)
   (setq straight-host-usernames
         '((github . "gmlarumbe")))
 
+  (defun larumbe/straight-packages ()
+    "Return list of strings with the paths of every straight repo."
+    (let* ((straight-repos-dir (expand-file-name (larumbe/path-join straight-base-dir "straight/repos")))
+           (straight-packages (directory-files straight-repos-dir t)))
+      (setq straight-packages (delete (larumbe/path-join straight-repos-dir ".")  straight-packages))
+      (setq straight-packages (delete (larumbe/path-join straight-repos-dir "..") straight-packages))
+      straight-packages))
+
   (defun larumbe/straight-check-dirty-repos ()
     "Show dirty straight repos/files in *straight-dirty* buffer."
     (interactive)
-    (unless (executable-find "git")
-      (error "Git is not installed!"))
     (unless straight-base-dir
       (error "Variable `straight-base-dir' not set!"))
-    (let ((buf "*straight-dirty*")
-          (shell-command-dont-erase-buffer t) ; Append output to buffer
-          (repos (delete "." (delete ".." (directory-files (concat (file-name-as-directory straight-base-dir) "straight/repos")))))
-          (dir)
-          (cmd))
-      (dolist (repo repos)
-        (message "Checking %s..." repo)
-        (setq dir (concat (file-name-as-directory straight-base-dir) "straight/repos/" repo))
-        (setq cmd (concat "git -C " dir " update-index --refresh >> /dev/null || "
-                          "{ echo \"Repo " repo " has uncommitted changes!\" && git -C " dir " update-index --refresh; git -C " dir " diff-index --quiet HEAD --; echo \"\"; }"))
-        (shell-command cmd buf buf))
-      (pop-to-buffer buf))))
+    (larumbe/git-check-dirty-repos (larumbe/straight-packages) "*straight-dirty*")))
 
 
 (provide 'init-straight)
