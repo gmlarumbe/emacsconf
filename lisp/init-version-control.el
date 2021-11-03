@@ -97,7 +97,34 @@
 (use-package repo
   :straight (:repo "canatella/repo-el"
              :fork (:repo "gmlarumbe/repo-el"))
-  :bind (("C-x j" . repo-status)))
+  :bind (("C-x j" . repo-status))
+  :bind (:map repo-mode-map
+         ("U" . larumbe/update-repo))
+  :config
+  (defvar larumbe/repo-workspace nil "docstring")
+
+  (defun larumbe/update-repo-sentinel (process signal)
+    "Notify the user when current workspace has been updated."
+    (cond
+     ((equal signal "finished\n")
+      (repo-status larumbe/repo-workspace)
+      (message "%s updated!" larumbe/repo-workspace))
+     ;; Error handling
+     ('t
+      (message "urepo process open message got signal %s" signal)
+      (display-buffer (process-buffer process)))))
+
+  (defun larumbe/update-repo ()
+    "Update repo with 'urepo' command."
+    (interactive)
+    (unless (and (executable-find "repo")
+                 (executable-find "urepo"))
+      (error "repo and urepo not found!"))
+    (let (proc)
+      (setq larumbe/repo-workspace repo-workspace)
+      (setq proc (start-process-shell-command "update_repo" "*update_repo*" "urepo"))
+      (message "Updating *%s*" (file-name-nondirectory (directory-file-name larumbe/repo-workspace)))
+      (set-process-sentinel proc #'larumbe/update-repo-sentinel))))
 
 
 ;;;; SVN
