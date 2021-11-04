@@ -5,8 +5,7 @@
 
 (use-package compile
   :straight nil
-  :bind (([f5]  . compile)
-         ("C-)" . larumbe/compilation-show-buffer))
+  :bind (([f5]  . compile))
   :bind (:map compilation-mode-map
               ("r"   . rename-buffer))
   :bind (:map comint-mode-map
@@ -64,6 +63,7 @@
 
 (use-package compilation-utils
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/compilation-utils.el"))
+  :bind (("C-)" . larumbe/compilation-show-buffer))
   :bind (:map compilation-mode-map
          ("j"   . larumbe/recompile-with-regexp-alist)
          ("t"   . larumbe/compilation-threshold))
