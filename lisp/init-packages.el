@@ -243,11 +243,11 @@ the vertical drag is done."
 
 
 ;;;; Sysadmin
-(use-package arch-packer)
+(use-package arch-packer
+  :straight (:repo "brotzeit/arch-packer"
+             :fork (:repo "gmlarumbe/arch-packer")))
 
-(use-package aurel
-  ;; :config
-  )
+(use-package aurel)
 
 (use-package google-this
   :diminish
@@ -268,9 +268,6 @@ the vertical drag is done."
 
 (use-package howdoi
   :straight (:host github :repo "arthurnn/howdoi-emacs"))
-
-
-(use-package sudo-ext)
 
 
 (use-package tramp
