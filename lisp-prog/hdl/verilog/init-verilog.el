@@ -43,7 +43,7 @@
               ("C-c C-c"  . larumbe/verilog-connect-ports-recursively)
               ("C-c C-p"  . larumbe/verilog-preprocess)
               ("C-c C-f"  . larumbe/verilog-flycheck-mode)
-              ("<f8>"     . larumbe/verilog-vhier-current-file))
+              ("<f8>"     . larumbe/verilog-perl-current-file))
   :config
   ;; Dependencies
   (require 'xah-lee-functions)

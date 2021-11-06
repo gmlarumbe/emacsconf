@@ -18,25 +18,6 @@
   (flycheck-select-checker larumbe/flycheck-active-linter)
   (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs))
 
-(defun larumbe/verilog-update-project-pkg-list ()
-  "Update currently open packages on `larumbe/verilog-project-pkg-list'.
-
-Only packages within current projectile project are added.
-To be used with vhier/flycheck.
-
-INFO: Limitations:
- - Packages included as sources might not be in the proper order.
- - Some sorting method could be used in the future:
-   - Extracting them from buffer file but in the order they have been
-     opened and reverse sorting, for example..."
-  (setq larumbe/verilog-project-pkg-list nil) ; Reset list
-  (mapc
-   (lambda (pkg)
-     (when (string-prefix-p (projectile-project-root) pkg)
-       (add-to-list 'larumbe/verilog-project-pkg-list pkg)))
-   larumbe/verilog-open-pkgs)
-  larumbe/verilog-project-pkg-list)     ; Return pkg-list
-
 
 (defun larumbe/verilog-flycheck-mode (&optional uarg)
   "`flycheck-mode' Verilog wrapper function.

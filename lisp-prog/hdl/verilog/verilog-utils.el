@@ -298,13 +298,36 @@ Used for flycheck and vhier packages."
     (dolist ($buf (buffer-list (current-buffer)))
       (with-current-buffer $buf
         (when (string-equal major-mode "verilog-mode")
-          (setq verilog-opened-dirs (push default-directory verilog-opened-dirs))
+          (unless (member default-directory verilog-opened-dirs)
+            (push default-directory verilog-opened-dirs))
           (save-excursion
             (goto-char (point-min))
             (when (re-search-forward pkg-regexp nil t)
-              (setq verilog-opened-pkgs (push (buffer-file-name) verilog-opened-pkgs)))))))
+              (unless (member (buffer-file-name) verilog-opened-pkgs)
+                (push (buffer-file-name) verilog-opened-pkgs)))))))
     `(,verilog-opened-dirs ,verilog-opened-pkgs)))  ; Return list of dirs and packages
 
+
+(defun larumbe/verilog-update-project-pkg-list ()
+  "Update currently open packages on `larumbe/verilog-project-pkg-list'.
+
+Only packages within current projectile project are added.
+To be used with vhier/flycheck.
+
+INFO: Limitations:
+ - Packages included as sources might not be in the proper order.
+ - Some sorting method could be used in the future:
+   - Extracting them from buffer file but in the order they have been
+     opened and reverse sorting, for example..."
+  (setq larumbe/verilog-project-pkg-list nil) ; Reset list
+  (mapc
+   (lambda (pkg)
+     (when (string-prefix-p (projectile-project-root) pkg)
+       (unless (member pkg larumbe/verilog-project-pkg-list)
+         (push pkg larumbe/verilog-project-pkg-list))))
+   larumbe/verilog-open-pkgs)
+  ;; Return pkg-list
+  larumbe/verilog-project-pkg-list)
 
 
 ;; Own projects verilog timestamp header
