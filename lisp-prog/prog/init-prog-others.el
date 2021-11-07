@@ -64,11 +64,7 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 ;;;; VIVADO
 (use-package vivado-utils
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/vivado-utils.el"))
-  :commands (vivado-xdc-mode
-             larumbe/vivado-shell
-             larumbe/vivado-shell-tcl-send-line-or-region-and-step
-             larumbe/vivado-shell-completion-at-point-mode)
-  :mode (("\\.xdc\\'" . vivado-xdc-mode)))
+  :mode (("\\.xdc\\'" . larumbe/vivado-xdc-mode)))
 
 
 ;;;; HTML
