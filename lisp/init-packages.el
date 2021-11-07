@@ -389,7 +389,8 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
          ("C-<f12>" . auto-fill-mode)
          ("<f12>"   . toggle-truncate-lines))
   :config
-  (setq save-interprogram-paste-before-kill t))
+  (setq save-interprogram-paste-before-kill t)
+  (setq next-error-verbose nil)) ; Hide "next-locus on <file> minibuffer messages that interfered with flycheck/eldoc"
 
 
 (use-package hi-lock
