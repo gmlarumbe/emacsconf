@@ -6,13 +6,8 @@
 ;;; Code:
 
 ;;;; Company
-(defvar larumbe/company-enable t
-  "Conditionally determine in a hook if mode is enabled.")
-
-
 (use-package company
   :diminish
-  :commands (larumbe/company-mode)
   :bind ("<S-return>" . company-complete-common)
   :bind (:map company-active-map
          ("C-n" . company-select-next-or-abort)
@@ -22,17 +17,7 @@
   (setq company-idle-delay nil) ; Disable auto complete
   (defvar larumbe/company-backends-common '((company-keywords
                                              company-capf
-                                             company-gtags)))
-
-  (defun larumbe/company-mode (&optional arg)
-    "Enable company-mode depending on value of `larumbe/company-enable'.
-
-Purpose is to use this function as a conditional hook.
-ARG will be passed to `company-mode' wrapped function."
-    (interactive)
-    (if larumbe/company-enable
-        (company-mode arg)
-      (company-mode -1))))
+                                             company-gtags))))
 
 
 ;;;; Yasnippet

@@ -3,17 +3,12 @@
 ;;; Code:
 
 
-(defvar larumbe/ggtags-enable t
-  "Conditionally determine in a hook if mode is enabled.")
-
-
 (use-package ggtags
   :diminish
   :commands (ggtags-create-tags
              ggtags-current-project-root
              ggtags-find-reference
              modi/ggtags-tag-at-point
-             larumbe/ggtags-mode
              larumbe/gtags-create-tags-async
              larumbe/ggtags-backend-switch)
   :bind (:map ggtags-navigation-map
@@ -52,18 +47,6 @@
   ;; buffer-local variable `ggtags-mode', with some side-effects such as
   ;; recursive function calling when testing `ggtags-mode' variable...
   (advice-add 'ggtags-tag-at-point :override #'modi/ggtags-tag-at-point)
-
-
-  (defun larumbe/ggtags-mode (&optional arg)
-    "Enable ggtags-mode depending on value of `larumbe/ggtags-enable'.
-
-Purpose is to use this function as a conditional hook.
-ARG will be passed to `ggtags-mode' wrapped function."
-    (interactive)
-    (if larumbe/ggtags-enable
-        (ggtags-mode arg)
-      (ggtags-mode -1)))
-
 
 
 ;;;; Global/ctags
