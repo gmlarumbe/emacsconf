@@ -30,14 +30,7 @@ Argument ARG sets `flycheck-mode' non-interactively."
         (flycheck-mode arg)
         (eldoc-mode (* -1 arg)))
     ;; Interactive
-    (if eldoc-mode
-        (progn
-          (eldoc-mode -1)
-          (flycheck-mode 1)
-          (message "Flycheck enabled"))
-      (eldoc-mode 1)
-      (flycheck-mode -1)
-      (message "Flycheck disabled"))))
+    (larumbe/flycheck-eldoc-toggle)))
 
 
 (defun larumbe/newline ()
