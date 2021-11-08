@@ -50,7 +50,9 @@ This will normally happen after calling `modi/verilog-find-parent-module'."
   (let* ((ag-buf "*ag search*")
          (ag-win (get-buffer-window ag-buf)))
     (if ag-win
-        (delete-window ag-win)
+        (progn
+          (delete-window ag-win)
+          (kill-buffer ag-buf))
       (call-interactively #'electric-verilog-terminate-line))))
 
 

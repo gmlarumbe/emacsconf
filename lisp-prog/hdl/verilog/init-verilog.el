@@ -15,10 +15,10 @@
          ("\\.vsrc.pp\\'"     . verilog-mode)
          ("\\.v.pp\\'"        . verilog-mode)
          ("\\.ppv\\'"         . verilog-mode))
-  :hook ((verilog-mode . larumbe/verilog-hook)
-         (verilog-mode . larumbe/verilog-flycheck-hook))
+  :hook ((verilog-mode . larumbe/verilog-hook))
   :bind (:map verilog-mode-map
               ("<return>" . larumbe/electric-verilog-terminate-line)
+              ("RET"      . larumbe/electric-verilog-terminate-line) ; C-m
               ([delete]   . delete-forward-char)
               ("C-%"      . hide/show-comments-toggle)
               ("M-s ."    . larumbe/verilog-isearch-forward-symbol-at-point)

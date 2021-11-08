@@ -49,6 +49,19 @@
   (advice-add 'ggtags-tag-at-point :override #'modi/ggtags-tag-at-point)
 
 
+  ;; Similar to `ggtags-navigation-mode-done' but killing gtags buffer to avoid conflicts with
+  ;; flycheck/compilation when moving to previous/next error.
+  ;; Change at last call (ggtags-navigation-mode-cleanup nil t) setting 2nd argument to t to kill buffer
+  (defun larumbe/ggtags-navigation-mode-done ()
+    (interactive)
+    (ggtags-navigation-mode -1)
+    (setq tags-loop-scan t
+          tags-loop-operate '(ggtags-find-tag-continue))
+    (ggtags-navigation-mode-cleanup nil t))
+
+  (advice-add 'ggtags-navigation-mode-done :override #'larumbe/ggtags-navigation-mode-done)
+
+
 ;;;; Global/ctags
   ;; INFO: Global does not allow to find external definitions outside project root directory (probably due to security reasons).
   ;; In order to do so, there are 2 methods:

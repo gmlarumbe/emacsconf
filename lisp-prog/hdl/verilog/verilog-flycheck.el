@@ -12,12 +12,6 @@
 (defvar larumbe/flycheck-active-linter nil) ; Flycheck will automatically set its default, avoiding potential errors when executables are not found
 
 
-(defun larumbe/verilog-flycheck-hook ()
-  "Set Verilog flycheck options."
-  (flycheck-select-checker larumbe/flycheck-active-linter)
-  (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs))
-
-
 (defun larumbe/verilog-flycheck-mode (&optional uarg)
   "`flycheck-mode' Verilog wrapper function.
 If called with UARG, select among available linters.
@@ -35,6 +29,9 @@ to avoid minibuffer collisions."
             ("iverilog"
              (setq active-linter 'verilog-iverilog))
             ("hal"
+             (unless (and (executable-find "xrun")
+                          (executable-find "hal"))
+               (error "Could not find 'xrun' and 'hal' in $PATH"))
              (setq active-linter 'verilog-cadence-hal)
              (larumbe/xrun-hal-script-create)))
           (setq larumbe/flycheck-active-linter active-linter)
@@ -59,7 +56,8 @@ to avoid minibuffer collisions."
 (defvar larumbe/xrun-hal-script-path (larumbe/path-join larumbe/xrun-hal-directory larumbe/xrun-hal-script-name))
 (defvar larumbe/xrun-hal-script-code (concat "#!/bin/bash
 args=\"${@}\"
-xrun -hal $args && cat " larumbe/xrun-hal-log-path "
+xrun -hal $args
+cat " larumbe/xrun-hal-log-path "
 "))
 
 (defun larumbe/xrun-hal-directory-fn (_checker)
@@ -85,6 +83,11 @@ try to output the log, it would throw a xrun fatal error since
         (write-file file)
         (set-file-modes file #o755)))))
 
+(defun larumbe/xrun-hal-open-log ()
+  "Open xrun log file for debug."
+  (interactive)
+  (find-file larumbe/xrun-hal-log-path))
+
 
 ;; Similar to `flycheck-define-checker' but it's a defun instead of a macro.
 ;; This allows the use of evaluated variables (`larumbe/xrun-hal-script-path' and
@@ -95,10 +98,12 @@ try to output the log, it would throw a xrun fatal error since
 (flycheck-define-command-checker 'verilog-cadence-hal
   "A Verilog syntax checker using Cadence HAL."
   :command `(,larumbe/xrun-hal-script-path
-             "-timescale"
-             "1ns/1ps"
-             "-l"
-             ,larumbe/xrun-hal-log-path
+             "-bb_unbound_comp"
+             "-timescale" "1ns/1ps"
+             "-l" ,larumbe/xrun-hal-log-path
+             "+libext+.v+.vh+.sv+.svh"
+             (option-list "-incdir" larumbe/flycheck-verilator-include-path)
+             (option-list "-y" larumbe/flycheck-verilator-include-path)
              (option-list "" larumbe/verilog-project-pkg-list concat)
              source-original)
   :working-directory #'larumbe/xrun-hal-directory-fn
@@ -115,11 +120,19 @@ try to output the log, it would throw a xrun fatal error since
 (flycheck-define-checker verilog-verilator
   "A Verilog syntax checker using the Verilator Verilog HDL simulator.
 
-See URL `https://www.veripool.org/wiki/verilator'."
+See URL `https://www.veripool.org/wiki/verilator'.
+
+INFO: Verilator does not support ignoring missing modules, as Iverilog does.
+  - https://github.com/verilator/verilator/issues/2835
+However, verilator supports SystemVerilog far better than Iverilog does.
+"
   :command ("verilator" "--lint-only" "-Wall" "-Wno-fatal"
             "--bbox-unsup" ; Blackbox unsupported language features: avoids errors on verification sources
-            (option-list "-I" larumbe/flycheck-verilator-include-path concat) ; -I searchs for includes
-            (option-list "-y" larumbe/flycheck-verilator-include-path)        ; -y searchs for modules
+            "--bbox-sys"  ;  Blackbox unknown $system calls
+            ;; https://verilator.org/guide/latest/exe_verilator.html
+            ;;  - The three flags -y, +incdir+<dir> and -I<dir> have similar effect;
+            ;;  +incdir+<dir> and -y are fairly standard across Verilog tools while -I<dir> is used by many C++ compilers.
+            (option-list "-I" larumbe/flycheck-verilator-include-path concat) ; -I searchs for includes and modules
             (option-list "" larumbe/verilog-project-pkg-list concat)
             source)
   :error-patterns
@@ -155,6 +168,10 @@ See URL `http://iverilog.icarus.com/'"
    (error   (file-name) ":" line ":" (message) line-end) ; 'syntax error' message (missing package)
    )
   :modes verilog-mode)
+
+
+;;;; Others
+;; Seems promising, but still under construction:  https://github.com/chipsalliance/verible
 
 
 (provide 'verilog-flycheck)

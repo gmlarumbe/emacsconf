@@ -347,6 +347,8 @@ INFO: Limitations:
   (setq larumbe/verilog-open-dirs (nth 0 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
   (setq larumbe/verilog-open-pkgs (nth 1 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
   (setq verilog-library-directories larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
+  (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs)
+  (flycheck-select-checker larumbe/flycheck-active-linter)
   (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
   (larumbe/verilog-time-stamp-setup)
   (larumbe/verilog-find-semicolon-in-instance-comments)

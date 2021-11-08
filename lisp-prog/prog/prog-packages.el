@@ -57,6 +57,10 @@ in order to check pending project actions. "
 (use-package flycheck
   :diminish
   :commands (flycheck-display-error-messages-unless-error-list)
+  :bind (:map flycheck-mode-map
+         ;; INFO: Precedence on current file over existing compilation/gtags/ag
+         ("M-n" . flycheck-next-error)
+         ("M-p" . flycheck-previous-error))
   :config
   (setq flycheck-display-errors-function ; Seems it shows full error if multiline
         #'flycheck-display-error-messages-unless-error-list))
