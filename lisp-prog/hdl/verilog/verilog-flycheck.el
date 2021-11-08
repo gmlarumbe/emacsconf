@@ -25,20 +25,21 @@ If called with UARG, select among available linters.
 Disable function `eldoc-mode' if flycheck is enabled
 to avoid minibuffer collisions."
   (interactive "P")
-  (let ((linters '("hal" "verilator" "iverilog"))
+  (let ((linters '("verilator" "iverilog" "hal"))
         (active-linter))
     (if uarg
         (progn
           (pcase (completing-read "Select linter: " linters)
-            ("hal"
-             (setq active-linter 'verilog-cadence-hal)
-             (larumbe/xrun-hal-script-create))
             ("verilator"
              (setq active-linter 'verilog-verilator))
             ("iverilog"
-             (setq active-linter 'verilog-iverilog)))
+             (setq active-linter 'verilog-iverilog))
+            ("hal"
+             (setq active-linter 'verilog-cadence-hal)
+             (larumbe/xrun-hal-script-create)))
           (setq larumbe/flycheck-active-linter active-linter)
-          (flycheck-select-checker active-linter))
+          (flycheck-select-checker active-linter)
+          (message "Linter set to: %s " larumbe/flycheck-active-linter))
       ;; No uarg
       (larumbe/verilog-update-project-pkg-list)
       (larumbe/flycheck-eldoc-toggle)
@@ -87,7 +88,7 @@ try to output the log, it would throw a xrun fatal error since
 
 ;; Similar to `flycheck-define-checker' but it's a defun instead of a macro.
 ;; This allows the use of evaluated variables (`larumbe/xrun-hal-script-path' and
-;; `larumbe/xrun-hal-log-path') inside the keyword argument :command
+;; `larumbe/xrun-hal-log-path') inside the first string of the keyword argument :command
 ;;
 ;; The only difference with `flycheck-define-checker' is that this one requires
 ;; keyword arguments to be quoted.
@@ -109,21 +110,24 @@ try to output the log, it would throw a xrun fatal error since
   :modes 'verilog-mode)
 
 
+
 ;;;; Verilator override
 (flycheck-define-checker verilog-verilator
   "A Verilog syntax checker using the Verilator Verilog HDL simulator.
 
 See URL `https://www.veripool.org/wiki/verilator'."
-  :command ("verilator" "--lint-only" "-Wall"
-            (option-list "-I" larumbe/flycheck-verilator-include-path concat)
+  :command ("verilator" "--lint-only" "-Wall" "-Wno-fatal"
+            "--bbox-unsup" ; Blackbox unsupported language features: avoids errors on verification sources
+            (option-list "-I" larumbe/flycheck-verilator-include-path concat) ; -I searchs for includes
+            (option-list "-y" larumbe/flycheck-verilator-include-path)        ; -y searchs for modules
             (option-list "" larumbe/verilog-project-pkg-list concat)
             source)
   :error-patterns
   ;; INFO: Required to add a column for latests version of Verilator!
   ;; TODO: Send a bug report/pull request at some point
-  ((warning line-start "%Warning-" (zero-or-more not-newline) ": "
-            (file-name) ":" line ": " (message) line-end)
-   (error line-start "%Error: " (file-name) ":" line ":" column ": " (message) line-end))
+  ((warning line-start "%Warning-" (zero-or-more not-newline) ": " (file-name) ":" line ":" column ": " (message) line-end)
+   (error   line-start "%Error: "                                  (file-name) ":" line ":" column ": " (message) line-end)
+   (error   line-start "%Error-"   (zero-or-more not-newline) ": " (file-name) ":" line ":" column ": " (message) line-end))
   :modes verilog-mode)
 
 
