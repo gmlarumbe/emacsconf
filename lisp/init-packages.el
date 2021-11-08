@@ -393,6 +393,11 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   (setq next-error-verbose nil)) ; Hide "next-locus on <file> minibuffer messages that interfered with flycheck/eldoc"
 
 
+(use-package menu-bar
+  :straight nil
+  :bind (("<f11>" . toggle-debug-on-error)))
+
+
 (use-package hi-lock
   :straight nil
   :bind (("C-\\" . highlight-symbol-at-point)
@@ -404,7 +409,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 (use-package auto-highlight-symbol
-  :bind (("<f11>" . auto-highlight-symbol-mode))
+  :bind (("C-<f11>" . auto-highlight-symbol-mode))
   :bind (:map auto-highlight-symbol-mode-map
          ("M-<"     . ahs-backward)
          ("M->"     . ahs-forward)

@@ -282,34 +282,34 @@ See also `verilog-header' for an alternative format."
       (goto-char start)
       (insert "\
 /********1*********2*********3*********4*********5*********6*********7*********8
- *
- * FILE      : <filename>
- * HIERARCHY :
- * FUNCTION  : <function>
- * AUTHOR    : <author>
- *
- *_______________________________________________________________________________
- *
- * REVISION HISTORY
- *
- * Name         Date          Comments
- * ------------------------------------------------------------------------------
- * <user>    <credate>     Created
- * ------------------------------------------------------------------------------
- *_______________________________________________________________________________
- *
- * FUNCTIONAL DESCRIPTION
- * <description>
- *_______________________________________________________________________________
- *
- * (c) Copyright Hewlett-Packard Company, year
- * All rights reserved. Copying or other reproduction of this
- * program except for archival purposes is prohibited without
- * written consent of Hewlett-Packard Company.
- * HEWLETT-PACKARD COMPANY
- * INKJET COMERCIAL DIVISION
- *
- *********1*********2*********3*********4*********5*********6*********7*********/
+*
+* FILE      : <filename>
+* HIERARCHY :
+* FUNCTION  : <function>
+* AUTHOR    : <author>
+*
+*_______________________________________________________________________________
+*
+* REVISION HISTORY
+*
+* Name      Date         Comments
+* ------------------------------------------------------------------------------
+* <user>  <credate>   Created
+* ------------------------------------------------------------------------------
+*_______________________________________________________________________________
+*
+* FUNCTIONAL DESCRIPTION
+* <description>
+*_______________________________________________________________________________
+*
+* (c) Copyright Hewlett-Packard Company, year
+* All rights reserved. Copying or other reproduction of this
+* program except for archival purposes is prohibited without
+* written consent of Hewlett-Packard Company.
+* HEWLETT-PACKARD COMPANY
+* INKJET COMERCIAL DIVISION
+*
+*********1*********2*********3*********4*********5*********6*********7*********/
 
 ")
       (goto-char start)

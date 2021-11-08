@@ -17,7 +17,7 @@
          ("\\.ppv\\'"         . verilog-mode))
   :hook ((verilog-mode . larumbe/verilog-hook))
   :bind (:map verilog-mode-map
-              ("<return>" . larumbe/electric-verilog-terminate-line)
+              ("<return>" . larumbe/electric-verilog-terminate-line) ; Enter
               ("RET"      . larumbe/electric-verilog-terminate-line) ; C-m
               ([delete]   . delete-forward-char)
               ("C-%"      . hide/show-comments-toggle)
@@ -33,17 +33,16 @@
               ("C-M-u"    . larumbe/find-verilog-module-instance-bwd)
               ("C-M-d"    . larumbe/find-verilog-module-instance-fwd)
               ("C-M-h"    . xah-select-current-block)
-              ("C-c l"    . larumbe/verilog-insert-instance-from-file)
               ("C-c i"    . larumbe/verilog-indent-current-module)
-              ("C-c a"    . larumbe/verilog-align-ports-current-module)
               ("C-c b"    . larumbe/verilog-beautify-current-module)
+              ("C-c B"    . larumbe/verilog-beautify-current-buffer)
               ("C-c c"    . larumbe/verilog-toggle-connect-port)
-              ("C-c C-t"  . hydra-verilog/body)
-              ("C-c C-l"  . larumbe/verilog-align-parameters-current-module)
               ("C-c C-c"  . larumbe/verilog-connect-ports-recursively)
+              ("C-c t"    . larumbe/verilog-time-stamp-work-new-entry)
+              ("C-c C-t"  . hydra-verilog/body)
               ("C-c C-p"  . larumbe/verilog-preprocess)
               ("C-c C-f"  . larumbe/verilog-flycheck-mode)
-              ("<f8>"     . larumbe/verilog-perl-current-file))
+              ("<f9>"     . larumbe/verilog-perl-current-file))
   :config
   ;; Dependencies
   (require 'xah-lee-functions)

@@ -175,7 +175,8 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
 
 
 (use-package hide-comnt
-  :straight (:host github :repo "emacsmirror/emacswiki.org" :branch "master" :files ("hide-comnt.el")))
+  :straight (:host github :repo "emacsmirror/emacswiki.org" :branch "master" :files ("hide-comnt.el"))
+  :commands (hide/show-comments-toggle))
 
 
 (use-package rainbow-delimiters)
@@ -188,6 +189,7 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
 
 (use-package time-stamp
   :straight nil
+  :hook ((before-save . time-stamp))
   :config
   (setq time-stamp-format "%:y-%02m-%02d %02H:%02M:%02S") ; Do not include user
   (setq time-stamp-line-limit 20)) ; Default 8

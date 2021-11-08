@@ -8,7 +8,7 @@
 (require 'verilog-mode)
 (require 'setup-verilog) ; Modi's setup
 (require 'init-ggtags)
-
+(require 'time-stamp)
 
 ;; Inspired by kmodi's variables (`modi/verilog-identifier-re')
 (defvar larumbe/newline-or-space-optional "\\(?:[[:blank:]\n]\\)*")
@@ -127,109 +127,7 @@ Create it only if in a projectile project and the Makefile does not exist alread
     (larumbe/compilation-show-buffer)))
 
 
-;;;; Code beautifying
-(defun larumbe/verilog-clean-parenthesis-blanks ()
-  "Cleans blanks inside parenthesis blocks (Verilog port connections).
-If region is not used, then a query replacement is performed instead.
-DANGER: It may wrongly detect some `old-end' regexp matches, but seems too complex for the effort..."
-  (interactive)
-  (let ((old-start "([ ]+\\(.*\\))")
-        (new-start "(\\1)")
-        (old-end "(\\([^ ]+\\)[ ]+)")
-        (new-end "(\\1)"))
-    (if (use-region-p)
-        (progn
-          (message "Removing blanks at the beginning...")
-          (larumbe/replace-regexp old-start new-start (region-beginning) (region-end))
-          (larumbe/replace-regexp old-end   new-end   (region-beginning) (region-end)))
-      (message "Removing blanks at the end...")
-      (query-replace-regexp old-start new-start nil (point-min) (point-max))
-      (query-replace-regexp old-end   new-end   nil (point-min) (point-max)))))
-
-
-(defun larumbe/verilog-indent-current-module (&optional module)
-  "Indent current module, the one pointed to by `which-func'.
-
-If used programatically perform a backwards regexp-search of MODULE
-and start indentation at that point.
-This is because current-module is determined by `which-func' and it takes time,
-therefore not detecting the proper module but the previous one."
-  (interactive)
-  (let ((case-fold-search verilog-case-fold)
-        (current-module))
-    (if module
-        (setq current-module module)
-      (setq current-module modi/verilog-which-func-xtra)) ; Find module header (modi/verilog-which-func-xtra)
-    (save-excursion
-      (re-search-backward (concat "\\_<" current-module "\\_>"))
-      ;; Mark region for the whole module
-      (beginning-of-line)
-      (set-mark (point))
-      (re-search-forward larumbe/verilog-module-instance-re nil t)
-      (backward-char)                            ; Point at instance opening parenthesis
-      (electric-verilog-forward-sexp)            ; Point at instance closing parenthesis
-      (end-of-line)
-      (electric-verilog-tab))))
-
-
-(defun larumbe/verilog-align-parameters-current-module (&optional module)
-  "Align parameters of current module, the one pointed to by `which-func'.
-
-Alignment is performed between module name and instance name.
-
-If used programatically perform a backwards regexp-search of MODULE
-and start indentation at that point.
-This is because current-module is determined by `which-func' and it takes time,
-therefore not detecting the proper module but the previous one."
-  (interactive)
-  (let ((case-fold-search verilog-case-fold)
-        (current-module)
-        (current-instance)
-        (beg)
-        (end))
-    (setq current-instance (substring-no-properties (modi/verilog-find-module-instance)))
-    (if module
-        (setq current-module module)
-      (setq current-module modi/verilog-which-func-xtra)) ; Find module header (modi/verilog-which-func-xtra)
-    (save-excursion
-      (re-search-backward (concat "\\_<" current-module "\\_>"))
-      (forward-line) ; Assumes ports start at next line from instance name
-      (setq beg (point))
-      (setq end (re-search-forward current-instance)))
-    (align-regexp beg end "\\(\\s-*\\)(" 1 1 nil) ; Requires one capture group: https://stackoverflow.com/questions/14583702/align-regexp-from-emacs-lisp
-    (message "Parameters aligned...")))
-
-
-(defun larumbe/verilog-align-ports-current-module ()
-  "Align parenthesis ports of current module.
-Current module is the one pointed to by `modi/verilog-find-module-instance'.
-
-Alignment is performed between instance name and end of instantiation."
-  (interactive)
-  (let ((case-fold-search verilog-case-fold)
-        (current-instance)
-        (beg)
-        (end))
-    (setq current-instance (substring-no-properties (modi/verilog-find-module-instance)))
-    (save-excursion
-      (re-search-backward (concat "\\_<" current-instance "\\_>"))
-      (forward-line) ; Assumes ports start at next line from instance name
-      (setq beg (point))
-      (setq end (re-search-forward ");")))
-    (align-regexp beg end "\\(\\s-*\\)(" 1 1 nil) ; Requires one capture group: https://stackoverflow.com/questions/14583702/align-regexp-from-emacs-lisp
-    (message "Ports aligned...")))
-
-
-(defun larumbe/verilog-beautify-current-module ()
-  "Beautify current module (open parenthesis, indent and align)."
-  (interactive)
-  (save-excursion
-    (larumbe/verilog-indent-current-module)
-    (larumbe/verilog-align-ports-current-module)
-    (larumbe/verilog-align-parameters-current-module)))
-
-
-;;;; Port connect/disconnect
+;;;; Port connect/disconnect/blank cleaning
 (defvar larumbe/connect-disconnect-port-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)")
 (defvar larumbe/connect-disconnect-conn-re "\\(?4:(\\(?5:.*\\))\\)?")
 (defvar larumbe/connect-disconnect-not-found "No port detected at current line")
@@ -237,11 +135,11 @@ Alignment is performed between instance name and end of instantiation."
 (defun larumbe/verilog-toggle-connect-port (force-connect)
   "Toggle connect/disconnect port at current line.
 
-If regexp detects that port is connected, then disconnect it.
-The other way round works the same.
+If regexp detects that port is connected then disconnect it
+and viceversa.
 
 If called with universal arg, FORCE-CONNECT parameter will force connection
-of current port, no matter it is connected/disconnected"
+of current port, no matter if it is connected/disconnected"
   (interactive "P")
   (let* ((case-fold-search verilog-case-fold)
          (port-regex larumbe/connect-disconnect-port-re)
@@ -260,7 +158,7 @@ of current port, no matter it is connected/disconnected"
                 (setq sig (read-string (concat "Connect [" port "] to: ") port))
                 (replace-match (concat "\\1.\\2\\3\(" sig "\)") t))
             (progn ; Else disconnect
-              (replace-match (concat "\\1.\\2\\3\(" sig "\)") t)))
+              (replace-match (concat "\\1.\\2\\3\(" nil "\)") t)))
           (goto-char start)
           (forward-line))
       (progn ; No port found
@@ -270,10 +168,152 @@ of current port, no matter it is connected/disconnected"
 
 (defun larumbe/verilog-connect-ports-recursively ()
   "Connect ports of current instance recursively.
+
 Ask for ports to be connected until no port is found at current line."
   (interactive)
-  (while (not (string-equal (larumbe/verilog-toggle-connect-port t) larumbe/connect-disconnect-not-found))))
+  (while (not (equal (larumbe/verilog-toggle-connect-port t) larumbe/connect-disconnect-not-found))
+    (larumbe/verilog-toggle-connect-port t)))
 
+
+
+(defvar larumbe/verilog-clean-port-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)(\\(?4:[ ]*\\)\\(?5:[^ ]+\\)\\(?6:[ ]*\\))"
+  "Information about different capture groups:
+Group 1: Beginning of line blanks
+Group 2: Port name (after dot connection)
+Group 3: Blanks after identifier
+Group 4: Blanks after beginning of port connection '('
+Group 5: Name of connection
+Group 6: Blanks after end of port connection ')'")
+
+(defun larumbe/verilog-clean-port-blanks ()
+  "Cleans blanks inside port connections of current buffer."
+  (interactive)
+  (let ((old-re larumbe/verilog-clean-port-re)
+        (new-re "\\1.\\2\\3\(\\5\)"))
+    (larumbe/replace-regexp-whole-buffer old-re new-re)
+    (message "Removed blanks from current buffer port connections.")))
+
+
+;;;; Code beautifying
+(defun larumbe/verilog-align-ports-current-module ()
+  "Align parenthesis ports of current module.
+Current module is the one pointed to by `modi/verilog-find-module-instance'.
+
+Alignment is performed between instance name and end of instantiation."
+  (interactive)
+  (let ((case-fold-search verilog-case-fold)
+        (current-module)
+        (current-instance)
+        (beg)
+        (end)
+        (re-beg-pos)
+        (re-end-pos))
+    (setq current-module modi/verilog-which-func-xtra)
+    (setq current-instance (modi/verilog-find-module-instance))
+    (save-excursion
+      (setq re-beg-pos (re-search-backward (concat "\\_<" current-instance "\\_>") nil t))
+      (forward-line) ; Assumes ports start at next line from instance name
+      (setq beg (point))
+      (setq re-end-pos (re-search-forward ");" nil t))
+      (setq end re-end-pos))
+    (if (and re-beg-pos re-end-pos)
+        (progn
+          (align-regexp beg end "\\(\\s-*\\)(" 1 1 nil) ; Requires one capture group: https://stackoverflow.com/questions/14583702/align-regexp-from-emacs-lisp
+          (message "Ports of %s aligned..." current-module))
+      (message "Could not align ports!"))))
+
+
+(defun larumbe/verilog-align-parameters-current-module (&optional module)
+  "Align parameters of current module, the one pointed to by `which-func'.
+
+Alignment is performed between module name and instance name.
+
+If used programatically perform a backwards regexp-search of MODULE
+and start indentation at that point.
+This is because current-module is determined by `which-func' and it takes time,
+therefore not detecting the proper module but the previous one."
+  (interactive)
+  (let ((case-fold-search verilog-case-fold)
+        (current-module)
+        (current-instance)
+        (beg)
+        (end)
+        (re-beg-pos)
+        (re-end-pos))
+    (setq current-instance (modi/verilog-find-module-instance))
+    (if module
+        (setq current-module module)
+      (setq current-module modi/verilog-which-func-xtra)) ; Find module header (modi/verilog-which-func-xtra)
+    (save-excursion
+      (setq re-beg-pos (re-search-backward (concat "\\_<" current-module "\\_>") nil t))
+      (forward-line) ; Assumes ports start at next line from instance name
+      (setq beg (point))
+      (when current-instance
+        (setq re-end-pos (re-search-forward current-instance nil t)))
+      (setq end re-end-pos))
+    (if (and re-beg-pos re-end-pos)
+        (progn
+          (align-regexp beg end "\\(\\s-*\\)(" 1 1 nil) ; Requires one capture group: https://stackoverflow.com/questions/14583702/align-regexp-from-emacs-lisp
+          (message "Parameters of %s  aligned..." current-module))
+      (message "Could not align parameters!"))))
+
+
+(defun larumbe/verilog-indent-current-module (&optional module)
+  "Indent current module, the one pointed to by `which-func'.
+
+If used programatically perform a backwards regexp-search of MODULE
+and start indentation at that point.
+This is because current-module is determined by `which-func' and it takes time,
+therefore not detecting the proper module but the previous one."
+  (interactive)
+  (let ((case-fold-search verilog-case-fold)
+        (current-module)
+        (re-beg-pos)
+        (re-end-pos)))
+  (if module
+      (setq current-module module)
+    (setq current-module modi/verilog-which-func-xtra)) ; Find module header (modi/verilog-which-func-xtra)
+  (save-excursion
+    (setq re-beg-pos (re-search-backward (concat "\\_<" current-module "\\_>") nil t))
+    (beginning-of-line)
+    (setq re-end-pos (re-search-forward larumbe/verilog-module-instance-re nil t)))
+  (if (and re-beg-pos re-end-pos)
+      (save-excursion
+        (goto-char re-beg-pos)
+        (beginning-of-line)
+        (set-mark (point))
+        (goto-char re-end-pos)
+        (backward-char)                 ; Point at instance opening parenthesis
+        (electric-verilog-forward-sexp) ; Point at instance closing parenthesis
+        (end-of-line)
+        (electric-verilog-tab)
+        (message "Indented %s" current-module))
+    (message "Point is not inside a module instantiation")))
+
+
+(defun larumbe/verilog-beautify-current-module ()
+  "Beautify current module (open parenthesis, indent and align)."
+  (interactive)
+  (save-excursion
+    ;; Leave indentation for the end to avoid conflicts with
+    ;; point position due to update delay in which-func
+    (larumbe/verilog-align-ports-current-module)
+    (larumbe/verilog-align-parameters-current-module)
+    (larumbe/verilog-indent-current-module)))
+
+
+(defun larumbe/verilog-beautify-current-buffer ()
+  "Beautify current buffer.
+
+Indent whole buffer, beautify every instantiated module and
+remove blanks in port connections."
+  (interactive)
+  (save-excursion
+    (indent-region (point-min) (point-max))
+    (larumbe/verilog-clean-port-blanks)
+    (goto-char (point-min))
+    (while (larumbe/find-verilog-module-instance-fwd)
+      (larumbe/verilog-beautify-current-module))))
 
 
 ;;;; Misc
@@ -330,18 +370,88 @@ INFO: Limitations:
   larumbe/verilog-project-pkg-list)
 
 
-;; Own projects verilog timestamp header
-(defvar larumbe/verilog-time-stamp-regex   "^// Last modified : ")
-(defvar larumbe/verilog-time-stamp-pattern (concat larumbe/verilog-time-stamp-regex "%%$"))
-(defvar larumbe/verilog-time-stamp-format  "%:y/%02m/%02d")
+;;;; Timestamp
+(defvar larumbe/verilog-time-stamp-profiles '("work" "personal"))
+(defvar larumbe/verilog-time-stamp-active-profile "work") ; Defaults to work
 
-(defun larumbe/verilog-time-stamp-setup ()
-  "Setup Time-stamp format for Verilog files."
-  (setq-local time-stamp-pattern larumbe/verilog-time-stamp-pattern)
-  (setq-local time-stamp-format  larumbe/verilog-time-stamp-format))
+(defun larumbe/verilog-time-stamp-set-profile ()
+  "Set active profile for verilog timestamp: work or personal."
+  (interactive)
+  (let ((profile (completing-read "Set timestamp profile: " larumbe/verilog-time-stamp-profiles)))
+    (setq larumbe/verilog-time-stamp-active-profile profile)))
+
+
+(defun larumbe/verilog-time-stamp-update ()
+  "Update `time-stamp' variables depending on current active profile."
+  (if (string= larumbe/verilog-time-stamp-active-profile "work")
+      (larumbe/verilog-time-stamp-work-update) ; Work
+    (larumbe/verilog-time-stamp-pers-update))) ; Personal
+
+
+;;;;; Work
+(defvar larumbe/verilog-time-stamp-work-boundary-re "\\(?1:[ ]?\\)\\* ------------------------------------------------------------------------------")
+(defvar larumbe/verilog-time-stamp-work-created-re  "\\(?1:^* \\)\\(?2:[a-z]+\\)\\(?3:[ ]+\\)\\(?4:[^ ]+\\)\\(?5:[ ]+\\)\\(?6:Created\\)")
+(defvar larumbe/verilog-time-stamp-work-modified-re "\\(?1:^* \\)\\(?2:[a-z]+\\)\\(?3:[ ]+\\)\\(?4:[^ ]+\\)\\(?5:[ ]+\\)\\(?6:Modified\\)")
+
+(defvar larumbe/verilog-time-stamp-work-start  (concat "* " user-login-name "  "))
+(defvar larumbe/verilog-time-stamp-work-format "%Y/%m/%d")
+(defvar larumbe/verilog-time-stamp-work-end    "   Modified")
+
+
+(defun larumbe/verilog-time-stamp-work-buffer-end-pos ()
+  "Return position of point at the end of the buffer timestamp.
+Return nil if no timestamp structure was found."
+  (save-excursion
+    (goto-char (point-min))
+    (re-search-forward larumbe/verilog-time-stamp-work-boundary-re nil t)
+    (re-search-forward larumbe/verilog-time-stamp-work-created-re nil t)
+    (re-search-forward larumbe/verilog-time-stamp-work-boundary-re nil t)))
+
+
+(defun larumbe/verilog-time-stamp-work-new-entry ()
+  "Create new time-stamp entry at header."
+  (interactive)
+  (let (initial-blank
+        pos)
+    (save-excursion
+      (setq pos (larumbe/verilog-time-stamp-work-buffer-end-pos))
+      (if pos
+          (progn
+            (goto-char pos)
+            (larumbe/verilog-time-stamp-work-buffer-end-pos)
+            (setq initial-blank (match-string-no-properties 1))
+            (beginning-of-line)
+            (open-line 1)
+            (insert (concat initial-blank larumbe/verilog-time-stamp-work-start))
+            (insert (format-time-string larumbe/verilog-time-stamp-work-format))
+            (insert larumbe/verilog-time-stamp-work-end))
+        (message "Could not find proper time-stamp structure!")))))
+
+
+(defun larumbe/verilog-time-stamp-work-update ()
+  "Update the 'Modified' entry `time-stamp.'"
+  (save-excursion
+    (goto-char (point-min))
+    (when (larumbe/verilog-time-stamp-work-buffer-end-pos) ; Activate time-stamp if structure is present
+      (setq-local time-stamp-start  larumbe/verilog-time-stamp-work-start)
+      (setq-local time-stamp-format larumbe/verilog-time-stamp-work-format)
+      (setq-local time-stamp-end    larumbe/verilog-time-stamp-work-end))))
+
+
+;;;;; Personal
+(defvar larumbe/verilog-time-stamp-pers-regex   "^// Last modified : ")
+(defvar larumbe/verilog-time-stamp-pers-pattern (concat larumbe/verilog-time-stamp-pers-regex "%%$"))
+(defvar larumbe/verilog-time-stamp-pers-format  "%:y/%02m/%02d")
+
+
+(defun larumbe/verilog-time-stamp-pers-update ()
+  "Setup `time-stamp' format for Verilog files."
+  (setq-local time-stamp-pattern larumbe/verilog-time-stamp-pers-pattern)
+  (setq-local time-stamp-format  larumbe/verilog-time-stamp-pers-format))
 
 
 
+;;;; Hooks
 (defun larumbe/verilog-hook ()
   "Verilog hook."
   (setq larumbe/verilog-open-dirs (nth 0 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
@@ -350,7 +460,7 @@ INFO: Limitations:
   (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs)
   (flycheck-select-checker larumbe/flycheck-active-linter)
   (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
-  (larumbe/verilog-time-stamp-setup)
+  (larumbe/verilog-time-stamp-update)
   (larumbe/verilog-find-semicolon-in-instance-comments)
   (setq-local yas-indent-line 'fixed))
 
