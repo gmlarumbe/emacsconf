@@ -191,7 +191,7 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
   :straight nil
   :hook ((before-save . time-stamp))
   :config
-  (setq time-stamp-format "%:y-%02m-%02d %02H:%02M:%02S") ; Do not include user
+  (setq time-stamp-format "%:y-%02m-%02d %02H:%02M") ; Do not include user nor seconds
   (setq time-stamp-line-limit 20)) ; Default 8
 
 

@@ -7,6 +7,7 @@
   :diminish eldoc-mode
   :bind (:map emacs-lisp-mode-map
          ("<return>" . larumbe/newline)
+         ("RET"      . larumbe/newline) ; C-m
          ("C-c C-l"  . larumbe/load-file-current-buffer)
          ("C-c C-b"  . larumbe/byte-compile-current-buffer)
          ("C-c C-f"  . larumbe/elisp-flycheck-mode)

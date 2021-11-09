@@ -72,6 +72,10 @@
          ("C-w" . my-isearch-yank-word-or-char-from-beginning) ; Override `isearch-yank-word-or-char'
          ("C-j" . isearch-exit)) ; Overrides `isearch-printing-char' to search for newlines
   :config
+  ;; Default was 'not-yanks, so text yanked into the search string in Isearch mode was always downcased.
+  ;; Setting to t, upper case chars disable case fold searching (e.g. search symbol at point)
+  (setq search-upper-case t)
+
   ;; https://www.emacswiki.org/emacs/SearchAtPoint
   (defun my-isearch-yank-word-or-char-from-beginning ()
     "Move to beginning of word before yanking word in `isearch-mode'.
@@ -80,10 +84,11 @@ C-s C-w [C-w] [C-w]... behaviour. "
     (interactive)
     ;; Making this work after a search string is entered by user
     ;; is too hard to do, so work only when search string is empty.
-    (if (= 0 (length isearch-string))
-        (beginning-of-thing 'word))
-    ;; At some point in Emacs it required a '1' argument to fix a "Wrong type argument: number-or-marker-p, nil" error
-    (isearch-yank-word-or-char 1)))
+    (let ((search-upper-case 'not-yanks)) ; INFO: Ignore case when searching. To take case into account better use symbol search
+      (if (= 0 (length isearch-string))
+          (beginning-of-thing 'word))
+      ;; At some point in Emacs it required a '1' argument to fix a "Wrong type argument: number-or-marker-p, nil" error
+      (isearch-yank-word-or-char 1))))
 
 
 (use-package view

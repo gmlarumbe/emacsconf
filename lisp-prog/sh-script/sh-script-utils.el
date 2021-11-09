@@ -21,6 +21,10 @@
     (goto-char end)))
 
 
+(defun larumbe/sh-mode-hook ()
+  "Custom shell script hook."
+  (modify-syntax-entry ?+ "."))
+
 
 (provide 'sh-script-utils)
 
