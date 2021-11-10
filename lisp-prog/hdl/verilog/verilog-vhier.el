@@ -209,6 +209,14 @@ INFO: Ensure ggtags works by writing OUTPUT-FILE into projectile root."
       (forward-line)
       (insert "// * Not found module references") ; Create level for not found
       (larumbe/replace-string "// * " "// ** " (point) nil))
+    ;; Insert local variables at the end of the file
+    (goto-char (point-max))
+    (newline 1)
+    (insert "
+// Local Variables:
+// eval: (vhier-outline-mode 1)
+// End:
+")
     ;; Insert header to get some info of the file
     (goto-char (point-min))
     (open-line 1)
