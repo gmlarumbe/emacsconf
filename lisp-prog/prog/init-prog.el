@@ -11,8 +11,7 @@
   ;;       To override minor-mode keybindings, use :bind*
   ;;       To override major-mode derived keybindings, use prog-mode-hook
   :hook ((prog-mode        . larumbe/prog-mode-hook)
-         (prog-mode        . larumbe/prog-mode-keys)
-         (before-save-hook . time-stamp))
+         (prog-mode        . larumbe/prog-mode-keys))
   :config
   (require 'prog-utils))
 

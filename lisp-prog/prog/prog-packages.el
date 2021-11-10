@@ -110,7 +110,7 @@ in order to check pending project actions. "
 
 
   ;; INFO: Face highlighting color fix due to theme customization
-  ;; These faces were set by 'deeper-blue-theme.el': /home/martigon/.elisp/submodules/emacs/etc/themes/deeper-blue-theme.el:57
+  ;; These faces were set by 'deeper-blue-theme.el': ~/.emacs.d/straight/repos/emacs/etc/themes/deeper-blue-theme.el:57
   ;; Ediff comparison of buffers in Magit assumes the following Git convention to compare old to new: revision^..revision
   ;; This caused that when comparing with ediff with the same range the diffB color was orange and diffA green.
   ;; That was misleading since it showed adittions in orange and removed things in green.
