@@ -78,13 +78,22 @@ List of files provided by project's 'gtags.file' will filter the search."
 
 
 
-;;;; RipGrep
-(use-package ripgrep)
+;;;; Ripgrep
+(defvar larumbe/rg-arguments
+  `("--no-ignore-vcs"     ; Ignore files/dirs ONLY from `.ignore'
+    "--line-number"       ; Line numbers
+    "--smart-case"
+    "--follow"            ; Follow symlinks
+    "--max-columns" "150" ; Emacs doesn't handle long line lengths very well
+    "--ignore-file" ,larumbe/gitignore-global-file)
+  "Default rg arguments used in functions (helm, counsel, `projectile')")
 
-(use-package deadgrep)
 
 ;; INFO: Even though these two packages are downloaded,
-;; `helm-rg' and `helm-projectile-rg' seem to be just enough
+;; `helm-rg' / `counsel-rg' and `helm-projectile-rg' / `counsel-projectile-rg' seem to be just enough
+(use-package ripgrep)
+(use-package deadgrep)
+
 
 
 (provide 'init-grep)

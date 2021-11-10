@@ -32,7 +32,7 @@
   ;;
   ;; Source: http://joelmccracken.github.io/entries/project-local-variables-in-projectile-with-dirlocals/
 
-  (setq projectile-completion-system 'helm)
+  (setq projectile-completion-system larumbe/completion-framework)
   (setq projectile-mode-line-prefix " P") ; Modeline
   (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line)
 
@@ -51,15 +51,6 @@ Replaces `projectile-default-mode-line' that also showed ':generic' type of proj
               projectile-mode-line-prefix
               (or project-name "-"))))
 
-
-  (defvar larumbe/rg-arguments
-    `("--no-ignore-vcs"     ; Ignore files/dirs ONLY from `.ignore'
-      "--line-number"       ; Line numbers
-      "--smart-case"
-      "--follow"            ; Follow symlinks
-      "--max-columns" "150" ; Emacs doesn't handle long line lengths very well
-      "--ignore-file" ,larumbe/gitignore-global-file)
-    "Default rg arguments used in the functions in `projectile'package.")
 
   ;; https://emacs.stackexchange.com/questions/16497/how-to-exclude-files-from-projectile
   ;; Inspired also by kmodi/setup-files/setup-projectile.el:71
