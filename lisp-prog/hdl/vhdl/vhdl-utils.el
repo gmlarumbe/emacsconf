@@ -4,7 +4,6 @@
 
 
 (require 'ggtags)
-(require 'auto-complete)
 
 
 ;;;; Variables
