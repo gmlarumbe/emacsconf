@@ -207,7 +207,7 @@ INFO: Ensure ggtags works by writing OUTPUT-FILE into projectile root."
       (open-line 2)
       (forward-line)
       (insert "// * Not found module references") ; Create level for not found
-      (larumbe/replace-string "// * " "// ** " (point) (point-max)))
+      (larumbe/replace-string "// * " "// ** " (point) nil))
     ;; Insert header to get some info of the file
     (goto-char (point-min))
     (open-line 1)
