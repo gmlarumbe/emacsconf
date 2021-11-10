@@ -80,6 +80,7 @@
     :straight (:host github :repo "kaushalmodi/.emacs.d" :local-repo "kmodi"
                :fork (:repo "gmlarumbe/kmodi" :branch "larumbe")
                :files ("setup-files/setup-verilog.el"))
+    :demand
     :config
     (require 'verilog-modi))
   ;; Own functions

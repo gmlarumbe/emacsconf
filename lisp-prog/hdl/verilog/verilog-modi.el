@@ -138,8 +138,9 @@ Modify `which-func' face color and set a slightly different format from modi's."
 
 
 ;;;; Misc
-(add-hook 'before-save-hook #'modi/verilog-block-end-comments-to-block-names nil :local)
+(add-hook 'verilog-mode-hook (lambda () (add-hook 'before-save-hook #'modi/verilog-block-end-comments-to-block-names nil :local)))
 
+;; Do not break any `outline-mode'or `outshine' functionality
 (advice-add 'verilog-indent-line-relative :before-until #'modi/verilog-selective-indent) ;; Advise the indentation behavior of `indent-region' done using `C-M-\'
 (advice-add 'verilog-indent-line          :before-until #'modi/verilog-selective-indent) ;; Advise the indentation done by hitting `TAB' (modi multi-line defines)
 
