@@ -21,6 +21,7 @@
     ;; SHOW/HIDE
     ("a" . outline-show-all)          ; Show (expand) everything
     ("i" . outline-show-children)     ; Show this heading's immediate child sub-headings
+    ("h" . outline-show-children)     ; Alias for `i' due to similarity with vim keys
     ("l" . vhier-hide-sublevels)      ; Hide current-level sublevels
     ("I" . outline-show-branches)     ; Show all sub-headings under this heading
     (";" . outline-hide-other)        ; Hide other branches
