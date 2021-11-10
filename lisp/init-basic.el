@@ -29,7 +29,7 @@
   (scroll-bar-mode -1))
 
 ;; Conf tweaking variables
-(defvar larumbe/gitignore-global-file "~/.gitignore_global") ; Variable used by `helm-rg' and `init-projectile' TODO: Probably by counsel-rg as well
+(defvar larumbe/gitignore-global-file "${HOME}/.gitignore_global") ; Variable used by `helm-rg' and `init-projectile' TODO: Probably by counsel-rg as well
 (defvar larumbe/completion-framework 'helm) ; 'ivy or 'helm are allowed values (helm will coexist with `ivy-switch-buffer')
 
 

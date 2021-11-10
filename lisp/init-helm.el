@@ -34,12 +34,12 @@
            ("C-x c y" . helm-youtube)
            ("C-x C-h" . larumbe/helm-help-major-mode-or-scratch)) ; Could be deprecated after `which-key'
     :config
-    (use-package helm-youtube)
-
-    (use-package helm-ag)
+    (setq helm-grep-ag-command (concat "ag --line-numbers -S --color --nogroup -p " larumbe/gitignore-global-file " %s %s %s"))
     (use-package helm-rg
       :config
       (setq helm-rg-default-extra-args `("--ignore-file" ,larumbe/gitignore-global-file)))
+
+    (use-package helm-youtube)
 
     (use-package helm-org) ; Required by helm-havi
     (use-package helm-navi
