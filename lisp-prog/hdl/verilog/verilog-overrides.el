@@ -27,13 +27,6 @@ Move backward ARG words."
       (backward-word arg))))
 
 
-(defun larumbe/verilog-isearch-forward-symbol-at-point ()
-  "Make verilog symbol Isearch case sensitive."
-  (interactive)
-  (let ((case-fold-search verilog-case-fold))
-    (isearch-forward-symbol-at-point)))
-
-
 (defun larumbe/electric-verilog-tab ()
   "Wrapper of the homonym verilog function to avoid indentation issues with compiler directives after setting custom hooks."
   (interactive)

@@ -21,7 +21,6 @@
               ("RET"      . larumbe/electric-verilog-terminate-line) ; C-m
               ([delete]   . delete-forward-char)
               ("C-%"      . hide/show-comments-toggle)
-              ("M-s ."    . larumbe/verilog-isearch-forward-symbol-at-point)
               ("M-f"      . larumbe/verilog-forward-word)
               ("M-b"      . larumbe/verilog-backward-word)
               ("M-i"      . larumbe/verilog-imenu)
