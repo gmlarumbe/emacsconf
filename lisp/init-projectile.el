@@ -100,9 +100,43 @@ Use `rg' for getting a list of all files in the project."
       :bind (:map projectile-mode-map
              ("C-c p s" . counsel-projectile-switch-project)
              ("C-c p f" . counsel-projectile-find-file)
-             ("C-c p a" . counsel-projectile-ag)
-             ("C-c p g" . counsel-projectile-grep)
-             ("C-c p r" . counsel-projectile-rg)))))
+             ("C-c p a" . larumbe/counsel-projectile-ag)
+             ("C-c p r" . larumbe/counsel-projectile-rg)
+             ("C-c p g" . counsel-projectile-grep)))
+
+    ;; INFO: There is no customization for grep because
+    ;; grep fetches its command from ag `counsel-projectile-ag'.
+
+    (defun larumbe/counsel-projectile--search (cmd)
+      "Auxiliary shared function between `counsel-projectile-ag' and `counsel-projectile-rg'.
+Similar to `larumbe/counsel--search'.
+
+Intended to do ag/rg with current symbol at point if cursor is over a symbol
+and prompt for input otherwise.
+
+If prefix ARG is provided, do case-sensitive search and with whole word.
+Otherwise, smart-case is performed (similar to case-fold-search)."
+      (let* ((ivy-case-fold-search-default ivy-case-fold-search-default)
+             (extra-args nil))
+        (when current-prefix-arg
+          (setq current-prefix-arg nil)           ; Disable universal-arg value to avoid prompt for extra options
+          (setq ivy-case-fold-search-default nil) ; Implicitly sets case-sensitive "-s" flag, which overrides "--smart-case"
+          (setq extra-args "-w"))                 ; Whole word search
+        (funcall cmd extra-args)))
+
+
+    (defun larumbe/counsel-projectile-ag ()
+      "Execute `counsel-projectile-ag' wrapper."
+      (interactive)
+      (let ((counsel-projectile-ag-initial-input (thing-at-point 'symbol)))
+        (larumbe/counsel-projectile--search #'counsel-projectile-ag)))
+
+
+    (defun larumbe/counsel-projectile-rg ()
+      "Execute `counsel-projectile-rg' wrapper."
+      (interactive)
+      (let ((counsel-projectile-rg-initial-input (thing-at-point 'symbol)))
+        (larumbe/counsel-projectile--search #'counsel-projectile-rg)))))
 
 
 

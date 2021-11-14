@@ -9,6 +9,7 @@
   :straight nil
   :bind (:map dired-mode-map
          ("C-x C-j" . larumbe/dired-jump)
+         ("C-j"     . dired-find-file)
          ("b"       . dired-up-directory)
          ("l"       . recenter-top-bottom)
          ("J"       . dired-goto-file)                                ; Switch from 'j' to 'J'

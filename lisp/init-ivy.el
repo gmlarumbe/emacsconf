@@ -5,11 +5,10 @@
 
 (use-package ivy
   :diminish
-  :bind (("C-x b" . ivy-switch-buffer)
-         ("M-s o" . ivy-occur))
+  :bind (("C-x b" . ivy-switch-buffer))
   :config
   (setq ivy-use-virtual-buffers t)      ; Add recent files and bookmarks to the ivy-switch-buffer
-  ;; (setq ivy-count-format "%d/%d ")      ; Displays the current and total number in the collection in the prompt
+  (setq ivy-count-format "%d/%d ")      ; Displays the current and total number in the collection in the prompt
   (setq enable-recursive-minibuffers t) ; Allow minibuffer commands while in the minibuffer.
   ;; Do not break compatibility with Helm for switching buffers
   (if (equal larumbe/completion-framework 'ivy)
@@ -22,27 +21,8 @@
     ;; Else (using helm)
     (ivy-mode -1))
 
-  ;; (setq ivy-extra-directories nil)
-
-  ;; https://github.com/abo-abo/swiper/issues/1068
-  (defun ivy-with-thing-at-point (cmd)
-    (let ((ivy-initial-inputs-alist
-           (list
-            (cons cmd (thing-at-point 'symbol)))))
-      (funcall cmd)))
-
-  (defun ivy-with-thing-at-point-search-symbol (cmd)
-    (let ((ivy-initial-inputs-alist
-           (list
-            (cons cmd (concat "\\_<" (thing-at-point 'symbol) "\\_>")))))
-      (funcall cmd)))
-
-  ;; Swiper multiple cursors
-  (add-to-list 'mc/cmds-to-run-once 'swiper-mc)
-
   ;; Dependencies
   (use-package ivy-hydra))
-
 
 
 
@@ -51,46 +31,124 @@
   (use-package swiper
     :bind (:map swiper-map
            ("C-r"   . swiper-isearch-C-r)
-           ("C-w"   . ivy-yank-word)
-           )
+           ("C-w"   . bjm/ivy-yank-whole-word)
+           ("C-o"   . ivy-occur)
+           ("C->"   . swiper-mc)
+           ("C-<"   . swiper-mc))
     :bind (("C-s"   . swiper)
+           ("C-r"   . swiper-backward)
            ("M-s ." . swiper-symbol-at-point))
     :config
-    ;; enable this if you want `swiper' to use it
-    (setq search-default-mode #'case-fold-search)
+    (setq search-default-mode 'auto)
 
+    ;; https://github.com/abo-abo/swiper/issues/1068
+    ;; INFO: abo-abo's answer was fine but didn't take into account ignoring
+    ;; case-fold while searching for symbols.
+    ;; Besides, it didn't actually searched for symbols according to current
+    ;; mode syntax-table, since it was necessary to add the \_< \_> to the search.
+    ;;
+    ;; A temporary binding on `search-default-mode' to #'isearch-symbol-regexp
+    ;; fixed it without the need of \_< \_>, but did not work with some symbols when
+    ;; there were hyphens (like elisp functions) or parenthesys.
+    ;;
+    ;; Lastly, using let binding on `ivy-initial-inputs-alist' instead of on
+    ;; ivy-related `initial-input' first arg caused swiper to jump to last result on
+    ;; buffer instead of to current one.
+    ;;
+    ;; The only issue with this approach is that if there is no symbol under the point
+    ;; the \_< \_> is still added to an empty string, and it is necessary to move the point
+    ;; 3 positions on the ivy buffer.
     (defun swiper-symbol-at-point ()
       (interactive)
-      (if (thing-at-point 'symbol)
-          (ivy-with-thing-at-point-search-symbol 'swiper)
-        (call-interactively #'swiper))))
+      (let* ((ivy-case-fold-search-default nil)
+             (sym-atp (thing-at-point 'symbol :noprops))
+             (initial-input (concat "\\_<" sym-atp "\\_>")))
+        (swiper initial-input)))
+
+    ;; http://pragmaticemacs.com/emacs/search-or-swipe-for-the-current-word/
+    (defun bjm/ivy-yank-whole-word ()
+      "Pull next word from buffer into search string."
+      (interactive)
+      (let (amend)
+        (with-ivy-window
+          ;;move to last word boundary
+          (re-search-backward "\\b")
+          (let ((pt (point))
+                (le (line-end-position)))
+            (forward-word 1)
+            (if (> (point) le)
+                (goto-char pt)
+              (setq amend (buffer-substring-no-properties pt (point))))))
+        (when amend
+          (insert (replace-regexp-in-string "  +" " " amend))))))
 
 
+  ;; INFO: Counsel find file:
+  ;;   Press "/ TAB" to go to root directory
+  ;;   Press "~" to go to $HOME
+  ;;   Press "$" to go to some env variable defined path
   (use-package counsel
     :bind (("M-x"     . counsel-M-x)
            ("C-x C-f" . counsel-find-file)
            ("C-x r b" . counsel-bookmark)
-           ;; ("M-g a"   . counsel-ag)
-           ("M-g a"   . counsel-ag-thing-at-point)
-           ;; ("M-g r"   . counsel-rg)
-           ("M-g r"   . counsel-rg-thing-at-point)
+           ("M-g a"   . larumbe/counsel-ag)
+           ("M-g r"   . larumbe/counsel-rg)
            ("M-I"     . counsel-imenu)
            ("C-x c /" . counsel-file-jump)
            ("C-x c p" . counsel-list-processes)
-           ("C-#"     . counsel-outline)
-           ;;  ; Emulate Helm, TODO: Do it at counsel map, not global
-           )
+           ("C-#"     . counsel-outline))
     :bind (:map counsel-find-file-map
            ("C-l" . counsel-up-directory))
     :config
-    (defun counsel-ag-thing-at-point ()
-      (interactive)
-      (ivy-with-thing-at-point 'counsel-ag))
+    ;; Format `counsel-ag' and `counsel-rg' commands from `ag-arguments' and `larumbe/rg-arguments'
+    ;; INFO: These commands are also used for counsel projectile implementations.
+    (setq counsel-ag-base-command (append '("ag") ag-arguments))
+    (delete "--stats" counsel-ag-base-command)
+    (dolist (arg `("--nocolor" "-p" ,larumbe/gitignore-global-file "%s"))
+      (add-to-list 'counsel-ag-base-command arg :append))
 
-    (defun counsel-rg-thing-at-point ()
+    (setq counsel-rg-base-command (append '("rg") larumbe/rg-arguments))
+    (dolist (arg `("--with-filename" "--no-heading" "--color" "never" "%s"))
+      (add-to-list 'counsel-rg-base-command arg :append))
+
+
+    ;; INFO: `counsel-ag'/ `counsel-rg' by default look for a .git directory and start a search from the directory containing it.
+    ;; This is better performed with projectile, and leave `default-directory' for non-projectile implementations.
+    (defun larumbe/counsel--search (cmd)
+      "Auxiliary shared function between `counsel-ag' and `counsel-rg'.
+
+Intended to do ag/rg with current symbol at point if cursor is over a symbol
+and prompt for input otherwise. If point is under a filename do not consider
+it an initial input to allow for dired searches over specific dirs.
+
+If prefix ARG is provided, do case-sensitive search and with whole word.
+Otherwise, smart-case is performed (similar to case-fold-search)."
+      (let* ((ivy-case-fold-search-default ivy-case-fold-search-default)
+             (initial-input (thing-at-point 'symbol))
+             (point-at-dir (thing-at-point 'filename :noprops))
+             (extra-args nil)
+             (prog-name (string-remove-prefix "counsel-" (symbol-name cmd)))
+             (prompt (concat "[" prog-name " @ " default-directory "]: ")))
+        (when current-prefix-arg
+          (setq ivy-case-fold-search-default nil) ; Implicitly sets case-sensitive "-s" flag, which overrides "--smart-case"
+          (setq extra-args "-w")
+          (setq prompt (concat "(Case/Word) " prompt)))
+        (when point-at-dir
+          (setq initial-input nil))
+        (funcall cmd initial-input default-directory extra-args prompt)))
+
+
+    (defun larumbe/counsel-ag ()
+      "Execute `counsel-ag' wrapper."
       (interactive)
-      (ivy-with-thing-at-point 'counsel-rg))
-    )
+      (larumbe/counsel--search #'counsel-ag))
+
+
+    (defun larumbe/counsel-rg ()
+      "Execute `counsel-rg' wrapper."
+      (interactive)
+      (larumbe/counsel--search #'counsel-rg)))
+
 
   (use-package ivy-youtube
     :bind (("C-x c y" . ivy-youtube))))
