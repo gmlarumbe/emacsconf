@@ -57,13 +57,31 @@
     ;;
     ;; The only issue with this approach is that if there is no symbol under the point
     ;; the \_< \_> is still added to an empty string, and it is necessary to move the point
-    ;; 3 positions on the ivy buffer.
+    ;; 3 positions on the ivy buffer. Worked around with `larumbe/swiper-C-s'
     (defun swiper-symbol-at-point ()
       (interactive)
       (let* ((ivy-case-fold-search-default nil)
              (sym-atp (thing-at-point 'symbol :noprops))
              (initial-input (concat "\\_<" sym-atp "\\_>")))
         (swiper initial-input)))
+
+
+    (defun larumbe/swiper-C-s (&optional arg)
+      "Move cursor vertically down ARG candidates.
+If the input is empty, select the previous history element instead.
+
+INFO: If performed a symbol search with no symbol at point, center
+point between the symbol boundaries."
+      (interactive "p")
+      (cond ((string= ivy-text "")
+             (ivy-previous-history-element 1))
+            ((search-backward "\\_<\\_>" nil t)
+             (forward-char 3))
+            (t
+             (ivy-next-line arg))))
+
+    (advice-add 'swiper-C-s :override #'larumbe/swiper-C-s)
+
 
     ;; http://pragmaticemacs.com/emacs/search-or-swipe-for-the-current-word/
     (defun bjm/ivy-yank-whole-word ()
