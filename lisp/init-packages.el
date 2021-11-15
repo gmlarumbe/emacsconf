@@ -238,7 +238,8 @@ the vertical drag is done."
          ("C-c C-<" . mc/mark-all-like-this)
          ("C-c #"   . mc/insert-numbers))
   :config
-  (add-to-list 'mc/cmds-to-run-once 'swiper-mc))
+  (when (equal larumbe/completion-framework 'ivy)
+    (add-to-list 'mc/cmds-to-run-once 'swiper-mc)))
 
 
 (use-package expand-region

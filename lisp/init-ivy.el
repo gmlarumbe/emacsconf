@@ -6,6 +6,9 @@
 (use-package ivy
   :diminish
   :bind (("C-x b" . ivy-switch-buffer))
+  :bind (:map ivy-minibuffer-map
+         ("C-o"     . ivy-occur)
+         ("C-c C-o" . hydra-ivy/body))
   :config
   (setq ivy-use-virtual-buffers t)      ; Add recent files and bookmarks to the ivy-switch-buffer
   (setq ivy-count-format "%d/%d ")      ; Displays the current and total number in the collection in the prompt
@@ -26,13 +29,11 @@
 
 
 
-
 (when (equal larumbe/completion-framework 'ivy)
   (use-package swiper
     :bind (:map swiper-map
            ("C-r"   . swiper-isearch-C-r)
            ("C-w"   . bjm/ivy-yank-whole-word)
-           ("C-o"   . ivy-occur)
            ("C->"   . swiper-mc)
            ("C-<"   . swiper-mc))
     :bind (("C-s"   . swiper)
@@ -118,6 +119,10 @@ point between the symbol boundaries."
     :bind (:map counsel-find-file-map
            ("C-l" . counsel-up-directory))
     :config
+    ;; Avoid writing 'larumbe/' for all these prefixed functions
+    (add-to-list 'ivy-initial-inputs-alist '(counsel-M-x . " "))
+
+    (require 'ag)
     ;; Format `counsel-ag' and `counsel-rg' commands from `ag-arguments' and `larumbe/rg-arguments'
     ;; INFO: These commands are also used for counsel projectile implementations.
     (setq counsel-ag-base-command (append '("ag") ag-arguments))
@@ -136,14 +141,13 @@ point between the symbol boundaries."
       "Auxiliary shared function between `counsel-ag' and `counsel-rg'.
 
 Intended to do ag/rg with current symbol at point if cursor is over a symbol
-and prompt for input otherwise. If point is under a filename do not consider
-it an initial input to allow for dired searches over specific dirs.
+and prompt for input otherwise. If in dired-mode do not consider an initial input
+to allow for searches over specific dirs.
 
 If prefix ARG is provided, do case-sensitive search and with whole word.
 Otherwise, smart-case is performed (similar to case-fold-search)."
       (let* ((ivy-case-fold-search-default ivy-case-fold-search-default)
              (initial-input (thing-at-point 'symbol))
-             (point-at-dir (thing-at-point 'filename :noprops))
              (extra-args nil)
              (prog-name (string-remove-prefix "counsel-" (symbol-name cmd)))
              (prompt (concat "[" prog-name " @ " default-directory "]: ")))
@@ -151,7 +155,7 @@ Otherwise, smart-case is performed (similar to case-fold-search)."
           (setq ivy-case-fold-search-default nil) ; Implicitly sets case-sensitive "-s" flag, which overrides "--smart-case"
           (setq extra-args "-w")
           (setq prompt (concat "(Case/Word) " prompt)))
-        (when point-at-dir
+        (when (string= major-mode "dired-mode")
           (setq initial-input nil))
         (funcall cmd initial-input default-directory extra-args prompt)))
 

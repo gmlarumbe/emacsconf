@@ -5,8 +5,8 @@
 
 ;;;; Silver-searcher
 (use-package ag
+  :hook ((ag-search-finished . ag/jump-to-result-if-only-one-match))
   :commands (ag/search
-             larumbe/ag-search-file-list
              larumbe/ag-search-project-gtags)
   :config
   (defun larumbe/ag-search-file-list (regex file directory)
@@ -31,9 +31,7 @@ List of files provided by project's 'gtags.file' will filter the search."
            (gtags-file (concat proj-dir "gtags.files")))
       (unless (file-exists-p gtags-file)
         (error "Error: gtags.files not found for current project"))
-      (larumbe/ag-search-file-list (thing-at-point 'symbol) gtags-file
-    proj-dir)))
-
+      (larumbe/ag-search-file-list (thing-at-point 'symbol) gtags-file proj-dir)))
 
 
   ;; Thanks to Kaushal Modi
@@ -50,17 +48,6 @@ List of files provided by project's 'gtags.file' will filter the search."
           (message (concat "ag: Jumping to the only found match and "
                            "killing the *ag* buffer."))))))
 
-
-  ;; wgrep-ag
-  ;; Allow editing in *ag* buffers
-  ;; https://github.com/mhayashi1120/Emacs-wgrep
-  (use-package wgrep-ag
-    :config
-    (add-hook 'ag-mode-hook #'wgrep-ag-setup)
-    :bind (:map wgrep-mode-map
-                ("C-x s" . wgrep-save-all-buffers)))
-
-
 ;;;;; Config
   (setq ag-arguments           ; Fetched from modi verilog config
         '("--nogroup"          ; mandatory argument for ag.el as per https://github.com/Wilfred/ag.el/issues/41
@@ -73,8 +60,25 @@ List of files provided by project's 'gtags.file' will filter the search."
           "--stats"))
   (setq ag-reuse-buffers t)
   (setq ag-reuse-window t)
-  (setq ag-highlight-search t)
-  (add-hook 'ag-search-finished-hook #'ag/jump-to-result-if-only-one-match))
+  (setq ag-highlight-search t))
+
+
+;; https://github.com/mhayashi1120/Emacs-wgrep
+;; Workflow:
+;; - C-c C-p to switch to wgrep
+;; - Make changes (an overlay shows up)
+;; - C-c C-e to apply changes
+;; - C-x s to save changes
+;; - C-x C-s to leave wgrep editing mode
+(use-package wgrep
+  :bind (:map wgrep-mode-map
+         ("C-x s" . wgrep-save-all-buffers)))
+
+;; Allow editing in *ag* buffers
+;; BUG: Could not make it work, always detects the buffer as read-only.
+;;  - Solution: use `ivy-occur' as a great alternative with swiper/counsel.
+(use-package wgrep-ag
+  :hook ((ag-mode . wgrep-ag-setup)))
 
 
 

@@ -104,8 +104,6 @@ Use `rg' for getting a list of all files in the project."
              ("C-c p r" . larumbe/counsel-projectile-rg)
              ("C-c p g" . counsel-projectile-grep)))
 
-    ;; INFO: There is no customization for grep because
-    ;; grep fetches its command from ag `counsel-projectile-ag'.
 
     (defun larumbe/counsel-projectile--search (cmd)
       "Auxiliary shared function between `counsel-projectile-ag' and `counsel-projectile-rg'.
