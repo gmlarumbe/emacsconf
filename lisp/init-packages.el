@@ -253,8 +253,23 @@ the vertical drag is done."
 ;;;; Sysadmin
 (use-package arch-packer
   :straight (:repo "brotzeit/arch-packer"
-             :fork (:repo "gmlarumbe/arch-packer")))
+             :fork (:repo "gmlarumbe/arch-packer"))
+  :commands (arch-packer-aur-install-package)
+  :config
+  (defun arch-packer-toggle-command ()
+    "Toggle between 'pacman' and 'pacaur'."
+    (interactive)
+    (if (string= arch-packer-default-command "pacman")
+        (progn
+          (setq arch-packer-default-command "pacaur")
+          (message "Set arch-packer command to: %s" arch-packer-default-command))
+      (setq arch-packer-default-command "pacman")
+      (message "Set arch-packer command to: %s" arch-packer-default-command))))
 
+
+;; Similar to `arch-packer', but just for AUR.
+;; Seems better to get info/voting.
+;; Supports AUR package downloading but not installation.
 (use-package aurel)
 
 (use-package google-this
@@ -374,7 +389,6 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 (use-package env-switch
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/env-switch.el")))
 
-
 ;; Updates `exec-path' from $PATH.
 ;; More info: https://emacs.stackexchange.com/questions/550/exec-path-and-path
 (use-package exec-path-from-shell)
@@ -464,9 +478,6 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 (use-package autorevert
   :straight nil
   :diminish auto-revert-mode)
-
-
-(use-package so-long :diminish)
 
 
 ;; API of `coin-ticker' was outdated. Also tried `crypto-ticker-mode' but was a bit more complex than this one
