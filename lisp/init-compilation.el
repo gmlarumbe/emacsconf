@@ -7,9 +7,11 @@
   :straight nil
   :bind (([f5]  . compile))
   :bind (:map compilation-mode-map
-              ("r"   . rename-buffer))
+         ("r"     . rename-buffer))
+  :bind (:map compilation-shell-minor-mode-map
+         ("M-RET" . nil)) ; Leave space for `company-complete'
   :bind (:map comint-mode-map
-              ("TAB" . completion-at-point)) ; Similar to ansi-term (e.g. for vivado tcl-shell)
+         ("TAB"   . completion-at-point))  ; Similar to ansi-term (e.g. for vivado/diamond tcl-shell)
   :hook ((compilation-mode   . larumbe/compilation-hook)
          (compilation-filter . colorize-compilation-buffer))
   :commands (recompile

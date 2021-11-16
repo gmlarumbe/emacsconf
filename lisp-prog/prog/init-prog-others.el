@@ -67,6 +67,11 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
   :mode (("\\.xdc\\'" . larumbe/vivado-xdc-mode)))
 
 
+;;;; LATTICE DIAMOND
+(use-package diamond-utils
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/diamond-utils.el")))
+
+
 ;;;; HTML
 (use-package mhtml-mode
   :bind (:map mhtml-mode-map
