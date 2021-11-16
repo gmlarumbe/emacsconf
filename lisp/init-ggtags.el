@@ -6,8 +6,6 @@
 (use-package ggtags
   :diminish
   :commands (ggtags-create-tags
-             ggtags-current-project-root
-             ggtags-find-reference
              modi/ggtags-tag-at-point
              larumbe/gtags-create-tags-async
              larumbe/ggtags-backend-switch)

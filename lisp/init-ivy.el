@@ -5,7 +5,7 @@
 
 (use-package ivy
   :diminish
-  :bind (("C-x b" . ivy-switch-buffer))
+  :bind (("C-x b"   . ivy-switch-buffer))
   :bind (:map ivy-minibuffer-map
          ("C-o"     . ivy-occur)
          ("C-c C-o" . hydra-ivy/body))
@@ -23,6 +23,7 @@
           (ivy-rich-mode 1)))
     ;; Else (using helm)
     (ivy-mode -1))
+
 
   ;; Dependencies
   (use-package ivy-hydra))

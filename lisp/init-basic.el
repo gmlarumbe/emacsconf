@@ -20,6 +20,7 @@
 (setq confirm-kill-emacs #'y-or-n-p)           ; Avoid closing Emacs unexpectedly (helm prefix C-x c)
 (setq inhibit-startup-screen t)                ; Inhibit startup screen
 (setq disabled-command-function 'ignore)       ; Enable all commands
+(setq initial-major-mode 'fundamental-mode)    ; Avoid start *scratch* in `lisp-interaction-mode' and enabling default `prog-mode-hook.
 
 ;; Save some screen real estate
 (menu-bar-mode -1)
