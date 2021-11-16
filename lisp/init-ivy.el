@@ -110,6 +110,7 @@ point between the symbol boundaries."
     :bind (("M-x"     . counsel-M-x)
            ("C-x C-f" . counsel-find-file)
            ("C-x r b" . counsel-bookmark)
+           ("M-RET"   . counsel-company) ; Replaces `minibuffer' function `completion-at-point'
            ("M-g a"   . larumbe/counsel-ag)
            ("M-g r"   . larumbe/counsel-rg)
            ("M-I"     . counsel-imenu)

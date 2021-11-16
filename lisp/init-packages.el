@@ -16,11 +16,6 @@
   (display-time-mode t))
 
 
-(use-package minibuffer
-  :straight nil
-  :bind ("<C-return>" . completion-at-point))
-
-
 (use-package popwin
   :config
   (popwin-mode 1))
@@ -534,7 +529,8 @@ to an html file in `user-emacs-directory'."
          ("C-x C-z"         . larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
          ("C-x C-/"         . larumbe/pwd-to-kill-ring)
          ("C-x C-,"         . larumbe/revert-buffer-maybe-no-confirm)
-         ("C-M-<backspace>" . larumbe/kill-sexp-backwards)))
+         ("C-M-<backspace>" . larumbe/kill-sexp-backwards)
+         ("C-x C-h"         . larumbe/scratch)))
 
 (use-package larumbe-macros
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("macros/larumbe-macros.el")))
