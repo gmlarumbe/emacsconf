@@ -316,6 +316,31 @@ remove blanks in port connections."
       (larumbe/verilog-beautify-current-module))))
 
 
+(defun larumbe/verilog-beautify-files (files)
+  "Beautify Verilog FILES.
+
+FILES is a list of strings containing the paths to the files to beautify."
+  (dolist (file files)
+    (unless (file-exists-p file)
+      (error "File %s does not exist! Aborting..." file)))
+  (dolist (file files)
+    (with-temp-file file
+      (verilog-mode)
+      (insert-file-contents file)
+      (larumbe/verilog-beautify-current-buffer)
+      (untabify-trailing-whitespace)
+      (write-file file))))
+
+
+(defun larumbe/verilog-beautify-files-current-dir ()
+  "Beautify Verilog files on current dired directory."
+  (interactive)
+  (unless (string= major-mode "dired-mode")
+    (error "Must be used in dired!"))
+  (let ((files (directory-files-recursively default-directory "\\.[s]?v[h]?$")))
+    (larumbe/verilog-beautify-files files)))
+
+
 ;;;; Misc
 ;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
 (defvar larumbe/verilog-open-dirs nil
