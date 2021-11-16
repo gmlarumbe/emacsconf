@@ -106,6 +106,9 @@
   ;; To cancel a copy call `dired-async-kill-process'
   (dired-async-mode 1)
 
+  ;; Dereference symlink info and show size in human readable format
+  (setq dired-listing-switches "-alLh")
+
 
   ;; Functionality
   (defun larumbe/dired-jump (arg)

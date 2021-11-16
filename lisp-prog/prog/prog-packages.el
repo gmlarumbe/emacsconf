@@ -6,28 +6,27 @@
   :commands (larumbe/clean-fic-keywords-dir
              larumbe/wrap-danger-region)
   :config
-  (require 'ag)
-
   (setq fic-activated-faces '(font-lock-doc-face  font-lock-comment-face))
   (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "DANGER" "INFO" "NOTE"))
 
   (defun larumbe/clean-fic-keywords-dir ()
-    "Perform an `ag-regexp' of `fic-mode' highlighted keywords in selected DIR
-in order to check pending project actions. "
+    "Perform `counsel-ag' of `fic-mode' highlighted keywords in selected DIR
+in order to check pending project actions."
     (interactive)
+    (require 'counsel)
     (let ((kwd (completing-read "Select keyword: " fic-highlighted-words))
           (path (read-directory-name "Directory: "))
           (files (completing-read "Select file regex: " '("(System)Verilog" "Python" "elisp")))
-          (ag-arguments ag-arguments) ; Save the global value of `ag-arguments'
+          (counsel-ag-base-command counsel-ag-base-command) ; Save the global value of `counsel-ag-base-command'
           (regex))
       (pcase files
         ("(System)Verilog" (setq regex ".[s]?v[h]?$")) ; +Headers
         ("Python"          (setq regex ".py$"))
         ("elisp"           (setq regex ".el$")))
-      ;; ag glob search
-      (setq ag-arguments (append ag-arguments '("-G")))
-      (setq ag-arguments (append ag-arguments (list regex)))
-      (ag-regexp kwd path)))
+      ;; `counsel-ag' glob search
+      (setq counsel-ag-base-command (append counsel-ag-base-command '("-G")))
+      (setq counsel-ag-base-command (append counsel-ag-base-command (list regex)))
+      (counsel-ag kwd path)))
 
 
   (defun larumbe/wrap-danger-region ()
@@ -62,8 +61,8 @@ in order to check pending project actions. "
          ("M-n" . flycheck-next-error)
          ("M-p" . flycheck-previous-error))
   :config
-  (setq flycheck-display-errors-function ; Seems it shows full error if multiline
-        #'flycheck-display-error-messages-unless-error-list))
+  ;; Seems it shows full error if multiline
+  (setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list))
 
 
 (use-package flyspell
@@ -129,7 +128,7 @@ in order to check pending project actions. "
 (use-package imenu-list
   :bind (("M-i" . modi/imenu-list-display-toggle))
   :bind ((:map imenu-list-major-mode-map
-          ("C-<return>" . modi/imenu-list-goto-entry-and-hide)))
+          ("M-RET" . modi/imenu-list-goto-entry-and-hide)))
   :config
   (setq imenu-list-size 0.15)
   (setq imenu-auto-rescan t)
@@ -201,7 +200,7 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
          ("C-c ," . nil)) ; INFO: Unbinds ALL semantic commands, since C-c , is the prefix
   :hook ((c-mode-common . larumbe/semantic-mode))
   :config
-  (defvar larumbe/semantic-enable t
+  (defvar larumbe/semantic-enable nil
     "Conditionally determine in a hook if mode is enabled.")
 
   (defun larumbe/semantic-mode (&optional arg)

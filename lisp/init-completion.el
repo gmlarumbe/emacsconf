@@ -48,18 +48,40 @@
 ;;; Code:
 
 
+;;;; CAPF
+;; Override company keybindings to use `completion-at-point' when executing "M-:" `eval-expression' at minibuffer.
+(use-package minibuffer
+  :straight nil
+  :bind (:map minibuffer-local-map
+         ("C-<return>" . completion-at-point)
+         ("M-RET"      . completion-at-point)))
+
+
 ;;;; Company
 (use-package company
   :diminish
-  :bind ("<C-return>" . company-complete)
+  :bind ("M-RET" . company-complete)
   :bind (:map company-active-map
          ("C-n" . company-select-next-or-abort)
          ("C-p" . company-select-previous-or-abort)
          ("C-j" . company-complete-selection))
+  :commands (larumbe/company-backend-compute)
   :config
   (setq company-idle-delay nil) ; Disable auto complete
   ;; Since company only uses one backend at a time, set only one grouped backend including all the desired ones.
-  (defvar larumbe/company-backends-common '((company-keywords company-capf company-gtags company-files))))
+  (defvar larumbe/company-backends-common '((company-keywords company-capf company-gtags company-files)))
+
+  (defun larumbe/company-backend-compute ()
+    "Select `company-backends' based on current major-mode.
+
+Normally it will return the grouped value of `larumbe/company-backends-common' plus
+some additional major-mode dependent backend."
+    (cond
+     ((string= major-mode "python-mode")
+      (list (append '(company-jedi) (car larumbe/company-backends-common))))
+     ;; Default (common)
+     (t
+      larumbe/company-backends-common))))
 
 
 ;;;; Yasnippet

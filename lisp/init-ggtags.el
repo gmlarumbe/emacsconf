@@ -1,5 +1,14 @@
 ;;; init-ggtags.el --- Ggtags/Global  -*- lexical-binding: t -*-
 ;;; Commentary:
+;;
+;; Ggtags & Xref:
+;;  - Xref uses the backends in the `xref-backend-functions' hook, similar to how
+;;  CAPF works (check commentary section of `init-completion').
+;;  - If ggtags is enabled the `ggtags--xref-backend' function will be added to the
+;;  hook and therefore gtags will be used as a backend for Xref.
+;;  - Besides, some major modes define their own backends for Xref (e.g. `elisp--xref-backend')
+;;  - Semantic adds a backend for other specific modes such as Python/HTML/C
+;;
 ;;; Code:
 
 

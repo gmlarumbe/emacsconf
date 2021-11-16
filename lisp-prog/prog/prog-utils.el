@@ -1,5 +1,9 @@
 ;;; prog-utils.el --- Prog-mode derived modes utils  -*- lexical-binding: t -*-
 ;;; Commentary:
+;;
+;;  Semantic adds an Xref backend for specific modes such as Python/HTML/C.
+;;  That's the reason why they are included in `larumbe/prog-mode-references'.
+;;
 ;;; Code:
 
 (require 'init-completion)
@@ -39,7 +43,7 @@ INFO: For some major-modes, xref will use global/ggtags as a backend
 if configured.  However, for elisp seems it's not the default engine,
 as well as for C/C++ or Python..."
   (interactive)
-  (let ((ref  (thing-at-point 'symbol)))
+  (let ((ref (thing-at-point 'symbol)))
     (cond ((or (string= major-mode "c-mode")
                (string= major-mode "python-mode")
                (string= major-mode "emacs-lisp-mode"))
@@ -78,7 +82,7 @@ as well as for C/C++ or Python..."
   (wide-column-mode    1)
   (setq truncate-lines t)
   (setq fill-column   80)
-  (setq-local company-backends larumbe/company-backends-common))
+  (setq-local company-backends (larumbe/company-backend-compute)))
 
 
 (provide 'prog-utils)

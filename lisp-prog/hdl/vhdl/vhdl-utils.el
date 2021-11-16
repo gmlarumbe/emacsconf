@@ -3,8 +3,6 @@
 ;;; Code:
 
 
-(require 'ggtags)
-
 
 ;;;; Variables
 (defvar larumbe/vhdl-entity-re "^\\s-*\\(entity\\)\\s-+\\(\\(\\w\\|\\s_\\)+\\)")

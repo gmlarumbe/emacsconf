@@ -40,7 +40,6 @@
     :demand
     :config
     (use-package company-jedi)
-    ;; Add 'company-jedi to `company-backends' list to autocomplete with <S-RET> instead of <C-c RET>
     (add-hook 'python-mode-hook #'jedi:setup))
 
   (use-package elpy)) ; INFO: Deserves some attention if some day Python becomes a priority

@@ -108,16 +108,16 @@ point between the symbol boundaries."
   ;;   Press "~" to go to $HOME
   ;;   Press "$" to go to some env variable defined path
   (use-package counsel
-    :bind (("M-x"     . counsel-M-x)
-           ("C-x C-f" . counsel-find-file)
-           ("C-x r b" . counsel-bookmark)
-           ("M-RET"   . counsel-company) ; Replaces `minibuffer' function `completion-at-point'
-           ("M-g a"   . larumbe/counsel-ag)
-           ("M-g r"   . larumbe/counsel-rg)
-           ("M-I"     . counsel-imenu)
-           ("C-x c /" . counsel-file-jump)
-           ("C-x c p" . counsel-list-processes)
-           ("C-#"     . counsel-outline))
+    :bind (("M-x"        . counsel-M-x)
+           ("C-x C-f"    . counsel-find-file)
+           ("C-x r b"    . counsel-bookmark)
+           ("<C-return>" . counsel-company) ; Replaces `minibuffer' function `completion-at-point'
+           ("M-g a"      . larumbe/counsel-ag)
+           ("M-g r"      . larumbe/counsel-rg)
+           ("M-I"        . counsel-imenu)
+           ("C-x c /"    . counsel-file-jump)
+           ("C-x c p"    . counsel-list-processes)
+           ("C-#"        . counsel-outline))
     :bind (:map counsel-find-file-map
            ("C-l" . counsel-up-directory))
     :config
