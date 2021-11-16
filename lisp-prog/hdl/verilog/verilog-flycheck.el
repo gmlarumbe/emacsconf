@@ -19,7 +19,7 @@ If called with UARG, select among available linters.
 Disable function `eldoc-mode' if flycheck is enabled
 to avoid minibuffer collisions."
   (interactive "P")
-  (let ((linters '("verilator" "iverilog" "hal"))
+  (let ((linters '("verilator" "iverilog" "hal" "svlint"))
         (active-linter))
     (if uarg
         (progn
@@ -33,7 +33,9 @@ to avoid minibuffer collisions."
                           (executable-find "hal"))
                (error "Could not find 'xrun' and 'hal' in $PATH"))
              (setq active-linter 'verilog-cadence-hal)
-             (larumbe/xrun-hal-script-create)))
+             (larumbe/xrun-hal-script-create))
+            ("svlint"
+             (setq active-linter 'verilog-svlint)))
           (setq larumbe/flycheck-active-linter active-linter)
           (flycheck-select-checker active-linter)
           (message "Linter set to: %s " larumbe/flycheck-active-linter))
@@ -170,8 +172,35 @@ See URL `http://iverilog.icarus.com/'"
   :modes verilog-mode)
 
 
+
 ;;;; Others
-;; Seems promising, but still under construction:  https://github.com/chipsalliance/verible
+(flycheck-define-checker verilog-svlint
+  "A Verilog syntax checker using svlint.
+
+A bit rudimentary, with not many rules but enough to check for parsing errors.
+However, fails dramatically if defines are not found.
+
+See URL `https://github.com/dalance/svlint'"
+  :command ("svlint"
+            "-1" ; one-line output
+            "--ignore-include"
+            (option-list "-i" larumbe/flycheck-verilator-include-path)
+            source)
+  :error-patterns
+  ((warning line-start "Fail"  (zero-or-more blank) (file-name) ":" line ":" column (zero-or-more blank) (zero-or-more not-newline) "hint: " (message) line-end)
+   (error   line-start "Error" (zero-or-more blank) (file-name) ":" line ":" column (zero-or-more blank) (zero-or-more not-newline) "hint: " (message) line-end))
+  :modes verilog-mode)
+
+
+;; Language servers:
+;; - https://awesomeopensource.com/projects/language-server/systemverilog/verilog
+;;
+;; `lsp-mode' based:
+;; - https://github.com/dalance/svls
+;; - https://github.com/dalance/svlint
+;;
+;; Verible: seems promising, but still under construction:
+;; - https://github.com/chipsalliance/verible
 
 
 (provide 'verilog-flycheck)
