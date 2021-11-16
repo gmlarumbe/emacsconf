@@ -7,6 +7,7 @@
   :diminish
   :bind (("C-x b"   . ivy-switch-buffer))
   :bind (:map ivy-minibuffer-map
+         ("C-l"     . ivy-backward-kill-word) ; Useful for `dired-do-copy'. Complement with M-i if want to yank result at point.
          ("C-o"     . ivy-occur)
          ("C-c C-o" . hydra-ivy/body))
   :config
