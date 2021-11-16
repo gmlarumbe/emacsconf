@@ -1,16 +1,22 @@
 ;;; init-projectile.el --- Projectile setup  -*- lexical-binding: t -*-
 ;;; Commentary:
+;;
+;; INFO: Projectile 2.0 removes automatic keybindings.
+;; The keybindings are mapped to `projectile-mode-map' because they need
+;; `projectile-mode' to be enabled to work properly.
+;;
+;; Currently, projectile gets enabled by doing it manually via M-x, or
+;; by opening a `prog-mode' derived mode file via `larumbe/prog-mode-hook'.
+;;
 ;;; Code:
 
 
 (use-package projectile
   :diminish projectile-mode       ; Also diminishes `larumbe/projectile-custom-mode-line', as it is already available at the left corner
-
   :bind (:map projectile-mode-map ; Projectile 2.0 removes automatic keybindings
          ("C-c p j" . projectile-find-tag)
          ("C-c p u" . projectile-regenerate-tags)
          ("C-c p c" . projectile-compile-project))
-
   :commands (projectile-project-root ; used by many larumbe functions
              projectile-project-name
              larumbe/projectile-custom-mode-line)
@@ -18,10 +24,6 @@
   (setq projectile-enable-caching t) ; Enable caching, otherwise `projectile-find-file' is really slow for large projects.
 
   (add-to-list 'projectile-globally-ignored-directories "*.repo") ; https://github.com/bbatsov/projectile/issues/1250
-
-  (let ((ignore-targets '("bundle_targets" "sim_targets" "syn_targets" "doc_targets" "version_targets")))
-    (dolist (dir ignore-targets)
-      (add-to-list 'projectile-globally-ignored-directories dir)))
 
   (setq projectile-indexing-method 'hybrid) ; `alien' is the fastest indexing method (default), but ignores .projectile ignores
   ;; INFO: hybrid works fine for most of the cases allowing for ignoring of specific dirs.
@@ -79,32 +81,31 @@ Use `rg' for getting a list of all files in the project."
           "fdfind . -0 --type f --color=never")
          ;; with find we have to be careful to strip the ./ from the paths
          ;; see https://stackoverflow.com/questions/2596462/how-to-strip-leading-in-unix-find
-         (t "find . -type f | cut -c3- | tr '\\n' '\\0'")))
+         (t "find . -type f | cut -c3- | tr '\\n' '\\0'"))))
 
 
-  ;; INFO: Needs to be placed inside projectile :config as otherwise
-  ;; projectile would disable these keybindings
-  (when (equal larumbe/completion-framework 'helm)
-    (use-package helm-projectile
-      :diminish
-      :bind (:map projectile-mode-map
-             ("C-c p s" . helm-projectile-switch-project)
-             ("C-c p f" . helm-projectile-find-file)
-             ("C-c p a" . helm-projectile-ag)
-             ("C-c p g" . helm-projectile-grep)
-             ("C-c p r" . helm-projectile-rg))))
+(when (equal larumbe/completion-framework 'helm)
+  (use-package helm-projectile
+    :diminish
+    :after projectile ; INFO: Otherwise projectile would disable these package keybindings
+    :bind (:map projectile-mode-map
+           ("C-c p s" . helm-projectile-switch-project)
+           ("C-c p f" . helm-projectile-find-file)
+           ("C-c p a" . helm-projectile-ag)
+           ("C-c p g" . helm-projectile-grep)
+           ("C-c p r" . helm-projectile-rg))))
 
 
-  (when (equal larumbe/completion-framework 'ivy)
-    (use-package counsel-projectile
-      :bind (:map projectile-mode-map
-             ("C-c p s" . counsel-projectile-switch-project)
-             ("C-c p f" . counsel-projectile-find-file)
-             ("C-c p a" . larumbe/counsel-projectile-ag)
-             ("C-c p r" . larumbe/counsel-projectile-rg)
-             ("C-c p g" . counsel-projectile-grep)))
-
-
+(when (equal larumbe/completion-framework 'ivy)
+  (use-package counsel-projectile
+    :after projectile ; INFO: Otherwise projectile would disable these package keybindings
+    :bind (:map projectile-mode-map
+           ("C-c p s" . counsel-projectile-switch-project)
+           ("C-c p f" . counsel-projectile-find-file)
+           ("C-c p a" . larumbe/counsel-projectile-ag)
+           ("C-c p r" . larumbe/counsel-projectile-rg)
+           ("C-c p g" . counsel-projectile-grep))
+    :config
     (defun larumbe/counsel-projectile--search (cmd)
       "Auxiliary shared function between `counsel-projectile-ag' and `counsel-projectile-rg'.
 Similar to `larumbe/counsel--search'.
