@@ -198,6 +198,8 @@ Check if current file-at-point has a line number and jump to it after opening th
 
 
   (use-package ivy-youtube
+    :straight (:repo "squiter/ivy-youtube"
+               :fork (:repo "gmlarumbe/ivy-youtube"))
     :bind (("C-x c y" . ivy-youtube))))
 
 
