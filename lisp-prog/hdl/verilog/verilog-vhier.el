@@ -215,6 +215,7 @@ INFO: Ensure ggtags works by writing OUTPUT-FILE into projectile root."
     (insert "
 // Local Variables:
 // eval: (vhier-outline-mode 1)
+// eval: (read-only-mode 1)
 // End:
 ")
     ;; Insert header to get some info of the file

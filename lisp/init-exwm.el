@@ -122,7 +122,7 @@
        ([?\C-e] . ?\C-e)
        ;; search (manually assigned at Okular)
        ([?\C-s] . ?\C-')    ; Forward
-       ([?\C-r] . ?\C-\\)) ; Backward
+       ([?\C-r] . ?\C-\\))  ; Backward
       ))
 
     ("Vivado" .
@@ -152,6 +152,18 @@
 
     ("Novas" .
      (("Novas")
+      nil
+      (;; Keep original values
+       ([?\C-k] . ?\C-k)
+       ([?\C-w] . ?\C-w)
+       ([?\C-s] . ?\C-s) ; Forward -> Avoid it since C-s should be better saving than searching (use C-r instead)
+       ([?\C-r] . ?\C-r)
+       ;; Selection/highlight
+       ([?\C-a] . ?\C-a))
+      ))
+
+    ("Diamond" .
+     (("Pnmain")
       nil
       (;; Keep original values
        ([?\C-k] . ?\C-k)
@@ -263,6 +275,8 @@ show stdout in BUFFER and pop to this window (for debug mainly)."
   (interactive)
   (unless program
     (setq program (read-shell-command "$ ")))
+  (unless (executable-find program)
+    (error "Could not find '%s' in $PATH!!" program))
   (when current-prefix-arg
     (setq buffer (concat "*" program "*")))
   (start-process-shell-command "" buffer program)

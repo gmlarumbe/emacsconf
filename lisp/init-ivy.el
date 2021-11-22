@@ -110,7 +110,7 @@ point between the symbol boundaries."
   ;;   Press "$" to go to some env variable defined path
   (use-package counsel
     :bind (("M-x"        . counsel-M-x)
-           ("C-x C-f"    . counsel-find-file)
+           ("C-x C-f"    . larumbe/counsel-find-file)
            ("C-x r b"    . counsel-bookmark)
            ("<C-return>" . counsel-company) ; Replaces `minibuffer' function `completion-at-point'
            ("M-g a"      . larumbe/counsel-ag)
@@ -124,6 +124,9 @@ point between the symbol boundaries."
     :config
     ;; Avoid writing 'larumbe/' for all these prefixed functions
     (add-to-list 'ivy-initial-inputs-alist '(counsel-M-x . " "))
+    ;; Use ffap to open files
+    (setq counsel-find-file-at-point t)
+
 
     (require 'ag)
     ;; Format `counsel-ag' and `counsel-rg' commands from `ag-arguments' and `larumbe/rg-arguments'
@@ -172,7 +175,26 @@ Otherwise, smart-case is performed (similar to case-fold-search)."
     (defun larumbe/counsel-rg ()
       "Execute `counsel-rg' wrapper."
       (interactive)
-      (larumbe/counsel--search #'counsel-rg)))
+      (larumbe/counsel--search #'counsel-rg))
+
+
+    ;; Inspiration from:
+    ;; https://stackoverflow.com/questions/3139970/open-a-file-at-line-with-filenameline-syntax
+    (defun larumbe/counsel-find-file ()
+      "Execute `counsel-find-file' wrapper.
+
+Check if current file-at-point has a line number and jump to it after opening the file."
+      (interactive)
+      (let ((line-num nil)
+            (bounds (bounds-of-thing-at-point 'filename)))
+        (save-excursion
+          (goto-char (car bounds))
+          (search-forward-regexp "[^ ]:" (cdr bounds) t)
+          (if (looking-at "[0-9]+")
+              (setq line-num (string-to-number (buffer-substring (match-beginning 0) (match-end 0))))))
+        (find-file-at-point)
+        (if (not (equal line-num 0))
+            (goto-line line-num)))))
 
 
   (use-package ivy-youtube
