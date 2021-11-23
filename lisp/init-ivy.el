@@ -187,14 +187,15 @@ Check if current file-at-point has a line number and jump to it after opening th
       (interactive)
       (let ((line-num nil)
             (bounds (bounds-of-thing-at-point 'filename)))
-        (save-excursion
-          (goto-char (car bounds))
-          (search-forward-regexp "[^ ]:" (cdr bounds) t)
-          (if (looking-at "[0-9]+")
-              (setq line-num (string-to-number (buffer-substring (match-beginning 0) (match-end 0))))))
+        (when bounds
+          (save-excursion
+            (goto-char (car bounds))
+            (search-forward-regexp "[^ ]:" (cdr bounds) t)
+            (if (looking-at "[0-9]+")
+                (setq line-num (string-to-number (buffer-substring (match-beginning 0) (match-end 0)))))))
         (find-file-at-point)
-        (if (not (equal line-num 0))
-            (goto-line line-num)))))
+        (unless (equal line-num 0)
+          (goto-line line-num)))))
 
 
   (use-package ivy-youtube
