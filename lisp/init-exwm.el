@@ -125,6 +125,14 @@
        ([?\C-r] . ?\C-\\))  ; Backward
       ))
 
+    ("Libreoffice" .
+     (("Soffice")
+      nil
+      (;; Undo
+       ([?\C-\/] . ?\C-z)
+       )
+      ))
+
     ("Vivado" .
      (("Vivado")
       nil
