@@ -41,7 +41,8 @@
               ("C-c C-t"  . hydra-verilog/body)
               ("C-c C-p"  . larumbe/verilog-preprocess)
               ("C-c C-f"  . larumbe/verilog-flycheck-mode)
-              ("<f9>"     . larumbe/verilog-perl-current-file))
+              ("<f9>"     . larumbe/verilog-perl-current-file)
+	      ("M-RET"    . nil)) ; Leave space for `company-complete'
   :config
   ;; Dependencies
   (require 'xah-lee-functions)

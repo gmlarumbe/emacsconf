@@ -104,6 +104,8 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package outshine
+  :bind (:map outshine-mode-map
+	 ("M-RET" . nil)) ; Leave space for `company-complete'
   :config
   ;; Do not include outshine tags at imenu
   (setq outshine-imenu-show-headlines-p nil))
