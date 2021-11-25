@@ -25,6 +25,7 @@ as well as for C/C++ or Python..."
           ((and file (file-exists-p file))
            (larumbe/find-file-at-point))
           ;; If not pointing to a file choose between different navigation functions
+          ;; Elisp: xref
           ((string= major-mode "emacs-lisp-mode")
            (if def
                (xref-find-definitions def)

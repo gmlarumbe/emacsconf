@@ -78,7 +78,10 @@ Normally it will return the grouped value of `larumbe/company-backends-common' p
 some additional major-mode dependent backend."
     (cond
      ((string= major-mode "python-mode")
-      (list (append '(company-jedi) (car larumbe/company-backends-common))))
+      ;; CAPF functions for `python-mode' are more related to shell, and only add gtags-completion-at-point (unnecessary)
+      ;; Plus, unless elpy mode is tested some day, jedi makes the best guesses so far so has the highest precedence.
+      '((company-jedi company-keywords company-files)
+	company-gtags))
      ;; Default (common)
      (t
       larumbe/company-backends-common))))
