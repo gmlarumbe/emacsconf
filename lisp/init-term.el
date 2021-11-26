@@ -4,10 +4,11 @@
 
 (use-package term
   :bind (:map term-raw-map
-              ("M-o" . other-window)
-              ("M-x" . helm-M-x)
-              ("M->" . end-of-buffer)
-              ("M-<" . beginning-of-buffer))
+         ("M-o" . other-window)
+         ("M-x" . helm-M-x)
+         ("M->" . end-of-buffer)
+         ("M-<" . beginning-of-buffer)
+         ("M-x" . counsel-M-x))
   :bind (("C-," . larumbe/ansi-term-dwim)
          ("C-." . larumbe/ansi-term-new))
   :hook ((term-mode . larumbe/term-hook))
