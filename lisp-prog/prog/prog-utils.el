@@ -30,6 +30,9 @@ as well as for C/C++ or Python..."
            (if def
                (xref-find-definitions def)
              (call-interactively #'xref-find-definitions)))
+          ;; Python: jedi
+          ((string= major-mode "python-mode")
+           (call-interactively #'jedi:goto-definition))
           ;; Default will be using ggtags interface
           (t
            (call-interactively #'ggtags-find-tag-dwim)))))
@@ -84,6 +87,11 @@ as well as for C/C++ or Python..."
   (setq truncate-lines t)
   (setq fill-column   80)
   (setq-local company-backends (larumbe/company-backend-compute)))
+
+
+;;; Hooks
+;; Truncate lines on xref buffers
+(add-hook 'xref-after-jump-hook #'(lambda () (setq truncate-lines t)))
 
 
 (provide 'prog-utils)

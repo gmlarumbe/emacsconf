@@ -36,9 +36,9 @@
     :demand
     :bind (:map jedi-mode-map
            ("<C-tab>" . nil) ; Let C-tab to HideShow
-           ;; Override `larumbe/prog-mode-definitions' and `xref-pop-marker-stack'
-           ("M-."     . jedi:goto-definition)
-           ("M-,"     . jedi:goto-definition-pop-marker))
+           ;; This config assumes that "M-." will be bound to `larumbe/prog-mode-definitions', and when the
+           ;; point is under a URL/file it will be browsed, but if in python-mode then Jedi will be used.
+           ("M-,"     . jedi:goto-definition-pop-marker)) ; Override `xref-pop-marker-stack'
     :config
     (use-package company-jedi)
     (add-hook 'python-mode-hook #'jedi:setup)
