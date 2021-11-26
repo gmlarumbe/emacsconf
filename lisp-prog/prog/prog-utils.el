@@ -21,16 +21,21 @@ as well as for C/C++ or Python..."
   (let ((file (thing-at-point 'filename))
         (url  (thing-at-point 'url))
         (def  (thing-at-point 'symbol)))
-    (cond (url  (browse-url url))
+    (cond (url
+           ;; URL
+           (browse-url url))
           ((and file (file-exists-p file))
-           (larumbe/find-file-at-point))
+           ;; File
+           (if (string= major-mode "python-mode")
+               (larumbe/find-file-at-point #'jedi:goto-definition-push-marker)
+             (larumbe/find-file-at-point)))
           ;; If not pointing to a file choose between different navigation functions
-          ;; Elisp: xref
+          ;; - Elisp: xref
           ((string= major-mode "emacs-lisp-mode")
            (if def
                (xref-find-definitions def)
              (call-interactively #'xref-find-definitions)))
-          ;; Python: jedi
+          ;; - Python: jedi
           ((string= major-mode "python-mode")
            (call-interactively #'jedi:goto-definition))
           ;; Default will be using ggtags interface
