@@ -26,7 +26,8 @@ as well as for C/C++ or Python..."
            (browse-url url))
           ((and file (file-exists-p file))
            ;; File
-           (if (string= major-mode "python-mode")
+           (if (and (string= major-mode "python-mode")
+                    (string= (file-name-extension file) "py"))
                (larumbe/find-file-at-point #'jedi:goto-definition-push-marker)
              (larumbe/find-file-at-point)))
           ;; If not pointing to a file choose between different navigation functions
