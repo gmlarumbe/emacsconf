@@ -194,7 +194,7 @@ Check if current file-at-point has a line number and jump to it after opening th
             (if (looking-at "[0-9]+")
                 (setq line-num (string-to-number (buffer-substring (match-beginning 0) (match-end 0)))))))
         (find-file-at-point)
-        (unless (equal line-num 0)
+        (unless (equal line-num nil)
           (goto-line line-num)))))
 
 
