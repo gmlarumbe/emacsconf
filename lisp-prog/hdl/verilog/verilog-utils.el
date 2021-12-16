@@ -122,9 +122,7 @@ Create it only if in a projectile project and the Makefile does not exist alread
     ;; Plus, it was necessary to change `compilation-read-command' which is unsafe.
     (setq cmd (concat "make " target))
     (cd (projectile-project-root))
-    (compile cmd)
-    (larumbe/compilation-error-re-set "verilog-make")
-    (larumbe/compilation-show-buffer)))
+    (larumbe/compile cmd nil "verilog-make")))
 
 
 ;;;; Port connect/disconnect/blank cleaning
