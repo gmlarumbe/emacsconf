@@ -116,7 +116,10 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 ;;   - http://www.khngai.com/emacs/perl.php
 ;; Interactive console
 ;;   -https://stackoverflow.com/questions/73667/how-can-i-start-an-interactive-console-for-perl
-(use-package cperl-mode)
+(use-package cperl-mode
+  ;; Since it is not a child of prog-mode, requires common configuration settings
+  :hook ((cperl-mode . larumbe/prog-mode-keys)
+         (cperl-mode . larumbe/prog-mode-hook)))
 
 
 ;;;; JSON
