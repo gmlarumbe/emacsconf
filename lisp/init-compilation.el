@@ -7,7 +7,8 @@
   :straight nil
   :bind (([f5]  . compile))
   :bind (:map compilation-mode-map
-         ("r"     . rename-buffer))
+         ("r"     . rename-buffer)
+         ("M-."   . larumbe/prog-mode-definitions)) ; Browse URLs and files
   :bind (:map compilation-shell-minor-mode-map
          ("M-RET" . nil)) ; Leave space for `company-complete'
   :bind (:map comint-mode-map

@@ -75,6 +75,7 @@
   (setq verilog-auto-endcomments                t)
   ;; Mode config
   (key-chord-mode 1)
+  (remove-hook 'compilation-mode-hook 'verilog-error-regexp-add-emacs) ; `verilog-mode' automatically adds useless compilation regexp alists
   ;; Many thanks to Kaushal Modi (https://scripter.co/)
   (use-package setup-verilog
     :straight (:host github :repo "kaushalmodi/.emacs.d" :local-repo "kmodi"
