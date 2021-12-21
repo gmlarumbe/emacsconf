@@ -65,6 +65,7 @@
 
 (use-package compilation-utils
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/compilation-utils.el"))
+  :mode (("\\.srr\\'" . synplify-log-mode))
   :bind (:map compilation-mode-map
          ("j"   . larumbe/recompile-with-regexp-alist)
          ("t"   . larumbe/compilation-threshold))
