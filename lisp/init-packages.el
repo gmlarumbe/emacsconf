@@ -233,7 +233,7 @@ the vertical drag is done."
          ("C-<"     . mc/mark-previous-like-this)
          ("C-c C->" . mc/edit-lines)
          ("C-c C-<" . mc/mark-all-like-this)
-         ("C-c #"   . mc/insert-numbers))
+         ("C-c C-#" . mc/insert-numbers))
   :config
   (when (equal larumbe/completion-framework 'ivy)
     (add-to-list 'mc/cmds-to-run-once 'swiper-mc)))
