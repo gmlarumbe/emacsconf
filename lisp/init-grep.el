@@ -49,6 +49,7 @@ List of files provided by project's 'gtags.file' will filter the search."
                            "killing the *ag* buffer."))))))
 
 ;;;;; Config
+  (setq ag/file-column-pattern-nogroup "^File: \\(.+?\\):\\([1-9][0-9]*\\):\\([1-9][0-9]*\\):") ; At some point it began adding some File: to the beginning of the ag output
   (setq ag-arguments           ; Fetched from modi verilog config
         '("--nogroup"          ; mandatory argument for ag.el as per https://github.com/Wilfred/ag.el/issues/41
           "--skip-vcs-ignores" ; Ignore files/dirs ONLY from `.ignore'
