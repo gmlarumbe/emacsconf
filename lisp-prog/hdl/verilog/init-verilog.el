@@ -15,7 +15,6 @@
          ("\\.vsrc.pp\\'"     . verilog-mode)
          ("\\.v.pp\\'"        . verilog-mode)
          ("\\.ppv\\'"         . verilog-mode))
-  :hook ((verilog-mode . larumbe/verilog-hook))
   :bind (:map verilog-mode-map
               ("<return>" . larumbe/electric-verilog-terminate-line) ; Enter
               ("RET"      . larumbe/electric-verilog-terminate-line) ; C-m
@@ -85,7 +84,10 @@
     :config
     (require 'verilog-modi))
   ;; Own functions
-  (require 'verilog-utils)
+  (use-package verilog-utils
+    :straight nil
+    :demand
+    :hook ((verilog-mode . larumbe/verilog-hook)))
   (require 'verilog-templates)
   (require 'verilog-overrides)
   (require 'verilog-navigation)

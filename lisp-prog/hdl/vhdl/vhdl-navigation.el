@@ -109,6 +109,12 @@ This will normally happen after calling `larumbe/vhdl-find-parent-module'"
       (vhdl-electric-return))))
 
 
+;; INFO: Using `bind-chord' instead of use-package :chords as the latter does
+;; a global mapping (not to `vhdl-mode')
+(bind-chord "\\\\" #'larumbe/vhdl-jump-to-module-at-point vhdl-mode-map)
+(bind-chord "\|\|" #'larumbe/vhdl-find-parent-module vhdl-mode-map)
+
+
 (provide 'vhdl-navigation)
 
 ;;; vhdl-navigation.el ends here

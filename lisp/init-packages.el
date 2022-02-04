@@ -130,6 +130,11 @@ C-s C-w [C-w] [C-w]... behaviour. "
   (beacon-mode 1))
 
 
+(use-package speedbar
+  :straight nil
+  :commands (speedbar-toggle-line-expansion)) ; Used by `vhdl-speedbar' own customization
+
+
 (use-package sr-speedbar
   ;; Default would be fetched from emacsorphanage
   :straight (:host github :repo "emacsmirror/emacswiki.org" :branch "master" :files ("sr-speedbar.el"))
