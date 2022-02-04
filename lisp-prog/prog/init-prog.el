@@ -11,7 +11,8 @@
   ;;       To override minor-mode keybindings, use :bind*
   ;;       To override major-mode derived keybindings, use prog-mode-hook
   :hook ((prog-mode . larumbe/prog-mode-hook)
-         (prog-mode . larumbe/prog-mode-keys))
+         (prog-mode . larumbe/prog-mode-keys)
+         (prog-mode . remove-dos-eol))
   :config
   (require 'prog-utils))
 
