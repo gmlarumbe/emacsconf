@@ -52,7 +52,6 @@ List of files provided by project's 'gtags.file' will filter the search."
   (setq ag/file-column-pattern-nogroup "^File: \\(.+?\\):\\([1-9][0-9]*\\):\\([1-9][0-9]*\\):") ; At some point it began adding some File: to the beginning of the ag output
   (setq ag-arguments           ; Fetched from modi verilog config
         '("--nogroup"          ; mandatory argument for ag.el as per https://github.com/Wilfred/ag.el/issues/41
-          "--skip-vcs-ignores" ; Ignore files/dirs ONLY from `.ignore'
           "--numbers"          ; Line numbers
           "--smart-case"
           "--follow"           ; Follow symlinks
@@ -85,8 +84,7 @@ List of files provided by project's 'gtags.file' will filter the search."
 
 ;;;; Ripgrep
 (defvar larumbe/rg-arguments
-  `("--no-ignore-vcs"     ; Ignore files/dirs ONLY from `.ignore'
-    "--line-number"       ; Line numbers
+  `("--line-number"       ; Line numbers
     "--smart-case"
     "--follow"            ; Follow symlinks
     "--max-columns" "150" ; Emacs doesn't handle long line lengths very well

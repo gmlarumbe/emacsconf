@@ -102,6 +102,7 @@ Use `rg' for getting a list of all files in the project."
     :bind (:map projectile-mode-map
            ("C-c p s" . counsel-projectile-switch-project)
            ("C-c p f" . counsel-projectile-find-file)
+           ("C-c p b" . counsel-projectile-switch-to-buffer)
            ("C-c p a" . larumbe/counsel-projectile-ag)
            ("C-c p r" . larumbe/counsel-projectile-rg)
            ("C-c p g" . counsel-projectile-grep))

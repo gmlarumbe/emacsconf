@@ -52,7 +52,7 @@
     ;;
     ;; A temporary binding on `search-default-mode' to #'isearch-symbol-regexp
     ;; fixed it without the need of \_< \_>, but did not work with some symbols when
-    ;; there were hyphens (like elisp functions) or parenthesys.
+    ;; there were hyphens (like elisp functions) or parenthesis.
     ;;
     ;; Lastly, using let binding on `ivy-initial-inputs-alist' instead of on
     ;; ivy-related `initial-input' first arg caused swiper to jump to last result on

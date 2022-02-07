@@ -187,6 +187,10 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 (use-package sed-mode)
 
 
+;;;; CSV
+(use-package csv-mode)
+
+
 ;;;; HEXL
 (use-package hexl
   :straight nil

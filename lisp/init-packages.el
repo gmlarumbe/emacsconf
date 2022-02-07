@@ -139,8 +139,8 @@ C-s C-w [C-w] [C-w]... behaviour. "
   ;; Default would be fetched from emacsorphanage
   :straight (:host github :repo "emacsmirror/emacswiki.org" :branch "master" :files ("sr-speedbar.el"))
   :bind (:map speedbar-mode-map
-              ("q"   . larumbe/kill-current-buffer)
-              ("j"   . speedbar-edit-line))
+         ("q" . larumbe/kill-current-buffer)
+         ("j" . speedbar-edit-line))
   :config
   (setq speedbar-show-unknown-files t)
   (setq speedbar-use-images nil)
@@ -227,6 +227,7 @@ the vertical drag is done."
   :bind (("C-w" . whole-line-or-region-kill-region)))
 
 
+;; TODO: Verify that it's working properly. Remove otherwise
 (use-package smart-mark
   :demand
   :config
@@ -256,7 +257,7 @@ the vertical drag is done."
 (use-package arch-packer
   :straight (:repo "brotzeit/arch-packer"
              :fork (:repo "gmlarumbe/arch-packer"))
-  :commands (arch-packer-aur-install-package)
+  :commands (arch-packer-toggle-command)
   :config
   (defun arch-packer-toggle-command ()
     "Toggle between 'pacman' and 'pacaur'."
@@ -537,7 +538,7 @@ to an html file in `user-emacs-directory'."
          ("C-x C-/"         . larumbe/pwd-to-kill-ring)
          ("C-x C-,"         . larumbe/revert-buffer-maybe-no-confirm)
          ("C-M-<backspace>" . larumbe/kill-sexp-backwards)
-         ("C-x C-h"         . larumbe/scratch)))
+         ("C-x C-h"         . larumbe/scratch-toggle)))
 
 (use-package larumbe-macros
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("macros/larumbe-macros.el")))
