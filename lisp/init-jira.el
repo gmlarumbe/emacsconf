@@ -144,15 +144,17 @@ Issue needs to be updated manually later via `org-jira-update-issue'."
 
 
 ;;;; Ejira
+;; Dependencies (handled manually)
+(use-package ox-jira)
+(use-package dash-functional)
+(use-package jiralib2)
+
+
+;; DANGER: Stopped working with error:
+;; - ejira--set-heading-body-jira-markup: Wrong type argument: integer-or-marker-p, nil
 (use-package ejira
   :straight (:host github :repo "nyyManni/ejira")
-  :commands (ejira-update-my-projects)
   :config
-  ;; Dependencies (handled manually)
-  (use-package ox-jira         :demand)
-  (use-package dash-functional :demand)
-  (use-package jiralib2        :demand)
-
   (setq ejira-org-directory "~/.ejira")
   (setq ejira-priorities-alist    '(("Highest" . ?A)
                                     ("High"    . ?B)
