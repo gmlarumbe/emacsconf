@@ -81,10 +81,29 @@ some additional major-mode dependent backend."
       ;; CAPF functions for `python-mode' are more related to shell, and only add gtags-completion-at-point (unnecessary)
       ;; Plus, unless elpy mode is tested some day, jedi makes the best guesses so far so has the highest precedence.
       '((company-jedi company-keywords company-files)
-	company-gtags))
+        company-gtags))
      ;; Default (common)
      (t
       larumbe/company-backends-common))))
+
+
+;; ;; TODO: Still experimenting with frontends based on tooltip
+;; (use-package company-box
+;;   :diminish
+;;   :hook (company-mode . company-box-mode))
+
+;; (setq company-box-backends-colors
+;;   '((company-yasnippet . (:all "lime green" :selected (:background "lime green" :foreground "black")))
+;;     (company-capf      . (:all "lime green" :selected (:background "lime green" :foreground "black")))
+;;     (company-gtags     . (:all "lime green" :selected (:background "lime green" :foreground "black")))
+;;     (company-files     . (:all "lime green" :selected (:background "lime green" :foreground "black")))
+;;     (company-keywords  . (:all "lime green" :selected (:background "lime green" :foreground "black")))
+;;     ))
+
+;; ;; TODO: Still check how to implement the Sublime flx fuzzy completion to coexist with current one
+;; (use-package company-fuzzy)
+
+;; (use-package flx)
 
 
 ;;;; Yasnippet
