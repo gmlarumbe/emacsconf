@@ -410,7 +410,7 @@ Regex search bound to LIMIT."
   (append larumbe/verilog-font-lock-keywords-1
           (list
            ;; Pragmas
-           (list (concat "\\(//\\s-*\\(" larumbe/verilog-pragma-keywords "\\).*\\)")
+           (list (concat "\\(//\\s-*\\(" larumbe/verilog-pragma-keywords " \\).*\\)")
                  '(0 'larumbe/font-lock-translate-off-face prepend)
                  '(2 'larumbe/font-lock-preprocessor-face prepend))
            ;; Escaped names
