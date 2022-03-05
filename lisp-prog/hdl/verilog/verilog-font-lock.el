@@ -13,7 +13,7 @@
 (defvar larumbe/verilog-port-connection-regex "^[[:blank:]]*\\.\\([0-9a-zA-Z*_-]*\\)")
 (defvar larumbe/verilog-dot-itf-struct-regex "\\([a-zA-Z*_-][0-9a-zA-Z*_-]+\\)\\.\\([0-9a-zA-Z*_-]+\\)")
 (defvar larumbe/verilog-braces-content-regex "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
-(defvar larumbe/verilog-width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xz]+\\)")
+(defvar larumbe/verilog-width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xzXZ]+\\)")
 (defvar larumbe/verilog-time-event-regex "\\([@#]\\)")
 (defvar larumbe/verilog-time-unit-regex "[0-9]+\\(\\.[0-9]+\\)?\\(?2:[umnpf]s\\)")
 
@@ -363,8 +363,7 @@ Regex search bound to LIMIT."
 
 (defvar larumbe/verilog-special-constructs
   (regexp-opt
-   '(
-     ;; These constructs contain some special character that prevent them to be detected as symbols
+   '(;; These constructs contain some special character that prevent them to be detected as symbols
      "@include" "@replace_ifdef" "@replace_end" "@insert_ifdef"
      "@macro_begin" "@macro_end"
      "@if" "@else" "@endif"
@@ -376,6 +375,64 @@ Regex search bound to LIMIT."
    nil)) ; Used for non-verilog constructs (i.e. custom preprocessing)
 
 
+(defvar larumbe/verilog-uvm-classes
+  (regexp-opt
+   '(; Fetched through grep -R of classes starting with uvm_* and subsequent processing
+     ; Does not include internal classes (such as m_uvm_*), nor enums, nor non-class typedefs such as vector derived
+     "uvm_agent" "uvm_algorithmic_comparator" "uvm_analysis_export" "uvm_analysis_imp" "uvm_analysis_port" "uvm_barrier"
+     "uvm_bit_rsrc" "uvm_blocking_get_export" "uvm_blocking_get_imp" "uvm_blocking_get_peek_export" "uvm_blocking_get_peek_imp" "uvm_blocking_get_peek_port"
+     "uvm_blocking_get_port" "uvm_blocking_master_export" "uvm_blocking_master_imp" "uvm_blocking_master_port" "uvm_blocking_peek_export" "uvm_blocking_peek_imp"
+     "uvm_blocking_peek_port" "uvm_blocking_put_export" "uvm_blocking_put_imp" "uvm_blocking_put_port" "uvm_blocking_slave_export" "uvm_blocking_slave_imp"
+     "uvm_blocking_slave_port" "uvm_blocking_transport_export" "uvm_blocking_transport_imp" "uvm_blocking_transport_port" "uvm_bogus_class" "uvm_bottomup_phase"
+     "uvm_build_phase" "uvm_built_in_clone" "uvm_built_in_comp" "uvm_built_in_converter" "uvm_built_in_pair" "uvm_byte_rsrc"
+     "uvm_callback" "uvm_callback_iter" "uvm_callbacks" "uvm_callbacks_base" "uvm_callbacks_objection" "uvm_check_phase"
+     "uvm_class_clone" "uvm_class_comp" "uvm_class_converter" "uvm_class_pair" "uvm_cmd_line_verb" "uvm_cmdline_processor"
+     "uvm_comparer" "uvm_component" "uvm_component_registry" "uvm_config_db" "uvm_config_db_options" "uvm_config_object_wrapper"
+     "uvm_configure_phase" "uvm_connect_phase" "uvm_copy_map" "uvm_derived_callbacks" "uvm_domain" "uvm_driver"
+     "uvm_end_of_elaboration_phase" "uvm_env" "uvm_event" "uvm_event_callback" "uvm_event_pool" "uvm_exhaustive_sequence"
+     "uvm_external_connector" "uvm_extract_phase" "uvm_factory" "uvm_factory_override" "uvm_factory_queue_class" "uvm_final_phase"
+     "uvm_get_export" "uvm_get_imp" "uvm_get_peek_export" "uvm_get_peek_imp" "uvm_get_peek_port" "uvm_get_port"
+     "uvm_hdl_path_concat" "uvm_heartbeat" "uvm_heartbeat_callback" "uvm_if_base_abstract" "uvm_in_order_built_in_comparator" "uvm_in_order_class_comparator"
+     "uvm_in_order_comparator" "uvm_int_rsrc" "uvm_line_printer" "uvm_main_phase" "uvm_master_export" "uvm_master_imp"
+     "uvm_master_port" "uvm_mem" "uvm_mem_access_seq" "uvm_mem_mam" "uvm_mem_mam_cfg" "uvm_mem_mam_policy"
+     "uvm_mem_region" "uvm_mem_shared_access_seq" "uvm_mem_single_access_seq" "uvm_mem_single_walk_seq" "uvm_mem_walk_seq" "uvm_monitor"
+     "uvm_nonblocking_get_export" "uvm_nonblocking_get_imp" "uvm_nonblocking_get_peek_export" "uvm_nonblocking_get_peek_imp" "uvm_nonblocking_get_peek_port" "uvm_nonblocking_get_port"
+     "uvm_nonblocking_master_export" "uvm_nonblocking_master_imp" "uvm_nonblocking_master_port" "uvm_nonblocking_peek_export" "uvm_nonblocking_peek_imp" "uvm_nonblocking_peek_port"
+     "uvm_nonblocking_put_export" "uvm_nonblocking_put_imp" "uvm_nonblocking_put_port" "uvm_nonblocking_slave_export" "uvm_nonblocking_slave_imp" "uvm_nonblocking_slave_port"
+     "uvm_nonblocking_transport_export" "uvm_nonblocking_transport_imp" "uvm_nonblocking_transport_port" "uvm_obj_rsrc" "uvm_object" "uvm_object_registry"
+     "uvm_object_string_pool" "uvm_object_wrapper" "uvm_objection" "uvm_objection_callback" "uvm_objection_context_object" "uvm_objection_events"
+     "uvm_packer" "uvm_peek_export" "uvm_peek_imp" "uvm_peek_port" "uvm_phase" "uvm_pool"
+     "uvm_port_base" "uvm_port_component" "uvm_port_component_base" "uvm_post_configure_phase" "uvm_post_main_phase" "uvm_post_reset_phase"
+     "uvm_post_shutdown_phase" "uvm_pre_configure_phase" "uvm_pre_main_phase" "uvm_pre_reset_phase" "uvm_pre_shutdown_phase" "uvm_predict_s"
+     "uvm_printer" "uvm_printer_knobs" "uvm_push_driver" "uvm_push_sequencer" "uvm_put_export" "uvm_put_imp"
+     "uvm_put_port" "uvm_queue" "uvm_random_sequence" "uvm_random_stimulus" "uvm_recorder" "uvm_reg"
+     "uvm_reg_access_seq" "uvm_reg_adapter" "uvm_reg_backdoor" "uvm_reg_bit_bash_seq" "uvm_reg_block" "uvm_reg_cbs"
+     "uvm_reg_field" "uvm_reg_fifo" "uvm_reg_file" "uvm_reg_frontdoor" "uvm_reg_hw_reset_seq" "uvm_reg_indirect_data"
+     "uvm_reg_indirect_ftdr_seq" "uvm_reg_item" "uvm_reg_map" "uvm_reg_map_info" "uvm_reg_mem_access_seq" "uvm_reg_mem_built_in_seq"
+     "uvm_reg_mem_hdl_paths_seq" "uvm_reg_mem_shared_access_seq" "uvm_reg_predictor" "uvm_reg_read_only_cbs" "uvm_reg_sequence" "uvm_reg_shared_access_seq"
+     "uvm_reg_single_access_seq" "uvm_reg_single_bit_bash_seq" "uvm_reg_tlm_adapter" "uvm_reg_write_only_cbs" "uvm_report_catcher" "uvm_report_global_server"
+     "uvm_report_handler" "uvm_report_object" "uvm_report_phase" "uvm_report_server" "uvm_reset_phase" "uvm_resource"
+     "uvm_resource_base" "uvm_resource_db" "uvm_resource_db_options" "uvm_resource_options" "uvm_resource_pool" "uvm_resource_types"
+     "uvm_root" "uvm_root_report_handler" "uvm_run_phase" "uvm_scope_stack" "uvm_scoreboard" "uvm_seed_map"
+     "uvm_seq_item_pull_export" "uvm_seq_item_pull_imp" "uvm_seq_item_pull_port" "uvm_sequence" "uvm_sequence_base" "uvm_sequence_item"
+     "uvm_sequence_library" "uvm_sequence_library_cfg" "uvm_sequence_request" "uvm_sequencer" "uvm_sequencer_analysis_fifo" "uvm_sequencer_base"
+     "uvm_sequencer_param_base" "uvm_shutdown_phase" "uvm_simple_sequence" "uvm_slave_export" "uvm_slave_imp" "uvm_slave_port"
+     "uvm_spell_chkr" "uvm_sqr_if_base" "uvm_start_of_simulation_phase" "uvm_status_container" "uvm_string_rsrc" "uvm_subscriber"
+     "uvm_table_printer" "uvm_task_phase" "uvm_test" "uvm_test_done_objection" "uvm_tlm_analysis_fifo" "uvm_tlm_b_initiator_socket"
+     "uvm_tlm_b_initiator_socket_base" "uvm_tlm_b_passthrough_initiator_socket" "uvm_tlm_b_passthrough_initiator_socket_base" "uvm_tlm_b_passthrough_target_socket"
+     "uvm_tlm_b_passthrough_target_socket_base" "uvm_tlm_b_target_socket" "uvm_tlm_b_target_socket_base" "uvm_tlm_b_transport_export" "uvm_tlm_b_transport_imp"
+     "uvm_tlm_b_transport_port" "uvm_tlm_event" "uvm_tlm_extension" "uvm_tlm_extension_base" "uvm_tlm_fifo" "uvm_tlm_fifo_base" "uvm_tlm_generic_payload"
+     "uvm_tlm_if" "uvm_tlm_if_base" "uvm_tlm_nb_initiator_socket" "uvm_tlm_nb_initiator_socket_base" "uvm_tlm_nb_passthrough_initiator_socket" "uvm_tlm_nb_passthrough_initiator_socket_base"
+     "uvm_tlm_nb_passthrough_target_socket" "uvm_tlm_nb_passthrough_target_socket_base" "uvm_tlm_nb_target_socket" "uvm_tlm_nb_target_socket_base" "uvm_tlm_nb_transport_bw_export"
+     "uvm_tlm_nb_transport_bw_imp" "uvm_tlm_nb_transport_bw_port" "uvm_tlm_nb_transport_fw_export"
+     "uvm_tlm_nb_transport_fw_imp" "uvm_tlm_nb_transport_fw_port" "uvm_tlm_req_rsp_channel" "uvm_tlm_time" "uvm_tlm_transport_channel" "uvm_topdown_phase"
+     "uvm_transaction" "uvm_transport_export" "uvm_transport_imp" "uvm_transport_port" "uvm_tree_printer" "uvm_typed_callbacks"
+     "uvm_typeid" "uvm_typeid_base" "uvm_utils" "uvm_void" "uvm_vreg" "uvm_vreg_cbs"
+     "uvm_vreg_field" "uvm_vreg_field_cbs"
+     )
+   'symbols)) ; Used to emphasize UVM specific constructs
+
+
 (defvar larumbe/verilog-font-lock-keywords
   (list
    ;; Preprocessor macros and compiler directives
@@ -384,6 +441,8 @@ Regex search bound to LIMIT."
    (cons (concat "\\<\\(" larumbe/verilog-special-macros "\\)\\>") 'larumbe/xilinx-attributes-face)
    ;; Special constructs
    (cons (concat "\\(" larumbe/verilog-special-constructs "\\)") 'larumbe/xilinx-attributes-face)
+   ;; UVM relevant constructs
+   (cons (concat "\\(" larumbe/verilog-uvm-classes "\\)") 'larumbe/uvm-classes-face)
    ;; Builtin keywords
    (concat "\\<\\(" larumbe/verilog-font-general-keywords "\\)\\>") ; Default 'font-lock-keyword-face
    ;; User/System tasks and functions

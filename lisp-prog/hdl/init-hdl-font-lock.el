@@ -156,6 +156,13 @@ obj.method();
   :group 'hdl-font-lock-highlighting-faces)
 
 
+(defvar larumbe/uvm-classes-face 'larumbe/uvm-classes-face)
+(defface larumbe/uvm-classes-face
+  '((t (:foreground "light blue")))
+  "Face for UVM classes."
+  :group 'hdl-font-lock-highlighting-faces)
+
+
 (defvar larumbe/font-lock-grouping-keywords-face 'larumbe/font-lock-grouping-keywords-face)
 (defface larumbe/font-lock-grouping-keywords-face
   '((t (:foreground "dark olive green")))
