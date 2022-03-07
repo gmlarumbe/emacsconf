@@ -15,33 +15,34 @@
          ("\\.vsrc.pp\\'"     . verilog-mode)
          ("\\.v.pp\\'"        . verilog-mode)
          ("\\.ppv\\'"         . verilog-mode))
+  :hook ((verilog-mode . larumbe/verilog-hook))
   :bind (:map verilog-mode-map
-              ("<return>" . larumbe/electric-verilog-terminate-line) ; Enter
-              ("RET"      . larumbe/electric-verilog-terminate-line) ; C-m
-              ([delete]   . delete-forward-char)
-              ("C-%"      . hide/show-comments-toggle)
-              ("M-f"      . larumbe/verilog-forward-word)
-              ("M-b"      . larumbe/verilog-backward-word)
-              ("M-i"      . larumbe/verilog-imenu)
-              ("TAB"      . larumbe/electric-verilog-tab)
-              ("C-M-a"    . verilog-beg-of-defun)
-              ("C-M-e"    . verilog-end-of-defun)
-              ("C-M-n"    . larumbe/find-verilog-token-fwd)
-              ("C-M-p"    . larumbe/find-verilog-token-bwd)
-              ("C-M-u"    . larumbe/find-verilog-module-instance-bwd)
-              ("C-M-d"    . larumbe/find-verilog-module-instance-fwd)
-              ("C-M-h"    . xah-select-current-block)
-              ("C-c i"    . larumbe/verilog-indent-current-module)
-              ("C-c b"    . larumbe/verilog-beautify-current-module)
-              ("C-c B"    . larumbe/verilog-beautify-current-buffer)
-              ("C-c c"    . larumbe/verilog-toggle-connect-port)
-              ("C-c C-c"  . larumbe/verilog-connect-ports-recursively)
-              ("C-c t"    . larumbe/verilog-time-stamp-work-new-entry)
-              ("C-c C-t"  . hydra-verilog/body)
-              ("C-c C-p"  . larumbe/verilog-preprocess)
-              ("C-c C-f"  . larumbe/verilog-flycheck-mode)
-              ("<f9>"     . larumbe/verilog-perl-current-file)
-              ("M-RET"    . nil)) ; Leave space for `company-complete'
+         ("<return>" . larumbe/electric-verilog-terminate-line) ; Enter
+         ("RET"      . larumbe/electric-verilog-terminate-line) ; C-m
+         ([delete]   . delete-forward-char)
+         ("C-%"      . hide/show-comments-toggle)
+         ("M-f"      . larumbe/verilog-forward-word)
+         ("M-b"      . larumbe/verilog-backward-word)
+         ("M-i"      . larumbe/verilog-imenu)
+         ("TAB"      . larumbe/electric-verilog-tab)
+         ("C-M-a"    . verilog-beg-of-defun)
+         ("C-M-e"    . verilog-end-of-defun)
+         ("C-M-n"    . larumbe/find-verilog-token-fwd)
+         ("C-M-p"    . larumbe/find-verilog-token-bwd)
+         ("C-M-u"    . larumbe/find-verilog-module-instance-bwd)
+         ("C-M-d"    . larumbe/find-verilog-module-instance-fwd)
+         ("C-M-h"    . xah-select-current-block)
+         ("C-c i"    . larumbe/verilog-indent-current-module)
+         ("C-c b"    . larumbe/verilog-beautify-current-module)
+         ("C-c B"    . larumbe/verilog-beautify-current-buffer)
+         ("C-c c"    . larumbe/verilog-toggle-connect-port)
+         ("C-c C-c"  . larumbe/verilog-connect-ports-recursively)
+         ("C-c t"    . larumbe/verilog-time-stamp-work-new-entry)
+         ("C-c C-t"  . hydra-verilog/body)
+         ("C-c C-p"  . larumbe/verilog-preprocess)
+         ("C-c C-f"  . larumbe/verilog-flycheck-mode)
+         ("<f9>"     . larumbe/verilog-perl-current-file)
+         ("M-RET"    . nil)) ; Leave space for `company-complete'
   :config
   ;; Dependencies
   (require 'xah-lee-functions)
@@ -84,10 +85,7 @@
     :config
     (require 'verilog-modi))
   ;; Own functions
-  (use-package verilog-utils
-    :straight nil
-    :demand
-    :hook ((verilog-mode . larumbe/verilog-hook)))
+  (require 'verilog-utils)
   (require 'verilog-templates)
   (require 'verilog-overrides)
   (require 'verilog-navigation)
