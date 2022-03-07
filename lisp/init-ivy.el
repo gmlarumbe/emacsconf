@@ -38,11 +38,33 @@
            ("C-w"   . bjm/ivy-yank-whole-word)
            ("C->"   . swiper-mc)
            ("C-<"   . swiper-mc))
-    :bind (("C-s"   . swiper)
-           ("C-r"   . swiper-backward)
-           ("M-s ." . swiper-symbol-at-point))
+    :bind (("C-s"   . larumbe/search-forward)
+           ("C-r"   . larumbe/search-backward)
+           ("M-s ." . larumbe/symbol-at-point))
     :config
     (setq search-default-mode 'auto)
+
+    ;; Search wrappers
+    (defun larumbe/search-forward ()
+      "Use isearch for dired-mode and swiper for the rest."
+      (interactive)
+      (if (string= major-mode "dired-mode")
+          (call-interactively #'isearch-forward)
+        (call-interactively #'swiper)))
+
+    (defun larumbe/search-backward ()
+      "Use isearch for dired-mode and swiper for the rest."
+      (interactive)
+      (if (string= major-mode "dired-mode")
+          (call-interactively #'isearch-backward)
+        (call-interactively #'swiper-backward)))
+
+    (defun larumbe/symbol-at-point ()
+      "Use isearch for dired-mode and swiper for the rest."
+      (interactive)
+      (if (string= major-mode "dired-mode")
+          (call-interactively #'isearch-forward-symbol-at-point)
+        (call-interactively #'swiper-symbol-at-point)))
 
     ;; https://github.com/abo-abo/swiper/issues/1068
     ;; INFO: abo-abo's answer was fine but didn't take into account ignoring
