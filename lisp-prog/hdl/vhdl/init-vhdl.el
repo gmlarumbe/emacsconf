@@ -4,22 +4,29 @@
 
 
 (use-package vhdl-mode
-  :straight (:host github :repo "emacs-mirror/emacs" :files ("lisp/progmodes/vhdl-mode.el"))
+  :straight (:host github :repo "emacs-mirror/emacs"
+             :fork (:repo "gmlarumbe/emacs" :branch "vhdl-projects")
+             :files ("lisp/progmodes/vhdl-mode.el"))
   :bind (:map vhdl-mode-map
-              ("<return>" . larumbe/vhdl-electric-return)
-              ("RET"      . larumbe/vhdl-electric-return)
-              ("C-M-a"    . vhdl-beginning-of-defun)
-              ("C-M-e"    . vhdl-end-of-defun)
-              ("C-M-d"    . larumbe/find-vhdl-module-instance-fwd)
-              ("C-M-u"    . larumbe/find-vhdl-module-instance-bwd)
-              ("C-M-p"    . vhdl-backward-same-indent)
-              ("C-M-n"    . vhdl-forward-same-indent)
-              ("<f5>"     . vhdl-compile)
-              ("C-c C-t"  . hydra-vhdl-template/body)
-              ("<f8>"     . sr-speedbar-open))
+         ("<return>" . larumbe/vhdl-electric-return)
+         ("RET"      . larumbe/vhdl-electric-return)
+         ("C-M-a"    . vhdl-beginning-of-defun)
+         ("C-M-e"    . vhdl-end-of-defun)
+         ("C-M-d"    . larumbe/find-vhdl-module-instance-fwd)
+         ("C-M-u"    . larumbe/find-vhdl-module-instance-bwd)
+         ("C-M-p"    . vhdl-backward-same-indent)
+         ("C-M-n"    . vhdl-forward-same-indent)
+         ("<f5>"     . vhdl-compile)
+         ("C-c C-t"  . hydra-vhdl-template/body)
+         ("<f8>"     . sr-speedbar-open))
+  :hook ((vhdl-mode . larumbe/vhdl-flycheck-ghdl-hook))
   :config
+  ;; INFO: Using `bind-chord' instead of use-package :chords as the latter does
+  ;; a global mapping (not to `vhdl-mode')
+  (bind-chord "\\\\" #'larumbe/vhdl-jump-to-module-at-point vhdl-mode-map)
+  (bind-chord "\|\|" #'larumbe/vhdl-find-parent-module vhdl-mode-map)
   ;; BUG: When used use-package :bind to `vhdl-speedbar-mode-map' this keybinding applied to non-spacebar modes
-  (define-key vhdl-speedbar-mode-map [? ] #'speedbar-toggle-line-expansion)
+  (advice-add 'vhdl-speedbar-initialize :after #'(lambda () (define-key vhdl-speedbar-mode-map [? ] #'speedbar-toggle-line-expansion)))
   ;; Indentation
   (setq vhdl-basic-offset 4)
   (setq tab-width 4)          ; TAB Width for indentation (buffer local)
@@ -50,10 +57,7 @@
   (require 'vhdl-templates)
   (require 'vhdl-navigation)
   (require 'vhdl-imenu)
-  (use-package vhdl-flycheck
-    :straight nil
-    :demand
-    :hook ((vhdl-mode . larumbe/vhdl-flycheck-ghdl-hook)))
+  (require 'vhdl-flycheck)
   (require 'vhdl-font-lock)
   ;; Additional MELPA packages
   ;; INFO: Check how they work, still untested, probably there is some overlap with my functions

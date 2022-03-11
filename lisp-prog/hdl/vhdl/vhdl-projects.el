@@ -10,8 +10,8 @@
 ;;   contained in the source files of the current directory or the specified
 ;;   projects (see option `vhdl-project-alist').
 ;;
-;;     The speedbar can be switched between file, directory hierarchy and
-;;   project hierarchy browsing mode in the speedbar menu or by typing `f',
+;;     The speedbar can be switched between file, buffer, directory hierarchy and
+;;   project hierarchy browsing mode in the speedbar menu or by typing `f', 'b',
 ;;   `h' or `H' in speedbar.
 ;;
 ;;     In speedbar, open design units with `mouse-2' on the name and browse
@@ -35,11 +35,19 @@
 ;;    - f: files
 ;;    - h: directory hierarchy
 ;;    - H: project hierarchy
+;;    - b: buffers
+;;    - SPC: Added additionally @ `init-vhdl' to toggle expand/contract level
 ;;
+;; More INFO: The hierarchy extraction stop working with lexical binding enabling.
+;;
+;; DANGER: If pressing 'R' while in hierarchy mode to refresh hierarchy, make
+;; sure of doing it with cursor on a line with text. Otherwise the error:
+;; "speedbar-files-line-directory: Wrong type argument: stringp, nil" will show up.
 ;;
 ;; DANGER: From `vhdl-project-alist' docstring:
 ;; NOTE: Reflect the new setting in the choice list of option `vhdl-project'
 ;;       by RESTARTING EMACS."
+;;
 ;;
 ;;;; Makefile generation
 ;;
@@ -76,16 +84,16 @@
 (setq vhdl-project "axi_if_converter")
 (setq vhdl-project-alist
 
-
 ;;;; MAIN Project
-      '((;; Name
+      '(
+        (;; Name
          "axi_if_converter"
          ;; Title
          "AXI Interface Converter"
          ;; Default directory
          "/home/gonz/Programming/FPGA/axi_if_converter/"
          ;; Sources (only RTL included) as directories (could be included
-         ;; recursively or individually.)
+         ;; recursively or individually)
          ("src/axi_lite_master/rtl/"
           "src/axi_lite_regs/rtl/"
           "src/core_conv/rtl/"
@@ -110,7 +118,6 @@
          ;; Description
          "")
 
-
 ;;;; SUBCOMPONENT project
         (;; Name
          "pattern_counter"
@@ -125,7 +132,7 @@
          ;; Compile options
          nil
          ;; Compile directory
-         "./"
+         "compile/"
          ;; Library name
          "xil_defaultlib"
          ;; Library directory
@@ -134,6 +141,31 @@
          ""
          ;; Description
          "")
+
+;;;; TinyALU project
+        (;; Name
+         "tinyalu"
+         ;; Title
+         ""
+         ;; Default directory
+         "/home/gonz/Programming/doc/SystemVerilog/UVM/uvmprimer/code/02_Conventional_Testbench/"
+         ;; Sources
+         ("tinyalu_dut/")
+         ;; Exclude regexp
+         ""
+         ;; Compile options
+         nil
+         ;; Compile directory
+         "./"
+         ;; Library name
+         "work"
+         ;; Library directory
+         "work/"
+         ;; Makefile name
+         ""
+         ;; Description
+         "")
+
         ))
 
 
