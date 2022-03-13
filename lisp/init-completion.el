@@ -45,6 +45,19 @@
 ;;         match the text at point, then instead of reporting a completion
 ;;         failure, the completion should try the next completion function.
 ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; More INFO:
+;;  - CAPF is aware of the context, e.g.:
+;;    - Elisp: results are different if capf is called inside a comment or after a parenthesis (functions)
+;;    - Verilog: results are different if capf is called within a module, task/function or class (according to indentation functions)
+;;
+;;  - Icons on candidate list depend on `company-text-icons-mapping'.
+;;    - Normally, the backend function should provide a (kind '<something>).
+;;    - `company-gtags' does not provide it, and `verilog-completion-at-point' neither does it.
+;;
+;;  - Changed default binding to `company-other-backend' to switch between backends/groups of backends.
+;;
 ;;; Code:
 
 
@@ -60,7 +73,7 @@
 ;;;; Company
 (use-package company
   :diminish
-  :bind ("M-RET" . company-complete)
+  :bind ("M-RET" . company-other-backend)
   :bind (:map company-active-map
          ("C-n" . company-select-next-or-abort)
          ("C-p" . company-select-previous-or-abort)
@@ -68,8 +81,19 @@
   :commands (larumbe/company-backend-compute)
   :config
   (setq company-idle-delay nil) ; Disable auto complete
-  ;; Since company only uses one backend at a time, set only one grouped backend including all the desired ones.
-  (defvar larumbe/company-backends-common '((company-keywords company-capf company-gtags company-files)))
+  (setq company-transformers '(delete-consecutive-dups company-sort-by-occurrence)) ; Remove duplicate and sort by occurrence
+  (setq company-tooltip-align-annotations t) ; Align annotations to the right
+
+  ;; Flex search: Searches for characters in the given order, with anything in between.
+  ;; e.g. "a-t-l" to find `add-to-list'
+  ;; Default is `regexp-quote' with looks for an exact match.
+  ;; DANGER: `company-search-flex-regexp' seems to only work for Elisp, not for Verilog/Python (use `counsel-company' for these)
+  (setq company-search-regexp-function #'company-search-flex-regexp)
+
+  ;; Company only uses one backend at a time, so set a backend for files/dirs and a grouped backend with keywords/tags/etc...
+  ;; To keep the candidates organized in accordance with the grouped backends order, add the keyword :separate to the list of the grouped backends.
+  ;; - https://company-mode.github.io/manual/Backends.html#Grouped-Backends
+  (defvar larumbe/company-backends-common '(company-files (company-capf company-keywords company-gtags :separate)))
 
   (defun larumbe/company-backend-compute ()
     "Select `company-backends' based on current major-mode.
@@ -80,30 +104,10 @@ some additional major-mode dependent backend."
      ((string= major-mode "python-mode")
       ;; CAPF functions for `python-mode' are more related to shell, and only add gtags-completion-at-point (unnecessary)
       ;; Plus, unless elpy mode is tested some day, jedi makes the best guesses so far so has the highest precedence.
-      '((company-jedi company-keywords company-files)
-        company-gtags))
+      '(company-files (company-jedi company-keywords company-gtags)))
      ;; Default (common)
      (t
       larumbe/company-backends-common))))
-
-
-;; ;; TODO: Still experimenting with frontends based on tooltip
-;; (use-package company-box
-;;   :diminish
-;;   :hook (company-mode . company-box-mode))
-
-;; (setq company-box-backends-colors
-;;   '((company-yasnippet . (:all "lime green" :selected (:background "lime green" :foreground "black")))
-;;     (company-capf      . (:all "lime green" :selected (:background "lime green" :foreground "black")))
-;;     (company-gtags     . (:all "lime green" :selected (:background "lime green" :foreground "black")))
-;;     (company-files     . (:all "lime green" :selected (:background "lime green" :foreground "black")))
-;;     (company-keywords  . (:all "lime green" :selected (:background "lime green" :foreground "black")))
-;;     ))
-
-;; ;; TODO: Still check how to implement the Sublime flx fuzzy completion to coexist with current one
-;; (use-package company-fuzzy)
-
-;; (use-package flx)
 
 
 ;;;; Yasnippet
