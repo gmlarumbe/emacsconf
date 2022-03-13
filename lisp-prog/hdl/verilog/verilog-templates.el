@@ -1087,9 +1087,8 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ;;;;;;;;;
   ;; UVM ;;
   ;;;;;;;;;
-  ;; INFO: Create functions/yasnippets if required
-  ("uc"  (verilog-sk-uvm-component))
-  ("uo"  (verilog-sk-uvm-object))
+  ("uc"  (larumbe/hydra-yasnippet "uc"))
+  ("uo"  (larumbe/hydra-yasnippet "uo"))
 
   ;;;;;;;;;;;;
   ;; Others ;;
