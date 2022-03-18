@@ -5565,7 +5565,7 @@ It will be in one of three forms: /main/NNN, or .../branchname/NNN, or DO-NAME"
 (defun clearcase-read-version-name (prompt file)
   "Display PROMPT and read a version string for FILE in the minibuffer,
 with completion if possible."
-  (let* ((insert-default-directory nil)
+  (let* (;; (insert-default-directory nil) INFO: Setting this to nil had issues with `read-file-name'
          ;; XEmacs change: disable dialog-box, to avoid
          ;; Dialog box error: "Creating file-dialog-box",
          ;; "FNERR_INVALIDFILENAME"
@@ -5588,13 +5588,9 @@ with completion if possible."
     ;;
     (if (clearcase-file-is-in-mvfs-p file)
         ;; Completion only works in MVFS:
-        ;;
-        (concat "/" (read-file-name prompt
-                                    completing-dir
-                                    (substring predecessor 1)
-                                    ;;nil
-                                    t
-                                    (substring predecessor 1)))
+	;;
+	(string-remove-prefix completing-dir
+			      (read-file-name prompt completing-dir))
       (concat "/" (read-string prompt
                                (substring predecessor 1)
                                nil)))))
