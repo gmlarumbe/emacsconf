@@ -2,6 +2,12 @@
 
 ;; Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Kevin Esler
 
+;; INFO:
+;; - General info: https://www.emacswiki.org/emacs/ClearCase
+;; - Quick guide: http://alexott.net/en/writings/emacs-vcs/EmacsClearCase.html
+;; - Downloaded from: http://ftp.xemacs.org/pub/xemacs/packages/
+;; - Also check vc-clearcase: https://github.com/alex-hhh/vc-clearcase
+
 ;; Author: Kevin Esler <kaesler@us.ibm.com>
 ;; Maintainer: Kevin Esler <kaesler@us.ibm.com>
 ;; Keywords: clearcase tools
@@ -349,22 +355,22 @@ Unless optional argument INPLACE is non-nil, return a new string."
 
 ;;{{{ Customizable variables
 
-(eval-and-compile
-  (condition-case nil
-      (require 'custom)
-    (error nil))
-  (if (and (featurep 'custom)
-           (fboundp 'custom-declare-variable))
-      nil ;; We've got what we needed
-    ;; We have the old custom-library, hack around it!
-    (defmacro defgroup (&rest args)
-      nil)
-    (defmacro defcustom (var value doc &rest args)
-      (` (defvar (, var) (, value) (, doc))))
-    (defmacro defface (face value doc &rest stuff)
-      `(make-face ,face))
-    (defmacro custom-declare-variable (symbol value doc &rest args)
-      (list 'defvar (eval symbol) value doc))))
+;; (eval-and-compile
+;;   (condition-case nil
+;;       (require 'custom)
+;;     (error nil))
+;;   (if (and (featurep 'custom)
+;;            (fboundp 'custom-declare-variable))
+;;       nil ;; We've got what we needed
+;;     ;; We have the old custom-library, hack around it!
+;;     (defmacro defgroup (&rest args)
+;;       nil)
+;;     (defmacro defcustom (var value doc &rest args)
+;;       `(defvar ,var ,value) ,doc))
+;;     (defmacro defface (face value doc &rest stuff)
+;;       `(make-face ,face))
+;;     (defmacro custom-declare-variable (symbol value doc &rest args)
+;;       (list 'defvar (eval symbol) value doc)))
 
 (defgroup clearcase () "ClearCase Options" :group 'tools :prefix "clearcase")
 
@@ -567,13 +573,9 @@ recommended to produce unified diffs, when your
 
 ;; Initialize clearcase-pname-sep-regexp according to
 ;; directory-sep-char.
-(defvar clearcase-pname-sep-regexp
-  (format "[%s/]"
-          (char-to-string directory-sep-char)))
+(defvar clearcase-pname-sep-regexp "/")
 
-(defvar clearcase-non-pname-sep-regexp
-  (format "[^%s/]"
-          (char-to-string directory-sep-char)))
+(defvar clearcase-non-pname-sep-regexp "[^ /]")
 
 ;; Matches any viewtag (without the trailing "/").
 ;;
@@ -4265,7 +4267,7 @@ properties of VIEWTAG."
                                 buf
                                 clearcase-cleartool-path
                                 "lsact" "-view" viewtag)))
-      (process-kill-without-query proc)
+      (process-query-on-exit-flag proc)
       (save-excursion
         (set-buffer buf)
         ;; Create a sentinel to parse and store the activities when the
@@ -4854,7 +4856,7 @@ or the empty string if none")
             (start-process "cleartool" ;; Absolute path won't work here
                            " *cleartool*"
                            clearcase-cleartool-path)))
-      (process-kill-without-query cleartool-process)
+      (process-query-on-exit-flag cleartool-process)
       (setq clearcase-ct-view "")
       (setq clearcase-ct-tq (tq-create cleartool-process))
       (tq-enqueue clearcase-ct-tq
