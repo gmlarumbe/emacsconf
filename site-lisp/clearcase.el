@@ -5356,7 +5356,7 @@ replacing the existing view prefix."
             ;; ...otherwise start with the file's version.
             ;;
             (clearcase-vxpath-version-extend file)))
-         (file-version-number (string-to-int (clearcase-vxpath-version file-version-path)))
+         (file-version-number (string-to-number (clearcase-vxpath-version file-version-path)))
          (branch (clearcase-vxpath-branch file-version-path)))
     (let* ((base-number 0)
            (base-version-path (format "%s%d" branch base-number)))
