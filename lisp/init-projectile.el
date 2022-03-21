@@ -39,7 +39,7 @@
   (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line)
 
   ;; Default search order is defined by functions of variable `projectile-project-root-functions':
-  (defvar larumbe/projectile-project-root-files '("GTAGS" ".repo" ".git" ".svn")) ; In order of precedence. If none of this works, use variable `projectile-project-root'
+  (defvar larumbe/projectile-project-root-files '("Makefile" "GTAGS" ".repo" ".git" ".svn")) ; In order of precedence. If none of this works, use variable `projectile-project-root'
   (setq projectile-project-root-files                    larumbe/projectile-project-root-files) ; Top-down
   (setq projectile-project-root-files-bottom-up          larumbe/projectile-project-root-files) ; Bottom-up
   (setq projectile-project-root-files-top-down-recurring larumbe/projectile-project-root-files) ; Top-down recurring
