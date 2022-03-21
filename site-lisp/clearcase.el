@@ -720,7 +720,11 @@ recommended to produce unified diffs, when your
                 (progn
                   (forward-line 1)
                   (let ((buffer-read-only nil))
-                    (insert (format "  [ClearCase View: %s]\n" viewtag))))))))))
+                    (insert (propertize "  ["                 'font-lock-face '(:foreground "red")))
+                    (insert (propertize "ClearCase View: "    'font-lock-face '(:foreground "light green")))
+                    (insert (propertize (format "%s" viewtag) 'font-lock-face '(:foreground "green")))
+                    (insert (propertize "]\n"                 'font-lock-face '(:foreground "red")))
+		    ))))))))
 
 (defun clearcase-dired-reformat-buffer ()
   "Reformats the current dired buffer."
@@ -3476,6 +3480,7 @@ on the directory element itself is listed, not on its contents."
               (goto-char (point-min))
               (if (looking-at "[\b\t\n\v\f\r ]+")
                   (delete-char (- (match-end 0) (match-beginning 0)))))))
+	  (setq truncate-lines t)
           (message "Listing element history...done"))
 
       (error "%s is not a ClearCase element" file))))
@@ -3514,6 +3519,7 @@ on the directory element itself is listed, not on its contents."
         (message "No differences")
       (clearcase-port-view-buffer-other-window "*clearcase*")
       (goto-char 0)
+      (diff-mode)
       (shrink-window-if-larger-than-buffer))))
 
 ;;}}}
