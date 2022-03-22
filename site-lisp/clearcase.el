@@ -1707,7 +1707,8 @@ the user to edit."
 ;;{{{ Annotate
 
 (defun clearcase-annotate-file (file)
-  (let ((relative-name (file-relative-name file)))
+  (let ((relative-name (file-relative-name file))
+	(verilog-file-p (string= major-mode "verilog-mode")))
     (message "Annotating %s ..." relative-name)
     (clearcase-with-tempfile
      annotation-file
@@ -1725,6 +1726,16 @@ the user to edit."
       (function
        (lambda ()
          (insert-file-contents annotation-file)))))
+    (with-current-buffer "*clearcase-annotate*"
+      (setq buffer-read-only nil)
+      (save-excursion
+	(goto-char (point-min))
+	(insert "/*\n")
+	(re-search-forward "^-------------------------------------------------" nil t 2)
+	(insert "\n*/\n"))
+      (when verilog-file-p
+	(verilog-mode))
+      (setq buffer-read-only t))
     (message "Annotating %s ...done" relative-name)))
 
 (defun clearcase-annotate-current-buffer ()
