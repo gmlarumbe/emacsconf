@@ -4876,6 +4876,7 @@ or the empty string if none")
                            " *cleartool*"
                            clearcase-cleartool-path)))
       (process-query-on-exit-flag cleartool-process)
+      (set-process-query-on-exit-flag cleartool-process nil)
       (setq clearcase-ct-view "")
       (setq clearcase-ct-tq (tq-create cleartool-process))
       (tq-enqueue clearcase-ct-tq
