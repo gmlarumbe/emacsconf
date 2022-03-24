@@ -1729,6 +1729,8 @@ the user to edit."
     (with-current-buffer "*clearcase-annotate*"
       (setq buffer-read-only nil)
       (save-excursion
+        (when (functionp 'larumbe/replace-regexp-whole-buffer)
+          (larumbe/replace-regexp-whole-buffer "^              ." "               "))
         (goto-char (point-min))
         (insert "/*\n")
         (re-search-forward "^-------------------------------------------------" nil t 2)
