@@ -58,7 +58,6 @@ Try to add it before Commentary section."
   (sanityinc/enable-check-parens-on-save)
   (prettify-symbols-mode 1)
   (rainbow-delimiters-mode 1)
-  (larumbe/elisp-flycheck-mode 1)
   ;; Eldoc mode hook for Lisp related modes
   (dolist (hook '(emacs-lisp-mode-hook
                   lisp-interaction-mode-hook
