@@ -724,7 +724,7 @@ recommended to produce unified diffs, when your
                     (insert (propertize "ClearCase View: "    'font-lock-face '(:foreground "light green")))
                     (insert (propertize (format "%s" viewtag) 'font-lock-face '(:foreground "green")))
                     (insert (propertize "]\n"                 'font-lock-face '(:foreground "red")))
-		    ))))))))
+                    ))))))))
 
 (defun clearcase-dired-reformat-buffer ()
   "Reformats the current dired buffer."
@@ -800,8 +800,8 @@ recommended to produce unified diffs, when your
                                       (member fullpath checkout-list)
                                     (clearcase-fprop-checked-out fullpath)))
                      (is-hijack (if hijack-list
-				    (member fullpath hijack-list)
-				  (clearcase-fprop-hijacked fullpath))))
+                                    (member fullpath hijack-list)
+                                  (clearcase-fprop-hijacked fullpath))))
 
                 ;; Highlight the line if the file is checked-out.
                 ;;
@@ -1708,7 +1708,7 @@ the user to edit."
 
 (defun clearcase-annotate-file (file)
   (let ((relative-name (file-relative-name file))
-	(verilog-file-p (string= major-mode "verilog-mode")))
+        (verilog-file-p (string= major-mode "verilog-mode")))
     (message "Annotating %s ..." relative-name)
     (clearcase-with-tempfile
      annotation-file
@@ -1729,12 +1729,12 @@ the user to edit."
     (with-current-buffer "*clearcase-annotate*"
       (setq buffer-read-only nil)
       (save-excursion
-	(goto-char (point-min))
-	(insert "/*\n")
-	(re-search-forward "^-------------------------------------------------" nil t 2)
-	(insert "\n*/\n"))
+        (goto-char (point-min))
+        (insert "/*\n")
+        (re-search-forward "^-------------------------------------------------" nil t 2)
+        (insert "\n*/\n"))
       (when verilog-file-p
-	(verilog-mode))
+        (verilog-mode))
       (setq buffer-read-only t))
     (message "Annotating %s ...done" relative-name)))
 
@@ -2673,8 +2673,8 @@ Intended to be used with the auto-revert hook 'auto-revert-buffer-reverted-hook"
   (if (null clearcase-post-update-work-queue)
       (progn
         (if clearcase-xemacs-p
-	    (delete-itimer clearcase-post-update-timer)
-	  (cancel-timer clearcase-post-update-timer))
+            (delete-itimer clearcase-post-update-timer)
+          (cancel-timer clearcase-post-update-timer))
         (setq clearcase-post-update-timer nil))))
 
 (defun clearcase-post-update-check-process-buffer (buffer)
@@ -3491,7 +3491,7 @@ on the directory element itself is listed, not on its contents."
               (goto-char (point-min))
               (if (looking-at "[\b\t\n\v\f\r ]+")
                   (delete-char (- (match-end 0) (match-beginning 0)))))))
-	  (setq truncate-lines t)
+          (setq truncate-lines t)
           (message "Listing element history...done"))
 
       (error "%s is not a ClearCase element" file))))
@@ -5605,9 +5605,9 @@ with completion if possible."
     ;;
     (if (clearcase-file-is-in-mvfs-p file)
         ;; Completion only works in MVFS:
-	;;
-	(string-remove-prefix completing-dir
-			      (read-file-name prompt completing-dir))
+        ;;
+        (string-remove-prefix completing-dir
+                              (read-file-name prompt completing-dir))
       (concat "/" (read-string prompt
                                (substring predecessor 1)
                                nil)))))
@@ -6988,7 +6988,7 @@ the ClearCase menu.")
          :keys nil
          :active (and (< (clearcase-dired-mark-count) 2)
                       (clearcase-dired-current-ok-to-checkin))]
-        
+
         ["Checkout file" clearcase-checkout-dired-files
          :keys nil
          :active (and (< (clearcase-dired-mark-count) 2)
