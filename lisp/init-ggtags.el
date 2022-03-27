@@ -16,6 +16,7 @@
   :diminish
   :commands (ggtags-create-tags
              modi/ggtags-tag-at-point
+             larumbe/ggtags-global-handle-exit-advice
              larumbe/gtags-create-tags-async
              larumbe/ggtags-backend-switch)
   :bind (:map ggtags-navigation-map
@@ -66,7 +67,95 @@
           tags-loop-operate '(ggtags-find-tag-continue))
     (ggtags-navigation-mode-cleanup nil t))
 
+  ;; Advice
   (advice-add 'ggtags-navigation-mode-done :override #'larumbe/ggtags-navigation-mode-done)
+
+
+  ;; INFO: Issue with `ggtags-global-handle-exit' on remote machines where
+  ;; *global* buffer was killed before `compilation-auto-jump' could jump to
+  ;; first match, when there was only one match.
+  ;; The problem was that `ggtags' relies heavily on `compilation-auto-jump'
+  ;; executing as a hook of `compilation-finish-functions', and it runs through
+  ;; a timer, so on slow/remote machines sometimes the buffer was killed before
+  ;; jumping to the first/only match, giving an error.
+  ;;
+  ;; The workaround implied runnin `ggtags-navigation-mode-cleanup' also with a
+  ;; programmable timer through the variable `larumbe/ggtags-global-handle-exit-timer-time'
+  ;;
+  ;; NOTE: This fix works only the first time a tag is visited if `ggtags-auto-jump-to-match'
+  ;; is 'history since somehow once it has been stored in `ggtags-global-search-history'
+  ;; it does not execute the adviced snippet of code.
+
+  (defvar larumbe/ggtags-global-handle-exit-timer-time 1
+    "Time for the timer to wait until global buffer is killed when there is only 1 result.
+Default to 1 sec only if function has been advised through `larumbe/ggtags-global-handle-exit-advice'")
+  (defvar larumbe/ggtags-global-handle-exit-use-idle-timer nil
+    "If set to non-nil run an idle timer.")
+
+  (defun larumbe/ggtags-global-handle-exit (buf how)
+    "A function for `compilation-finish-functions' (which see)."
+    (cond
+     (ggtags-global-continuation
+      (let ((cont (prog1 ggtags-global-continuation
+                    (setq ggtags-global-continuation nil))))
+        (funcall cont buf how)))
+     ((string-prefix-p "exited abnormally" how)
+      ;; If exit abnormally display the buffer for inspection.
+      (ggtags-global--display-buffer)
+      (when (save-excursion
+              (goto-char (point-max))
+              (re-search-backward
+               (eval-when-compile
+                 (format "^global: %s not found.$"
+                         (regexp-opt '("GTAGS" "GRTAGS" "GSYMS" "GPATH"))))
+               nil t))
+        (ggtags-echo "WARNING: Global tag files missing in `%s'"
+                     ggtags-project-root)
+        (remhash ggtags-project-root ggtags-projects)))
+     (ggtags-auto-jump-to-match
+      (if (pcase (compilation-next-single-property-change
+                  (point-min) 'compilation-message)
+            ((and pt (guard pt))
+             (compilation-next-single-property-change
+              (save-excursion (goto-char pt) (end-of-line) (point))
+              'compilation-message)))
+          ;; INFO: Case when there are multiple matches
+          ;; There are multiple matches so pop up the buffer.
+          (and ggtags-navigation-mode (ggtags-global--display-buffer))
+
+        ;; INFO: Else clause when there is only one match and global buffer gets killed.
+        ;; Similar to the one in `ggtags-global-handle-exit' but running
+        ;; the cleanup also with a timer.
+
+        ;; Manually run the `compilation-auto-jump' timer. Hackish but
+        ;; everything else seems unreliable. See:
+        ;;
+        ;; - http://debbugs.gnu.org/13829
+        ;; - http://debbugs.gnu.org/23987
+        ;; - https://github.com/leoliu/ggtags/issues/89
+        ;;
+        (pcase (cl-find 'compilation-auto-jump timer-list :key #'timer--function)
+          (`nil )
+          (timer (timer-event-handler timer)))
+        (ggtags-navigation-mode -1)
+        (if larumbe/ggtags-global-handle-exit-use-idle-timer
+            (run-with-idle-timer larumbe/ggtags-global-handle-exit-timer-time
+                                 nil
+                                 #'ggtags-navigation-mode-cleanup buf t)
+          (run-with-timer larumbe/ggtags-global-handle-exit-timer-time
+                          nil
+                          #'ggtags-navigation-mode-cleanup buf t))))))
+
+  ;; Advice function (not used on every machine, only in remote slow ones)
+  (defun larumbe/ggtags-global-handle-exit-advice (enable)
+    "Advice `ggtags-global-handle-exit' if ENABLE is set to non-nil and
+remove advice is ENABLE is set to nil."
+    (if enable
+        (progn
+          (advice-add 'ggtags-global-handle-exit :override #'larumbe/ggtags-global-handle-exit)
+          (message "Adviced `ggtags-global-handle-exit' with a %s secs timer" larumbe/ggtags-global-handle-exit-timer-time))
+      (advice-remove 'ggtags-global-handle-exit #'larumbe/ggtags-global-handle-exit)
+      (message "Removed advice on `ggtags-global-handle-exit'. Killing global buffer without timer!")))
 
 
 ;;;; Global/ctags
