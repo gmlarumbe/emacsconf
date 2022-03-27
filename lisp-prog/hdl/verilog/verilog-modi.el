@@ -10,6 +10,7 @@
 
 
 (require 'setup-verilog)
+(require 'ag) ; Load `ag' package so `ag-arguments' get updated with --stats to jump to first match
 
 ;;;; Navigation
 (defun larumbe/verilog-find-parent-module ()
