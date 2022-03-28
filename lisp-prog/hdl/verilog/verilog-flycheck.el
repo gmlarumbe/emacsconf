@@ -19,6 +19,8 @@ If called with UARG, select among available linters.
 Disable function `eldoc-mode' if flycheck is enabled
 to avoid minibuffer collisions."
   (interactive "P")
+  (when buffer-read-only
+    (error "Flycheck does not work on read-only buffers!"))
   (let ((linters '("verilator" "iverilog" "hal" "svlint"))
         (active-linter))
     (if uarg
