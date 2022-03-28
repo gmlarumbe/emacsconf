@@ -38,13 +38,13 @@
 ;;;; Org
 (use-package org
   :bind (:map org-mode-map
-              ("C-c c" . org-capture)
-              ("C-c b" . org-iswitchb)
-              ("M-."   . org-open-at-point)  ; Override xref-find-definitions, used now to follow internal/external links/tags
-              ("M-,"   . org-mark-ring-goto) ; Override xref-pop-marker-stack, used now to pop back links
-              ("C-,"   . nil)                ; Unamps org-cycle-agenda-files to free `larumbe/ansi-term'
-              ("C-c l" . org-store-link)
-              ("C-c a" . org-agenda))
+         ("C-c c" . org-capture)
+         ("C-c b" . org-iswitchb)
+         ("M-."   . org-open-at-point)  ; Override xref-find-definitions, used now to follow internal/external links/tags
+         ("M-,"   . org-mark-ring-goto) ; Override xref-pop-marker-stack, used now to pop back links
+         ("C-,"   . nil)                ; Unamps org-cycle-agenda-files to free `larumbe/ansi-term'
+         ("C-c l" . org-store-link)
+         ("C-c a" . org-agenda))
   :bind (("C-x l" . larumbe/org-show-todos-agenda))
   :hook ((org-agenda-mode    . larumbe/org-mode-hook)
          (org-mode           . larumbe/org-mode-hook)
@@ -101,7 +101,32 @@ Meant to be used as a hook for `org-insert-heading-hook'"
   ;; By default, `org-insert-todo-heading' inserts the TODO after
   ;; the `org-insert-heading-hook'. This advice moves the pointer
   ;; to the end of the line, making it ready to write afterwards.
-  (advice-add 'org-insert-todo-heading :after #'org-end-of-line))
+  (advice-add 'org-insert-todo-heading :after #'org-end-of-line)
+
+
+  ;; https://emacs.stackexchange.com/questions/31683/schedule-org-task-for-last-day-of-every-month
+  (defun diary-last-day-of-month (date)
+    "Return `t` if DATE is the last day of the month."
+    (let* ((day (calendar-extract-day date))
+           (month (calendar-extract-month date))
+           (year (calendar-extract-year date))
+           (last-day-of-month
+            (calendar-last-day-of-month month year)))
+      (= day last-day-of-month)))
+
+
+  (defun larumbe/diary-last-day-of-month-mon-to-thu (date)
+    "Return `t` if DATE is the last day of the month and DATE ranges from Monday to Thursday."
+    (let* ((day (calendar-extract-day date))
+           (month (calendar-extract-month date))
+           (year (calendar-extract-year date))
+           (last-day-of-month
+            (calendar-last-day-of-month month year))
+           (monday-idx   1)
+           (thursday-idx 4))
+      (and (= day last-day-of-month)
+           (>= (calendar-day-of-week date) monday-idx)
+           (<= (calendar-day-of-week date) thursday-idx)))))
 
 
 
