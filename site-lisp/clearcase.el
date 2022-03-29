@@ -3532,7 +3532,11 @@ on the directory element itself is listed, not on its contents."
         (message "No differences")
       (clearcase-port-view-buffer-other-window "*clearcase*")
       (goto-char 0)
+      (when (get-buffer "*clearcase-diff*")
+        (kill-buffer "*clearcase-diff*"))
+      (rename-buffer "*clearcase-diff*")
       (diff-mode)
+      (setq buffer-read-only t)
       (shrink-window-if-larger-than-buffer))))
 
 ;;}}}
@@ -4975,6 +4979,14 @@ EXTRA-ARGS."
        (clearcase-ct-cd default-directory)
        (if clearcase-command-messages
            (message "Running %s..." command))
+       (when (and (or (string= command "lshistory")
+                      (string= command "lsco"))
+                  (functionp 'clearcase-log-mode))
+         (when (get-buffer (concat "*clearcase-" command "*"))
+           (kill-buffer (concat "*clearcase-" command "*")))
+         (rename-buffer (concat "*clearcase-" command "*"))
+         (clearcase-log-mode)
+         (setq buffer-read-only nil))
        (insert
         (apply 'clearcase-ct-cleartool-cmd (append (list command) squeezed)))
        (if clearcase-command-messages
