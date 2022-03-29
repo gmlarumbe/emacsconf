@@ -28,7 +28,7 @@
   ;; 1 -- skip anything less than warning or
   ;; 0 -- don't skip any messages.
   (setq compilation-skip-threshold 2) ; Compilation error jumping settings
-
+  (setq compilation-message-face nil) ; Set to nil to remove underlines from compilation faces (defaults to 'underline)
   (setq compilation-scroll-output 'first-error)
 
   (defun larumbe/compilation-hook ()
