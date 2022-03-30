@@ -21,11 +21,14 @@ to avoid minibuffer collisions."
   (interactive "P")
   (when buffer-read-only
     (error "Flycheck does not work on read-only buffers!"))
-  (let ((linters '("verilator" "iverilog" "hal" "svlint"))
+  (let ((linters '("verible" "verilator" "iverilog" "hal" "svlint"))
         (active-linter))
     (if uarg
         (progn
           (pcase (completing-read "Select linter: " linters)
+            ("verible"
+             (larumbe/verilog-verible-rules-fmt)
+             (setq active-linter 'verilog-verible))
             ("verilator"
              (setq active-linter 'verilog-verilator))
             ("iverilog"
@@ -129,6 +132,10 @@ See URL `https://www.veripool.org/wiki/verilator'.
 INFO: Verilator does not support ignoring missing modules, as Iverilog does.
   - https://github.com/verilator/verilator/issues/2835
 However, verilator supports SystemVerilog far better than Iverilog does.
+
+For RTL seems a good solution. For simulation it has many issues
+with 'Define or directive not defined' due to difficulties finding defines
+and includes (e.g. for UVM macros).
 "
   :command ("verilator" "--lint-only" "-Wall" "-Wno-fatal"
             "--bbox-unsup" ; Blackbox unsupported language features: avoids errors on verification sources
@@ -175,6 +182,44 @@ See URL `http://iverilog.icarus.com/'"
 
 
 
+;;;; Verible
+(defvar larumbe/verilog-verible-rules
+  '("-line-length"
+    "-invalid-system-task-function")
+  " https://chipsalliance.github.io/verible/lint.html")
+(defvar larumbe/verilog-verible-rules-flycheck nil
+  "Used as a flycheck argument depending on `larumbe/verilog-verible-rules'")
+
+(defun larumbe/verilog-verible-rules-fmt ()
+  "Format `larumbe/verilog-verible-rules' to pass correct arguments to --rules flycheck checker."
+  (setq larumbe/verilog-verible-rules-flycheck (mapconcat #'identity larumbe/verilog-verible-rules ",")))
+
+
+(flycheck-define-checker verilog-verible
+  " The Verible project's main mission is to parse SystemVerilog (IEEE 1800-2017)
+(as standardized in the SV-LRM) for a wide variety of applications, including developer tools.
+
+See URL `https://github.com/chipsalliance/verible'.
+
+So far seems the best option to find syntax errors quickly without compiling
+on single testbench files."
+  ;; INFO: From the documentation:
+  ;; Syntax errors cannot be waived. A common source of syntax errors is if the file is not a standalone Verilog program
+  ;; as defined by the LRM, e.g. a body snippet of a module, class, task, or function. In such cases, the parser can be
+  ;; directed to treat the code as a snippet by selecting a parsing mode, which looks like a comment near the top-of-file
+  ;; like // verilog_syntax: parse-as-module-body.
+  ;;
+  ;; NOTE: Since regexps are common for error/warning/infos, it is important to declare errors before warnings below!
+
+  :command ("verible-verilog-lint"
+            (option "--rules=" larumbe/verilog-verible-rules-flycheck concat)
+            source)
+  :error-patterns
+  ((error    (file-name) ":" line ":" column (zero-or-more "-") (zero-or-more digit) ":" (zero-or-more blank) "syntax error at " (message) line-end)
+   (warning  (file-name) ":" line ":" column (zero-or-more "-") (zero-or-more digit) ":" (zero-or-more blank)                    (message) line-end))
+  :modes verilog-mode)
+
+
 ;;;; Others
 (flycheck-define-checker verilog-svlint
   "A Verilog syntax checker using svlint.
@@ -200,9 +245,6 @@ See URL `https://github.com/dalance/svlint'"
 ;; `lsp-mode' based:
 ;; - https://github.com/dalance/svls
 ;; - https://github.com/dalance/svlint
-;;
-;; Verible: seems promising, but still under construction:
-;; - https://github.com/chipsalliance/verible
 
 
 (provide 'verilog-flycheck)
