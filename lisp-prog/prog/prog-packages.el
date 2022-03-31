@@ -2,6 +2,11 @@
 ;;; Commentary:
 ;;; Code:
 
+(use-package eglot)
+(use-package lsp-mode)
+(use-package lsp-ivy)
+
+
 (use-package fic-mode
   :commands (larumbe/clean-fic-keywords-dir
              larumbe/wrap-danger-region)

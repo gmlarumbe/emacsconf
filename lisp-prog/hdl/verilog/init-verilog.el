@@ -96,7 +96,8 @@
   (require 'verilog-imenu)
   (require 'verilog-vhier)
   (require 'verilog-flycheck)
-  (require 'verilog-font-lock))
+  (require 'verilog-font-lock)
+  (require 'verilog-lsp))
 
 
 (provide 'init-verilog)

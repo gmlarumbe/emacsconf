@@ -239,13 +239,6 @@ See URL `https://github.com/dalance/svlint'"
   :modes verilog-mode)
 
 
-;; Language servers:
-;; - https://awesomeopensource.com/projects/language-server/systemverilog/verilog
-;;
-;; `lsp-mode' based:
-;; - https://github.com/dalance/svls
-;; - https://github.com/dalance/svlint
-
 
 (provide 'verilog-flycheck)
 
