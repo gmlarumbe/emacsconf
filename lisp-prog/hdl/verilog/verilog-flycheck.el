@@ -183,10 +183,10 @@ See URL `http://iverilog.icarus.com/'"
 
 
 ;;;; Verible
-(defvar larumbe/verilog-verible-rules
-  '("-line-length"
-    "-invalid-system-task-function")
-  " https://chipsalliance.github.io/verible/lint.html")
+(defvar larumbe/verilog-verible-rules nil
+  "List of strings containing rules. Use - or + prefixes depending on enabling/disabling of rules.
+https://chipsalliance.github.io/verible/lint.html")
+
 (defvar larumbe/verilog-verible-rules-flycheck nil
   "Used as a flycheck argument depending on `larumbe/verilog-verible-rules'")
 
@@ -225,6 +225,8 @@ on single testbench files."
   "A Verilog syntax checker using svlint.
 
 A bit rudimentary, with not many rules but enough to check for parsing errors.
+Could be useful for small RTL self-contained blocks (i.e, almost never).
+
 However, fails dramatically if defines are not found.
 
 See URL `https://github.com/dalance/svlint'"
