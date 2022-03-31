@@ -2,6 +2,11 @@
 ;;; Commentary:
 ;;; Code:
 
+;; lsp & eglot will override some variables/functionality of
+;; - For code navigation they use `xref' under the hood.
+;; - For syntax checking, they override `flymake' and `flycheck' variables, e.g. they execute (flycheck-select-checker 'lsp) or similar
+;; - For code completion, they change `company-backends', overriding it with `company-capf' or adding it to existing ones
+;; - etc...
 (use-package eglot)
 (use-package lsp-mode)
 (use-package lsp-ivy)

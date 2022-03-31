@@ -31,8 +31,10 @@ as well as for C/C++ or Python..."
                (larumbe/find-file-at-point #'jedi:goto-definition-push-marker)
              (larumbe/find-file-at-point)))
           ;; If not pointing to a file choose between different navigation functions
-          ;; - Elisp: xref
-          ((string= major-mode "emacs-lisp-mode")
+          ;; - xref (lsp, eglot, Elisp)
+          ((or lsp-mode
+               eglot--managed-mode
+               (string= major-mode "emacs-lisp-mode"))
            (if def
                (xref-find-definitions def)
              (call-interactively #'xref-find-definitions)))
@@ -54,7 +56,9 @@ if configured.  However, for elisp seems it's not the default engine,
 as well as for C/C++ or Python..."
   (interactive)
   (let ((ref (thing-at-point 'symbol)))
-    (cond ((or (string= major-mode "c-mode")
+    (cond ((or lsp-mode
+               eglot--managed-mode
+               (string= major-mode "c-mode")
                (string= major-mode "python-mode")
                (string= major-mode "emacs-lisp-mode"))
            (if ref

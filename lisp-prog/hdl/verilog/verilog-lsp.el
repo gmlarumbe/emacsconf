@@ -54,7 +54,9 @@
   (add-to-list 'lsp-disabled-clients 'verilog))
 
 
-
+;;; Enable
+(larumbe/verilog-lsp-configure)
+(larumbe/verilog-lsp-set-default-server)
 
 
 (provide 'verilog-lsp)
