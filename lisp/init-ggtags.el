@@ -165,7 +165,7 @@ remove advice is ENABLE is set to nil."
   ;;   - Make use of GTAGSLIBPATH environment variable.
   ;; Associated thread: https://emacs.stackexchange.com/questions/13254/find-external-definition-with-gtags-or-ggtags
   (defun larumbe/gtags-filelist-create (regex &optional exclude-re dir append)
-    "Generate gtags.files for current directory, unless optional DIR is set.
+    "Generate gtags.files on current directory for tags in directory DIR if it is set.
 Include files that match REGEX.
 If EXCLUDE-RE is set, delete paths with that regexp from generated file.
 If DIR is not specified, use current-directory.
@@ -180,25 +180,48 @@ If APPEND is set, append directory files to already existing tags file."
 
   (defun larumbe/gtags-create-tags-async-sentinel (process signal)
     "Sentinel for asynchronous gtags creation."
-    (let ((buf (process-buffer process)))
+    (let* ((buf (process-buffer process))
+           (filename default-directory))
       (cond
        ((equal signal "finished\n")
         (pop-to-buffer buf)
         (message "GTAGS generated in %s" buf))
        ;; Error handling
        ('t
-        (message "Unison process open message got signal %s" signal)
-        (display-buffer (process-buffer process))))))
+        (message "#'larumbe/gtags-create-tags-async-sentinel %s failed with error code %s" filename signal)
+        (display-buffer buf)))))
 
 
-  (defun larumbe/gtags-create-tags-async-process (dir)
-    "Spawn shell and execute gtags asynchronously at directory DIR."
+  (defun larumbe/gtags-create-tags-async-kill-buf-sentinel (process signal)
+    "Sentinel for asynchronous gtags creation.
+Kills gtags buffer after finishing the process if created sucessfully."
+    (let* ((buf (process-buffer process))
+           (filename default-directory))
+      (cond
+       ((equal signal "finished\n")
+        (message "GTAGS successfully generated  %s" (buffer-file-name buf))
+        (quit-window t (get-buffer-window buf)))
+       ;; Error handling
+       ('t
+        (message "#'larumbe/gtags-create-tags-async-kill-buf-sentinel %s failed with error code %s" filename signal)
+        (display-buffer buf)))))
+
+
+  (defun larumbe/gtags-create-tags-async-process (dir &optional bufname kill-buf)
+    "Spawn shell and execute gtags asynchronously at directory DIR.
+Use buffer BUFNAME if optional arg is provided. Otherwise, default will be *gtags-<dirname>*.
+If optional KILL-BUF is non-nil, create a sentinel that kills the process buffer after creating tags."
     (let ((gtags-cmd "gtags -v")
-          (output-buffer (concat "*gtags-" (file-name-nondirectory (directory-file-name dir)) "*")))
+          (output-buffer (if bufname
+                             bufname
+                           (concat "*gtags-" (file-name-nondirectory (directory-file-name dir)) "*")))
+          (sentinel (if kill-buf
+                        #'larumbe/gtags-create-tags-async-kill-buf-sentinel
+                      #'larumbe/gtags-create-tags-async-sentinel)))
       (save-window-excursion
         (async-shell-command (concat "cd " dir " && " gtags-cmd) output-buffer))
       (message "Started gtags at buffer %s" output-buffer)
-      (set-process-sentinel (get-buffer-process output-buffer) #'larumbe/gtags-create-tags-async-sentinel)))
+      (set-process-sentinel (get-buffer-process output-buffer) sentinel)))
 
 
 
@@ -213,12 +236,14 @@ If APPEND is set, append directory files to already existing tags file."
       ("VHDL"            . "\\.vhd[l]?$")
       ("other"           . nil)))
 
-  (defun larumbe/gtags-create-tags-async (&optional dir lang)
+  (defun larumbe/gtags-create-tags-async (&optional dir lang bufname kill-buf)
     "Similar to `ggtags-create-tags' but asynchronously and adapted to Global+Ctags+Pygments workflow.
 
 Create tags at DIR for language LANG.
 If DIR is nil create tags at `default-directory'.
 If LANG is nil default to first language in `larumbe/gtags-create-tags-lang-regexps'.
+Use buffer BUFNAME if optional arg is provided. Otherwise, default will be *gtags-<dirname>*.
+If KILL-BUF is non-nil kill the *gtags-<path>* buffer after finishing the process.
 
 If called interactively, default to create tags for first language in `larumbe/gtags-create-tags-lang-regexps'
 at `default-directory'. If called interactively with prefix, prompt for DIR and LANG."
@@ -260,7 +285,20 @@ at `default-directory'. If called interactively with prefix, prompt for DIR and 
       ;; Create filelist
       (larumbe/gtags-filelist-create regex exclude-re dir) ; Do not append created tags to existing file
       ;; Execute gtags
-      (larumbe/gtags-create-tags-async-process dir)))
+      (larumbe/gtags-create-tags-async-process dir bufname kill-buf)))
+
+
+  (defun larumbe/gtags-create-tags-async-dirs (dirs)
+    "Create gtags for list of strings directories DIRS.
+Skip the ones where there is no write permissions."
+    (dolist (dir dirs)
+      (if (file-writable-p dir)
+          (larumbe/gtags-create-tags-async dir
+                                           "Elisp"
+                                           (concat "*gtags-" (expand-file-name dir) "*")
+                                           :kill-buf)
+        (message "Skipping %s due to write permissions..." dir))))
+
 
 
 ;;;; Auxiliar functions

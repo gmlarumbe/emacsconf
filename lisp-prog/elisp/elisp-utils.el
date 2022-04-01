@@ -80,6 +80,21 @@ However, uninstrumentation is done by evaluating the whole buffer."
 
 
 
+(defun larumbe/elisp-xref-create-gtags ()
+  "Create gtags for Elisp directories of `load-path'.
+
+By default `xref-find-references' will search for a GPATH file on every
+directory/project in the `load-path'. If it can find it, global will be used
+to look up the references. Otherwise grep is used, which can get quite slower
+for all the directories (straight, /usr/local/emacs/, etc...)
+
+Useful to make much faster lookups of xref references on elisp buffers,
+since `semantic-symref-tool' is used through grep if GTAGS does not exist
+and is slow on local installations, and much slower on remote ones."
+  (interactive)
+  (larumbe/gtags-create-tags-async-dirs load-path))
+
+
 ;;;; Steve Purcell
 (defun sanityinc/headerise-elisp ()
   "Add minimal header and footer to an elisp buffer in order to placate flycheck."
