@@ -33,8 +33,8 @@
 (defvar larumbe/gitignore-global-file (concat (getenv "HOME") "/.gitignore_global")) ; Variable used by `helm-rg', `counsel-rg' and `init-projectile'.
 (defvar larumbe/completion-framework 'ivy) ; 'ivy or 'helm are allowed values (helm will coexist with `ivy-switch-buffer')
 
-(defvar larumbe/emacs-conf-repos-all (append '("~/.elisp" "~/.elisp_private") (larumbe/straight-packages)))
-(defvar larumbe/emacs-conf-repos-devel '("~/.elisp" "~/.elisp_private" "~/.emacs.d/straight/repos/my-elisp-packages" "~/.emacs.d/straight/repos/my-elisp-packages-priv"))
+(defvar larumbe/emacs-conf-repos '("~/.elisp" "~/.elisp_private"))
+(defvar larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos '("~/.emacs.d/straight/repos/my-elisp-packages" "~/.emacs.d/straight/repos/my-elisp-packages-priv")))
 (defvar larumbe/emacs-conf-straight-forked
   '("~/.emacs.d/straight/repos/yasnippet-snippets"
     "~/.emacs.d/straight/repos/verilog-mode"
