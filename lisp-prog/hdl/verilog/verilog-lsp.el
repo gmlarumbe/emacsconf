@@ -35,8 +35,9 @@
 ;;
 ;;; Code:
 
+(require 'lsp-mode)
 
-;;; Verible
+;;;; Verible
 (defun larumbe/verilog-lsp-configure ()
   "Configure Verilog for LSP."
   (interactive)
@@ -45,7 +46,7 @@
                     :major-modes '(verilog-mode)
                     :server-id 'verible-ls)))
 
-;;; Select default
+;;;; Select default
 (defun larumbe/verilog-lsp-set-default-server ()
   "Select svlangserver by default by disabling others without chaning priorities."
   (interactive)
@@ -54,7 +55,7 @@
   (add-to-list 'lsp-disabled-clients 'verilog))
 
 
-;;; Enable
+;;;; Enable
 (larumbe/verilog-lsp-configure)
 (larumbe/verilog-lsp-set-default-server)
 
