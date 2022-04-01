@@ -12,7 +12,7 @@
   "Find definition of symbol at point.
 If pointing a URL/file, visit that URL/file instead.
 
-Selects between ggtags/xref to find definitions based on `major-mode'.
+Selects between specific engines/xref to find definitions based on `major-mode'.
 
 INFO: For some major-modes, xref will use global/ggtags as a backend
 if configured.  However, for elisp seems it's not the default engine,
@@ -31,44 +31,29 @@ as well as for C/C++ or Python..."
                (larumbe/find-file-at-point #'jedi:goto-definition-push-marker)
              (larumbe/find-file-at-point)))
           ;; If not pointing to a file choose between different navigation functions
-          ;; - xref (lsp, eglot, Elisp)
-          ((or (bound-and-true-p lsp-mode)
-               (bound-and-true-p eglot--managed-mode)
-               (string= major-mode "verilog-mode")
-               (string= major-mode "emacs-lisp-mode"))
-           (if def
-               (xref-find-definitions def)
-             (call-interactively #'xref-find-definitions)))
           ;; - Python: jedi
           ((string= major-mode "python-mode")
            (call-interactively #'jedi:goto-definition))
-          ;; Default will be using ggtags interface
+          ;; Default to use xref
           (t
-           (call-interactively #'ggtags-find-tag-dwim)))))
+           (if def (progn
+                     (xref-find-definitions def)
+                     (message "Definitions of: %s" def))
+             (call-interactively #'xref-find-definitions))))))
 
 
 (defun larumbe/prog-mode-references ()
-  "Find references of symbol at point.
-
-Selects between ggtags/xref to find references based on `major-mode'.
+  "Find references of symbol at point using xref.
 
 INFO: For some major-modes, xref will use global/ggtags as a backend
 if configured.  However, for elisp seems it's not the default engine,
 as well as for C/C++ or Python..."
   (interactive)
   (let ((ref (thing-at-point 'symbol)))
-    (cond ((or (bound-and-true-p lsp-mode)
-               (bound-and-true-p eglot--managed-mode)
-               (string= major-mode "verilog-mode")
-               (string= major-mode "c-mode")
-               (string= major-mode "python-mode")
-               (string= major-mode "emacs-lisp-mode"))
-           (if ref
-               (xref-find-references ref)
-             (call-interactively #'xref-find-references)))
-          ;; Default will be using ggtags interface
-          (t
-           (call-interactively #'ggtags-find-reference ref)))))
+    (if ref (progn
+              (message "References of: %s" ref)
+              (xref-find-references ref))
+      (call-interactively #'xref-find-references))))
 
 
 
