@@ -17,8 +17,6 @@
          ("\\.ppv\\'"         . verilog-mode))
   :hook ((verilog-mode . larumbe/verilog-hook))
   :bind (:map verilog-mode-map
-         ("<return>" . larumbe/electric-verilog-terminate-line) ; Enter
-         ("RET"      . larumbe/electric-verilog-terminate-line) ; C-m
          ([delete]   . delete-forward-char)
          ("C-%"      . hide/show-comments-toggle)
          ("M-f"      . larumbe/verilog-forward-word)
@@ -76,6 +74,7 @@
   ;; Mode config
   (key-chord-mode 1)
   (remove-hook 'compilation-mode-hook 'verilog-error-regexp-add-emacs) ; `verilog-mode' automatically adds useless compilation regexp alists
+  (advice-add 'electric-verilog-terminate-line :before-until #'larumbe/newline-advice) ; Quit *xref* buffer with C-m/RET
   ;; Company keywords for Verilog
   (require 'company-keywords)
   (add-to-list 'company-keywords-alist (append '(verilog-mode) verilog-keywords))

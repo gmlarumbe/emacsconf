@@ -415,7 +415,8 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
          ("<f12>"   . toggle-truncate-lines))
   :config
   (setq save-interprogram-paste-before-kill t)
-  (setq next-error-verbose nil)) ; Hide "next-locus on <file> minibuffer messages that interfered with flycheck/eldoc"
+  (setq next-error-verbose nil) ; Hide "next-locus on <file> minibuffer messages that interfered with flycheck/eldoc"
+  (advice-add 'newline :before-until #'larumbe/newline-advice)) ; Kill *ag* and *xref* active buffers with RET/C-m
 
 
 (use-package menu-bar

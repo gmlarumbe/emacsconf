@@ -36,20 +36,6 @@ Move backward ARG words."
       (electric-verilog-tab))))
 
 
-(defun larumbe/electric-verilog-terminate-line ()
-  "Wrapper for RET key to add functionality when there is an AG search buffer.
-This will normally happen after calling `modi/verilog-find-parent-module'."
-  (interactive)
-  (let* ((ag-buf "*ag search*")
-         (ag-win (get-buffer-window ag-buf)))
-    (if ag-win
-        (progn
-          (delete-window ag-win)
-          (kill-buffer ag-buf))
-      (call-interactively #'electric-verilog-terminate-line))))
-
-
-
 ;;;; Advising
 (defun larumbe/verilog-forward-sexp ()
   "Same as `verilog-forward-sexp' but with additional support for:
