@@ -33,6 +33,23 @@
 (defvar larumbe/gitignore-global-file (concat (getenv "HOME") "/.gitignore_global")) ; Variable used by `helm-rg', `counsel-rg' and `init-projectile'.
 (defvar larumbe/completion-framework 'ivy) ; 'ivy or 'helm are allowed values (helm will coexist with `ivy-switch-buffer')
 
+(defvar larumbe/emacs-conf-repos-all (append '("~/.elisp" "~/.elisp_private") (larumbe/straight-packages)))
+(defvar larumbe/emacs-conf-repos-devel '("~/.elisp" "~/.elisp_private" "~/.emacs.d/straight/repos/my-elisp-packages" "~/.emacs.d/straight/repos/my-elisp-packages-priv"))
+(defvar larumbe/emacs-conf-straight-forked
+  '("~/.emacs.d/straight/repos/yasnippet-snippets"
+    "~/.emacs.d/straight/repos/verilog-mode"
+    "~/.emacs.d/straight/repos/ssh-tunnels"
+    "~/.emacs.d/straight/repos/repo-el"
+    "~/.emacs.d/straight/repos/org-jira"
+    "~/.emacs.d/straight/repos/kmodi"
+    "~/.emacs.d/straight/repos/jenkins.el"
+    "~/.emacs.d/straight/repos/ivy-youtube"
+    "~/.emacs.d/straight/repos/emacs-btc-ticker"
+    "~/.emacs.d/straight/repos/emacs"
+    "~/.emacs.d/straight/repos/arch-packer")
+  "Obtained through evaluation of: `(larumbe/git-check-forked-repos (larumbe/straight-packages))'")
+
+
 
 (provide 'init-basic)
 
