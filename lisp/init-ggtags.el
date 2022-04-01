@@ -180,30 +180,29 @@ If APPEND is set, append directory files to already existing tags file."
 
   (defun larumbe/gtags-create-tags-async-sentinel (process signal)
     "Sentinel for asynchronous gtags creation."
-    (let* ((buf (process-buffer process))
-           (filename default-directory))
+    (let* ((buf (process-buffer process)))
       (cond
        ((equal signal "finished\n")
         (pop-to-buffer buf)
         (message "GTAGS generated in %s" buf))
        ;; Error handling
        ('t
-        (message "#'larumbe/gtags-create-tags-async-sentinel %s failed with error code %s" filename signal)
+        (message "#'larumbe/gtags-create-tags-async-sentinel: %s failed with error code %s" buf signal)
         (display-buffer buf)))))
 
 
   (defun larumbe/gtags-create-tags-async-kill-buf-sentinel (process signal)
     "Sentinel for asynchronous gtags creation.
 Kills gtags buffer after finishing the process if created sucessfully."
-    (let* ((buf (process-buffer process))
-           (filename default-directory))
+    (let* ((buf (process-buffer process)))
       (cond
        ((equal signal "finished\n")
-        (message "GTAGS successfully generated  %s" (buffer-file-name buf))
-        (quit-window t (get-buffer-window buf)))
+        (message "GTAGS successfully generated: %s" buf)
+        (switch-to-buffer buf)
+        (kill-buffer))
        ;; Error handling
        ('t
-        (message "#'larumbe/gtags-create-tags-async-kill-buf-sentinel %s failed with error code %s" filename signal)
+        (message "#'larumbe/gtags-create-tags-async-kill-buf-sentinel: %s failed with error code %s" buf signal)
         (display-buffer buf)))))
 
 
@@ -290,7 +289,7 @@ at `default-directory'. If called interactively with prefix, prompt for DIR and 
 
   (defun larumbe/gtags-create-tags-async-dirs (dirs)
     "Create gtags for list of strings directories DIRS.
-Skip the ones where there is no write permissions."
+Skip the ones where there is no write permissions. "
     (dolist (dir dirs)
       (if (file-writable-p dir)
           (larumbe/gtags-create-tags-async dir
