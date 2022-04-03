@@ -12,15 +12,16 @@
   "Find definition of symbol at point.
 If pointing a URL/file, visit that URL/file instead.
 
-Selects between specific engines/xref to find definitions based on `major-mode'.
+Selects between specific xref backends to find definitions.
 
-INFO: For some major-modes, xref will use global/ggtags as a backend
-if configured.  However, for elisp seems it's not the default engine,
-as well as for C/C++ or Python..."
+Assumes that prog-modes will have `dumb-jump' as a fallback backend before etags.
+In case definitions are not found and dumb-jump is detected ask for use it as a backend."
   (interactive)
   (let ((file (thing-at-point 'filename))
         (url  (thing-at-point 'url))
-        (def  (thing-at-point 'symbol)))
+        (def  (thing-at-point 'symbol))
+        (backend-xref)
+        (skip))
     (cond (url
            ;; URL
            (browse-url url))
@@ -33,26 +34,47 @@ as well as for C/C++ or Python..."
           ;; If not pointing to a file choose between different navigation functions
           ;; - Python: jedi
           ((string= major-mode "python-mode")
-           (call-interactively #'jedi:goto-definition))
+           (call-interactively #'jedi:goto-definition)
+           (message "[jedi] Definitions of: %s" def))
           ;; Default to use xref
           (t
            (if def (progn
-                     (xref-find-definitions def)
-                     (message "Definitions of: %s" def))
+                     (setq backend-xref (xref-find-backend))
+                     ;; `dumb-jump' only supports definitions and does some basic processing of them
+                     ;; Since sometimes these could not be the desired ones, ask for confirmation
+                     (when (and (equal backend-xref 'dumb-jump)
+                                (not (y-or-n-p "No definitions found, try dumb-jump? ")))
+                       (setq skip t))
+                     (unless skip
+                       (xref-find-definitions def)
+                       (message "[%s] Definitions of: %s" backend-xref def)))
+             ;; Ask for input if there is no def at point
              (call-interactively #'xref-find-definitions))))))
 
 
 (defun larumbe/prog-mode-references ()
   "Find references of symbol at point using xref.
 
-INFO: For some major-modes, xref will use global/ggtags as a backend
-if configured.  However, for elisp seems it's not the default engine,
-as well as for C/C++ or Python..."
+Assumes that prog-modes will have `dumb-jump' as a fallback backend before etags.
+In case references are not found, and dumb-jump is detected as a backend, perform a ripgrep instead.
+
+This ripgrep will be executed at `projectile-project-root' or `default-directory'
+and will be applied to only files of current `major-mode' if existing in `larumbe/ripgrep-types'."
   (interactive)
-  (let ((ref (thing-at-point 'symbol)))
+  (let* ((ref (thing-at-point 'symbol))
+         (backend-xref))
     (if ref (progn
-              (message "References of: %s" ref)
-              (xref-find-references ref))
+              (setq backend-xref (xref-find-backend))
+              ;; `dumb-jump' only supports definitions (doesn't provide implementation for xref-find-references)
+              ;; Since references would be searched through grep and processed by default `semantic-symref'
+              ;; a customized ripgrep command is preferred.
+              (if (equal backend-xref 'dumb-jump)
+                  (when (y-or-n-p "[Skipping dumb-jump] No refs found, try ripgrep? ")
+                    (larumbe/ripgrep-xref ref))
+                ;; Find references with corresponding backend
+                (xref-find-references ref)
+                (message "[%s] References of: %s" backend-xref ref)))
+      ;; Ask for input if there is no ref at point
       (call-interactively #'xref-find-references))))
 
 
@@ -83,7 +105,8 @@ as well as for C/C++ or Python..."
   (wide-column-mode    1)
   (setq truncate-lines t)
   (setq fill-column   80)
-  (setq-local company-backends (larumbe/company-backend-compute)))
+  (setq-local company-backends (larumbe/company-backend-compute))
+  (larumbe/dumb-jump-local-enable))
 
 
 ;;; Hooks

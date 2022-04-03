@@ -92,9 +92,80 @@ List of files provided by project's 'gtags.file' will filter the search."
   "Default rg arguments used in functions (helm, counsel, `projectile')")
 
 
-;; INFO: Even though these two packages are downloaded,
-;; `helm-rg' / `counsel-rg' and `helm-projectile-rg' / `counsel-projectile-rg' seem to be just enough
-(use-package ripgrep)
+(use-package ripgrep
+  :straight (:repo "nlamirault/ripgrep.el"
+             :fork (:repo "gmlarumbe/ripgrep.el"))
+  :commands (larumbe/ripgrep-regexp-symbol-at-point
+             larumbe/ripgrep-xref)
+  :config
+  (setq ripgrep-arguments (append larumbe/rg-arguments '("-w")))
+  (setq ripgrep--base-arguments '("--with-filename" "--no-heading")) ; Remove --line-number since it's already in `larumbe/rg-arguments'
+
+  (defvar larumbe/ripgrep-types
+    '((verilog-mode    . "verilog")
+      (python-mode     . "py")
+      (emacs-lisp-mode . "elisp")
+      (c-mode          . "c")
+      (c++-mode        . "cpp")
+      (vhdl-mode       . "vhdl"))
+    "Variable to determine the -t argument of rg depending on major-mode.")
+
+
+  (defun larumbe/ripgrep-get-lang-type-args (lang)
+    "Return formatted ripgrep type arguments for major-mode LANG."
+    (let ((key (assoc lang larumbe/ripgrep-types))
+          type)
+      (when key
+        (setq type (cdr key))
+        (list "-t" type))))
+
+
+  (defun larumbe/ripgrep-regexp-symbol-at-point ()
+    "Perform ripgrep of current symbol at point in a compilation buffer.
+
+Use current projectile directory or default-dir if not in a project.
+Try to find matches for files associated with current `major-mode'.
+
+Could be useful to find references on specific projects.
+
+Return the type of file used to perform ripgrep."
+    (interactive)
+    (let ((symbol (symbol-name (symbol-at-point)))
+          (rg-dir (larumbe/projectile-project-root-or-current-dir))
+          (type-args (larumbe/ripgrep-get-lang-type-args major-mode)))
+      (ripgrep-regexp symbol rg-dir type-args)
+      ;; Return value
+      (or (nth 1 type-args)
+          "all")))
+
+
+  ;; Variables to show in the modeline which reference is being searched for, at the
+  ;; beginning of the ripgrep, and after search has finished.
+  (defvar larumbe/ripgrep-current-reference nil)
+  (defvar larumbe/ripgrep-current-type nil)
+
+  (defun larumbe/ripgrep-search-finish-update-vars (ref type)
+    "Update reference/type searched variables and use them to debug in the modeline."
+    (setq larumbe/ripgrep-current-reference ref)
+    (setq larumbe/ripgrep-current-type type))
+
+  (defun larumbe/ripgrep-search-finished-hook ()
+    "Hook to run on ripgrep buffers once search has finished."
+    (message "[ripgrep-%s] References of: %s" larumbe/ripgrep-current-type larumbe/ripgrep-current-reference))
+
+  (defun larumbe/ripgrep-xref (ref)
+    "Use `ripgrep' to find xrefs."
+    (let (rg-type)
+      (setq rg-type (larumbe/ripgrep-regexp-symbol-at-point))
+      (larumbe/ripgrep-search-finish-update-vars ref rg-type)
+      (with-current-buffer "*ripgrep-search*"
+        (setq-local ripgrep-search-finished-hook #'larumbe/ripgrep-search-finished-hook))
+      ;; Execute hook at the beginning of ripgrep and after compilation has finished to keep seeing message on the mode-line
+      (larumbe/ripgrep-search-finished-hook))))
+
+
+
+;; Further packages
 (use-package deadgrep)
 
 

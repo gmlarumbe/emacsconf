@@ -55,11 +55,18 @@
 
 (use-package straight
   :commands (larumbe/straight-packages
-             larumbe/straight-check-dirty-repos)
+             larumbe/straight-check-dirty-repos
+             larumbe/straight-not-repo-p)
   :config
   (setq straight-use-package-by-default t)
   (setq straight-host-usernames
         '((github . "gmlarumbe")))
+
+
+  (defun larumbe/straight-not-repo-p (repo)
+    "Return true if REPO is not a straight repo."
+    (not (string-prefix-p (expand-file-name "~/.emacs.d/straight/") repo)))
+
 
   (defun larumbe/straight-packages ()
     "Return list of strings with the paths of every straight repo."

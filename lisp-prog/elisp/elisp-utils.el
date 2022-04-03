@@ -33,19 +33,6 @@ Argument ARG sets `flycheck-mode' non-interactively."
     (larumbe/flycheck-eldoc-toggle)))
 
 
-(defun larumbe/newline ()
-  "Wrapper for RET key when there is an *xref* search buffer.
-This will normally happen after calling `larumbe/prog-mode-definitions' in elisp."
-  (interactive)
-  (let* ((xref-buf "*xref*")
-         (xref-win (get-buffer-window xref-buf)))
-    (if xref-win
-        (progn
-          (delete-window xref-win)
-          (kill-buffer xref-buf))
-      (call-interactively #'newline))))
-
-
 (defun larumbe/insert-time-stamp-elisp ()
   "Insert time-stamp for Elisp buffers.
 Try to add it before Commentary section."
@@ -54,22 +41,11 @@ Try to add it before Commentary section."
 
 
 ;;;; Xref
-;; Xref uses semantic engine to find definitions/references through various backends: Global, IDutils, CScope or grep as a fallback.
-;; Check variables: `semantic-symref-tool'
-;; It makes use of `project-root' and project.el, a projectile-like based GNU ELPA core package, probably intended to be added
-;; in future versions of Emacs.
-;;
-;; Working principles:
-;;   By default `xref-find-references' will search for a GPATH file (plus idutils and cscope files)
-;;   on every directory/project. If non of these are found, it will use grep to find definitions and references.
-;;   Current project is found through project.el `project-find-functions', which seems to work well, and external
-;;   projects related to current one through the execution of the function `project-vc-external-roots-function'.
-;;   By default, the value of `project-vc-external-roots-function' is (lambda () tags-table-list), so etags is asked for use.
-;;
-;;   For elisp, these external-roots directories are considered to be the `load-path' since `emacs-lisp-mode' sets
-;;   it locally to `elisp-load-path-roots'. On remote machines, it could take very long times to grep every straight
-;;   directory to find references. So the options are to create global GTAGS/GPATH on each of these directories, or
-;;   whether change the `project-vc-external-roots-function' to not use the `load-path' and custom directories instead.
+;; For elisp, the external-roots directories are considered to be the `load-path' since `emacs-lisp-mode'
+;; sets the variable `project-vc-external-roots-function' locally to `elisp-load-path-roots'.
+;; On remote machines, it could take very long times to grep every straight directory to find references.
+;; So the options are to create global GTAGS/GPATH on each of these directories, or whether change the
+;; `project-vc-external-roots-function' to not use the `load-path' and custom directories instead.
 ;;
 ;; The first thing is to set the value of `larumbe/elisp-xref-dirs':
 ;;  - If set to nil:
@@ -79,25 +55,47 @@ Try to add it before Commentary section."
 ;;     + References will be looked-up in the specified directories.
 ;;     + `larumbe/elisp-xref-create-gtags' will create tags on these specified directories
 ;;
-;;
 ;; More INFO: https://emacs.stackexchange.com/questions/56198/how-to-use-xref-find-references-on-elisp-files-without-no-references-found-for
 ;;            2nd answer
 
-(defvar larumbe/elisp-xref-dirs nil
+(defvar larumbe/elisp-xref-dirs larumbe/emacs-conf-repos-devel
   "Set to nil by default, assumming a local/fast machine without many straight repos.")
 
 
-(defun larumbe/elisp-xref-create-gtags ()
-  "Create gtags for Elisp directories depending on value of `larumbe/elisp-xref-dirs'.
+(defun larumbe/elisp-xref-set-dirs (dirs)
+  "Ask for which directories are to be used to find xrefs for elisp.
 
-If set to nil, create references for every writable project directory of `load-path'
-If set to non-nil, create references for repos in `larumbe/elisp-xref-dirs'."
+If called non-interactively, valid values are 'all, 'non-straight and 'mine.
+Other values will set it to nil, enabling all folders for xref lookup."
+  (interactive
+   (list (intern (completing-read "Select dirs: " '(all
+                                                    non-straight
+                                                    mine)))))
+  ;; Set variable according to choice
+  (pcase dirs
+    ('all
+     (setq larumbe/elisp-xref-dirs nil))
+    ('non-straight
+     (setq larumbe/elisp-xref-dirs (append (seq-filter #'larumbe/straight-not-repo-p load-path)
+                                           larumbe/emacs-conf-repos-packages)))
+    ('mine
+     (setq larumbe/elisp-xref-dirs larumbe/emacs-conf-repos-devel))
+    (_
+     (setq larumbe/elisp-xref-dirs nil)))
+  ;; Echo value set
+  (message "xref dirs set to: %s" larumbe/elisp-xref-dirs))
+
+
+(defun larumbe/elisp-xref-create-gtags ()
+  "Create gtags for Elisp directories depending on value of `larumbe/elisp-xref-dirs':
+- If `larumbe/elisp-xref-dirs' is nil, create references for every writable project directory of `load-path'.
+- If `larumbe/elisp-xref-dirs' is non-nil, create references for repos in `larumbe/elisp-xref-dirs'."
   (interactive)
-  (let ((dirs (larumbe/project-vc-external-roots-function)))
+  (let ((dirs (larumbe/elisp-project-vc-external-roots-function)))
     (larumbe/gtags-create-tags-async-dirs dirs)))
 
 
-(defun larumbe/project-vc-external-roots-function ()
+(defun larumbe/elisp-project-vc-external-roots-function ()
   "Return list of strings of external roots projects where to look for xref references.
 Meant to be used as a hook to override default functionality of the whole `load-path'."
   (let ((dirs (if (bound-and-true-p larumbe/elisp-xref-dirs)
@@ -116,7 +114,7 @@ Meant to be used as a hook to override default functionality of the whole `load-
   (rainbow-delimiters-mode 1)
   ;; Xrefs limited to specified directories
   (when (bound-and-true-p larumbe/elisp-xref-dirs)
-    (setq-local project-vc-external-roots-function #'larumbe/project-vc-external-roots-function))
+    (setq-local project-vc-external-roots-function #'larumbe/elisp-project-vc-external-roots-function))
   ;; Eldoc mode hook for Lisp related modes
   (dolist (hook '(emacs-lisp-mode-hook
                   lisp-interaction-mode-hook

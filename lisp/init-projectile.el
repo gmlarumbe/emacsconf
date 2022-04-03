@@ -19,7 +19,8 @@
          ("C-c p c" . projectile-compile-project))
   :commands (projectile-project-root ; used by many larumbe functions
              projectile-project-name
-             larumbe/projectile-custom-mode-line)
+             larumbe/projectile-custom-mode-line
+             larumbe/projectile-project-root-or-current-dir)
   :config
   (setq projectile-enable-caching t) ; Enable caching, otherwise `projectile-find-file' is really slow for large projects.
 
@@ -81,7 +82,15 @@ Use `rg' for getting a list of all files in the project."
           "fdfind . -0 --type f --color=never")
          ;; with find we have to be careful to strip the ./ from the paths
          ;; see https://stackoverflow.com/questions/2596462/how-to-strip-leading-in-unix-find
-         (t "find . -type f | cut -c3- | tr '\\n' '\\0'"))))
+         (t "find . -type f | cut -c3- | tr '\\n' '\\0'")))
+
+
+  (defun larumbe/projectile-project-root-or-current-dir (&optional dir)
+    "Return `projectile-project-root' if existing, current dir otherwise.
+Used for some ripgrep/dumb-jump xref related functions."
+    (if (projectile-project-root dir)
+        (projectile-project-root dir)
+      default-directory)))
 
 
 (when (equal larumbe/completion-framework 'helm)

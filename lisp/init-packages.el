@@ -160,13 +160,6 @@ C-s C-w [C-w] [C-w]... behaviour. "
   (global-hardcore-mode 1))
 
 
-(use-package xref
-  :config
-  (setq xref-auto-jump-to-first-definition t)
-  (setq xref-auto-jump-to-first-xref t)
-  (setq xref-after-update-hook #'(lambda () (setq truncate-lines t))))
-
-
 
 ;;;; Editing
 (use-package drag-stuff

@@ -33,12 +33,14 @@
 (defvar larumbe/gitignore-global-file (concat (getenv "HOME") "/.gitignore_global")) ; Variable used by `helm-rg', `counsel-rg' and `init-projectile'.
 (defvar larumbe/completion-framework 'ivy) ; 'ivy or 'helm are allowed values (helm will coexist with `ivy-switch-buffer')
 
-(defvar larumbe/emacs-conf-repos '("~/.elisp" "~/.elisp_private"))
-(defvar larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos '("~/.emacs.d/straight/repos/my-elisp-packages" "~/.emacs.d/straight/repos/my-elisp-packages-priv")))
+(defvar larumbe/emacs-conf-repos-core '("~/.elisp" "~/.elisp_private"))
+(defvar larumbe/emacs-conf-repos-packages '("~/.emacs.d/straight/repos/my-elisp-packages" "~/.emacs.d/straight/repos/my-elisp-packages-priv"))
+(defvar larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos-core larumbe/emacs-conf-repos-packages))
 (defvar larumbe/emacs-conf-straight-forked
   '("~/.emacs.d/straight/repos/yasnippet-snippets"
     "~/.emacs.d/straight/repos/verilog-mode"
     "~/.emacs.d/straight/repos/ssh-tunnels"
+    "~/.emacs.d/straight/repos/ripgrep.el"
     "~/.emacs.d/straight/repos/repo-el"
     "~/.emacs.d/straight/repos/org-jira"
     "~/.emacs.d/straight/repos/kmodi"

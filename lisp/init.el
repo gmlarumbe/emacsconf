@@ -20,6 +20,7 @@
 (require 'init-ivy)
 (require 'init-projectile)
 (require 'init-ggtags)
+(require 'init-xref)
 (require 'init-completion)
 (require 'init-dired)
 (require 'init-jira)

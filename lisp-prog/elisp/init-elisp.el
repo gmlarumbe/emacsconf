@@ -5,6 +5,7 @@
 (use-package elisp-mode
   :straight nil
   :diminish eldoc-mode
+  :commands (larumbe/elisp-xref-set-dirs)
   :bind (:map emacs-lisp-mode-map
          ("C-c C-l"  . larumbe/load-file-current-buffer)
          ("C-c C-b"  . larumbe/byte-compile-current-buffer)
