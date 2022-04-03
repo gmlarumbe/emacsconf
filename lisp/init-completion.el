@@ -86,8 +86,7 @@
 
   ;; Flex search: Searches for characters in the given order, with anything in between.
   ;; e.g. "a-t-l" to find `add-to-list'
-  ;; Default is `regexp-quote' with looks for an exact match.
-  ;; DANGER: `company-search-flex-regexp' seems to only work for Elisp, not for Verilog/Python (use `counsel-company' for these)
+  ;; Default is `regexp-quote' which looks for an exact match.
   (setq company-search-regexp-function #'company-search-flex-regexp)
 
   ;; Company only uses one backend at a time, so set a backend for files/dirs and a grouped backend with keywords/tags/etc...

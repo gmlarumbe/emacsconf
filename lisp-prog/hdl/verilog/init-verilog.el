@@ -6,15 +6,10 @@
 (use-package verilog-mode
   :straight (:repo "veripool/verilog-mode"
              :fork (:repo "gmlarumbe/verilog-mode" :branch "bug-sexp"))
-  :mode (("\\.[st]*v[hp]*\\'" . verilog-mode) ;.v, .sv, .svh, .tv, .vp
-         ("\\.psl\\'"         . verilog-mode)
-         ("\\.vams\\'"        . verilog-mode)
-         ("\\.vinc\\'"        . verilog-mode)
-         ;; Other custom formats
-         ("\\.vsrc\\'"        . verilog-mode)
-         ("\\.vsrc.pp\\'"     . verilog-mode)
-         ("\\.v.pp\\'"        . verilog-mode)
-         ("\\.ppv\\'"         . verilog-mode))
+  :mode (;; Emacs will add "\\.[ds]?va?h?\\'" by default
+         ("\\.psl\\'"   . verilog-mode)
+         ("\\.vams\\'"  . verilog-mode)
+         ("\\.vinc\\'"  . verilog-mode))
   :hook ((verilog-mode . larumbe/verilog-hook))
   :bind (:map verilog-mode-map
          ([delete]   . delete-forward-char)

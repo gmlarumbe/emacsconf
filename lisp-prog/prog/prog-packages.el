@@ -205,10 +205,10 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
 
 
 ;; Global mode used by C, Python, HTML and others
+;; INFO: Better use cscope and language servers with LSP
 (use-package semantic
   :bind (:map semantic-mode-map
          ("C-c ," . nil)) ; INFO: Unbinds ALL semantic commands, since C-c , is the prefix
-  :hook ((c-mode-common . larumbe/semantic-mode))
   :config
   (defvar larumbe/semantic-enable nil
     "Conditionally determine in a hook if mode is enabled.")

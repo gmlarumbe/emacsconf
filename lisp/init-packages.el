@@ -278,6 +278,7 @@ the vertical drag is done."
 (use-package google-this
   :diminish
   :bind (("C-c / t" . google-this)
+         ("C-c / l" . google-this-line)
          ("C-c / c" . google-this-translate-query-or-region))
   :config
   ;; Once a command present in :bind is executed the rest of `google-this-mode' commands will be available
@@ -491,6 +492,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 ;;;; Libraries
+(use-package dash)
 (use-package f)
 (use-package pcre2el)
 (use-package with-editor)

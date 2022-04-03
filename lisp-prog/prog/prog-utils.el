@@ -3,6 +3,7 @@
 ;;
 ;;  Semantic adds an Xref backend for specific modes such as Python/HTML/C.
 ;;  That's the reason why they are included in `larumbe/prog-mode-references'.
+;;  DANGER: Tried to check this on 3 April 2022 and dunno if it was certain...?
 ;;
 ;;; Code:
 
