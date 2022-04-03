@@ -16,6 +16,7 @@
          ("j"       . larumbe/dired-do-async-shell-command-or-okular) ; Open file-at-point directly with Okular if is a PDF and delete async process window. Otherwise it will ask for default program
          (","       . larumbe/dired-toggle-deletion-confirmer)        ; https://superuser.com/questions/332590/how-to-prevent-delete-confirmation-in-emacs-dired
          ("I"       . dired-kill-subdir)                              ; Replaces `dired-info', requires `dired-aux', mapping in dired-aux use-package didn't work
+         ("a"       . larumbe/dired-async-toggle)                     ; Replaces `dired-find-alternate-file', never used it though...
          ("C-x C-q" . wdired-change-to-wdired-mode))                  ; Previously overriden by EXWM global keybinding
   :bind (("C-x C-j" . larumbe/dired-jump))
   :hook ((dired-mode . larumbe/dired-hook))
@@ -102,10 +103,6 @@
            (";" . dired-collapse-mode)))
 
 
-  ;; Run asynchronously dired commands for copying, renaming and symlinking (through async library)
-  ;; To cancel a copy call `dired-async-kill-process'
-  (dired-async-mode 1)
-
   ;; Show size in human readable format
   (setq dired-listing-switches "-alh")
 
@@ -148,6 +145,19 @@ Provides a more convenient solution to cluttering dired buffers than `dired-sing
             (dired-do-async-shell-command program filename (list filename))
             (delete-window (get-buffer-window "*Async Shell Command*")))
         (call-interactively #'dired-do-async-shell-command))))
+
+
+  (defun larumbe/dired-async-toggle ()
+    "Run asynchronously dired commands for copying, renaming and symlinking, through async library.
+Useful since sometimes it takes longer renaming/copying for small files due to async processing overhead.
+To cancel a copy call `dired-async-kill-process'. "
+    (interactive)
+    (if dired-async-mode
+        (progn
+          (dired-async-mode -1)
+          (message "dired-async disabled"))
+      (dired-async-mode 1)
+      (message "dired-async enabled")))
 
 
   (defun larumbe/dired-hook ()
