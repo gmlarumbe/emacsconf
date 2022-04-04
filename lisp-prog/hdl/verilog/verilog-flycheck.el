@@ -12,6 +12,44 @@
 (defvar larumbe/flycheck-active-linter nil) ; Flycheck will automatically set its default, avoiding potential errors when executables are not found
 
 
+
+(defun larumbe/verilog-flycheck-extra-actions-pre (linter)
+  "Extra actions to perform for speficic LINTER to work properly before enabling flycheck."
+  (pcase linter
+    ('verilog-verible
+     (larumbe/verilog-verible-rules-fmt))
+    ('verilog-hal
+     (unless (and (executable-find "xrun")
+                  (executable-find "hal"))
+       (error "Could not find 'xrun' and 'hal' in $PATH"))
+     (larumbe/xrun-hal-script-create))))
+
+
+(defun larumbe/verilog-flycheck-extra-actions-post ()
+  "Extra actions to perform for `larumbe/flycheck-active-linter' after enabling flycheck."
+  (when (and (equal larumbe/flycheck-active-linter 'verilog-cadence-hal)
+             (equal flycheck-mode t))
+    (message "Cadence HAL linting...")))
+
+
+(defun larumbe/verilog-flycheck-select-linter (&optional linter)
+  "Select LINTER for verilog flycheck."
+  (unless linter
+    (setq linter (intern (completing-read "Select linter: " '(verilog-verible
+                                                              verilog-verilator
+                                                              verilog-iverilog
+                                                              verilog-cadence-hal
+                                                              verilog-svlint)
+                                          nil t))))
+  (larumbe/verilog-flycheck-extra-actions-pre linter)
+  (setq larumbe/flycheck-active-linter linter)
+  (when (string= major-mode "verilog-mode") ; Allow for setting up the linter in the elisp init
+    (flycheck-select-checker linter))       ; This line needs to be executed only in a verilog buffer
+  (message "Linter set to: %s " larumbe/flycheck-active-linter)
+  ;; Return 'linter value
+  linter)
+
+
 (defun larumbe/verilog-flycheck-mode (&optional uarg)
   "`flycheck-mode' Verilog wrapper function.
 If called with UARG, select among available linters.
@@ -21,35 +59,12 @@ to avoid minibuffer collisions."
   (interactive "P")
   (when buffer-read-only
     (error "Flycheck does not work on read-only buffers!"))
-  (let ((linters '("verible" "verilator" "iverilog" "hal" "svlint"))
-        (active-linter))
-    (if uarg
-        (progn
-          (pcase (completing-read "Select linter: " linters)
-            ("verible"
-             (larumbe/verilog-verible-rules-fmt)
-             (setq active-linter 'verilog-verible))
-            ("verilator"
-             (setq active-linter 'verilog-verilator))
-            ("iverilog"
-             (setq active-linter 'verilog-iverilog))
-            ("hal"
-             (unless (and (executable-find "xrun")
-                          (executable-find "hal"))
-               (error "Could not find 'xrun' and 'hal' in $PATH"))
-             (setq active-linter 'verilog-cadence-hal)
-             (larumbe/xrun-hal-script-create))
-            ("svlint"
-             (setq active-linter 'verilog-svlint)))
-          (setq larumbe/flycheck-active-linter active-linter)
-          (flycheck-select-checker active-linter)
-          (message "Linter set to: %s " larumbe/flycheck-active-linter))
-      ;; No uarg
-      (larumbe/verilog-update-project-pkg-list)
-      (larumbe/flycheck-eldoc-toggle)
-      (when (and (equal larumbe/flycheck-active-linter 'verilog-cadence-hal)
-                 (equal flycheck-mode t))
-        (message "Cadence HAL linting...")))))
+  (if uarg
+      (larumbe/verilog-flycheck-select-linter)
+    ;; No uarg
+    (larumbe/verilog-update-project-pkg-list)
+    (larumbe/flycheck-eldoc-toggle)
+    (larumbe/verilog-flycheck-extra-actions-post)))
 
 
 

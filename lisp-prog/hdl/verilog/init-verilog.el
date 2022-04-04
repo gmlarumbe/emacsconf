@@ -6,6 +6,7 @@
 (use-package verilog-mode
   :straight (:repo "veripool/verilog-mode"
              :fork (:repo "gmlarumbe/verilog-mode" :branch "bug-sexp"))
+  :commands (larumbe/verilog-flycheck-select-linter)
   :mode (;; Emacs will add "\\.[ds]?va?h?\\'" by default
          ("\\.psl\\'"   . verilog-mode)
          ("\\.vams\\'"  . verilog-mode)
