@@ -45,17 +45,22 @@
     (setq search-default-mode 'auto)
 
     ;; Search wrappers
-    (defun larumbe/search-forward ()
-      "Use isearch for dired-mode and swiper for the rest."
-      (interactive)
-      (if (string= major-mode "dired-mode")
+    (defun larumbe/search-forward (&optional uarg)
+      "Use isearch for dired-mode and swiper for the rest.
+Use isearch if uarg is provided (e.g. large files where swiper could be a bit slow)."
+      (interactive "P")
+      (if (or (string= major-mode "dired-mode")
+              uarg)
           (call-interactively #'isearch-forward)
         (call-interactively #'swiper)))
 
-    (defun larumbe/search-backward ()
-      "Use isearch for dired-mode and swiper for the rest."
+    (defun larumbe/search-backward (&optional uarg)
+      "Use isearch for dired-mode and swiper for the rest.
+Use isearch if uarg is provided (e.g. large files where swiper could be a bit slow)."
       (interactive)
-      (if (string= major-mode "dired-mode")
+      (interactive "P")
+      (if (or (string= major-mode "dired-mode")
+              uarg)
           (call-interactively #'isearch-backward)
         (call-interactively #'swiper-backward)))
 
