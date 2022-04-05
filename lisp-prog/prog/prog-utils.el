@@ -111,10 +111,6 @@ and will be applied to only files of current `major-mode' if existing in `larumb
   (gtags-update-async-minor-mode 1))
 
 
-;;; Hooks
-;; Truncate lines on xref buffers
-(add-hook 'xref-after-jump-hook #'(lambda () (setq truncate-lines t)))
-
 
 (provide 'prog-utils)
 
