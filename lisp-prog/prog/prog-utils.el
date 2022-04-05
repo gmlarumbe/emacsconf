@@ -107,7 +107,8 @@ and will be applied to only files of current `major-mode' if existing in `larumb
   (setq truncate-lines t)
   (setq fill-column   80)
   (setq-local company-backends (larumbe/company-backend-compute))
-  (larumbe/dumb-jump-local-enable))
+  (larumbe/dumb-jump-local-enable)
+  (gtags-update-async-minor-mode 1))
 
 
 ;;; Hooks
