@@ -98,7 +98,9 @@ C-s C-w [C-w] [C-w]... behaviour. "
               ("C-k" . scroll-down-command)
               ("j"   . View-scroll-line-forward)
               ("k"   . View-scroll-line-backward)
-              ("l"   . recenter-top-bottom))
+              ("l"   . recenter-top-bottom)
+              ("RET" . nil)
+              ("C-m" . nil))
   :config
   (setq view-read-only t))
 
