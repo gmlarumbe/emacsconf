@@ -12,6 +12,7 @@
          ("C-j"     . dired-find-file)
          ("b"       . dired-up-directory)
          ("l"       . recenter-top-bottom)
+         ("y"       . dired-do-symlink)                               ; Replaces `dired-show-file-type'
          ("J"       . dired-goto-file)                                ; Switch from 'j' to 'J'
          ("j"       . larumbe/dired-do-async-shell-command-or-okular) ; Open file-at-point directly with Okular if is a PDF and delete async process window. Otherwise it will ask for default program
          (","       . larumbe/dired-toggle-deletion-confirmer)        ; https://superuser.com/questions/332590/how-to-prevent-delete-confirmation-in-emacs-dired
