@@ -50,7 +50,40 @@ in order to check pending project actions."
 
 (use-package hideshow
   :straight nil
-  :diminish hs-minor-mode)
+  :diminish hs-minor-mode
+  :config
+  ;; Advice `hs-toggle-hiding':
+  ;;   - There was a 'bug' when doing hs-toggle if the block start symbol was at the end of the line.
+  ;;     The block would hid properly and the point is set to the block start but if toggling
+  ;;     again to show the hidden block it would not work (it is necessary to go back one char
+  ;;     for it to show again).
+  ;;
+  ;;   - e.g. in verilog, this worked with hs with the begin/end keywords:
+  ;;         begin : foo
+  ;;            something();
+  ;;         end : foo
+  ;;
+  ;;     But this didn't
+  ;;         begin
+  ;;            something();
+  ;;         end
+  ;;
+  ;;  - The only difference is that it is needed that the point be inside the block
+  ;;    for it to hide, it is not enough that point is over the block start symbol,
+  ;;    it has to be after it (not a major problem though).
+  ;;
+  (defun larumbe/hs-toggle-hiding (&optional e)
+    "Advice function for `hs-toggle-hiding'.
+
+Same as `hs-toggle-hiding', but do not exec: (posn-set-point (event-end e))"
+    (interactive)
+    (hs-life-goes-on
+     ;; (posn-set-point (event-end e)) ;; INFO: Disabled action
+     (if (hs-already-hidden-p)
+         (hs-show-block)
+       (hs-hide-block))))
+
+  (advice-add 'hs-toggle-hiding :override #'larumbe/hs-toggle-hiding))
 
 
 

@@ -122,22 +122,6 @@ Modify `which-func' face color and set a slightly different format from modi's."
 (add-hook 'verilog-mode-hook #'modi/verilog-which-func)
 
 
-;;;; Hideshow
-(add-to-list 'modi/verilog-block-start-keywords "generate")
-(add-to-list 'modi/verilog-block-end-keywords "endgenerate")
-(delete "module" modi/verilog-block-start-keywords)
-(delete "endmodule" modi/verilog-block-end-keywords)
-
-(setq modi/verilog-block-start-keywords-re (regexp-opt modi/verilog-block-start-keywords 'symbols))
-(setq modi/verilog-block-end-keywords-re (regexp-opt modi/verilog-block-end-keywords 'symbols))
-
-(add-to-list 'hs-special-modes-alist
-             `(verilog-mode ,(concat "(\\|" modi/verilog-block-start-keywords-re)
-                            ,(concat ")\\|" modi/verilog-block-end-keywords-re)
-                            nil
-                            verilog-forward-sexp-function))
-
-
 ;;;; Misc
 (add-hook 'verilog-mode-hook (lambda () (add-hook 'before-save-hook #'modi/verilog-block-end-comments-to-block-names nil :local)))
 
