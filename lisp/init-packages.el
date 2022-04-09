@@ -488,9 +488,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 ;; API of `coin-ticker' was outdated. Also tried `crypto-ticker-mode' but was a bit more complex than this one
-(use-package btc-ticker
-  :straight (:repo "niedbalski/emacs-btc-ticker"
-             :fork (:repo "gmlarumbe/emacs-btc-ticker" :branch "larumbe")))
+(use-package btc-ticker)
 
 
 ;;;; Libraries
