@@ -153,7 +153,8 @@ point between the symbol boundaries."
     (add-to-list 'ivy-initial-inputs-alist '(counsel-M-x . " "))
     ;; Use ffap to open files
     (setq counsel-find-file-at-point t)
-
+    ;; Use same outline faces as org
+    (setq counsel-outline-face-style 'org)
 
     (require 'ag)
     ;; Format `counsel-ag' and `counsel-rg' commands from `ag-arguments' and `larumbe/rg-arguments'
