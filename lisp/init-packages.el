@@ -348,8 +348,9 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 (use-package ssh-tunnels
-  :straight (:repo "death/ssh-tunnels"
-             :fork (:repo "gmlarumbe/ssh-tunnels" :branch "larumbe")))
+  :config
+  (setq ssh-tunnels-name-width 25)
+  (setq ssh-tunnels-host-width 20))
 
 
 (use-package erc
