@@ -149,8 +149,6 @@ point between the symbol boundaries."
     :bind (:map counsel-find-file-map
            ("C-l" . counsel-up-directory))
     :config
-    ;; Avoid writing 'larumbe/' for all these prefixed functions
-    (add-to-list 'ivy-initial-inputs-alist '(counsel-M-x . " "))
     ;; Use ffap to open files
     (setq counsel-find-file-at-point t)
     ;; Use same outline faces as org
