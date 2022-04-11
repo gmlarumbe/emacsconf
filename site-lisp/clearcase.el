@@ -1736,7 +1736,8 @@ the user to edit."
         (re-search-forward "^-------------------------------------------------" nil t 2)
         (insert "\n*/\n"))
       (when verilog-file-p
-        (verilog-mode))
+        (verilog-mode)
+        (view-mode))
       (setq buffer-read-only t))
     (message "Annotating %s ...done" relative-name)))
 
