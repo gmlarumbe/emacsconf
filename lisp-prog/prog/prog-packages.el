@@ -161,10 +161,7 @@ Same as `hs-toggle-hiding', but do not exec: (posn-set-point (event-end e))"
   (set-face-attribute 'ediff-odd-diff-B     nil :background "Grey50"      :foreground "White" :inherit nil)
   (set-face-attribute 'ediff-current-diff-A nil :background "darkorange3" :foreground "white" :inherit nil)
   (set-face-attribute 'ediff-fine-diff-A    nil :background "cyan4"       :foreground "white" :inherit nil)
-  (set-face-attribute 'ediff-even-diff-A    nil :background "Grey50"      :foreground "White" :inherit nil)
-  ;; Last tweak to show green changes at the left
-  ;; Meant to be used for 2 buffers. If three are used then it will rotate just once after startup.
-  (add-hook 'ediff-startup-hook #'ediff-swap-buffers))
+  (set-face-attribute 'ediff-even-diff-A    nil :background "Grey50"      :foreground "White" :inherit nil))
 
 
 
