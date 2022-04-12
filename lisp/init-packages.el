@@ -439,7 +439,6 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 (use-package auto-highlight-symbol
-  :bind (("C-<f11>" . auto-highlight-symbol-mode))
   :bind (:map auto-highlight-symbol-mode-map
          ("M-<"     . ahs-backward)
          ("M->"     . ahs-forward)
