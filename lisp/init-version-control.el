@@ -166,8 +166,10 @@
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/larumbe-vc-utils.el"))
   :bind (("C-x t"   . larumbe/repohome-magit-status)
          ("C-x y"   . larumbe/repohome-magit-reset-args)
-         ("C-<f11>" . larumbe/emacs-check-dirty-repos)))
+         ("C-<f12>" . larumbe/emacs-check-dirty-repos)))
 
+(use-package git-dirty
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/git-dirty.el")))
 
 
 
