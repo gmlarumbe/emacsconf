@@ -26,40 +26,6 @@ Point to problematic regexp in case it is found."
       (message "Imenu DANGER!: semicolon in comment instance!!"))))
 
 
-;; (defmacro with-verilog-shadow (&rest body)
-;;   "Ensure command is executed in associated verilog shadow buffer."
-;;   (declare (debug t))
-;;   `(save-excursion
-;;      (unless (get-buffer (larumbe/verilog-shadow-buffer))
-;;        (error "Shadow buf does not exist!"))
-;;      (let ((orig-pos (point)))
-;;        (with-current-buffer (larumbe/verilog-shadow-buffer)
-;;          (goto-char orig-pos)
-;;          ,@body))))
-
-
-;; (defmacro with-verilog-shadow (&rest body)
-;;   "Ensure command is executed in associated verilog shadow buffer."
-;;   (declare (debug t))
-;;   `(save-excursion
-;;      (let ((buf (get-buffer (larumbe/verilog-shadow-buffer)))
-;;            (orig-pos (point))
-;;            (orig-buffer (current-buffer)))
-;;        (unless buf
-;;          (setq buf (get-buffer-create (larumbe/verilog-shadow-buffer)))
-;;          (with-current-buffer buf
-;;            (insert-buffer-substring-no-properties orig-buffer)
-;;            (larumbe/verilog-replace-comments-with-blanks)
-;;            (goto-char (point-min))))
-;;        (with-current-buffer buf
-;;          (goto-char orig-pos)
-;;          ,@body))))
-
-
-;; (with-verilog-shadow
-;;  (message"hello"))
-
-
 (add-hook 'verilog-mode-hook (lambda () (add-hook 'after-save-hook #'larumbe/verilog-shadow-buffer-update nil :local)))
 (add-hook 'verilog-mode-hook (lambda () (add-hook 'kill-buffer-hook #'larumbe/verilog-shadow-buffer-kill nil :local)))
 
@@ -104,14 +70,6 @@ Point to problematic regexp in case it is found."
   (let ((buf (larumbe/verilog-shadow-buffer)))
     (when (get-buffer buf)
       (kill-buffer buf))))
-
-
-;; INFO: Very promising!!
-;; The only missing thing is to insert the buffer and remove blanks when colorizing ONLY
-;; once at the beginning.
-;; So it's necessary to have a buffer with the blanks in parallel to do the coloring
-;; Check `larumbe/find-verilog-module-instance-fontify' and check about the buffer without blanks there.
-;; font-lock does it gradually, but with this function is extremely expensive
 
 
 (defun larumbe/verilog-replace-comments-with-blanks ()
@@ -209,12 +167,10 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
       (forward-char) ; Needed to avoid getting stuck
       (while (and (not found)
                   (re-search-forward larumbe/verilog-token-re nil t))
-        (unless (or (equal (face-at-point) 'font-lock-comment-face)
-                    (equal (face-at-point) 'font-lock-string-face))
-          (setq found t)
-          (if (called-interactively-p)
-              (setq pos (match-beginning 1))
-            (setq pos (point))))))
+        (setq found t)
+        (if (called-interactively-p)
+            (setq pos (match-beginning 1))
+          (setq pos (point)))))
     (when found
       (goto-char pos))))
 
@@ -228,12 +184,10 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
     (with-verilog-shadow
       (while (and (not found)
                   (re-search-backward larumbe/verilog-token-re nil t))
-        (unless (or (equal (face-at-point) 'font-lock-comment-face)
-                    (equal (face-at-point) 'font-lock-string-face))
-          (setq found t)
-          (if (called-interactively-p)
-              (setq pos (match-beginning 1))
-            (setq pos (point))))))
+        (setq found t)
+        (if (called-interactively-p)
+            (setq pos (match-beginning 1))
+          (setq pos (point)))))
     (when found
       (goto-char pos))))
 
