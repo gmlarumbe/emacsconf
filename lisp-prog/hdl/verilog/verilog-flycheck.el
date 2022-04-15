@@ -39,8 +39,7 @@
                                                               verilog-verilator
                                                               verilog-iverilog
                                                               verilog-cadence-hal
-                                                              verilog-svlint)
-                                          nil t))))
+                                                              verilog-svlint) nil t))))
   (larumbe/verilog-flycheck-extra-actions-pre linter)
   (setq larumbe/flycheck-active-linter linter)
   (when (string= major-mode "verilog-mode") ; Allow for setting up the linter in the elisp init

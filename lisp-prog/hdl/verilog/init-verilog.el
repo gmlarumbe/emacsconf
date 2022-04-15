@@ -71,18 +71,13 @@
   (key-chord-mode 1)
   (remove-hook 'compilation-mode-hook 'verilog-error-regexp-add-emacs) ; `verilog-mode' automatically adds useless compilation regexp alists
   (advice-add 'electric-verilog-terminate-line :before-until #'larumbe/newline-advice) ; Quit *xref* buffer with C-m/RET
-  ;; Company keywords for Verilog
-  (require 'company-keywords)
-  (add-to-list 'company-keywords-alist (append '(verilog-mode) verilog-keywords))
-  ;; Many thanks to Kaushal Modi (https://scripter.co/)
-  (use-package setup-verilog
-    :straight (:host github :repo "kaushalmodi/.emacs.d" :local-repo "kmodi"
-               :fork (:repo "gmlarumbe/kmodi" :branch "larumbe")
-               :files ("setup-files/setup-verilog.el"))
-    :demand
-    :config
-    (require 'verilog-modi))
-  ;; Own functions
+  ;; Verilog extensions
+  (require 'verilog-vars)
+  (require 'verilog-shadow)
+  (require 'verilog-completion)
+  (require 'verilog-which-func)
+  (require 'verilog-hideshow)
+  (require 'verilog-beautify)
   (require 'verilog-utils)
   (require 'verilog-templates)
   (require 'verilog-overrides)
@@ -92,7 +87,10 @@
   (require 'verilog-vhier)
   (require 'verilog-flycheck)
   (require 'verilog-font-lock)
-  (require 'verilog-lsp))
+  (require 'verilog-lsp)
+  ;; TODO: Add compilation regexp support for verilog here (as a derived compilation mode maybe?)
+  ;; (require 'verilog-compilation)
+  )
 
 
 (provide 'init-verilog)

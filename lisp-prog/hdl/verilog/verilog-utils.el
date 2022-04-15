@@ -6,7 +6,6 @@
 (require 'make-mode)
 (require 'which-func)
 (require 'verilog-mode)
-(require 'setup-verilog) ; Modi's setup
 (require 'init-ggtags)
 (require 'time-stamp)
 
@@ -192,152 +191,6 @@ Group 6: Blanks after end of port connection ')'")
     (message "Removed blanks from current buffer port connections.")))
 
 
-;;;; Code beautifying
-(defun larumbe/verilog-align-ports-current-module ()
-  "Align parenthesis ports of current module.
-Current module is the one pointed to by `modi/verilog-find-module-instance'.
-
-Alignment is performed between instance name and end of instantiation."
-  (interactive)
-  (let ((case-fold-search verilog-case-fold)
-        (current-module)
-        (current-instance)
-        (beg)
-        (end)
-        (re-beg-pos)
-        (re-end-pos))
-    (setq current-module modi/verilog-which-func-xtra)
-    (setq current-instance (modi/verilog-find-module-instance))
-    (save-excursion
-      (setq re-beg-pos (re-search-backward (concat "\\_<" current-instance "\\_>") nil t))
-      (forward-line) ; Assumes ports start at next line from instance name
-      (setq beg (point))
-      (setq re-end-pos (re-search-forward ");" nil t))
-      (setq end re-end-pos))
-    (if (and re-beg-pos re-end-pos)
-        (progn
-          (align-regexp beg end "\\(\\s-*\\)(" 1 1 nil) ; Requires one capture group: https://stackoverflow.com/questions/14583702/align-regexp-from-emacs-lisp
-          (message "Ports of %s aligned..." current-module))
-      (message "Could not align ports!"))))
-
-
-(defun larumbe/verilog-align-parameters-current-module (&optional module)
-  "Align parameters of current module, the one pointed to by `which-func'.
-
-Alignment is performed between module name and instance name.
-
-If used programatically perform a backwards regexp-search of MODULE
-and start indentation at that point.
-This is because current-module is determined by `which-func' and it takes time,
-therefore not detecting the proper module but the previous one."
-  (interactive)
-  (let ((case-fold-search verilog-case-fold)
-        (current-module)
-        (current-instance)
-        (beg)
-        (end)
-        (re-beg-pos)
-        (re-end-pos))
-    (setq current-instance (modi/verilog-find-module-instance))
-    (if module
-        (setq current-module module)
-      (setq current-module modi/verilog-which-func-xtra)) ; Find module header (modi/verilog-which-func-xtra)
-    (save-excursion
-      (setq re-beg-pos (re-search-backward (concat "\\_<" current-module "\\_>") nil t))
-      (forward-line) ; Assumes ports start at next line from instance name
-      (setq beg (point))
-      (when current-instance
-        (setq re-end-pos (re-search-forward current-instance nil t)))
-      (setq end re-end-pos))
-    (if (and re-beg-pos re-end-pos)
-        (progn
-          (align-regexp beg end "\\(\\s-*\\)(" 1 1 nil) ; Requires one capture group: https://stackoverflow.com/questions/14583702/align-regexp-from-emacs-lisp
-          (message "Parameters of %s  aligned..." current-module))
-      (message "Could not align parameters!"))))
-
-
-(defun larumbe/verilog-indent-current-module (&optional module)
-  "Indent current module, the one pointed to by `which-func'.
-
-If used programatically perform a backwards regexp-search of MODULE
-and start indentation at that point.
-This is because current-module is determined by `which-func' and it takes time,
-therefore not detecting the proper module but the previous one."
-  (interactive)
-  (let ((case-fold-search verilog-case-fold)
-        (current-module)
-        (re-beg-pos)
-        (re-end-pos)))
-  (if module
-      (setq current-module module)
-    (setq current-module modi/verilog-which-func-xtra)) ; Find module header (modi/verilog-which-func-xtra)
-  (save-excursion
-    (setq re-beg-pos (re-search-backward (concat "\\_<" current-module "\\_>") nil t))
-    (beginning-of-line)
-    (setq re-end-pos (re-search-forward larumbe/verilog-module-instance-re nil t)))
-  (if (and re-beg-pos re-end-pos)
-      (save-excursion
-        (goto-char re-beg-pos)
-        (beginning-of-line)
-        (set-mark (point))
-        (goto-char re-end-pos)
-        (backward-char)                 ; Point at instance opening parenthesis
-        (electric-verilog-forward-sexp) ; Point at instance closing parenthesis
-        (end-of-line)
-        (electric-verilog-tab)
-        (message "Indented %s" current-module))
-    (message "Point is not inside a module instantiation")))
-
-
-(defun larumbe/verilog-beautify-current-module ()
-  "Beautify current module (open parenthesis, indent and align)."
-  (interactive)
-  (save-excursion
-    ;; Leave indentation for the end to avoid conflicts with
-    ;; point position due to update delay in which-func
-    (larumbe/verilog-align-ports-current-module)
-    (larumbe/verilog-align-parameters-current-module)
-    (larumbe/verilog-indent-current-module)))
-
-
-(defun larumbe/verilog-beautify-current-buffer ()
-  "Beautify current buffer.
-
-Indent whole buffer, beautify every instantiated module and
-remove blanks in port connections."
-  (interactive)
-  (save-excursion
-    (indent-region (point-min) (point-max))
-    (larumbe/verilog-clean-port-blanks)
-    (goto-char (point-min))
-    (while (larumbe/find-verilog-module-instance-fwd)
-      (larumbe/verilog-beautify-current-module))))
-
-
-(defun larumbe/verilog-beautify-files (files)
-  "Beautify Verilog FILES.
-
-FILES is a list of strings containing the paths to the files to beautify."
-  (dolist (file files)
-    (unless (file-exists-p file)
-      (error "File %s does not exist! Aborting..." file)))
-  (dolist (file files)
-    (with-temp-file file
-      (verilog-mode)
-      (insert-file-contents file)
-      (larumbe/verilog-beautify-current-buffer)
-      (untabify-trailing-whitespace)
-      (write-file file))))
-
-
-(defun larumbe/verilog-beautify-files-current-dir ()
-  "Beautify Verilog files on current dired directory."
-  (interactive)
-  (unless (string= major-mode "dired-mode")
-    (error "Must be used in dired!"))
-  (let ((files (directory-files-recursively default-directory "\\.[s]?v[h]?$")))
-    (larumbe/verilog-beautify-files files)))
-
 
 ;;;; Misc
 ;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
@@ -393,115 +246,6 @@ INFO: Limitations:
   larumbe/verilog-project-pkg-list)
 
 
-;;;; Timestamp
-(defvar larumbe/verilog-time-stamp-profiles '("work" "personal"))
-(defvar larumbe/verilog-time-stamp-active-profile "work") ; Defaults to work
-
-(defun larumbe/verilog-time-stamp-set-profile ()
-  "Set active profile for verilog timestamp: work or personal."
-  (interactive)
-  (let ((profile (completing-read "Set timestamp profile: " larumbe/verilog-time-stamp-profiles)))
-    (setq larumbe/verilog-time-stamp-active-profile profile)))
-
-
-(defun larumbe/verilog-time-stamp-update ()
-  "Update `time-stamp' variables depending on current active profile."
-  (if (string= larumbe/verilog-time-stamp-active-profile "work")
-      (larumbe/verilog-time-stamp-work-update) ; Work
-    (larumbe/verilog-time-stamp-pers-update))) ; Personal
-
-
-;;;;; Work
-(defvar larumbe/verilog-time-stamp-work-boundary-re "\\(?1:[ ]?\\)\\* ------------------------------------------------------------------------------")
-(defvar larumbe/verilog-time-stamp-work-created-re  "\\(?1:^* \\)\\(?2:[a-z]+\\)\\(?3:[ ]+\\)\\(?4:[^ ]+\\)\\(?5:[ ]+\\)\\(?6:Created\\)")
-(defvar larumbe/verilog-time-stamp-work-modified-re "\\(?1:^* \\)\\(?2:[a-z]+\\)\\(?3:[ ]+\\)\\(?4:[^ ]+\\)\\(?5:[ ]+\\)\\(?6:Modified\\)")
-
-(defvar larumbe/verilog-time-stamp-work-start  (concat "* " user-login-name "  "))
-(defvar larumbe/verilog-time-stamp-work-format "%Y/%m/%d")
-(defvar larumbe/verilog-time-stamp-work-end    "   Modified")
-
-
-(defun larumbe/verilog-time-stamp-work-buffer-end-pos ()
-  "Return position of point at the end of the buffer timestamp.
-Return nil if no timestamp structure was found."
-  (save-excursion
-    (goto-char (point-min))
-    (re-search-forward larumbe/verilog-time-stamp-work-boundary-re nil t)
-    (re-search-forward larumbe/verilog-time-stamp-work-created-re nil t)
-    (re-search-forward larumbe/verilog-time-stamp-work-boundary-re nil t)))
-
-
-(defun larumbe/verilog-time-stamp-work-new-entry ()
-  "Create new time-stamp entry at header."
-  (interactive)
-  (let (initial-blank
-        pos)
-    (save-excursion
-      (setq pos (larumbe/verilog-time-stamp-work-buffer-end-pos))
-      (if pos
-          (progn
-            (goto-char pos)
-            (larumbe/verilog-time-stamp-work-buffer-end-pos)
-            (setq initial-blank (match-string-no-properties 1))
-            (beginning-of-line)
-            (open-line 1)
-            (insert (concat initial-blank larumbe/verilog-time-stamp-work-start))
-            (insert (format-time-string larumbe/verilog-time-stamp-work-format))
-            (insert larumbe/verilog-time-stamp-work-end))
-        (message "Could not find proper time-stamp structure!")))))
-
-
-(defun larumbe/verilog-time-stamp-work-update ()
-  "Update the 'Modified' entry `time-stamp.'"
-  (save-excursion
-    (goto-char (point-min))
-    (when (larumbe/verilog-time-stamp-work-buffer-end-pos) ; Activate time-stamp if structure is present
-      (setq-local time-stamp-start  larumbe/verilog-time-stamp-work-start)
-      (setq-local time-stamp-format larumbe/verilog-time-stamp-work-format)
-      (setq-local time-stamp-end    larumbe/verilog-time-stamp-work-end))))
-
-
-;;;;; Personal
-(defvar larumbe/verilog-time-stamp-pers-regex   "^// Last modified : ")
-(defvar larumbe/verilog-time-stamp-pers-pattern (concat larumbe/verilog-time-stamp-pers-regex "%%$"))
-(defvar larumbe/verilog-time-stamp-pers-format  "%:y/%02m/%02d")
-
-
-(defun larumbe/verilog-time-stamp-pers-update ()
-  "Setup `time-stamp' format for Verilog files."
-  (setq-local time-stamp-pattern larumbe/verilog-time-stamp-pers-pattern)
-  (setq-local time-stamp-format  larumbe/verilog-time-stamp-pers-format))
-
-
-
-;;;; Hideshow
-(defvar larumbe/verilog-hs-block-start-keywords
-  '("begin"
-    "fork"
-    "clocking"
-    "function"
-    "covergroup"
-    "property"
-    "task"
-    "generate"))
-
-(defvar larumbe/verilog-hs-block-end-keywords
-  '("end"
-    "join" "join_any" "join_none"
-    "endclocking"
-    "endfunction"
-    "endgroup"
-    "endproperty"
-    "endtask"
-    "endgenerate"))
-
-(defvar larumbe/verilog-hs-block-end-keywords-re (regexp-opt larumbe/verilog-hs-block-start-keywords 'symbols))
-(defvar larumbe/verilog-hs-block-end-keywords-re (regexp-opt larumbe/verilog-hs-block-end-keywords   'symbols))
-(add-to-list 'hs-special-modes-alist `(verilog-mode ,larumbe/verilog-hs-block-end-keywords-re
-                                                    ,larumbe/verilog-hs-block-end-keywords-re
-                                                    nil
-                                                    verilog-forward-sexp-function))
-
 
 ;;;; Hooks
 (defun larumbe/verilog-hook ()
@@ -516,6 +260,90 @@ Return nil if no timestamp structure was found."
   (larumbe/verilog-find-semicolon-in-instance-comments)
   (setq-local yas-indent-line 'fixed))
 
+
+;;;; Modi
+(defun modi/verilog-get-header (&optional fwd)
+  "Function to return the name of the block (module, class, package,
+function, task, `define) under which the point is currently present.
+
+If FWD is non-nil, do the block header search in forward direction;
+otherwise in backward direction.
+
+This function updates the local variable `modi/verilog-which-func-xtra'.
+
+For example, if the point is as below (indicated by that rectangle), \"top\"
+is returned and `modi/verilog-which-func-xtra' is updated to \"mod\" (short
+for \"module\").
+
+   module top ();
+   ▯
+   endmodule "
+  (let (block-type block-name return-val) ;return-val will be nil by default
+    (setq-local modi/verilog-which-func-xtra nil) ;Reset
+    (save-excursion
+      (when (if fwd
+                (re-search-forward modi/verilog-header-re nil :noerror)
+              (re-search-backward modi/verilog-header-re nil :noerror))
+        ;; Ensure that text in line or block comments is not incorrectly
+        ;; parsed as a Verilog block header
+        (when (not (equal (face-at-point) 'font-lock-comment-face))
+          ;; (message "---- 1 ---- %s" (match-string 1))
+          ;; (message "---- 2 ---- %s" (match-string 2))
+          ;; (message "---- 3 ---- %s" (match-string 3))
+          ;; (message "---- 4 ---- %s" (match-string 4))
+          (setq block-type (match-string 1))
+          (setq block-name (match-string 2))
+
+          (when (and (stringp block-name)
+                     (not (string-match modi/verilog-keywords-re
+                                        block-name)))
+            (setq-local modi/verilog-which-func-xtra
+                        (cond
+                         ((string= "class"     block-type) "class")
+                         ((string= "clocking"  block-type) "clk")
+                         ((string= "`define"   block-type) "macro")
+                         ((string= "group"     block-type) "group")
+                         ((string= "module"    block-type) "mod")
+                         ((string= "interface" block-type) "if")
+                         ((string= "package"   block-type) "pkg")
+                         ((string= "sequence"  block-type) "seq")
+                         (t (substring block-type 0 4)))) ;First 4 chars
+            (setq return-val block-name)))))
+    (when (featurep 'which-func)
+      (modi/verilog-update-which-func-format))
+    return-val))
+
+
+
+
+
+
+(defun modi/verilog-block-end-comments-to-block-names ()
+  "Convert valid block-end comments to ': BLOCK_NAME'.
+
+Examples: endmodule // module_name             → endmodule : module_name
+          endfunction // some comment          → endfunction // some comment
+          endfunction // class_name::func_name → endfunction : func_name
+          end // block: block_name             → end : block_name "
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward (concat "^"
+                                      "\\(?1:[[:blank:]]*"
+                                      modi/verilog-block-end-keywords-re
+                                      "\\)"
+                                      "[[:blank:]]*//[[:blank:]]*"
+                                      "\\(\\(block:\\|"
+                                      modi/verilog-identifier-re "[[:blank:]]*::\\)[[:blank:]]*\\)*"
+                                      "\\(?2:" modi/verilog-identifier-re "\\)"
+                                      "[[:blank:]]*$")
+                              nil :noerror)
+      ;; Make sure that the matched string after "//" is not a verilog
+      ;; keyword.
+      (when (not (string-match-p modi/verilog-keywords-re (match-string 2)))
+        (replace-match "\\1 : \\2")))))
+
+(add-hook 'verilog-mode-hook (lambda () (add-hook 'before-save-hook #'modi/verilog-block-end-comments-to-block-names nil :local)))
 
 
 
