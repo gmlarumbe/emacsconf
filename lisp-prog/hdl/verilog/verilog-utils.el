@@ -9,59 +9,6 @@
 (require 'init-ggtags)
 (require 'time-stamp)
 
-;; Inspired by kmodi's variables (`modi/verilog-identifier-re')
-(defvar larumbe/newline-or-space-optional "\\(?:[[:blank:]\n]\\)*")
-(defvar larumbe/newline-or-space-mandatory "\\(?:[[:blank:]\n]\\)+")
-(defvar larumbe/verilog-identifier-re ;; Same as modi's one
-      (concat "\\_<\\(?:"
-              "\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)" ; simple identifier
-              "\\|\\(?:\\\\[!-~]+\\)"           ; escaped identifier
-              "\\)\\_>"))
-(defvar larumbe/param-port-list "([^;]+?)")
-(defvar larumbe/verilog-module-instance-re
-      (concat "^[[:blank:]]*"
-              "\\(?1:" larumbe/verilog-identifier-re "\\)" ;module name (subgroup 1)
-              larumbe/newline-or-space-optional ; For modi its mandatory, but thats a problem since it could be: btd#(
-              ;; optional port parameters
-              "\\("
-              "#" larumbe/newline-or-space-optional larumbe/param-port-list
-              "\\([[:blank:]]*//.*?\\)*"  ;followed by optional comments
-              "[^;\\./]+?"  ;followed by 'almost anything' before instance name
-              "\\)*"
-              "\\(?2:" larumbe/verilog-identifier-re "\\)" ;instance name (subgroup 2)
-              ;; Added by Larumbe
-              "\\s-*\\(\\[.*\\]\\)*"         ; SystemVerilog sometimes instantiates array of modules with brackets after instance name
-              larumbe/newline-or-space-optional
-              "(" ; And finally .. the opening parenthesis `(' before port list
-              ))
-
-(defvar larumbe/verilog-module-instance-full-re ; INFO: Not used for the time being even though it worked for a while... regex too complex
-      (concat larumbe/verilog-module-instance-re
-              ;; Includes content inside parenthesis of instance. Currently not being used
-              larumbe/newline-or-space-optional
-              ;; "[^;]+?"  ;followed by 'almost anything' before instance name -> This one requires content between brackets (instances only)
-              "[^;]*?"  ;followed by 'almost anything' before instance name -> This one does not require contents necessarily between brackets (instances+interfaces)
-              ")"
-              larumbe/newline-or-space-optional
-              ";"
-              ))
-
-(defvar larumbe/verilog-token-re
-  (regexp-opt '("module"
-                "program"
-                "package"
-                "class"
-                "function"
-                "task"
-                "initial"
-                "always"
-                "always_ff"
-                "always_comb"
-                "generate"
-                "property"
-                "sequence"
-                ) 'symbols))
-
 
 
 ;;;; Lint, Compilation and Simulation Tools

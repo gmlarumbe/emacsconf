@@ -9,7 +9,11 @@
 ;;; Code:
 
 
-;;;; Modi copied/Misc
+;;;; Dependencies
+(require 'verilog-mode)
+(require 'rx)
+
+;;;; Modi
 (defconst modi/verilog-identifier-re
   (concat "\\_<\\(?:"
           "\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)" ;simple identifier
@@ -17,7 +21,7 @@
           "\\)\\_>")
   "Regexp to match a valid Verilog/SystemVerilog identifier.
 
-An identifier is used to give an object a unique name so it can be
+an identifier is used to give an object a unique name so it can be
 referenced.  An identifier is either a simple identifier or an escaped
 identifier.
 
@@ -168,9 +172,83 @@ See `modi/verilog-block-start-keywords' for more.")
   "Regexp to match valid Verilog/SystemVerilog block header statement.")
 
 
-(defvar modi/verilog-keywords-re (regexp-opt verilog-keywords 'symbols)
-  "Regexp to match reserved Verilog/SystemVerilog keywords.")
 
+
+;;;; Larumbe
+(setq hdl-rx-verilog-simple-identifier (rx (or letter "_")
+                                           (* (or letter digit "_" "$"))))
+
+(setq hdl-rx-verilog-escaped-identifier (rx "\\" (+ (or "!" "-" "~"))))
+
+(setq hdl-rx-verilog-identifier-re (rx symbol-start
+                                       (or (regexp hdl-rx-verilog-simple-identifier)
+                                           (regexp hdl-rx-verilog-escaped-identifier))
+                                       symbol-end))
+
+(setq hdl-rx-newline-or-space-optional  (rx (* (or blank
+                                                   "\n"))))
+
+(setq hdl-rx-newline-or-space-mandatory (rx (+ (or blank
+                                                   "\n"))))
+
+(setq hdl-rx-param-port-list (rx "("
+                                 (opt (+ (not ";")))
+                                 ")"))
+
+(setq hdl-rx-verilog-module-instance-re
+      (rx bol (* blank)
+          (group-n 1 (regexp hdl-rx-verilog-identifier-re))
+          (regexp hdl-rx-newline-or-space-optional)
+          (* "#" (regexp hdl-rx-newline-or-space-optional) ; Change to optional?
+             (regexp hdl-rx-param-port-list))
+          ;; INFO: Excluded: "[^;\\./]+?"  ;followed by 'almost anything' before instance name exc
+          ;; INFO: THe followed by almost anything
+          (opt (1+ (not (or ";" "." "/"))))
+          (group-n 2 (regexp hdl-rx-verilog-identifier-re))
+          (* blank) (* "[" (+ not-newline) "]")
+          (regexp hdl-rx-newline-or-space-optional)
+          "("
+          ))
+
+
+(defvar hdl-rx-verilog-keywords-re (regexp-opt verilog-keywords 'symbols))
+
+(defvar hdl-rx-verilog-token-re (regexp-opt '("module"
+                                              "program"
+                                              "package"
+                                              "class"
+                                              "function"
+                                              "task"
+                                              "initial"
+                                              "always"
+                                              "always_ff"
+                                              "always_comb"
+                                              "generate"
+                                              "property"
+                                              "sequence")
+                                            'symbols))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+(defvar larumbe/verilog-module-instance-re
+      (concat "^[[:blank:]]*"
+              "\\(?1:" modi/verilog-identifier-re "\\)" ;module name (subgroup 1)
+              larumbe/newline-or-space-optional ; For modi its mandatory, but thats a problem since it could be: btd#(
+              ;; optional port parameters
+              "\\("
+              "#" larumbe/newline-or-space-optional larumbe/param-port-list
+              "\\([[:blank:]]*//.*?\\)*"  ;followed by optional comments
+              "[^;\\./]+?"  ;followed by 'almost anything' before instance name
+              "\\)*"
+              "\\(?2:" modi/verilog-identifier-re "\\)" ;instance name (subgroup 2)
+              ;; Added by Larumbe
+              "\\s-*\\(\\[.*\\]\\)*"         ; SystemVerilog sometimes instantiates array of modules with brackets after instance name
+              larumbe/newline-or-space-optional
+              "(" ; And finally .. the opening parenthesis `(' before port list
+              ))
 
 
 (provide 'verilog-vars)
