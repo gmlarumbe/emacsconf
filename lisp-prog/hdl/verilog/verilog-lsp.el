@@ -2,8 +2,8 @@
 ;;; Commentary:
 ;;
 ;; INFO: To make it work, just add the following at the end of the file so that verible gets added:
-;; (larumbe/verilog-lsp-configure)
-;; (larumbe/verilog-lsp-set-default-server)
+;; (verilog-ext-lsp-configure)
+;; (verilog-ext-lsp-set-default-server)
 ;;
 ;; And execute M-x lsp RET on a verilog-mode buffer (or add it as a hook)
 ;;
@@ -38,7 +38,7 @@
 (require 'lsp-mode)
 
 ;;;; Verible
-(defun larumbe/verilog-lsp-configure ()
+(defun verilog-ext-lsp-configure ()
   "Configure Verilog for LSP."
   (interactive)
   (lsp-register-client
@@ -47,7 +47,7 @@
                     :server-id 'verible-ls)))
 
 ;;;; Select default
-(defun larumbe/verilog-lsp-set-default-server ()
+(defun verilog-ext-lsp-set-default-server ()
   "Select svlangserver by default by disabling others without chaning priorities."
   (interactive)
   ;; Assumes native support for lsp-verilog and lsp-svlangserver, and that verible-ls is installed
@@ -56,8 +56,8 @@
 
 
 ;;;; Enable
-(larumbe/verilog-lsp-configure)
-(larumbe/verilog-lsp-set-default-server)
+(verilog-ext-lsp-configure)
+(verilog-ext-lsp-set-default-server)
 
 
 (provide 'verilog-lsp)

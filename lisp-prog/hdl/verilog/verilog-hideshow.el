@@ -3,7 +3,7 @@
 ;;; Code:
 
 
-(defvar larumbe/verilog-hs-block-start-keywords
+(defvar verilog-ext-hs-block-start-keywords
   '("begin"
     "fork"
     "clocking"
@@ -13,7 +13,7 @@
     "task"
     "generate"))
 
-(defvar larumbe/verilog-hs-block-end-keywords
+(defvar verilog-ext-hs-block-end-keywords
   '("end"
     "join" "join_any" "join_none"
     "endclocking"
@@ -23,10 +23,10 @@
     "endtask"
     "endgenerate"))
 
-(defvar larumbe/verilog-hs-block-end-keywords-re (regexp-opt larumbe/verilog-hs-block-start-keywords 'symbols))
-(defvar larumbe/verilog-hs-block-end-keywords-re (regexp-opt larumbe/verilog-hs-block-end-keywords   'symbols))
-(add-to-list 'hs-special-modes-alist `(verilog-mode ,larumbe/verilog-hs-block-end-keywords-re
-                                                    ,larumbe/verilog-hs-block-end-keywords-re
+(defvar verilog-ext-hs-block-end-keywords-re (regexp-opt verilog-ext-hs-block-start-keywords 'symbols))
+(defvar verilog-ext-hs-block-end-keywords-re (regexp-opt verilog-ext-hs-block-end-keywords   'symbols))
+(add-to-list 'hs-special-modes-alist `(verilog-mode ,verilog-ext-hs-block-end-keywords-re
+                                                    ,verilog-ext-hs-block-end-keywords-re
                                                     nil
                                                     verilog-forward-sexp-function))
 

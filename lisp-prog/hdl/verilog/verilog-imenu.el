@@ -15,7 +15,7 @@
 ;;
 ;; 4 - A first solution seemed to be executing `imenu' after erasing comments from current buffer and then returning it to its initial state
 ;;     But that would require use of `delete-comments-from-buffer' (very slow) and `undo', with some issues programatically.
-;;     That would need  to be done with `larumbe/find-verilog-module-instance-fwd' as well.
+;;     That would need  to be done with `verilog-ext-find-module-instance-fwd' as well.
 ;;     The profit would not be worth the effort due to an extreme fall in performance.
 ;;
 ;; 5 - Best solution is to create a function that checks if there are problematic regexps in a verilog file, and set is as a hook every time
@@ -29,13 +29,13 @@
 ;;   2 - Define `imenu-prev-index-position-function' and `imenu-extract-index-name-function'.
 ;;       If these variables are defined, the imenu-list creation function uses them to find the tags.  For example:
 ;;
-;;         (setq imenu-prev-index-position-function 'larumbe/verilog-imenu-prev-index-position-function)
-;;         (setq imenu-extract-index-name-function 'larumbe/verilog-imenu-extract-index-name)
+;;         (setq imenu-prev-index-position-function 'verilog-ext-imenu-prev-index-position-function)
+;;         (setq imenu-extract-index-name-function 'verilog-ext-imenu-extract-index-name)
 ;;
-;;       Check `larumbe/verilog-imenu-prev-index-position-function' and `larumbe/verilog-imenu-extract-index-name'
+;;       Check `verilog-ext-imenu-prev-index-position-function' and `verilog-ext-imenu-extract-index-name'
 ;;
 ;;   3 - Redefine `imenu-create-index-function' to make a custom more complex alist (e.g a tree recursively for nested classes)
-;;       This is the most complex and the one used in python mode.  Check `larumbe/verilog-imenu-index'.
+;;       This is the most complex and the one used in python mode.  Check `verilog-ext-imenu-index'.
 ;;
 ;;; Code:
 
@@ -45,34 +45,34 @@
 
 
 ;;;; Variables
-;; Search by regexp: Used as regexps in `larumbe/verilog-imenu-generic-expression'
-(defvar larumbe/verilog-imenu-top-re        "^\\s-*\\(?1:connectmodule\\|m\\(?:odule\\|acromodule\\)\\|p\\(?:rimitive\\|rogram\\|ackage\\)\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
-(defvar larumbe/verilog-imenu-localparam-re "^\\s-*localparam\\(?1:\\s-+\\(logic\\|bit\\|int\\|integer\\)\\s-*\\(\\[.*\\]\\)?\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
-(defvar larumbe/verilog-imenu-define-re     "^\\s-*`define\\s-+\\([a-zA-Z0-9_.:]+\\)")
-(defvar larumbe/verilog-imenu-assign-re     "^\\s-*assign\\s-+\\([a-zA-Z0-9_.:]+\\)")
-(defvar larumbe/verilog-imenu-generate-re   "^\\s-*generate[ \t\n]*\\(?1:.*\\)")
-(defvar larumbe/verilog-imenu-always-re     "^\\s-*always\\(_ff\\|_comb\\|_latch\\)?\\s-*\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
-(defvar larumbe/verilog-imenu-initial-re    "^\\s-*initial\\s-+\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
-;; Search by function: Used for functions that will be passed as an argument of `larumbe/verilog-imenu-generic-expression'
-(defvar larumbe/verilog-task-re     "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*task\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
-(defvar larumbe/verilog-function-re "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*function\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?:\\w+\\s-+\\)?\\(?:\\(?:un\\)signed\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
-(defvar larumbe/verilog-class-re    "\\(?1:\\(?:\\(?:virtual\\|interface\\)\\s-+\\)?class\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
-(defvar larumbe/verilog-top-re      "\\(?1:package\\|program\\|module\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
+;; Search by regexp: Used as regexps in `verilog-ext-imenu-generic-expression'
+(defvar verilog-ext-imenu-top-re        "^\\s-*\\(?1:connectmodule\\|m\\(?:odule\\|acromodule\\)\\|p\\(?:rimitive\\|rogram\\|ackage\\)\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
+(defvar verilog-ext-imenu-localparam-re "^\\s-*localparam\\(?1:\\s-+\\(logic\\|bit\\|int\\|integer\\)\\s-*\\(\\[.*\\]\\)?\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
+(defvar verilog-ext-imenu-define-re     "^\\s-*`define\\s-+\\([a-zA-Z0-9_.:]+\\)")
+(defvar verilog-ext-imenu-assign-re     "^\\s-*assign\\s-+\\([a-zA-Z0-9_.:]+\\)")
+(defvar verilog-ext-imenu-generate-re   "^\\s-*generate[ \t\n]*\\(?1:.*\\)")
+(defvar verilog-ext-imenu-always-re     "^\\s-*always\\(_ff\\|_comb\\|_latch\\)?\\s-*\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
+(defvar verilog-ext-imenu-initial-re    "^\\s-*initial\\s-+\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
+;; Search by function: Used for functions that will be passed as an argument of `verilog-ext-imenu-generic-expression'
+(defvar verilog-ext-task-re     "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*task\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
+(defvar verilog-ext-function-re "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*function\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?:\\w+\\s-+\\)?\\(?:\\(?:un\\)signed\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
+(defvar verilog-ext-class-re    "\\(?1:\\(?:\\(?:virtual\\|interface\\)\\s-+\\)?class\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
+(defvar verilog-ext-top-re      "\\(?1:package\\|program\\|module\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
 
-(defvar larumbe/verilog-imenu-generic-expression
-      `((nil                ,larumbe/verilog-imenu-top-re 2)
-        ("*Localparams*"    ,larumbe/verilog-imenu-localparam-re 2)
-        ("*Defines*"        ,larumbe/verilog-imenu-define-re 1)
-        ("*Assigns*"        ,larumbe/verilog-imenu-assign-re 1)
-        ("*Generates*"      ,larumbe/verilog-imenu-generate-re 1)
-        ("*Always blocks*"  ,larumbe/verilog-imenu-always-re 4)
-        ("*Initial blocks*" ,larumbe/verilog-imenu-initial-re 3)
-        ("*Task/Func*"      larumbe/find-verilog-task-function-outside-class-bwd 2)
-        ("*Instances*"      larumbe/find-verilog-module-instance-bwd 1)))  ;; Use capture group index 2 if want to get instance name instead
+(defvar verilog-ext-imenu-generic-expression
+      `((nil                ,verilog-ext-imenu-top-re 2)
+        ("*Localparams*"    ,verilog-ext-imenu-localparam-re 2)
+        ("*Defines*"        ,verilog-ext-imenu-define-re 1)
+        ("*Assigns*"        ,verilog-ext-imenu-assign-re 1)
+        ("*Generates*"      ,verilog-ext-imenu-generate-re 1)
+        ("*Always blocks*"  ,verilog-ext-imenu-always-re 4)
+        ("*Initial blocks*" ,verilog-ext-imenu-initial-re 3)
+        ("*Task/Func*"      verilog-ext-find-task-function-outside-class-bwd 2)
+        ("*Instances*"      verilog-ext-find-module-instance-bwd 1)))  ;; Use capture group index 2 if want to get instance name instead
 
 
 ;;;; Tree building
-(defun larumbe/verilog-imenu-format-class-item-label (type name)
+(defun verilog-ext-imenu-format-class-item-label (type name)
   "Return Imenu label for single node using TYPE and NAME."
   (let (short-type)
     (setq short-type
@@ -83,10 +83,10 @@
     (format "%s (%s)" name short-type)))
 
 
-(defun larumbe/verilog-imenu-class-put-parent (type name pos tree &optional add)
+(defun verilog-ext-imenu-class-put-parent (type name pos tree &optional add)
   "Create parent tag with TYPE and NAME.
 If optional ADD, add the parent with TYPE, NAME and POS to the TREE."
-  (let* ((label      (funcall #'larumbe/verilog-imenu-format-class-item-label type name))
+  (let* ((label      (funcall #'verilog-ext-imenu-format-class-item-label type name))
          (jump-label label))
     (if (not tree)
         (cons label pos)
@@ -95,7 +95,7 @@ If optional ADD, add the parent with TYPE, NAME and POS to the TREE."
         (cons label tree)))))
 
 
-(defun larumbe/verilog-imenu-build-class-tree (&optional tree)
+(defun verilog-ext-imenu-build-class-tree (&optional tree)
   "Build the imenu alist TREE.
 Coded to work with verification files with CLASSES and METHODS.
 Adapted from `python-mode' imenu build-tree function."
@@ -103,33 +103,33 @@ Adapted from `python-mode' imenu build-tree function."
     (narrow-to-region (point-min) (point))
     (let* ((pos
             (progn
-              (larumbe/find-verilog-class-bwd)
+              (verilog-ext-find-class-bwd)
               (verilog-forward-sexp)
-              (larumbe/find-verilog-task-function-class-bwd)))
+              (verilog-ext-find-task-function-class-bwd)))
            type
-           (name (when (and pos (or (looking-at larumbe/verilog-task-re)
-                                    (looking-at larumbe/verilog-function-re)
-                                    (looking-at larumbe/verilog-class-re)))
+           (name (when (and pos (or (looking-at verilog-ext-task-re)
+                                    (looking-at verilog-ext-function-re)
+                                    (looking-at verilog-ext-class-re)))
                    (setq type (match-string-no-properties 1))
                    (match-string-no-properties 2)))
            (label (when name
-                    (funcall #'larumbe/verilog-imenu-format-class-item-label type name))))
+                    (funcall #'verilog-ext-imenu-format-class-item-label type name))))
       (cond ((not pos)
              nil)
-            ((looking-at larumbe/verilog-class-re)
-             (larumbe/verilog-imenu-class-put-parent type name pos tree nil)) ; Do not want class imenu redundancy (tags+entries)
+            ((looking-at verilog-ext-class-re)
+             (verilog-ext-imenu-class-put-parent type name pos tree nil)) ; Do not want class imenu redundancy (tags+entries)
             (t
-             (larumbe/verilog-imenu-build-class-tree
-              (if (or (looking-at larumbe/verilog-task-re)
-                      (looking-at larumbe/verilog-function-re))
+             (verilog-ext-imenu-build-class-tree
+              (if (or (looking-at verilog-ext-task-re)
+                      (looking-at verilog-ext-function-re))
                   (cons (cons label pos) tree)
                 (cons
-                 (larumbe/verilog-imenu-build-class-tree
+                 (verilog-ext-imenu-build-class-tree
                   (list (cons label pos)))
                  tree))))))))
 
 
-(defun larumbe/verilog-imenu-classes-index ()
+(defun verilog-ext-imenu-classes-index ()
   "Obtain entries of tasks/functions within classes.
 
 INFO: Tasks/functions outside classes are obtained with a custom function search
@@ -140,39 +140,39 @@ tasks/functions."
     (goto-char (point-max))
     (let ((index)
           (tree))
-      (while (setq tree (larumbe/verilog-imenu-build-class-tree))
+      (while (setq tree (verilog-ext-imenu-build-class-tree))
         (setq index (cons tree index)))
       (when index
         (list (cons "Classes" index))))))
 
 
 
-(defun larumbe/verilog-imenu-index ()
+(defun verilog-ext-imenu-index ()
   "Custom index builder for Verilog Imenu.
 First creates a list with the entries that correspond to *Classes* tag by
 performing a recursive search.  Afterwards it appends the contents of the
 list obtained by using the imenu generic function."
   (append
-   (larumbe/verilog-imenu-classes-index)
-   (imenu--generic-function larumbe/verilog-imenu-generic-expression)))
+   (verilog-ext-imenu-classes-index)
+   (imenu--generic-function verilog-ext-imenu-generic-expression)))
 
 
 
 ;;;; Interactive
-(defun larumbe/verilog-imenu ()
+(defun verilog-ext-imenu ()
   "Wrapper interactive Imenu function for Verilog mode.
 Checks if there is an instance with semicolon in mutiline comments of parameters."
   (interactive)
   (let (issue)
-    (setq imenu-create-index-function #'larumbe/verilog-imenu-index)
-    (setq issue (larumbe/verilog-find-semicolon-in-instance-comments))
+    (setq imenu-create-index-function #'verilog-ext-imenu-index)
+    (setq issue (verilog-ext-find-semicolon-in-instance-comments))
     (imenu-list)
-    (larumbe/verilog-imenu-hide-all t)
+    (verilog-ext-imenu-hide-all t)
     (when issue
       (error "Imenu DANGER!: semicolon in comment instance!!"))))
 
 
-(defun larumbe/verilog-imenu-hide-all (&optional first)
+(defun verilog-ext-imenu-hide-all (&optional first)
   "Hides all the blocks @ Imenu-list buffer.
 If optional FIRST is used, then shows first block (Verilog *instances/interfaces*)"
   (interactive)
@@ -191,59 +191,59 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
 
 
 ;;;; Auxiliary
-(defun larumbe/find-verilog-class-bwd ()
+(defun verilog-ext-find-class-bwd ()
   "Meant to be used for Imenu class entry."
   (let (found pos)
     (save-excursion
       (while (and (not found)
-                  (larumbe/find-verilog-token-bwd))
-        (when (looking-at larumbe/verilog-class-re)
+                  (verilog-ext-find-token-bwd))
+        (when (looking-at verilog-ext-class-re)
           (setq found t)
           (setq pos (point)))))
     (when found
       (goto-char pos))))
 
 
-(defun larumbe/find-verilog-task-function-class-bwd ()
+(defun verilog-ext-find-task-function-class-bwd ()
   "Meant to be used for Imenu class entry."
   (let (found pos)
     (save-excursion
       (while (and (not found)
-                  (larumbe/find-verilog-token-bwd))
-        (when (or (looking-at larumbe/verilog-function-re)
-                  (looking-at larumbe/verilog-task-re)
-                  (looking-at larumbe/verilog-class-re))
+                  (verilog-ext-find-token-bwd))
+        (when (or (looking-at verilog-ext-function-re)
+                  (looking-at verilog-ext-task-re)
+                  (looking-at verilog-ext-class-re))
           (setq found t)
           (setq pos (point)))))
     (when found
       (goto-char pos))))
 
-(defun larumbe/find-verilog-task-function-outside-class-bwd ()
+(defun verilog-ext-find-task-function-outside-class-bwd ()
   "Meant to be used for Imenu class entry."
   (let (found pos)
     (save-excursion
       (while (and (not found)
-                  (larumbe/find-verilog-token-bwd))
-        (when (and (or (looking-at larumbe/verilog-function-re)
-                       (looking-at larumbe/verilog-task-re))
-                   (not (larumbe/verilog-func-task-inside-class)))
+                  (verilog-ext-find-token-bwd))
+        (when (and (or (looking-at verilog-ext-function-re)
+                       (looking-at verilog-ext-task-re))
+                   (not (verilog-ext-func-task-inside-class)))
           (setq found t)
           (setq pos (point)))))
     (when found
       (goto-char pos))))
 
 
-(defun larumbe/verilog-func-task-inside-class ()
+(defun verilog-ext-func-task-inside-class ()
   "Return non-nil if cursor is pointing a task inside a class."
   (interactive)
   (save-match-data
-    (unless (or (looking-at larumbe/verilog-task-re)
-                (looking-at larumbe/verilog-function-re))
+    (unless (or (looking-at verilog-ext-task-re)
+                (looking-at verilog-ext-function-re))
       (error "Pointer is not in a function/task!"))
     (let ((task-point (point))
           (endclass-point))
       (save-excursion
-        (if (larumbe/find-verilog-class-bwd)
+        (if (verilog-ext-find-class-bwd)
             (progn
               (verilog-forward-sexp)
               (setq endclass-point (point))
@@ -253,13 +253,13 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
           nil)))))
 
 
-(defun larumbe/find-verilog-top-bwd ()
+(defun verilog-ext-find-top-bwd ()
   "Return non-nil if cursor is pointing at verilog top module."
   (let (found pos)
     (save-excursion
       (while (and (not found)
-                  (larumbe/find-verilog-token-bwd))
-        (when (looking-at larumbe/verilog-top-re)
+                  (verilog-ext-find-token-bwd))
+        (when (looking-at verilog-ext-top-re)
           (setq found t)
           (setq pos (point)))))
     (when found
@@ -269,11 +269,11 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
 ;;;; Legacy
 ;; INFO: These two methods were insufficient to implement Imenu with functions/tasks within classes.
 ;; Code kept in case it is used in the future to add something new tag.
-(defun larumbe/verilog-imenu-prev-index-position-function ()
+(defun verilog-ext-imenu-prev-index-position-function ()
   "Function to search backwards in the buffer for Imenu alist generation."
-  (larumbe/find-verilog-module-instance-bwd))
+  (verilog-ext-find-module-instance-bwd))
 
-(defun larumbe/verilog-imenu-extract-index-name ()
+(defun verilog-ext-imenu-extract-index-name ()
   "Function to extract the tag."
   (verilog-forward-syntactic-ws)
   (thing-at-point 'symbol t))

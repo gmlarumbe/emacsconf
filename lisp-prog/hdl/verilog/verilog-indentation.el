@@ -3,7 +3,7 @@
 ;;
 ;; INFO: `lexical-binding' is set to nil in this file, since `verilog-mode'
 ;; doesn't have this variable set either. The overriden function
-;; `larumbe/verilog-do-indent' gave some errors with lexical-binding enabled.
+;; `verilog-ext-do-indent' gave some errors with lexical-binding enabled.
 ;;
 ;; Functions of these file are copied from `verilog-mode' with the purpose of
 ;; advising them to obtain a custom indentation scheme.
@@ -18,22 +18,22 @@
 ;; Modify zero-indent words to exclude 'class' since they will normally be declared within packages.
 ;; Simply override value of `verilog-zero-indent-re' excluding "class" and
 ;; "endclass" from their respective lists.
-(defconst larumbe/verilog-zero-indent-defun-re
+(defconst verilog-ext-zero-indent-defun-re
   (eval-when-compile (verilog-regexp-words '("macromodule" "connectmodule" "module" "program" "interface" "package" "primitive" "config"))))
-(defconst larumbe/verilog-zero-indent-end-defun-re
+(defconst verilog-ext-zero-indent-end-defun-re
   (eval-when-compile (verilog-regexp-words '("endconnectmodule" "endmodule" "endprogram" "endinterface" "endpackage" "endprimitive" "endconfig"))))
 (defconst verilog-zero-indent-re
-  (concat larumbe/verilog-zero-indent-defun-re "\\|" larumbe/verilog-zero-indent-end-defun-re))
+  (concat verilog-ext-zero-indent-defun-re "\\|" verilog-ext-zero-indent-end-defun-re))
 
 
 
-;; Following section is intended to add a hook via `larumbe/verilog-custom-declaration-core-re'
+;; Following section is intended to add a hook via `verilog-ext-custom-declaration-core-re'
 ;; variable to add new keywords for indentation of SystemVerilog interface port declarations.
-(defvar larumbe/verilog-custom-declaration-core-re nil
+(defvar verilog-ext-custom-declaration-core-re nil
   "Verilog custom declaration keywords used for indentation.")
 
 ;; Same as original `verilog-mode' constant but appending list of strings
-;; `larumbe/verilog-custom-declaration-core-re' to existent list of strings.
+;; `verilog-ext-custom-declaration-core-re' to existent list of strings.
 (defconst verilog-declaration-core-re
   (eval-when-compile
     (verilog-regexp-words
@@ -53,7 +53,7 @@
                ;; builtin classes
                "mailbox" "semaphore")
              ;; INFO: Custom declaration constructs hook
-             larumbe/verilog-custom-declaration-core-re))))
+             verilog-ext-custom-declaration-core-re))))
 
 
 (defconst verilog-declaration-re
@@ -76,7 +76,7 @@
 
 
 ;;;; Functions
-(defun larumbe/verilog-beg-of-statement ()
+(defun verilog-ext-beg-of-statement ()
   "Move backward to beginning of statement."
   (interactive)
   (if (verilog-in-comment-p)
@@ -103,7 +103,7 @@
 
 
 
-(defun larumbe/verilog-calculate-indent ()
+(defun verilog-ext-calculate-indent ()
   "Same as `verilog-calculate-indent'.
 Modified to avoid issues when indent parameters/ports if `verilog-indent-lists'
 is nil"
@@ -281,7 +281,7 @@ is nil"
 
 
 
-(defun larumbe/verilog-do-indent (indent-str)
+(defun verilog-ext-do-indent (indent-str)
   "Same as `verilog-do-indent'.
 Modified to avoid issues when indent parameters/ports if `verilog-indent-lists'
 is nil.
@@ -357,7 +357,7 @@ INFO: -*- lexical-binding: t -*- gave some errors."
               (close-par (looking-at ")"))
               (val (save-excursion
                      (verilog-backward-up-list 1)
-                     (larumbe/verilog-beg-of-statement)
+                     (verilog-ext-beg-of-statement)
                      (setq here (point))
                      (if close-par
                          (current-column)
@@ -425,8 +425,8 @@ INFO: -*- lexical-binding: t -*- gave some errors."
 
 
 ;;;; Config
-(advice-add 'verilog-calculate-indent :override #'larumbe/verilog-calculate-indent)
-(advice-add 'verilog-do-indent        :override #'larumbe/verilog-do-indent)
+(advice-add 'verilog-calculate-indent :override #'verilog-ext-calculate-indent)
+(advice-add 'verilog-do-indent        :override #'verilog-ext-do-indent)
 
 
 

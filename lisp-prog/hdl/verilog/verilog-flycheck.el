@@ -8,31 +8,31 @@
 (require 'verilog-utils)
 
 
-(defvar larumbe/flycheck-verilator-include-path nil)
-(defvar larumbe/flycheck-active-linter nil) ; Flycheck will automatically set its default, avoiding potential errors when executables are not found
+(defvar verilog-ext-flycheck-verilator-include-path nil)
+(defvar verilog-ext-flycheck-active-linter nil) ; Flycheck will automatically set its default, avoiding potential errors when executables are not found
 
 
 
-(defun larumbe/verilog-flycheck-extra-actions-pre (linter)
+(defun verilog-ext-flycheck-extra-actions-pre (linter)
   "Extra actions to perform for speficic LINTER to work properly before enabling flycheck."
   (pcase linter
     ('verilog-verible
-     (larumbe/verilog-verible-rules-fmt))
+     (verilog-ext-verible-rules-fmt))
     ('verilog-hal
      (unless (and (executable-find "xrun")
                   (executable-find "hal"))
        (error "Could not find 'xrun' and 'hal' in $PATH"))
-     (larumbe/xrun-hal-script-create))))
+     (verilog-ext-xrun-hal-script-create))))
 
 
-(defun larumbe/verilog-flycheck-extra-actions-post ()
-  "Extra actions to perform for `larumbe/flycheck-active-linter' after enabling flycheck."
-  (when (and (equal larumbe/flycheck-active-linter 'verilog-cadence-hal)
+(defun verilog-ext-flycheck-extra-actions-post ()
+  "Extra actions to perform for `verilog-ext-flycheck-active-linter' after enabling flycheck."
+  (when (and (equal verilog-ext-flycheck-active-linter 'verilog-cadence-hal)
              (equal flycheck-mode t))
     (message "Cadence HAL linting...")))
 
 
-(defun larumbe/verilog-flycheck-select-linter (&optional linter)
+(defun verilog-ext-flycheck-select-linter (&optional linter)
   "Select LINTER for verilog flycheck."
   (unless linter
     (setq linter (intern (completing-read "Select linter: " '(verilog-verible
@@ -40,16 +40,16 @@
                                                               verilog-iverilog
                                                               verilog-cadence-hal
                                                               verilog-svlint) nil t))))
-  (larumbe/verilog-flycheck-extra-actions-pre linter)
-  (setq larumbe/flycheck-active-linter linter)
+  (verilog-ext-flycheck-extra-actions-pre linter)
+  (setq verilog-ext-flycheck-active-linter linter)
   (when (string= major-mode "verilog-mode") ; Allow for setting up the linter in the elisp init
     (flycheck-select-checker linter))       ; This line needs to be executed only in a verilog buffer
-  (message "Linter set to: %s " larumbe/flycheck-active-linter)
+  (message "Linter set to: %s " verilog-ext-flycheck-active-linter)
   ;; Return 'linter value
   linter)
 
 
-(defun larumbe/verilog-flycheck-mode (&optional uarg)
+(defun verilog-ext-flycheck-mode (&optional uarg)
   "`flycheck-mode' Verilog wrapper function.
 If called with UARG, select among available linters.
 
@@ -59,36 +59,36 @@ to avoid minibuffer collisions."
   (when buffer-read-only
     (error "Flycheck does not work on read-only buffers!"))
   (if uarg
-      (larumbe/verilog-flycheck-select-linter)
+      (verilog-ext-flycheck-select-linter)
     ;; No uarg
-    (larumbe/verilog-update-project-pkg-list)
-    (larumbe/flycheck-eldoc-toggle)
-    (larumbe/verilog-flycheck-extra-actions-post)))
+    (verilog-ext-verilog-update-project-pkg-list)
+    (verilog-ext-flycheck-eldoc-toggle)
+    (verilog-ext-flycheck-extra-actions-post)))
 
 
 
 
 ;;;; Cadence HAL
-(defvar larumbe/xrun-hal-directory   "/tmp")
-(defvar larumbe/xrun-hal-log-name    "xrun.log")
-(defvar larumbe/xrun-hal-script-name "hal.sh")
+(defvar verilog-ext-xrun-hal-directory   "/tmp")
+(defvar verilog-ext-xrun-hal-log-name    "xrun.log")
+(defvar verilog-ext-xrun-hal-script-name "hal.sh")
 
-(defvar larumbe/xrun-hal-log-path    (larumbe/path-join larumbe/xrun-hal-directory larumbe/xrun-hal-log-name))
-(defvar larumbe/xrun-hal-script-path (larumbe/path-join larumbe/xrun-hal-directory larumbe/xrun-hal-script-name))
-(defvar larumbe/xrun-hal-script-code (concat "#!/bin/bash
+(defvar verilog-ext-xrun-hal-log-path    (verilog-ext-path-join verilog-ext-xrun-hal-directory verilog-ext-xrun-hal-log-name))
+(defvar verilog-ext-xrun-hal-script-path (verilog-ext-path-join verilog-ext-xrun-hal-directory verilog-ext-xrun-hal-script-name))
+(defvar verilog-ext-xrun-hal-script-code (concat "#!/bin/bash
 args=\"${@}\"
 xrun -hal $args
-cat " larumbe/xrun-hal-log-path "
+cat " verilog-ext-xrun-hal-log-path "
 "))
 
-(defun larumbe/xrun-hal-directory-fn (_checker)
+(defun verilog-ext-hal-directory-fn (_checker)
   "Return directory where hal is executed.
 xcelium.d (INCA_libs) and lint logs will be saved at this path."
-  (let ((dir larumbe/xrun-hal-directory))
+  (let ((dir verilog-ext-xrun-hal-directory))
     dir))
 
-(defun larumbe/xrun-hal-script-create ()
-  "Create HAL wrapper script according to `larumbe/xrun-hal-script-code'.
+(defun verilog-ext-hal-script-create ()
+  "Create HAL wrapper script according to `verilog-ext-hal-script-code'.
 
 This is needed because the output of HAL is written to a logfile and
 flycheck parses stdout (didn't find the way to redirect xrun output to stdout).
@@ -97,39 +97,39 @@ Plus, the :command keyword of `flycheck-define-command-checker' assumes each
 of the strings are arguments, so if something such as \"&&\" \"cat\" is used to
 try to output the log, it would throw a xrun fatal error since
 \"&&\" would not be recognized as a file."
-  (let ((file larumbe/xrun-hal-script-path))
-    (unless (file-exists-p larumbe/xrun-hal-script-path)
+  (let ((file verilog-ext-hal-script-path))
+    (unless (file-exists-p verilog-ext-hal-script-path)
       (with-temp-buffer
-        (insert larumbe/xrun-hal-script-code)
+        (insert verilog-ext-hal-script-code)
         (write-file file)
         (set-file-modes file #o755)))))
 
-(defun larumbe/xrun-hal-open-log ()
+(defun verilog-ext-hal-open-log ()
   "Open xrun log file for debug."
   (interactive)
-  (find-file larumbe/xrun-hal-log-path))
+  (find-file verilog-ext-xrun-hal-log-path))
 
 
 ;; Similar to `flycheck-define-checker' but it's a defun instead of a macro.
-;; This allows the use of evaluated variables (`larumbe/xrun-hal-script-path' and
-;; `larumbe/xrun-hal-log-path') inside the first string of the keyword argument :command
+;; This allows the use of evaluated variables (`verilog-ext-hal-script-path' and
+;; `verilog-ext-xrun-hal-log-path') inside the first string of the keyword argument :command
 ;;
 ;; The only difference with `flycheck-define-checker' is that this one requires
 ;; keyword arguments to be quoted.
 (flycheck-define-command-checker 'verilog-cadence-hal
   "A Verilog syntax checker using Cadence HAL."
-  :command `(,larumbe/xrun-hal-script-path
+  :command `(,verilog-ext-hal-script-path
              "-bb_unbound_comp"
              "-timescale" "1ns/1ps"
-             "-l" ,larumbe/xrun-hal-log-path
+             "-l" ,verilog-ext-xrun-hal-log-path
              "+libext+.v+.vh+.sv+.svh"
-             (option-list "-incdir" larumbe/flycheck-verilator-include-path)
-             (option-list "-y" larumbe/flycheck-verilator-include-path)
-             (option-list "" larumbe/verilog-project-pkg-list concat)
+             (option-list "-incdir" verilog-ext-flycheck-verilator-include-path)
+             (option-list "-y" verilog-ext-flycheck-verilator-include-path)
+             (option-list "" verilog-ext-verilog-project-pkg-list concat)
              source-original)
-  :working-directory #'larumbe/xrun-hal-directory-fn
+  :working-directory #'verilog-ext-hal-directory-fn
   :error-patterns
-  ;; Check `larumbe/compilation-error-re-xrun'
+  ;; Check `verilog-ext-compilation-error-re-xrun'
   '((info    (zero-or-more not-newline) ": *N," (zero-or-more not-newline) "(" (file-name) "," line "|" column "): " (message) line-end)
     (warning (zero-or-more not-newline) ": *W," (zero-or-more not-newline) "(" (file-name) "," line "|" column "): " (message) line-end)
     (error   (zero-or-more not-newline) ": *E," (zero-or-more not-newline) "(" (file-name) "," line "|" column "): " (message) line-end))
@@ -157,8 +157,8 @@ and includes (e.g. for UVM macros).
             ;; https://verilator.org/guide/latest/exe_verilator.html
             ;;  - The three flags -y, +incdir+<dir> and -I<dir> have similar effect;
             ;;  +incdir+<dir> and -y are fairly standard across Verilog tools while -I<dir> is used by many C++ compilers.
-            (option-list "-I" larumbe/flycheck-verilator-include-path concat) ; -I searchs for includes and modules
-            (option-list "" larumbe/verilog-project-pkg-list concat)
+            (option-list "-I" verilog-ext-flycheck-verilator-include-path concat) ; -I searchs for includes and modules
+            (option-list "" verilog-ext-verilog-project-pkg-list concat)
             source)
   :error-patterns
   ;; INFO: Required to add a column for latests version of Verilator!
@@ -184,7 +184,7 @@ See URL `http://iverilog.icarus.com/'"
   ;;   - Since this is a just a linter for current file, other files errors/warnings would appear at the beginning of the buffer.
 
   :command ("iverilog" "-g2012" "-Wall" "-gassertions" "-t" "null" "-i"
-            (option-list "" larumbe/verilog-project-pkg-list concat)
+            (option-list "" verilog-ext-verilog-project-pkg-list concat)
             source)
   :error-patterns
   ((info    (file-name) ":" line ":" (zero-or-more not-newline) "sorry:" (message) line-end) ; Unsupported
@@ -197,16 +197,16 @@ See URL `http://iverilog.icarus.com/'"
 
 
 ;;;; Verible
-(defvar larumbe/verilog-verible-rules nil
+(defvar verilog-ext-verible-rules nil
   "List of strings containing rules. Use - or + prefixes depending on enabling/disabling of rules.
 https://chipsalliance.github.io/verible/lint.html")
 
-(defvar larumbe/verilog-verible-rules-flycheck nil
-  "Used as a flycheck argument depending on `larumbe/verilog-verible-rules'")
+(defvar verilog-ext-verible-rules-flycheck nil
+  "Used as a flycheck argument depending on `verilog-ext-verible-rules'")
 
-(defun larumbe/verilog-verible-rules-fmt ()
-  "Format `larumbe/verilog-verible-rules' to pass correct arguments to --rules flycheck checker."
-  (setq larumbe/verilog-verible-rules-flycheck (mapconcat #'identity larumbe/verilog-verible-rules ",")))
+(defun verilog-ext-verible-rules-fmt ()
+  "Format `verilog-ext-verible-rules' to pass correct arguments to --rules flycheck checker."
+  (setq verilog-ext-verible-rules-flycheck (mapconcat #'identity verilog-ext-verible-rules ",")))
 
 
 (flycheck-define-checker verilog-verible
@@ -226,7 +226,7 @@ on single testbench files."
   ;; NOTE: Since regexps are common for error/warning/infos, it is important to declare errors before warnings below!
 
   :command ("verible-verilog-lint"
-            (option "--rules=" larumbe/verilog-verible-rules-flycheck concat)
+            (option "--rules=" verilog-ext-verible-rules-flycheck concat)
             source)
   :error-patterns
   ((error    (file-name) ":" line ":" column (zero-or-more "-") (zero-or-more digit) ":" (zero-or-more blank) "syntax error at " (message) line-end)
@@ -247,7 +247,7 @@ See URL `https://github.com/dalance/svlint'"
   :command ("svlint"
             "-1" ; one-line output
             "--ignore-include"
-            (option-list "-i" larumbe/flycheck-verilator-include-path)
+            (option-list "-i" verilog-ext-flycheck-verilator-include-path)
             source)
   :error-patterns
   ((warning line-start "Fail"  (zero-or-more blank) (file-name) ":" line ":" column (zero-or-more blank) (zero-or-more not-newline) "hint: " (message) line-end)

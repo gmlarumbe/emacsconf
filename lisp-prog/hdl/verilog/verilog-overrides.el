@@ -7,7 +7,7 @@
 
 ;;;; Syntax table override functions
 ;; https://www.veripool.org/issues/724-Verilog-mode-How-to-make-word-navigation-commands-stop-at-underscores-
-(defun larumbe/verilog-forward-word (&optional arg)
+(defun verilog-ext-forward-word (&optional arg)
   "Make verilog word navigation commands stop at underscores.
 Move forward ARG words."
   (interactive "p")
@@ -17,7 +17,7 @@ Move forward ARG words."
       (forward-word arg))))
 
 
-(defun larumbe/verilog-backward-word (&optional arg)
+(defun verilog-ext-backward-word (&optional arg)
   "Make verilog word navigation commands stop at underscores.
 Move backward ARG words."
   (interactive "p")
@@ -27,7 +27,7 @@ Move backward ARG words."
       (backward-word arg))))
 
 
-(defun larumbe/electric-verilog-tab ()
+(defun verilog-ext-electric-verilog-tab ()
   "Wrapper of the homonym verilog function to avoid indentation issues with compiler directives after setting custom hooks."
   (interactive)
   (let ((table (make-syntax-table verilog-mode-syntax-table)))
@@ -37,7 +37,7 @@ Move backward ARG words."
 
 
 ;;;; Advising
-(defun larumbe/verilog-forward-sexp ()
+(defun verilog-ext-forward-sexp ()
   "Same as `verilog-forward-sexp' but with additional support for:
 - checker/endchecker
 - config/endconfig
@@ -205,7 +205,7 @@ BUG: Fixes a bug when finding generate/covergroups/property etc... "
 
 
 
-(defun larumbe/verilog-backward-sexp ()
+(defun verilog-ext-backward-sexp ()
   "Same as `verilog-backward-sexp' but with additional support for:
 - checker/endchecker
 - config/endconfig
@@ -283,8 +283,8 @@ Also allows for proper working of hideshow within this constructs."
 
 
 ;;;; Config
-(advice-add 'verilog-forward-sexp :override #'larumbe/verilog-forward-sexp)
-(advice-add 'verilog-backward-sexp :override #'larumbe/verilog-backward-sexp)
+(advice-add 'verilog-forward-sexp :override #'verilog-ext-forward-sexp)
+(advice-add 'verilog-backward-sexp :override #'verilog-ext-backward-sexp)
 
 
 (provide 'verilog-overrides)

@@ -3,48 +3,37 @@
 ;;; Code:
 
 
-(defun larumbe/verilog-shadow-buffer ()
+(defun verilog-ext-shadow-buffer ()
   (concat " #" buffer-file-name "#"))
 
-(defmacro with-verilog-shadow (&rest body)
-  "Ensure command is executed in associated verilog shadow buffer."
-  (declare (indent 0) (debug t))
-  `(save-excursion
-     (unless (get-buffer (larumbe/verilog-shadow-buffer))
-       (larumbe/verilog-shadow-buffer-create))
-     (let ((orig-pos (point)))
-       (with-current-buffer (larumbe/verilog-shadow-buffer)
-         (goto-char orig-pos)
-         ,@body))))
 
-(defun larumbe/verilog-shadow-buffer-create ()
+(defun verilog-ext-shadow-buffer-create ()
   "Create shadow buffer if it does not already exist."
-  (let ((buf (larumbe/verilog-shadow-buffer))
+  (let ((buf (verilog-ext-shadow-buffer))
         (orig (current-buffer)))
     (unless (get-buffer buf)
       (get-buffer-create buf))
     (with-current-buffer buf
       (erase-buffer)
       (insert-buffer-substring-no-properties orig)
-      (larumbe/verilog-replace-comments-with-blanks)
+      (verilog-ext-shadow-replace-comments-with-blanks)
       (goto-char (point-min)))))
 
 
-(defun larumbe/verilog-shadow-buffer-update ()
+(defun verilog-ext-shadow-buffer-update ()
   "Update shadow buffer and fontify."
-  (larumbe/verilog-shadow-buffer-create)
+  (verilog-ext-shadow-buffer-create)
   (font-lock-fontify-block))
 
 
-
-(defun larumbe/verilog-shadow-buffer-kill ()
+(defun verilog-ext-shadow-buffer-kill ()
   "Kill shadow buffer after killing its buffer to avoid Emacs cluttering."
-  (let ((buf (larumbe/verilog-shadow-buffer)))
+  (let ((buf (verilog-ext-shadow-buffer)))
     (when (get-buffer buf)
       (kill-buffer buf))))
 
 
-(defun larumbe/verilog-replace-comments-with-blanks ()
+(defun verilog-ext-shadow-replace-comments-with-blanks ()
   "Remove comments from current buffer and replace them with blanks.
 Main purpose is to have a reformatted buffer without comments that has
 the same structure (point) as original buffer."
@@ -72,17 +61,31 @@ the same structure (point) as original buffer."
         (insert-char unicode-spc num)))))
 
 
+;;;###autoload
+(defmacro with-verilog-shadow (&rest body)
+  "Ensure command is executed in associated verilog shadow buffer."
+  (declare (indent 0) (debug t))
+  `(save-excursion
+     (unless (get-buffer (verilog-ext-shadow-buffer))
+       (verilog-ext-shadow-buffer-create))
+     (let ((orig-pos (point)))
+       (with-current-buffer (verilog-ext-shadow-buffer)
+         (goto-char orig-pos)
+         ,@body))))
+
+
+;;;###autoload
 (define-minor-mode verilog-shadow-mode
   "Use verilog shadow buffers (without comments) for regexp parsing to detect instances."
   :global nil
   (if verilog-shadow-mode
       (progn
         ;; Enable
-        (add-hook 'verilog-mode-hook (lambda () (add-hook 'after-save-hook #'larumbe/verilog-shadow-buffer-update nil :local)))
-        (add-hook 'verilog-mode-hook (lambda () (add-hook 'kill-buffer-hook #'larumbe/verilog-shadow-buffer-kill nil :local))))
+        (add-hook 'verilog-mode-hook (lambda () (add-hook 'after-save-hook #'verilog-ext-shadow-buffer-update nil :local)))
+        (add-hook 'verilog-mode-hook (lambda () (add-hook 'kill-buffer-hook #'verilog-ext-shadow-buffer-kill nil :local))))
     ;; Disable
-    (remove-hook 'verilog-mode-hook (lambda () (add-hook 'after-save-hook #'larumbe/verilog-shadow-buffer-update nil :local)))
-    (remove-hook 'verilog-mode-hook (lambda () (add-hook 'kill-buffer-hook #'larumbe/verilog-shadow-buffer-kill nil :local)))))
+    (remove-hook 'verilog-mode-hook (lambda () (add-hook 'after-save-hook #'verilog-ext-shadow-buffer-update nil :local)))
+    (remove-hook 'verilog-mode-hook (lambda () (add-hook 'kill-buffer-hook #'verilog-ext-shadow-buffer-kill nil :local)))))
 
 
 

@@ -4,7 +4,7 @@
 ;; `vhier-outline-mode':
 ;; Navigate with `outline-minor-mode' through extracted Verilog-Perl hierarchy.
 ;;
-;; `larumbe/verilog-perl-current-file' and `larumbe/verilog-vhier-from-project':
+;; `verilog-ext-vhier-current-file' and `verilog-ext-verilog-vhier-from-project':
 ;; Extract verilog hierarchy of current open files or from project list.
 ;;
 ;;; Code:
@@ -111,85 +111,85 @@ This way gtags can be easily integrated in the workflow."
 ;;;; Hierarchy extraction
 ;; INFO: First preprocesses input files for `include' and `define' expansion.
 ;; Then extracts hierarchy from that preprocessed file.
-(defvar larumbe/verilog-perl-buffer-name "*Verilog-Perl*"
+(defvar verilog-ext-verilog-perl-buffer-name "*Verilog-Perl*"
   "Buffer name to use for the hierarchy file.")
-(defvar larumbe/verilog-perl-shell-cmds-buffer-name "*Verilog-Perl-Shell*"
+(defvar verilog-ext-verilog-perl-shell-cmds-buffer-name "*Verilog-Perl-Shell*"
   "Buffer name to use for the output of the shell commands vppreproc and vhier.")
 
 
-(defvar larumbe/verilog-perl-pp-outfile nil)
-(defvar larumbe/verilog-perl-pp-args    nil)
+(defvar verilog-ext-verilog-perl-pp-outfile nil)
+(defvar verilog-ext-verilog-perl-pp-args    nil)
 
 
-(defvar larumbe/verilog-perl-vhier-outfile "hierarchy.v")
-(defvar larumbe/verilog-perl-vhier-args '("--cells"
+(defvar verilog-ext-verilog-perl-vhier-outfile "hierarchy.v")
+(defvar verilog-ext-verilog-perl-vhier-args '("--cells"
                                           "--no-missing"
                                           "--missing-modules"))
-(defvar larumbe/verilog-perl-vhier-filelist-name "vhier.files")
-(defvar larumbe/verilog-perl-vhier-filelist-path nil)
+(defvar verilog-ext-verilog-perl-vhier-filelist-name "vhier.files")
+(defvar verilog-ext-verilog-perl-vhier-filelist-path nil)
 
 
-(defvar larumbe/verilog-perl-projects nil
+(defvar verilog-ext-verilog-perl-projects nil
   "Projects list:
 Name of the project (+plus)
 1) Name of the top-module
 2) Input files for hierarchy elaboration
 3) Output hierarchy file path")
-(defvar larumbe/verilog-perl-top-module  nil)
-(defvar larumbe/verilog-perl-project-dir nil)
-(defvar larumbe/verilog-perl-input-files nil)
+(defvar verilog-ext-verilog-perl-top-module  nil)
+(defvar verilog-ext-verilog-perl-project-dir nil)
+(defvar verilog-ext-verilog-perl-input-files nil)
 
 
 
-(defun larumbe/verilog-perl-set-active-project ()
+(defun verilog-ext-verilog-perl-set-active-project ()
   "Retrieve Vhier project list and set variables accordingly."
   (let ((vhier-project)
         (files-list))
     ;; Get Project name
-    (setq vhier-project (completing-read "Select project: " (mapcar 'car larumbe/verilog-perl-projects))) ;; Read previous variable and get list of first element of each assoc list
-    (setq files-list (cdr (assoc vhier-project larumbe/verilog-perl-projects)))
+    (setq vhier-project (completing-read "Select project: " (mapcar 'car verilog-ext-perl-projects))) ;; Read previous variable and get list of first element of each assoc list
+    (setq files-list (cdr (assoc vhier-project verilog-ext-verilog-perl-projects)))
     ;; Set parameters accordingly
-    (setq larumbe/verilog-perl-top-module  (nth 0 files-list))
-    (setq larumbe/verilog-perl-input-files (nth 1 files-list))
-    (setq larumbe/verilog-perl-project-dir (nth 2 files-list))
-    (setq larumbe/verilog-perl-pp-outfile
-          (concat (larumbe/path-join larumbe/verilog-perl-project-dir larumbe/verilog-perl-top-module)
+    (setq verilog-ext-verilog-perl-top-module  (nth 0 files-list))
+    (setq verilog-ext-verilog-perl-input-files (nth 1 files-list))
+    (setq verilog-ext-verilog-perl-project-dir (nth 2 files-list))
+    (setq verilog-ext-verilog-perl-pp-outfile
+          (concat (larumbe/path-join verilog-ext-verilog-perl-project-dir verilog-ext-verilog-perl-top-module)
                   "_pp.sv"))
-    (setq larumbe/verilog-perl-pp-args (concat "-o " larumbe/verilog-perl-pp-outfile))
-    (setq larumbe/verilog-perl-vhier-filelist-path (larumbe/path-join larumbe/verilog-perl-project-dir larumbe/verilog-perl-vhier-filelist-name))))
+    (setq verilog-ext-verilog-perl-pp-args (concat "-o " verilog-ext-verilog-perl-pp-outfile))
+    (setq verilog-ext-verilog-perl-vhier-filelist-path (larumbe/path-join verilog-ext-verilog-perl-project-dir verilog-ext-verilog-perl-vhier-filelist-name))))
 
 
 
-(defun larumbe/verilog-perl-create-filelist (&optional sort-defs-pkg)
-  "Generate larumbe/verilog-perl-vhier-filelist-name filelist from `larumbe/verilog-perl-input-files'
+(defun verilog-ext-verilog-perl-create-filelist (&optional sort-defs-pkg)
+  "Generate verilog-ext-verilog-perl-vhier-filelist-name filelist from `verilog-ext-verilog-perl-input-files'
 file (normally gtags.files).
 
-INFO: Assumes that files fetched from `larumbe/verilog-perl-input-files' are
+INFO: Assumes that files fetched from `verilog-ext-verilog-perl-input-files' are
 relative paths.
 
 If optional arg SORT-DEFS-PKG is set then move every *_defs_pkg.sv file
 to the beginning."
-  (let ((exp-dir (file-name-directory larumbe/verilog-perl-input-files))
+  (let ((exp-dir (file-name-directory verilog-ext-verilog-perl-input-files))
         (debug nil)) ; INFO: Debug `with-temp-buffer', set to non-nil to debug temp buffer contents.
-    (make-directory larumbe/verilog-perl-project-dir t) ; Create vhier folder if it did not exist
+    (make-directory verilog-ext-verilog-perl-project-dir t) ; Create vhier folder if it did not exist
     (with-temp-buffer
       (when debug
         (clone-indirect-buffer-other-window "*debug*" t))
-      (insert-file-contents larumbe/verilog-perl-input-files)
+      (insert-file-contents verilog-ext-verilog-perl-input-files)
       (larumbe/buffer-expand-filenames t exp-dir)
       (larumbe/replace-regexp-whole-buffer "\\(.*/\\).*\.[s]?vh$" "-y \\1") ; Replace header `include' files with -y library flag
       (when sort-defs-pkg
         (larumbe/sort-regexp-at-the-beginning-of-file "_defs_pkg.sv"))
-      (write-file larumbe/verilog-perl-vhier-filelist-path))))
+      (write-file verilog-ext-verilog-perl-vhier-filelist-path))))
 
 
 
-(defun larumbe/verilog-perl-format-hierarchy-write-file (output-file)
+(defun verilog-ext-verilog-perl-format-hierarchy-write-file (output-file)
   "Process Verilog-Perl buffer prior to write it to hierarchy file.
 Make an outline/outshine accessible view for use with Gtags.
 
 INFO: Ensure ggtags works by writing OUTPUT-FILE into projectile root."
-  (pop-to-buffer (get-buffer larumbe/verilog-perl-buffer-name))
+  (pop-to-buffer (get-buffer verilog-ext-verilog-perl-buffer-name))
   (goto-char (point-min))
   (save-excursion
     (larumbe/replace-regexp-whole-buffer "  " "*") ; Replace blank spaces by * for outline
@@ -223,9 +223,9 @@ INFO: Ensure ggtags works by writing OUTPUT-FILE into projectile root."
     (open-line 1)
     (insert
      (concat "// Created by Larumbe at " (format-time-string "%d-%m-%Y, %H:%M:%S") "\n"))
-    (if larumbe/verilog-perl-input-files
-        (insert (concat "// Hierarchy extracted from files included in: " larumbe/verilog-perl-input-files "\n"))
-      (insert (concat "// Hierarchy extracted from `larumbe/verilog-open-dirs' variable\n")))
+    (if verilog-ext-verilog-perl-input-files
+        (insert (concat "// Hierarchy extracted from files included in: " verilog-ext-verilog-perl-input-files "\n"))
+      (insert (concat "// Hierarchy extracted from `verilog-ext-verilog-open-dirs' variable\n")))
     (write-file output-file)
     (vhier-outline-mode)
     (setq buffer-read-only t)
@@ -235,27 +235,27 @@ INFO: Ensure ggtags works by writing OUTPUT-FILE into projectile root."
 
 
 ;;;###autoload
-(defun larumbe/verilog-perl-extract-hierarchy ()
-  "Execute shell processes that preprocess hierarchy from `larumbe/verilog-perl-vhier-filelist-name'
+(defun verilog-ext-verilog-perl-extract-hierarchy ()
+  "Execute shell processes that preprocess hierarchy from `verilog-ext-verilog-perl-vhier-filelist-name'
 and extract hierarchy from previous preprocessed file.
 
-INFO: Defined as interactive for the case when the command `larumbe/verilog-perl-from-project'
-fails due to some reformatting needed on previously created `larumbe/verilog-perl-vhier-filelist-name' via `larumbe/verilog-perl-create-filelist'.
+INFO: Defined as interactive for the case when the command `verilog-ext-verilog-perl-from-project'
+fails due to some reformatting needed on previously created `verilog-ext-verilog-perl-vhier-filelist-name' via `verilog-ext-verilog-perl-create-filelist'.
   e.g: some included file was not added via -yDIR but as a source file and cannot be found.
 "
   (interactive)
   (let* ((shell-command-dont-erase-buffer t) ; Append output to buffer
          (pp-cmd (concat "vppreproc "
-                         "-f " larumbe/verilog-perl-vhier-filelist-path " "
-                         larumbe/verilog-perl-pp-args))
-         (vhier-cmd (concat "cd " larumbe/verilog-perl-project-dir " && "
-                            "vhier " (mapconcat #'identity larumbe/verilog-perl-vhier-args " ") " --top-module " larumbe/verilog-perl-top-module " "
-                            larumbe/verilog-perl-pp-outfile))
-         (buf     larumbe/verilog-perl-buffer-name)
-         (buf-err larumbe/verilog-perl-shell-cmds-buffer-name)
-         (file-path (larumbe/path-join larumbe/verilog-perl-project-dir larumbe/verilog-perl-vhier-outfile))
-         (err-msg (format "returned with errors\nCheck %s buffer\nModify %s\nAnd finally run `larumbe/verilog-perl-extract-hierarchy' instead of `larumbe/verilog-perl-from-project' !"
-                          buf-err larumbe/verilog-perl-vhier-filelist-path)))
+                         "-f " verilog-ext-verilog-perl-vhier-filelist-path " "
+                         verilog-ext-verilog-perl-pp-args))
+         (vhier-cmd (concat "cd " verilog-ext-verilog-perl-project-dir " && "
+                            "vhier " (mapconcat #'identity verilog-ext-verilog-perl-vhier-args " ") " --top-module " verilog-ext-verilog-perl-top-module " "
+                            verilog-ext-verilog-perl-pp-outfile))
+         (buf     verilog-ext-verilog-perl-buffer-name)
+         (buf-err verilog-ext-verilog-perl-shell-cmds-buffer-name)
+         (file-path (larumbe/path-join verilog-ext-verilog-perl-project-dir verilog-ext-verilog-perl-vhier-outfile))
+         (err-msg (format "returned with errors\nCheck %s buffer\nModify %s\nAnd finally run `verilog-ext-perl-extract-hierarchy' instead of `verilog-ext-perl-from-project' !"
+                          buf-err verilog-ext-verilog-perl-vhier-filelist-path)))
     ;; Preprocess and extract hierarchy (vppreproc && vhier)
     (unless (= 0 (shell-command pp-cmd buf buf-err))
       (pop-to-buffer buf-err)
@@ -264,30 +264,30 @@ fails due to some reformatting needed on previously created `larumbe/verilog-per
       (pop-to-buffer buf-err)
       (error (concat "vhier " err-msg)))
     ;; Format buffer and write file
-    (larumbe/verilog-perl-format-hierarchy-write-file file-path)))
+    (verilog-ext-verilog-perl-format-hierarchy-write-file file-path)))
 
 
 ;;;###autoload
-(defun larumbe/verilog-perl-from-project ()
+(defun verilog-ext-verilog-perl-from-project ()
   "Extract hierarchy of top level module using Verilog-Perl backend."
   (interactive)
   (unless (executable-find "vhier")
     (error "Executable vhier not found"))
-  (larumbe/verilog-perl-set-active-project)
-  (larumbe/verilog-perl-create-filelist)
-  (larumbe/verilog-perl-extract-hierarchy))
+  (verilog-ext-verilog-perl-set-active-project)
+  (verilog-ext-verilog-perl-create-filelist)
+  (verilog-ext-verilog-perl-extract-hierarchy))
 
 
 ;; TODO: Beautify a little bit
 ;;;###autoload
-(defun larumbe/verilog-perl-current-file ()
+(defun verilog-ext-vhier-current-file ()
   "Extract hierarchy of current file module using Verilog-Perl backend."
   (interactive)
   (unless (executable-find "vhier")
     (error "Executable vhier not found"))
   (let* ((library-args (verilog-expand-command "__FLAGS__"))
-         (pkg-files  (mapconcat #'identity (larumbe/verilog-update-project-pkg-list) " "))
-         (vhier-args (mapconcat #'identity larumbe/verilog-perl-vhier-args " "))
+         (pkg-files  (mapconcat #'identity (verilog-ext-verilog-update-project-pkg-list) " "))
+         (vhier-args (mapconcat #'identity verilog-ext-verilog-perl-vhier-args " "))
          (top-module (file-title))
          (cmd (concat "vhier "
                       pkg-files        " "
@@ -296,8 +296,8 @@ fails due to some reformatting needed on previously created `larumbe/verilog-per
                       vhier-args       " "
                       "--top-module " top-module))
          (file-path (concat (larumbe/path-join (projectile-project-root) "vhier/") top-module ".v"))
-         (buf larumbe/verilog-perl-buffer-name)
-         (buf-err larumbe/verilog-perl-shell-cmds-buffer-name)
+         (buf verilog-ext-verilog-perl-buffer-name)
+         (buf-err verilog-ext-verilog-perl-shell-cmds-buffer-name)
          (err-msg (format "vhier returned with errors\nCheck %s buffer" buf-err)))
     ;; Body
     (make-directory (file-name-directory file-path) t)
@@ -306,7 +306,7 @@ fails due to some reformatting needed on previously created `larumbe/verilog-per
     (unless (= 0 (shell-command cmd buf buf-err))
       (pop-to-buffer buf-err)
       (error err-msg))
-    (larumbe/verilog-perl-format-hierarchy-write-file file-path)))
+    (verilog-ext-verilog-perl-format-hierarchy-write-file file-path)))
 
 
 

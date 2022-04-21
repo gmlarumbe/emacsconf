@@ -16,12 +16,12 @@
 ;; - `verilog-linter:' replaced by FlyCheck with opened buffers as additional arguments, plus custom project parsing functions
 ;; - `verilog-simulator': replaced by XSim and ncsim sim project funcions
 ;; - `verilog-compiler': replaced by Vivado elaboration/synthesis project functions
-;; - `verilog-preprocessor': `larumbe/verilog-preprocess' wrapper of verilog-mode internal function' does the trick
+;; - `verilog-preprocessor': `verilog-ext-preprocess' wrapper of verilog-mode internal function' does the trick
 ;; - `verilog-coverage' still not implemented as there are not many free alternatives...
 
 
 ;;;;; Preprocessor
-(defun larumbe/verilog-preprocess ()
+(defun verilog-ext-preprocess ()
   "Allow choosing between programs with a wrapper of `verilog-preprocess'.
 All the libraries/incdirs are computed internally at `verilog-mode' via
 `verilog-expand'.
@@ -37,7 +37,7 @@ INFO: `iverilog' command syntax requires writing to an output file (defaults to 
 
 
 ;;;;; Iverilog/verilator Makefile development
-(defun larumbe/verilog-makefile-create ()
+(defun verilog-ext-makefile-create ()
   "Create Iverilog/verilator Yasnippet based Makefile.
 Create it only if in a projectile project and the Makefile does not exist already."
   (interactive)
@@ -47,11 +47,11 @@ Create it only if in a projectile project and the Makefile does not exist alread
             (error "File %s already exists!" file)
           (progn
             (find-file file)
-            (larumbe/hydra-yasnippet "verilog")))
+            (verilog-ext-hydra-yasnippet "verilog")))
       (error "Not in a projectile project!"))))
 
 
-(defun larumbe/verilog-makefile-compile-project ()
+(defun verilog-ext-makefile-compile-project ()
   "Prompts to available previous Makefile targets and compiles them with various verilog regexps."
   (interactive)
   (let ((makefile (concat (projectile-project-root) "Makefile"))
@@ -72,11 +72,11 @@ Create it only if in a projectile project and the Makefile does not exist alread
 
 
 ;;;; Port connect/disconnect/blank cleaning
-(defvar larumbe/connect-disconnect-port-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)")
-(defvar larumbe/connect-disconnect-conn-re "\\(?4:(\\(?5:.*\\))\\)?")
-(defvar larumbe/connect-disconnect-not-found "No port detected at current line")
+(defvar verilog-ext-connect-disconnect-port-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)")
+(defvar verilog-ext-connect-disconnect-conn-re "\\(?4:(\\(?5:.*\\))\\)?")
+(defvar verilog-ext-connect-disconnect-not-found "No port detected at current line")
 
-(defun larumbe/verilog-toggle-connect-port (force-connect)
+(defun verilog-ext-toggle-connect-port (force-connect)
   "Toggle connect/disconnect port at current line.
 
 If regexp detects that port is connected then disconnect it
@@ -86,8 +86,8 @@ If called with universal arg, FORCE-CONNECT parameter will force connection
 of current port, no matter if it is connected/disconnected"
   (interactive "P")
   (let* ((case-fold-search verilog-case-fold)
-         (port-regex larumbe/connect-disconnect-port-re)
-         (conn-regex larumbe/connect-disconnect-conn-re)
+         (port-regex verilog-ext-connect-disconnect-port-re)
+         (conn-regex verilog-ext-connect-disconnect-conn-re)
          (line-regex (concat port-regex conn-regex))
          port conn sig
          (start (point)))
@@ -107,20 +107,20 @@ of current port, no matter if it is connected/disconnected"
           (forward-line))
       (progn ; No port found
         (goto-char start)
-        (message larumbe/connect-disconnect-not-found)))))
+        (message verilog-ext-connect-disconnect-not-found)))))
 
 
-(defun larumbe/verilog-connect-ports-recursively ()
+(defun verilog-ext-connect-ports-recursively ()
   "Connect ports of current instance recursively.
 
 Ask for ports to be connected until no port is found at current line."
   (interactive)
-  (while (not (equal (larumbe/verilog-toggle-connect-port t) larumbe/connect-disconnect-not-found))
-    (larumbe/verilog-toggle-connect-port t)))
+  (while (not (equal (verilog-ext-toggle-connect-port t) verilog-ext-connect-disconnect-not-found))
+    (verilog-ext-toggle-connect-port t)))
 
 
 
-(defvar larumbe/verilog-clean-port-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)(\\(?4:[ ]*\\)\\(?5:[^ ]+\\)\\(?6:[ ]*\\))"
+(defvar verilog-ext-verilog-clean-port-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)(\\(?4:[ ]*\\)\\(?5:[^ ]+\\)\\(?6:[ ]*\\))"
   "Information about different capture groups:
 Group 1: Beginning of line blanks
 Group 2: Port name (after dot connection)
@@ -129,10 +129,10 @@ Group 4: Blanks after beginning of port connection '('
 Group 5: Name of connection
 Group 6: Blanks after end of port connection ')'")
 
-(defun larumbe/verilog-clean-port-blanks ()
+(defun verilog-ext-verilog-clean-port-blanks ()
   "Cleans blanks inside port connections of current buffer."
   (interactive)
-  (let ((old-re larumbe/verilog-clean-port-re)
+  (let ((old-re verilog-ext-verilog-clean-port-re)
         (new-re "\\1.\\2\\3\(\\5\)"))
     (larumbe/replace-regexp-whole-buffer old-re new-re)
     (message "Removed blanks from current buffer port connections.")))
@@ -141,16 +141,16 @@ Group 6: Blanks after end of port connection ')'")
 
 ;;;; Misc
 ;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
-(defvar larumbe/verilog-open-dirs nil
+(defvar verilog-ext-verilog-open-dirs nil
   "List with directories of current opened `verilog-mode' buffers.
 Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
-(defvar larumbe/verilog-open-pkgs nil
+(defvar verilog-ext-verilog-open-pkgs nil
   "List of currently opened SystemVerilog packages.")
-(defvar larumbe/verilog-project-pkg-list nil
+(defvar verilog-ext-verilog-project-pkg-list nil
   "List of current open packages at projectile project.")
 
 
-(defun larumbe/verilog-dirs-and-pkgs-of-open-buffers ()
+(defun verilog-ext-verilog-dirs-and-pkgs-of-open-buffers ()
   "Return a list of directories from current verilog opened files.
 It also updates currently opened SystemVerilog packages.
 
@@ -171,8 +171,8 @@ Used for flycheck and vhier packages."
     `(,verilog-opened-dirs ,verilog-opened-pkgs)))  ; Return list of dirs and packages
 
 
-(defun larumbe/verilog-update-project-pkg-list ()
-  "Update currently open packages on `larumbe/verilog-project-pkg-list'.
+(defun verilog-ext-verilog-update-project-pkg-list ()
+  "Update currently open packages on `verilog-ext-verilog-project-pkg-list'.
 
 Only packages within current projectile project are added.
 To be used with vhier/flycheck.
@@ -182,55 +182,110 @@ INFO: Limitations:
  - Some sorting method could be used in the future:
    - Extracting them from buffer file but in the order they have been
      opened and reverse sorting, for example..."
-  (setq larumbe/verilog-project-pkg-list nil) ; Reset list
+  (setq verilog-ext-verilog-project-pkg-list nil) ; Reset list
   (mapc
    (lambda (pkg)
      (when (string-prefix-p (projectile-project-root) pkg)
-       (unless (member pkg larumbe/verilog-project-pkg-list)
-         (push pkg larumbe/verilog-project-pkg-list))))
-   larumbe/verilog-open-pkgs)
+       (unless (member pkg verilog-ext-verilog-project-pkg-list)
+         (push pkg verilog-ext-verilog-project-pkg-list))))
+   verilog-ext-verilog-open-pkgs)
   ;; Return pkg-list
-  larumbe/verilog-project-pkg-list)
+  verilog-ext-verilog-project-pkg-list)
 
 
 
-;;;; Hooks
-(defun larumbe/verilog-hook ()
-  "Verilog hook."
-  (setq larumbe/verilog-open-dirs (nth 0 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
-  (setq larumbe/verilog-open-pkgs (nth 1 (larumbe/verilog-dirs-and-pkgs-of-open-buffers)))
-  (setq verilog-library-directories larumbe/verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
-  (setq larumbe/flycheck-verilator-include-path larumbe/verilog-open-dirs)
-  (flycheck-select-checker larumbe/flycheck-active-linter)
-  (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `larumbe/electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
-  (larumbe/verilog-time-stamp-update)
-  (larumbe/verilog-find-semicolon-in-instance-comments)
-  (setq-local yas-indent-line 'fixed))
+;;;; Others
+(defun verilog-ext-verilog-find-semicolon-in-instance-comments ()
+  "Find semicolons in instance comments.
+
+Main purpose is to avoid missing instantiation detections with `imenu' and
+`verilog-ext-find-module-instance-fwd' functions.
+
+Point to problematic regexp in case it is found."
+  (let ((case-fold-search verilog-case-fold)
+        (problem-re ")[, ]*\\(//\\|/\\*\\).*;") ; DANGER: Does not detect semicolon if newline within /* comment */
+        (found))
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward problem-re nil t)
+        (setq found t)))
+    (when found
+      (goto-char (point-min))
+      (re-search-forward problem-re nil t)
+      (message "Imenu DANGER!: semicolon in comment instance!!"))))
 
 
-;;;; Modi
-(defun modi/verilog-get-header (&optional fwd)
+
+(defun verilog-ext-find-module-instance (&optional fwd)
+  "Return the module instance name within which the point is currently.
+
+If FWD is non-nil, do the verilog module/instance search in forward direction;
+otherwise in backward direction.
+
+This function updates the local variable `verilog-ext-which-func-xtra'.
+
+For example, if the point is as below (indicated by that rectangle), \"u_adder\"
+is returned and `verilog-ext-which-func-xtra' is updated to \"adder\".
+
+   adder u_adder
+   (
+    ▯
+    );"
+  (let (instance-name return-val)   ;return-val will be nil by default
+    (setq-local verilog-ext-which-func-xtra nil) ;Reset
+    (save-excursion
+      (when (if fwd
+                (re-search-forward verilog-ext-header-re nil :noerror)
+              (re-search-backward verilog-ext-header-re nil :noerror))
+        ;; Ensure that text in line or block comments is not incorrectly
+        ;; parsed as a module instance
+        (when (not (equal (face-at-point) 'font-lock-comment-face))
+          ;; (message "---- 1 ---- %s" (match-string 1))
+          ;; (message "---- 2 ---- %s" (match-string 2))
+          ;; (message "---- 3 ---- %s" (match-string 3))
+          (setq-local verilog-ext-which-func-xtra (match-string 1)) ;module name
+          (setq instance-name (match-string 2)) ;Instance name
+
+          (when (and (stringp verilog-ext-which-func-xtra)
+                     (string-match verilog-ext-keywords-re
+                                   verilog-ext-which-func-xtra))
+            (setq-local verilog-ext-which-func-xtra nil))
+
+          (when (and (stringp instance-name)
+                     (string-match verilog-ext-keywords-re
+                                   instance-name))
+            (setq instance-name nil))
+
+          (when (and verilog-ext-which-func-xtra
+                     instance-name)
+            (setq return-val instance-name)))))
+    (when (featurep 'which-func)
+      (modi/verilog-update-which-func-format))
+    return-val))
+
+
+(defun verilog-ext-get-header (&optional fwd)
   "Function to return the name of the block (module, class, package,
 function, task, `define) under which the point is currently present.
 
 If FWD is non-nil, do the block header search in forward direction;
 otherwise in backward direction.
 
-This function updates the local variable `modi/verilog-which-func-xtra'.
+This function updates the local variable `verilog-ext-which-func-xtra'.
 
 For example, if the point is as below (indicated by that rectangle), \"top\"
-is returned and `modi/verilog-which-func-xtra' is updated to \"mod\" (short
+is returned and `verilog-ext-which-func-xtra' is updated to \"mod\" (short
 for \"module\").
 
    module top ();
    ▯
    endmodule "
   (let (block-type block-name return-val) ;return-val will be nil by default
-    (setq-local modi/verilog-which-func-xtra nil) ;Reset
+    (setq-local verilog-ext-which-func-xtra nil) ;Reset
     (save-excursion
       (when (if fwd
-                (re-search-forward modi/verilog-header-re nil :noerror)
-              (re-search-backward modi/verilog-header-re nil :noerror))
+                (re-search-forward verilog-ext-header-re nil :noerror)
+              (re-search-backward verilog-ext-header-re nil :noerror))
         ;; Ensure that text in line or block comments is not incorrectly
         ;; parsed as a Verilog block header
         (when (not (equal (face-at-point) 'font-lock-comment-face))
@@ -242,9 +297,9 @@ for \"module\").
           (setq block-name (match-string 2))
 
           (when (and (stringp block-name)
-                     (not (string-match modi/verilog-keywords-re
+                     (not (string-match verilog-ext-keywords-re
                                         block-name)))
-            (setq-local modi/verilog-which-func-xtra
+            (setq-local verilog-ext-which-func-xtra
                         (cond
                          ((string= "class"     block-type) "class")
                          ((string= "clocking"  block-type) "clk")
@@ -261,8 +316,44 @@ for \"module\").
     return-val))
 
 
+;;;; Hooks
+(defun verilog-ext-verilog-hook ()
+  "Verilog hook."
+  (setq verilog-ext-verilog-open-dirs (nth 0 (verilog-ext-verilog-dirs-and-pkgs-of-open-buffers)))
+  (setq verilog-ext-verilog-open-pkgs (nth 1 (verilog-ext-verilog-dirs-and-pkgs-of-open-buffers)))
+  (setq verilog-library-directories verilog-ext-verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
+  (setq verilog-ext-flycheck-verilator-include-path verilog-ext-verilog-open-dirs)
+  (flycheck-select-checker verilog-ext-flycheck-active-linter)
+  (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `verilog-ext-electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
+  (verilog-ext-verilog-time-stamp-update)
+  (verilog-ext-verilog-find-semicolon-in-instance-comments)
+  (setq-local yas-indent-line 'fixed))
 
 
+;;;; Modi
+(defvar modi/verilog-block-end-keywords '("end"
+                                          "join" "join_any" "join_none"
+                                          "endchecker"
+                                          "endclass"
+                                          "endclocking"
+                                          "endconfig"
+                                          "endfunction"
+                                          "endgroup"
+                                          "endinterface"
+                                          "endmodule"
+                                          "endpackage"
+                                          "endprimitive"
+                                          "endprogram"
+                                          "endproperty"
+                                          "endsequence"
+                                          "endtask")
+  "Verilog/SystemVerilog block end keywords.
+IEEE 1800-2012 SystemVerilog Section 9.3.4 Block names.")
+
+(defvar modi/verilog-block-end-keywords-re
+  (regexp-opt modi/verilog-block-end-keywords 'symbols)
+  "Regexp to match the Verilog/SystemVerilog block end keywords.
+See `modi/verilog-block-end-keywords' for more.")
 
 
 (defun modi/verilog-block-end-comments-to-block-names ()
@@ -287,7 +378,7 @@ Examples: endmodule // module_name             → endmodule : module_name
                               nil :noerror)
       ;; Make sure that the matched string after "//" is not a verilog
       ;; keyword.
-      (when (not (string-match-p modi/verilog-keywords-re (match-string 2)))
+      (when (not (string-match-p verilog-ext-keywords-re (match-string 2)))
         (replace-match "\\1 : \\2")))))
 
 (add-hook 'verilog-mode-hook (lambda () (add-hook 'before-save-hook #'modi/verilog-block-end-comments-to-block-names nil :local)))

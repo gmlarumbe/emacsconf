@@ -8,18 +8,18 @@
 (require 'verilog-navigation)
 
 ;;;; Variables
-;; Some regexps come from evaluated `(concat larumbe/verilog-identifier-re "\\s-+" larumbe/verilog-identifier-re)' with capture groups and additions depending on what they might detect.
-(defvar larumbe/verilog-system-task-regex "\\$[a-zA-Z][a-zA-Z0-9_\\$]*")
-(defvar larumbe/verilog-port-connection-regex "^[[:blank:]]*\\.\\([0-9a-zA-Z*_-]*\\)")
-(defvar larumbe/verilog-dot-itf-struct-regex "\\([a-zA-Z*_-][0-9a-zA-Z*_-]+\\)\\.\\([0-9a-zA-Z*_-]+\\)")
-(defvar larumbe/verilog-braces-content-regex "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
-(defvar larumbe/verilog-width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xzXZ]+\\)")
-(defvar larumbe/verilog-time-event-regex "\\([@#]\\)")
-(defvar larumbe/verilog-time-unit-regex "[0-9]+\\(\\.[0-9]+\\)?\\(?2:[umnpf]s\\)")
+;; Some regexps come from evaluated `(concat verilog-ext-identifier-re "\\s-+" verilog-ext-identifier-re)' with capture groups and additions depending on what they might detect.
+(defvar verilog-ext-verilog-system-task-regex "\\$[a-zA-Z][a-zA-Z0-9_\\$]*")
+(defvar verilog-ext-verilog-port-connection-regex "^[[:blank:]]*\\.\\([0-9a-zA-Z*_-]*\\)")
+(defvar verilog-ext-verilog-dot-itf-struct-regex "\\([a-zA-Z*_-][0-9a-zA-Z*_-]+\\)\\.\\([0-9a-zA-Z*_-]+\\)")
+(defvar verilog-ext-verilog-braces-content-regex "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
+(defvar verilog-ext-verilog-width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xzXZ]+\\)")
+(defvar verilog-ext-verilog-time-event-regex "\\([@#]\\)")
+(defvar verilog-ext-verilog-time-unit-regex "[0-9]+\\(\\.[0-9]+\\)?\\(?2:[umnpf]s\\)")
 
 ;; Variable declaration type/name font-lock
-(defvar larumbe/verilog-highlight-variable-declaration-names nil)
-(defvar larumbe/verilog-keywords-no-types '("`__FILE__" "`__LINE" "`begin_keywords" "`celldefine" "`default_nettype" "`define" "`else" "`elsif" "`end_keywords" "`endcelldefine" "`endif" "`ifdef" "`ifndef" "`include"
+(defvar verilog-ext-verilog-highlight-variable-declaration-names nil)
+(defvar verilog-ext-keywords-no-types '("`__FILE__" "`__LINE" "`begin_keywords" "`celldefine" "`default_nettype" "`define" "`else" "`elsif" "`end_keywords" "`endcelldefine" "`endif" "`ifdef" "`ifndef" "`include"
                                             "`line" "`nounconnected_drive" "`pragma" "`resetall" "`timescale" "`unconnected_drive" "`undef" "`undefineall" "`case" "`default" "`endfor" "`endprotect" "`endswitch"
                                             "`endwhile" "`for" "`format" "`if" "`let" "`protect" "`switch" "`timescale" "`time_scale" "`while" "after" "alias" "always" "always_comb" "always_ff" "always_latch"
                                             "assert" "assign" "assume" "automatic" "before" "begin" "bind" "bins" "binsof" "bit" "break" "byte" "case" "casex" "casez" "cell" "chandle" "class" "clocking" "config"
@@ -37,17 +37,17 @@
                                             "untyped" "weak" "implements"
                                             "interconnect" "nettype" "soft"))
 ;; Obtained with: (dolist (word (cl-set-difference verilog-keywords verilog-type-keywords :test #'equal)) (insert "\"" word "\" "))
-(defvar larumbe/verilog-keywords-no-types-re (regexp-opt larumbe/verilog-keywords-no-types 'symbols))
-(defvar larumbe/verilog-variable-re-1
+(defvar verilog-ext-verilog-keywords-no-types-re (regexp-opt verilog-ext-verilog-keywords-no-types 'symbols))
+(defvar verilog-ext-verilog-variable-re-1
   "\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(?2:\\[.*\\]\\s-*\\)?\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*\\(?4:=.*\\)?;"
   "type_t asdf;
    type_t [10:0] asdf;
    type_t [10:0] asdf = 'h0;
 ")
-(defvar larumbe/verilog-variable-re-2
+(defvar verilog-ext-verilog-variable-re-2
   "\\_<\\(?1:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\_>\\s-+\\(?3:\\([a-zA-Z_][a-zA-Z0-9$_]*\\s-*,\\s-*\\)+\\([a-zA-Z_][a-zA-Z0-9$_]*\\s-*\\)\\);"
   "type_t asdf1, asdf2 , asdf4, asdf6[], asdf7 [25], asdf8 ;")
-(defvar larumbe/verilog-variable-re-3
+(defvar verilog-ext-verilog-variable-re-3
   "\\_<\\(input\\|output\\|inout\\|ref\\|parameter\\|localparam\\)\\_>\\s-+\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(\\[.*\\]\\)?\\s-*\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*"
   " ...
   parameter type_t a = 1,
@@ -69,11 +69,11 @@
 ;;     Look for 'function' section.
 ;; - Based on `verilog-match-translate-off'
 
-(defun larumbe/find-verilog-module-instance-fontify (limit)
+(defun verilog-ext-find-verilog-module-instance-fontify (limit)
   "Search based fontification function of Verilog modules/instances.
 Arg LIMIT is used internally for fontification."
   (let (start-line end-line)
-    (when (larumbe/find-verilog-module-instance-fwd limit)
+    (when (verilog-ext-find-module-instance-fwd limit)
       (setq start-line (save-excursion
                          (goto-char (match-beginning 0))
                          (point-at-bol)))
@@ -85,7 +85,7 @@ Arg LIMIT is used internally for fontification."
       (point))))
 
 
-(defun larumbe/verilog-match-translate-off-fontify (limit)
+(defun verilog-ext-verilog-match-translate-off-fontify (limit)
   "Match a translate-off block, setting `match-data' and returning t, else nil.
 Bound search by LIMIT.
 
@@ -102,7 +102,7 @@ including `font-lock-multiline' property."
           (goto-char end))))))
 
 
-(defun larumbe/find-verilog-variable-type-fwd (regex limit)
+(defun verilog-ext-find-verilog-variable-type-fwd (regex limit)
   "Generic search based fontification function of Verilog variable types.
 INFO: It is not necessary to check that variable is not within string/comment
 since these both have precedence over custom fontify.
@@ -118,85 +118,85 @@ Search for REGEX bound to LIMIT."
                   (re-search-forward regex limit t))
         (setq type (match-string-no-properties 1))
         (setq name (match-string-no-properties 3))
-        (unless (or (string-match larumbe/verilog-keywords-no-types-re type)
-                    (string-match larumbe/verilog-keywords-no-types-re name))
+        (unless (or (string-match verilog-ext-verilog-keywords-no-types-re type)
+                    (string-match verilog-ext-verilog-keywords-no-types-re name))
           (setq found t)
           (setq pos (point)))))
     (when found
       (goto-char pos))))
 
 
-(defun larumbe/find-verilog-variable-fwd-1 (limit)
-  (larumbe/find-verilog-variable-type-fwd larumbe/verilog-variable-re-1 limit))
+(defun verilog-ext-find-verilog-variable-fwd-1 (limit)
+  (verilog-ext-find-verilog-variable-type-fwd verilog-ext-verilog-variable-re-1 limit))
 
-(defun larumbe/find-verilog-variable-fwd-2 (limit)
-  (larumbe/find-verilog-variable-type-fwd larumbe/verilog-variable-re-2 limit))
+(defun verilog-ext-find-verilog-variable-fwd-2 (limit)
+  (verilog-ext-find-verilog-variable-type-fwd verilog-ext-verilog-variable-re-2 limit))
 
-(defun larumbe/find-verilog-variable-fwd-3 (limit)
-  (larumbe/find-verilog-variable-type-fwd larumbe/verilog-variable-re-3 limit))
+(defun verilog-ext-find-verilog-variable-fwd-3 (limit)
+  (verilog-ext-find-verilog-variable-type-fwd verilog-ext-verilog-variable-re-3 limit))
 
 
-(defun larumbe/find-verilog-variable-type-fontify-1 (limit)
+(defun verilog-ext-find-verilog-variable-type-fontify-1 (limit)
   "Search based fontification function of Verilog type 1 variable types.
-These are determined by variable `larumbe/verilog-variable-re-1'.
+These are determined by variable `verilog-ext-verilog-variable-re-1'.
 Regex search bound to LIMIT."
   (let (start end)
-    (when (larumbe/find-verilog-variable-fwd-1 limit)
+    (when (verilog-ext-find-verilog-variable-fwd-1 limit)
       (setq start (match-beginning 1))
       (setq end (match-end 1))
       (set-match-data (list start end))
       (point))))
 
-(defun larumbe/find-verilog-variable-name-fontify-1 (limit)
+(defun verilog-ext-find-verilog-variable-name-fontify-1 (limit)
   "Search based fontification function of Verilog type 1 variable names.
-These are determined by variable `larumbe/verilog-variable-re-1'.
+These are determined by variable `verilog-ext-verilog-variable-re-1'.
 Regex search bound to LIMIT."
   (let (start end)
-    (when (larumbe/find-verilog-variable-fwd-1 limit)
+    (when (verilog-ext-find-verilog-variable-fwd-1 limit)
       (setq start (match-beginning 3))
       (setq end (match-end 3))
       (set-match-data (list start end))
       (point))))
 
-(defun larumbe/find-verilog-variable-type-fontify-2 (limit)
+(defun verilog-ext-find-verilog-variable-type-fontify-2 (limit)
   "Search based fontification function of Verilog type 2 variable types.
-These are determined by variable `larumbe/verilog-variable-re-1'.
+These are determined by variable `verilog-ext-verilog-variable-re-1'.
 Regex search bound to LIMIT."
   (let (start end)
-    (when (larumbe/find-verilog-variable-fwd-2 limit)
+    (when (verilog-ext-find-verilog-variable-fwd-2 limit)
       (setq start (match-beginning 1))
       (setq end (match-end 1))
       (set-match-data (list start end))
       (point))))
 
-(defun larumbe/find-verilog-variable-name-fontify-2 (limit)
+(defun verilog-ext-find-verilog-variable-name-fontify-2 (limit)
   "Search based fontification function of Verilog type 2 variable names.
-These are determined by variable `larumbe/verilog-variable-re-1'.
+These are determined by variable `verilog-ext-verilog-variable-re-1'.
 Regex search bound to LIMIT."
   (let (start end)
-    (when (larumbe/find-verilog-variable-fwd-2 limit)
+    (when (verilog-ext-find-verilog-variable-fwd-2 limit)
       (setq start (match-beginning 2))
       (setq end (match-end 2))
       (set-match-data (list start end))
       (point))))
 
-(defun larumbe/find-verilog-variable-type-fontify-3 (limit)
+(defun verilog-ext-find-verilog-variable-type-fontify-3 (limit)
   "Search based fontification function of Verilog type 3 variable types.
-These are determined by variable `larumbe/verilog-variable-re-1'.
+These are determined by variable `verilog-ext-verilog-variable-re-1'.
 Regex search bound to LIMIT."
   (let (start end)
-    (when (larumbe/find-verilog-variable-fwd-3 limit)
+    (when (verilog-ext-find-verilog-variable-fwd-3 limit)
       (setq start (match-beginning 1))
       (setq end (match-end 1))
       (set-match-data (list start end))
       (point))))
 
-(defun larumbe/find-verilog-variable-name-fontify-3 (limit)
+(defun verilog-ext-find-verilog-variable-name-fontify-3 (limit)
   "Search based fontification function of Verilog type 3 variable names.
-These are determined by variable `larumbe/verilog-variable-re-1'.
+These are determined by variable `verilog-ext-verilog-variable-re-1'.
 Regex search bound to LIMIT."
   (let (start end)
-    (when (larumbe/find-verilog-variable-fwd-3 limit)
+    (when (verilog-ext-find-verilog-variable-fwd-3 limit)
       (setq start (match-beginning 3))
       (setq end (match-end 3))
       (set-match-data (list start end))
@@ -205,7 +205,7 @@ Regex search bound to LIMIT."
 
 
 ;;;; Font-lock keywords
-(defvar larumbe/verilog-type-font-keywords
+(defvar verilog-ext-verilog-type-font-keywords
   (regexp-opt
    '("and" "buf" "bufif0" "bufif1" "cmos" "defparam" "event"
      "genvar" "highz0" "highz1" "inout" "input" "integer"
@@ -224,7 +224,7 @@ Regex search bound to LIMIT."
      ;; 1800-2012
      "interconnect" "nettype" ) nil))
 
-(defvar larumbe/verilog-pragma-keywords
+(defvar verilog-ext-verilog-pragma-keywords
   (regexp-opt
    '("surefire" "0in" "auto" "leda" "rtl_synthesis" "verilint"
      ;; Recognized by Vivado (check Xilinx attribute 'translate_off/translate_on'):
@@ -233,7 +233,7 @@ Regex search bound to LIMIT."
 
 ;; https://www.xilinx.com/support/documentation/sw_manuals/xilinx2017_3/ug901-vivado-synthesis.pdf
 ;; Chapter 2 (Some of them are also supported at XDC)
-(defvar larumbe/verilog-xilinx-attributes
+(defvar verilog-ext-verilog-xilinx-attributes
   (regexp-opt
    '("async_reg" "black_box" "cascade_height" "clock_buffer_type"
      "direct_enable" "direct_reset" "dont_touch" "extract_enable"
@@ -253,7 +253,7 @@ Regex search bound to LIMIT."
      ) nil))
 
 
-(defvar larumbe/verilog-font-general-keywords
+(defvar verilog-ext-verilog-font-general-keywords
   (regexp-opt
    ;; INFO: Same as the one in `verilog-mode' but excluding "include"
    ;; as it must be highlighted as a macro instead.
@@ -295,11 +295,11 @@ Regex search bound to LIMIT."
      ;; 1800-2012
      "implements" "soft" ) nil))
 
-(defvar larumbe/verilog-font-grouping-keywords
+(defvar verilog-ext-verilog-font-grouping-keywords
   (regexp-opt
    '( "begin" "end" "this") nil))  ; "this" is not grouping but looks better in green
 
-(defvar larumbe/verilog-special-macros
+(defvar verilog-ext-verilog-special-macros
   (regexp-opt
    '( ;; DMA Macros
      "DMA_MASTER_V2K_PORTS_READ" "DMA_MASTER_V2K_PORTS_WRITE" "DMA_MASTER_V2K_PORTS" "DMA_MASTER_V2K_PORTS_QOS"
@@ -361,7 +361,7 @@ Regex search bound to LIMIT."
      )
    nil)) ; Used for non-verilog constructs (i.e. custom preprocessing)
 
-(defvar larumbe/verilog-special-constructs
+(defvar verilog-ext-verilog-special-constructs
   (regexp-opt
    '(;; These constructs contain some special character that prevent them to be detected as symbols
      "@include" "@replace_ifdef" "@replace_end" "@insert_ifdef"
@@ -375,7 +375,7 @@ Regex search bound to LIMIT."
    nil)) ; Used for non-verilog constructs (i.e. custom preprocessing)
 
 
-(defvar larumbe/verilog-uvm-classes
+(defvar verilog-ext-verilog-uvm-classes
   (regexp-opt
    '(; Fetched through grep -R of classes starting with uvm_* and subsequent processing
      ; Does not include internal classes (such as m_uvm_*), nor enums, nor non-class typedefs such as vector derived
@@ -433,28 +433,28 @@ Regex search bound to LIMIT."
    'symbols)) ; Used to emphasize UVM specific constructs
 
 
-(defvar larumbe/verilog-font-lock-keywords
+(defvar verilog-ext-verilog-font-lock-keywords
   (list
    ;; Preprocessor macros and compiler directives
    '("`\\s-*[A-Za-z][A-Za-z0-9_]*" 0 larumbe/font-lock-preprocessor-face) ; Place at the top to have precendence in `else or `include 'macros over keywords
    ;; Special macros
-   (cons (concat "\\<\\(" larumbe/verilog-special-macros "\\)\\>") 'larumbe/xilinx-attributes-face)
+   (cons (concat "\\<\\(" verilog-ext-verilog-special-macros "\\)\\>") 'verilog-ext-xilinx-attributes-face)
    ;; Special constructs
-   (cons (concat "\\(" larumbe/verilog-special-constructs "\\)") 'larumbe/xilinx-attributes-face)
+   (cons (concat "\\(" verilog-ext-verilog-special-constructs "\\)") 'verilog-ext-xilinx-attributes-face)
    ;; UVM relevant constructs
-   (cons (concat "\\(" larumbe/verilog-uvm-classes "\\)") 'larumbe/uvm-classes-face)
+   (cons (concat "\\(" verilog-ext-verilog-uvm-classes "\\)") 'verilog-ext-uvm-classes-face)
    ;; Builtin keywords
-   (concat "\\<\\(" larumbe/verilog-font-general-keywords "\\)\\>") ; Default 'font-lock-keyword-face
+   (concat "\\<\\(" verilog-ext-verilog-font-general-keywords "\\)\\>") ; Default 'font-lock-keyword-face
    ;; User/System tasks and functions
-   (cons (concat "\\<\\(" larumbe/verilog-system-task-regex "\\)\\>") 'font-lock-builtin-face)
+   (cons (concat "\\<\\(" verilog-ext-verilog-system-task-regex "\\)\\>") 'font-lock-builtin-face)
    ;; Grouping keywords
-   (cons (concat "\\<\\(" larumbe/verilog-font-grouping-keywords "\\)\\>") 'larumbe/font-lock-grouping-keywords-face)
+   (cons (concat "\\<\\(" verilog-ext-verilog-font-grouping-keywords "\\)\\>") 'verilog-ext-font-lock-grouping-keywords-face)
    ;; Types
-   (cons (concat "\\<\\(" larumbe/verilog-type-font-keywords "\\)\\>") 'font-lock-type-face)
+   (cons (concat "\\<\\(" verilog-ext-verilog-type-font-keywords "\\)\\>") 'font-lock-type-face)
    ))
 
-(defvar larumbe/verilog-font-lock-keywords-1
-  (append larumbe/verilog-font-lock-keywords
+(defvar verilog-ext-verilog-font-lock-keywords-1
+  (append verilog-ext-verilog-font-lock-keywords
           (list
            ;; Module definitions
            (list "\\<\\(?1:\\(macro\\|connect\\)?module\\|primitive\\|class\\|program\\|interface\\|package\\|task\\)\\>\\s-*\\(automatic\\s-+\\)?\\(?3:\\sw+\\)\\s-*\\(?4:#?\\)"
@@ -465,13 +465,13 @@ Regex search bound to LIMIT."
                  '(4 font-lock-function-name-face)) ; Match 3 is return type (might be void)
            )))
 
-(defvar larumbe/verilog-font-lock-keywords-2
-  (append larumbe/verilog-font-lock-keywords-1
+(defvar verilog-ext-verilog-font-lock-keywords-2
+  (append verilog-ext-verilog-font-lock-keywords-1
           (list
            ;; Pragmas
-           (list (concat "\\(//\\s-*\\(" larumbe/verilog-pragma-keywords " \\).*\\)")
-                 '(0 'larumbe/font-lock-translate-off-face prepend)
-                 '(2 'larumbe/font-lock-preprocessor-face prepend))
+           (list (concat "\\(//\\s-*\\(" verilog-ext-verilog-pragma-keywords " \\).*\\)")
+                 '(0 'verilog-ext-font-lock-translate-off-face prepend)
+                 '(2 'verilog-ext-font-lock-preprocessor-face prepend))
            ;; Escaped names
            '("\\(\\\\\\S-*\\s-\\)"  0 font-lock-function-name-face)
            ;; Delays/numbers
@@ -480,70 +480,70 @@ Regex search bound to LIMIT."
            '("##\\(?1:\\sw+\\|\\[[^]]+\\]\\)" 1 font-lock-type-face append)
            )))
 
-(defvar larumbe/verilog-font-lock-keywords-3
-  (append larumbe/verilog-font-lock-keywords-2
+(defvar verilog-ext-verilog-font-lock-keywords-3
+  (append verilog-ext-verilog-font-lock-keywords-2
           (list
-           (list larumbe/verilog-time-unit-regex          2 larumbe/font-lock-time-unit-face)
-           (list larumbe/verilog-time-event-regex         0 larumbe/font-lock-time-event-face)
-           (list larumbe/verilog-port-connection-regex    1 larumbe/font-lock-port-connection-face)
-           (list larumbe/verilog-dot-itf-struct-regex     1 larumbe/font-lock-dot-expression-face)
-           (list larumbe/verilog-braces-content-regex     1 larumbe/font-lock-braces-content-face)
-           (list larumbe/punctuation-regex                0 larumbe/font-lock-punctuation-face)
-           (list larumbe/punctuation-bold-regex           0 larumbe/font-lock-punctuation-bold-face)
-           (list larumbe/braces-regex                     0 larumbe/font-lock-braces-face)
-           (list larumbe/brackets-regex                   0 larumbe/font-lock-brackets-face)
-           (list larumbe/curly-brackets-regex             0 larumbe/font-lock-curly-brackets-face)
-           (list larumbe/verilog-width-signal-regex
-                 '(1 larumbe/font-lock-width-num-face)
-                 '(2 larumbe/font-lock-width-type-face))
+           (list verilog-ext-verilog-time-unit-regex          2 verilog-ext-font-lock-time-unit-face)
+           (list verilog-ext-verilog-time-event-regex         0 verilog-ext-font-lock-time-event-face)
+           (list verilog-ext-verilog-port-connection-regex    1 verilog-ext-font-lock-port-connection-face)
+           (list verilog-ext-verilog-dot-itf-struct-regex     1 verilog-ext-font-lock-dot-expression-face)
+           (list verilog-ext-verilog-braces-content-regex     1 verilog-ext-font-lock-braces-content-face)
+           (list verilog-ext-punctuation-regex                0 verilog-ext-font-lock-punctuation-face)
+           (list verilog-ext-punctuation-bold-regex           0 verilog-ext-font-lock-punctuation-bold-face)
+           (list verilog-ext-braces-regex                     0 verilog-ext-font-lock-braces-face)
+           (list verilog-ext-brackets-regex                   0 verilog-ext-font-lock-brackets-face)
+           (list verilog-ext-curly-brackets-regex             0 verilog-ext-font-lock-curly-brackets-face)
+           (list verilog-ext-verilog-width-signal-regex
+                 '(1 verilog-ext-font-lock-width-num-face)
+                 '(2 verilog-ext-font-lock-width-type-face))
 
            ;; Xilinx attributes
-           (list (concat "(\\*\\s-+" "\\<\\(?1:" larumbe/verilog-xilinx-attributes "\\)\\>" "\\s-+\\*)") 1 larumbe/xilinx-attributes-face)
+           (list (concat "(\\*\\s-+" "\\<\\(?1:" verilog-ext-verilog-xilinx-attributes "\\)\\>" "\\s-+\\*)") 1 verilog-ext-xilinx-attributes-face)
 
            ;; FUNCTION-Based search fontify
            ;; Modules/instances
-           '(larumbe/find-verilog-module-instance-fontify
-             (1 'larumbe/font-lock-module-face))
-           '(larumbe/find-verilog-module-instance-fontify
-             (2 'larumbe/font-lock-instance-face))
+           '(verilog-ext-find-verilog-module-instance-fontify
+             (1 'verilog-ext-font-lock-module-face))
+           '(verilog-ext-find-verilog-module-instance-fontify
+             (2 'verilog-ext-font-lock-instance-face))
 
            ;; Variable types
-           '(larumbe/find-verilog-variable-type-fontify-1
-             (0 'larumbe/font-lock-variable-type-face))
-           '(larumbe/find-verilog-variable-type-fontify-2
-             (0 'larumbe/font-lock-variable-type-face))
-           '(larumbe/find-verilog-variable-type-fontify-3
-             (0 'larumbe/font-lock-variable-type-face))
+           '(verilog-ext-find-verilog-variable-type-fontify-1
+             (0 'verilog-ext-font-lock-variable-type-face))
+           '(verilog-ext-find-verilog-variable-type-fontify-2
+             (0 'verilog-ext-font-lock-variable-type-face))
+           '(verilog-ext-find-verilog-variable-type-fontify-3
+             (0 'verilog-ext-font-lock-variable-type-face))
 
            ;; *_translate off regions
-           '(larumbe/verilog-match-translate-off-fontify
-             (0 'larumbe/font-lock-translate-off-face prepend)) ; 3rd parameter (prepend or t) overrides previous fontlocking
+           '(verilog-ext-verilog-match-translate-off-fontify
+             (0 'verilog-ext-font-lock-translate-off-face prepend)) ; 3rd parameter (prepend or t) overrides previous fontlocking
            )
 
           ;; DANGER: Still experimental. Regexps are not solid enough.
-          (when larumbe/verilog-highlight-variable-declaration-names
+          (when verilog-ext-verilog-highlight-variable-declaration-names
             (list
              ;; A good approach would be fixing the function search based fontification to detect better variable declarations.
-             '(larumbe/find-verilog-variable-name-fontify-1
-               (0 'larumbe/font-lock-variable-name-face))
-             '(larumbe/find-verilog-variable-name-fontify-2
-               (0 'larumbe/font-lock-variable-name-face))
-             '(larumbe/find-verilog-variable-name-fontify-3
-               (0 'larumbe/font-lock-variable-name-face))
+             '(verilog-ext-find-verilog-variable-name-fontify-1
+               (0 'verilog-ext-font-lock-variable-name-face))
+             '(verilog-ext-find-verilog-variable-name-fontify-2
+               (0 'verilog-ext-font-lock-variable-name-face))
+             '(verilog-ext-find-verilog-variable-name-fontify-3
+               (0 'verilog-ext-font-lock-variable-name-face))
              ))))
 
 
 
 ;;;; Config
 (setq verilog-highlight-grouping-keywords     t)
-(setq verilog-highlight-translate-off       nil)  ; Conflict with `larumbe/verilog-match-translate-off-fontify' if enabled
+(setq verilog-highlight-translate-off       nil)  ; Conflict with `verilog-ext-verilog-match-translate-off-fontify' if enabled
 (setq verilog-highlight-modules             nil)  ; Analogous to `verilog-highlight-includes', would highlight module while hovering mouse. However it's experimental/incomplete as the regexp is not consistent.
 
 (font-lock-add-keywords 'verilog-mode
-                        (append larumbe/verilog-font-lock-keywords
-                                larumbe/verilog-font-lock-keywords-1
-                                larumbe/verilog-font-lock-keywords-2
-                                larumbe/verilog-font-lock-keywords-3) 'set)
+                        (append verilog-ext-verilog-font-lock-keywords
+                                verilog-ext-verilog-font-lock-keywords-1
+                                verilog-ext-verilog-font-lock-keywords-2
+                                verilog-ext-verilog-font-lock-keywords-3) 'set)
 
 
 
