@@ -176,7 +176,13 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 
 
 ;;;; CRON
-(use-package crontab-mode)
+(use-package crontab-mode
+  :hook ((crontab-mode . larumbe/crontab-hook))
+  :config
+  (defun larumbe/crontab-hook ()
+    "Crontab hook"
+    (interactive)
+    (setq truncate-lines t)))
 
 
 ;;;; YAML
