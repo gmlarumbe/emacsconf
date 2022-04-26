@@ -36,9 +36,9 @@
 Return nil if no timestamp structure was found."
   (save-excursion
     (goto-char (point-min))
-    (re-search-forward verilog-ext-verilog-time-stamp-work-boundary-re nil t)
-    (re-search-forward verilog-ext-verilog-time-stamp-work-created-re nil t)
-    (re-search-forward verilog-ext-verilog-time-stamp-work-boundary-re nil t)))
+    (re-search-forward verilog-ext-time-stamp-work-boundary-re nil t)
+    (re-search-forward verilog-ext-time-stamp-work-created-re nil t)
+    (re-search-forward verilog-ext-time-stamp-work-boundary-re nil t)))
 
 
 (defun verilog-ext-time-stamp-work-new-entry ()

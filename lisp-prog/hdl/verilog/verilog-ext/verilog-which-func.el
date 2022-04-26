@@ -11,7 +11,7 @@ show \"top\" but also show extra information that it's a \"module\".")
 
 
 (defun verilog-ext-which-func ()
-  (setq-local which-func-functions '(verilog-ext-find-module-instance
+  (setq-local which-func-functions '(verilog-ext-find-module-instance-bwd
                                      verilog-ext-get-header)))
 
 

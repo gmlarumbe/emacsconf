@@ -1,11 +1,5 @@
 ;;; verilog-rx.el --- Verilog Regexps  -*- lexical-binding: t -*-
 ;;; Commentary:
-;;
-;; This file includes functions fetched from modi's modified `setup-verilog'
-;; that are adviced to provide some extra/complementary functionality.
-;;
-;; It also includes hooks adding and modi's variable tweaking for personal customization.
-;;
 ;;; Code:
 
 

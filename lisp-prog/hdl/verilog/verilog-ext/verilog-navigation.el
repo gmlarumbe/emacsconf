@@ -18,7 +18,8 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
   (let ((case-fold-search verilog-case-fold)
         (found nil)
         (pos))
-    (with-verilog-shadow
+    ;; (with-verilog-shadow
+    (save-excursion
       (when (called-interactively-p) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
         (forward-char))              ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
       (while (and (not found)
@@ -26,6 +27,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
         (unless (or (string-match verilog-ext-keywords-re (match-string-no-properties 1))
                     (string-match verilog-ext-keywords-re (match-string-no-properties 2)))
           ;; TODO: Add thing of comments back when not using shadowing?
+          ;; TODO: Still fails to find some regexps (can see it with coloring)
           (setq found t)
           (if (called-interactively-p)
               (progn
@@ -47,7 +49,8 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
   (let ((case-fold-search verilog-case-fold)
         (found nil)
         (pos))
-    (with-verilog-shadow
+    ;; (with-verilog-shadow
+    (save-excursion
       (when (called-interactively-p) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
         (backward-char))             ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
       (while (and (not found)
@@ -62,7 +65,8 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
                 (message (match-string 1)))
             (setq pos (point))))))
     (when found
-      (goto-char pos))))
+      (goto-char pos)
+      (match-string-no-properties 1))))
 
 
 (defun verilog-ext-find-token-fwd ()

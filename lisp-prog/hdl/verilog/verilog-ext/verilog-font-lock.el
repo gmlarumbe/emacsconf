@@ -7,6 +7,13 @@
 (require 'verilog-mode)
 (require 'verilog-navigation)
 
+(defvar verilog-ext-uvm-classes-face 'verilog-ext-uvm-classes-face)
+(defface verilog-ext-uvm-classes-face
+  '((t (:foreground "light blue")))
+  "Face for UVM classes."
+  :group 'hdl-font-lock-highlighting-faces)
+
+
 ;;;; Variables
 ;; Some regexps come from evaluated `(concat verilog-ext-identifier-re "\\s-+" verilog-ext-identifier-re)' with capture groups and additions depending on what they might detect.
 (defvar verilog-ext-verilog-system-task-regex "\\$[a-zA-Z][a-zA-Z0-9_\\$]*")
@@ -37,7 +44,7 @@
                                             "untyped" "weak" "implements"
                                             "interconnect" "nettype" "soft"))
 ;; Obtained with: (dolist (word (cl-set-difference verilog-keywords verilog-type-keywords :test #'equal)) (insert "\"" word "\" "))
-(defvar verilog-ext-verilog-keywords-no-types-re (regexp-opt verilog-ext-verilog-keywords-no-types 'symbols))
+(defvar verilog-ext-verilog-keywords-no-types-re (regexp-opt verilog-ext-keywords-no-types 'symbols))
 (defvar verilog-ext-verilog-variable-re-1
   "\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(?2:\\[.*\\]\\s-*\\)?\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*\\(?4:=.*\\)?;"
   "type_t asdf;
@@ -436,11 +443,11 @@ Regex search bound to LIMIT."
 (defvar verilog-ext-verilog-font-lock-keywords
   (list
    ;; Preprocessor macros and compiler directives
-   '("`\\s-*[A-Za-z][A-Za-z0-9_]*" 0 larumbe/font-lock-preprocessor-face) ; Place at the top to have precendence in `else or `include 'macros over keywords
+   '("`\\s-*[A-Za-z][A-Za-z0-9_]*" 0 hdl-ext-font-lock-preprocessor-face) ; Place at the top to have precendence in `else or `include 'macros over keywords
    ;; Special macros
-   (cons (concat "\\<\\(" verilog-ext-verilog-special-macros "\\)\\>") 'verilog-ext-xilinx-attributes-face)
+   (cons (concat "\\<\\(" verilog-ext-verilog-special-macros "\\)\\>") 'hdl-ext-xilinx-attributes-face)
    ;; Special constructs
-   (cons (concat "\\(" verilog-ext-verilog-special-constructs "\\)") 'verilog-ext-xilinx-attributes-face)
+   (cons (concat "\\(" verilog-ext-verilog-special-constructs "\\)") 'hdl-ext-xilinx-attributes-face)
    ;; UVM relevant constructs
    (cons (concat "\\(" verilog-ext-verilog-uvm-classes "\\)") 'verilog-ext-uvm-classes-face)
    ;; Builtin keywords
@@ -448,7 +455,7 @@ Regex search bound to LIMIT."
    ;; User/System tasks and functions
    (cons (concat "\\<\\(" verilog-ext-verilog-system-task-regex "\\)\\>") 'font-lock-builtin-face)
    ;; Grouping keywords
-   (cons (concat "\\<\\(" verilog-ext-verilog-font-grouping-keywords "\\)\\>") 'verilog-ext-font-lock-grouping-keywords-face)
+   (cons (concat "\\<\\(" verilog-ext-verilog-font-grouping-keywords "\\)\\>") 'hdl-ext-font-lock-grouping-keywords-face)
    ;; Types
    (cons (concat "\\<\\(" verilog-ext-verilog-type-font-keywords "\\)\\>") 'font-lock-type-face)
    ))
@@ -483,29 +490,29 @@ Regex search bound to LIMIT."
 (defvar verilog-ext-verilog-font-lock-keywords-3
   (append verilog-ext-verilog-font-lock-keywords-2
           (list
-           (list verilog-ext-verilog-time-unit-regex          2 verilog-ext-font-lock-time-unit-face)
-           (list verilog-ext-verilog-time-event-regex         0 verilog-ext-font-lock-time-event-face)
-           (list verilog-ext-verilog-port-connection-regex    1 verilog-ext-font-lock-port-connection-face)
-           (list verilog-ext-verilog-dot-itf-struct-regex     1 verilog-ext-font-lock-dot-expression-face)
-           (list verilog-ext-verilog-braces-content-regex     1 verilog-ext-font-lock-braces-content-face)
-           (list verilog-ext-punctuation-regex                0 verilog-ext-font-lock-punctuation-face)
-           (list verilog-ext-punctuation-bold-regex           0 verilog-ext-font-lock-punctuation-bold-face)
-           (list verilog-ext-braces-regex                     0 verilog-ext-font-lock-braces-face)
-           (list verilog-ext-brackets-regex                   0 verilog-ext-font-lock-brackets-face)
-           (list verilog-ext-curly-brackets-regex             0 verilog-ext-font-lock-curly-brackets-face)
+           (list verilog-ext-verilog-time-unit-regex          2 hdl-ext-font-lock-time-unit-face)
+           (list verilog-ext-verilog-time-event-regex         0 hdl-ext-font-lock-time-event-face)
+           (list verilog-ext-verilog-port-connection-regex    1 hdl-ext-font-lock-port-connection-face)
+           (list verilog-ext-verilog-dot-itf-struct-regex     1 hdl-ext-font-lock-dot-expression-face)
+           (list verilog-ext-verilog-braces-content-regex     1 hdl-ext-font-lock-braces-content-face)
+           (list hdl-ext-punctuation-regex                0 hdl-ext-font-lock-punctuation-face)
+           (list hdl-ext-punctuation-bold-regex           0 hdl-ext-font-lock-punctuation-bold-face)
+           (list hdl-ext-braces-regex                     0 hdl-ext-font-lock-braces-face)
+           (list hdl-ext-brackets-regex                   0 hdl-ext-font-lock-brackets-face)
+           (list hdl-ext-curly-brackets-regex             0 hdl-ext-font-lock-curly-brackets-face)
            (list verilog-ext-verilog-width-signal-regex
-                 '(1 verilog-ext-font-lock-width-num-face)
-                 '(2 verilog-ext-font-lock-width-type-face))
+                 '(1 hdl-ext-font-lock-width-num-face)
+                 '(2 hdl-ext-font-lock-width-type-face))
 
            ;; Xilinx attributes
-           (list (concat "(\\*\\s-+" "\\<\\(?1:" verilog-ext-verilog-xilinx-attributes "\\)\\>" "\\s-+\\*)") 1 verilog-ext-xilinx-attributes-face)
+           (list (concat "(\\*\\s-+" "\\<\\(?1:" verilog-ext-verilog-xilinx-attributes "\\)\\>" "\\s-+\\*)") 1 hdl-ext-xilinx-attributes-face)
 
            ;; FUNCTION-Based search fontify
            ;; Modules/instances
            '(verilog-ext-find-verilog-module-instance-fontify
-             (1 'verilog-ext-font-lock-module-face))
+             (1 'hdl-ext-font-lock-module-face))
            '(verilog-ext-find-verilog-module-instance-fontify
-             (2 'verilog-ext-font-lock-instance-face))
+             (2 'hdl-ext-font-lock-instance-face))
 
            ;; Variable types
            '(verilog-ext-find-verilog-variable-type-fontify-1

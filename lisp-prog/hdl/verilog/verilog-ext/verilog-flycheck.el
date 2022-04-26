@@ -73,8 +73,8 @@ to avoid minibuffer collisions."
 (defvar verilog-ext-xrun-hal-log-name    "xrun.log")
 (defvar verilog-ext-xrun-hal-script-name "hal.sh")
 
-(defvar verilog-ext-xrun-hal-log-path    (verilog-ext-path-join verilog-ext-xrun-hal-directory verilog-ext-xrun-hal-log-name))
-(defvar verilog-ext-xrun-hal-script-path (verilog-ext-path-join verilog-ext-xrun-hal-directory verilog-ext-xrun-hal-script-name))
+(defvar verilog-ext-xrun-hal-log-path    (larumbe/path-join verilog-ext-xrun-hal-directory verilog-ext-xrun-hal-log-name))
+(defvar verilog-ext-xrun-hal-script-path (larumbe/path-join verilog-ext-xrun-hal-directory verilog-ext-xrun-hal-script-name))
 (defvar verilog-ext-xrun-hal-script-code (concat "#!/bin/bash
 args=\"${@}\"
 xrun -hal $args
@@ -97,8 +97,8 @@ Plus, the :command keyword of `flycheck-define-command-checker' assumes each
 of the strings are arguments, so if something such as \"&&\" \"cat\" is used to
 try to output the log, it would throw a xrun fatal error since
 \"&&\" would not be recognized as a file."
-  (let ((file verilog-ext-hal-script-path))
-    (unless (file-exists-p verilog-ext-hal-script-path)
+  (let ((file verilog-ext-xrun-hal-script-path))
+    (unless (file-exists-p verilog-ext-xrun-hal-script-path)
       (with-temp-buffer
         (insert verilog-ext-hal-script-code)
         (write-file file)
@@ -111,14 +111,14 @@ try to output the log, it would throw a xrun fatal error since
 
 
 ;; Similar to `flycheck-define-checker' but it's a defun instead of a macro.
-;; This allows the use of evaluated variables (`verilog-ext-hal-script-path' and
+;; This allows the use of evaluated variables (`verilog-ext-xrun-hal-script-path' and
 ;; `verilog-ext-xrun-hal-log-path') inside the first string of the keyword argument :command
 ;;
 ;; The only difference with `flycheck-define-checker' is that this one requires
 ;; keyword arguments to be quoted.
 (flycheck-define-command-checker 'verilog-cadence-hal
   "A Verilog syntax checker using Cadence HAL."
-  :command `(,verilog-ext-hal-script-path
+  :command `(,verilog-ext-xrun-hal-script-path
              "-bb_unbound_comp"
              "-timescale" "1ns/1ps"
              "-l" ,verilog-ext-xrun-hal-log-path
