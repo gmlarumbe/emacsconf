@@ -50,7 +50,7 @@
   :after verilog-mode
   :demand
   :commands (verilog-ext-flycheck-select-linter)
-  :hook ((verilog-mode . verilog-ext-verilog-hook))
+  :hook ((verilog-mode . verilog-ext-hook))
   :bind (:map verilog-mode-map
          ("M-f"      . verilog-ext-forward-word)
          ("M-b"      . verilog-ext-backward-word)

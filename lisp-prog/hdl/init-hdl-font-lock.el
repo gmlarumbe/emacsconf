@@ -171,11 +171,11 @@ obj.method();
 
 
 ;;;; Common regexps
-(defvar hdl-ext-brackets-regex "[()]")
-(defvar hdl-ext-curly-brackets-regex "[{}]")
-(defvar hdl-ext-braces-regex "\\(\\[\\|\\]\\)")
-(defvar hdl-ext-punctuation-regex "\\([!,;:?'=<>]\\|\\*\\)")
-(defvar hdl-ext-punctuation-bold-regex "\\([&^~+-]\\||\\|\\.\\|\\/\\)")
+(defvar hdl-ext-brackets-re "[()]")
+(defvar hdl-ext-curly-brackets-re "[{}]")
+(defvar hdl-ext-braces-re "\\(\\[\\|\\]\\)")
+(defvar hdl-ext-punctuation-re "\\([!,;:?'=<>]\\|\\*\\)")
+(defvar hdl-ext-punctuation-bold-re "\\([&^~+-]\\||\\|\\.\\|\\/\\)")
 
 
 (provide 'init-hdl-font-lock)

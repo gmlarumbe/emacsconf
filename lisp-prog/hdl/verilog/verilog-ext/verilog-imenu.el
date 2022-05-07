@@ -177,6 +177,8 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
 
 
 ;;;; Auxiliary
+;; TODO: Move them to a more generic place, navigation? Since these can be used by which-func and others...
+;; TODO: Can refactor this with a macro passing it the expressions to look at?
 (defun verilog-ext-find-class-bwd ()
   "Meant to be used for Imenu class entry."
   (let (found pos)
@@ -220,7 +222,7 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
 
 
 (defun verilog-ext-func-task-inside-class ()
-  "Return non-nil if cursor is pointing a task inside a class."
+  "Return non-nil if cursor is pointing a func/task inside a class."
   (interactive)
   (save-match-data
     (unless (or (looking-at verilog-ext-task-re)

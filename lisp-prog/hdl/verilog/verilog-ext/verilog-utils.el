@@ -120,7 +120,7 @@ Ask for ports to be connected until no port is found at current line."
 
 
 
-(defvar verilog-ext-verilog-clean-port-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)(\\(?4:[ ]*\\)\\(?5:[^ ]+\\)\\(?6:[ ]*\\))"
+(defvar verilog-ext-clean-port-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)(\\(?4:[ ]*\\)\\(?5:[^ ]+\\)\\(?6:[ ]*\\))"
   "Information about different capture groups:
 Group 1: Beginning of line blanks
 Group 2: Port name (after dot connection)
@@ -129,10 +129,10 @@ Group 4: Blanks after beginning of port connection '('
 Group 5: Name of connection
 Group 6: Blanks after end of port connection ')'")
 
-(defun verilog-ext-verilog-clean-port-blanks ()
+(defun verilog-ext-clean-port-blanks ()
   "Cleans blanks inside port connections of current buffer."
   (interactive)
-  (let ((old-re verilog-ext-verilog-clean-port-re)
+  (let ((old-re verilog-ext-clean-port-re)
         (new-re "\\1.\\2\\3\(\\5\)"))
     (larumbe/replace-regexp-whole-buffer old-re new-re)
     (message "Removed blanks from current buffer port connections.")))
@@ -141,16 +141,16 @@ Group 6: Blanks after end of port connection ')'")
 
 ;;;; Misc
 ;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
-(defvar verilog-ext-verilog-open-dirs nil
+(defvar verilog-ext-open-dirs nil
   "List with directories of current opened `verilog-mode' buffers.
 Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
-(defvar verilog-ext-verilog-open-pkgs nil
+(defvar verilog-ext-open-pkgs nil
   "List of currently opened SystemVerilog packages.")
-(defvar verilog-ext-verilog-project-pkg-list nil
+(defvar verilog-ext-project-pkg-list nil
   "List of current open packages at projectile project.")
 
 
-(defun verilog-ext-verilog-dirs-and-pkgs-of-open-buffers ()
+(defun verilog-ext-dirs-and-pkgs-of-open-buffers ()
   "Return a list of directories from current verilog opened files.
 It also updates currently opened SystemVerilog packages.
 
@@ -171,8 +171,8 @@ Used for flycheck and vhier packages."
     `(,verilog-opened-dirs ,verilog-opened-pkgs)))  ; Return list of dirs and packages
 
 
-(defun verilog-ext-verilog-update-project-pkg-list ()
-  "Update currently open packages on `verilog-ext-verilog-project-pkg-list'.
+(defun verilog-ext-update-project-pkg-list ()
+  "Update currently open packages on `verilog-ext-project-pkg-list'.
 
 Only packages within current projectile project are added.
 To be used with vhier/flycheck.
@@ -182,20 +182,20 @@ INFO: Limitations:
  - Some sorting method could be used in the future:
    - Extracting them from buffer file but in the order they have been
      opened and reverse sorting, for example..."
-  (setq verilog-ext-verilog-project-pkg-list nil) ; Reset list
+  (setq verilog-ext-project-pkg-list nil) ; Reset list
   (mapc
    (lambda (pkg)
      (when (string-prefix-p (projectile-project-root) pkg)
-       (unless (member pkg verilog-ext-verilog-project-pkg-list)
-         (push pkg verilog-ext-verilog-project-pkg-list))))
-   verilog-ext-verilog-open-pkgs)
+       (unless (member pkg verilog-ext-project-pkg-list)
+         (push pkg verilog-ext-project-pkg-list))))
+   verilog-ext-open-pkgs)
   ;; Return pkg-list
-  verilog-ext-verilog-project-pkg-list)
+  verilog-ext-project-pkg-list)
 
 
 
 ;;;; Others
-(defun verilog-ext-verilog-find-semicolon-in-instance-comments ()
+(defun verilog-ext-find-semicolon-in-instance-comments ()
   "Find semicolons in instance comments.
 
 Main purpose is to avoid missing instantiation detections with `imenu' and
@@ -319,16 +319,16 @@ for \"module\").
 
 
 ;;;; Hooks
-(defun verilog-ext-verilog-hook ()
+(defun verilog-ext-hook ()
   "Verilog hook."
-  (setq verilog-ext-verilog-open-dirs (nth 0 (verilog-ext-verilog-dirs-and-pkgs-of-open-buffers)))
-  (setq verilog-ext-verilog-open-pkgs (nth 1 (verilog-ext-verilog-dirs-and-pkgs-of-open-buffers)))
-  (setq verilog-library-directories verilog-ext-verilog-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
-  (setq verilog-ext-flycheck-verilator-include-path verilog-ext-verilog-open-dirs)
+  (setq verilog-ext-open-dirs (nth 0 (verilog-ext-dirs-and-pkgs-of-open-buffers)))
+  (setq verilog-ext-open-pkgs (nth 1 (verilog-ext-dirs-and-pkgs-of-open-buffers)))
+  (setq verilog-library-directories verilog-ext-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
+  (setq verilog-ext-flycheck-verilator-include-path verilog-ext-open-dirs)
   (flycheck-select-checker verilog-ext-flycheck-active-linter)
   (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `verilog-ext-electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
   (verilog-ext-time-stamp-update)
-  (verilog-ext-verilog-find-semicolon-in-instance-comments)
+  (verilog-ext-find-semicolon-in-instance-comments)
   (setq-local yas-indent-line 'fixed))
 
 

@@ -39,9 +39,10 @@
 
 (defvar verilog-ext-keywords-re (regexp-opt verilog-keywords 'symbols))
 
-(defvar verilog-ext-token-re
+(setq verilog-ext-token-re
   (regexp-opt
    '("module"
+     "interface"
      "program"
      "package"
      "class"
@@ -53,11 +54,13 @@
      "always_comb"
      "generate"
      "property"
-     "sequence")
+     "sequence"
+     "`define")
    'symbols))
 
 
 
+;; Modi, to find header (probably can be removed later)
 (defvar verilog-ext-header-words-re
   (regexp-opt
    '("case"
@@ -101,32 +104,32 @@
 ;; Search by function: Used for functions that will be passed as an argument of `verilog-ext-imenu-generic-expression'
 (defvar verilog-ext-task-re     "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*task\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
 (defvar verilog-ext-function-re "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*function\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?:\\w+\\s-+\\)?\\(?:\\(?:un\\)signed\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
-(defvar verilog-ext-class-re    "\\(?1:\\(?:\\(?:virtual\\|interface\\)\\s-+\\)?class\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
-(defvar verilog-ext-top-re      "\\(?1:package\\|program\\|module\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
+(setq verilog-ext-class-re    "\\(?1:\\(?:\\(?:virtual\\)\\s-+\\)?class\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
+(setq verilog-ext-top-re      "\\(?1:package\\|program\\|module\\|interface\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
 
 
 ;;;; Used by font-lock
 ;; Some regexps come from evaluated `(concat verilog-ext-identifier-re "\\s-+" verilog-ext-identifier-re)' with capture groups and additions depending on what they might detect.
-(defvar verilog-ext-verilog-system-task-regex "\\$[a-zA-Z][a-zA-Z0-9_\\$]*")
-(defvar verilog-ext-verilog-port-connection-regex "^[[:blank:]]*\\.\\([0-9a-zA-Z*_-]*\\)")
-(defvar verilog-ext-verilog-dot-itf-struct-regex "\\([a-zA-Z*_-][0-9a-zA-Z*_-]+\\)\\.\\([0-9a-zA-Z*_-]+\\)")
-(defvar verilog-ext-verilog-braces-content-regex "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
-(defvar verilog-ext-verilog-width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xzXZ]+\\)")
-(defvar verilog-ext-verilog-time-event-regex "\\([@#]\\)")
-(defvar verilog-ext-verilog-time-unit-regex "[0-9]+\\(\\.[0-9]+\\)?\\(?2:[umnpf]s\\)")
+(defvar verilog-ext-system-task-re "\\$[a-zA-Z][a-zA-Z0-9_\\$]*")
+(defvar verilog-ext-port-connection-re "^[[:blank:]]*\\.\\([0-9a-zA-Z*_-]*\\)")
+(defvar verilog-ext-dot-itf-struct-re "\\([a-zA-Z*_-][0-9a-zA-Z*_-]+\\)\\.\\([0-9a-zA-Z*_-]+\\)")
+(defvar verilog-ext-braces-content-re "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
+(defvar verilog-ext-width-signal-re "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xzXZ]+\\)")
+(defvar verilog-ext-time-event-re "\\([@#]\\)")
+(defvar verilog-ext-time-unit-re "[0-9]+\\(\\.[0-9]+\\)?\\(?2:[umnpf]s\\)")
 
 
 
-(defvar verilog-ext-verilog-variable-re-1
+(defvar verilog-ext-variable-re-1
   "\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(?2:\\[.*\\]\\s-*\\)?\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*\\(?4:=.*\\)?;"
   "type_t asdf;
    type_t [10:0] asdf;
    type_t [10:0] asdf = 'h0;
 ")
-(defvar verilog-ext-verilog-variable-re-2
+(defvar verilog-ext-variable-re-2
   "\\_<\\(?1:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\_>\\s-+\\(?3:\\([a-zA-Z_][a-zA-Z0-9$_]*\\s-*,\\s-*\\)+\\([a-zA-Z_][a-zA-Z0-9$_]*\\s-*\\)\\);"
   "type_t asdf1, asdf2 , asdf4, asdf6[], asdf7 [25], asdf8 ;")
-(defvar verilog-ext-verilog-variable-re-3
+(defvar verilog-ext-variable-re-3
   "\\_<\\(input\\|output\\|inout\\|ref\\|parameter\\|localparam\\)\\_>\\s-+\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(\\[.*\\]\\)?\\s-*\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*"
   " ...
   parameter type_t a = 1,

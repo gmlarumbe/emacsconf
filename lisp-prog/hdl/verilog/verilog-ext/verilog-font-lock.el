@@ -17,7 +17,7 @@
 
 ;; TODO: Maybe move them somewhere else?
 ;; Variable declaration type/name font-lock
-(defvar verilog-ext-verilog-highlight-variable-declaration-names nil)
+(defvar verilog-ext-highlight-variable-declaration-names nil)
 (defvar verilog-ext-keywords-no-types '("`__FILE__" "`__LINE" "`begin_keywords" "`celldefine" "`default_nettype" "`define" "`else" "`elsif" "`end_keywords" "`endcelldefine" "`endif" "`ifdef" "`ifndef" "`include"
                                             "`line" "`nounconnected_drive" "`pragma" "`resetall" "`timescale" "`unconnected_drive" "`undef" "`undefineall" "`case" "`default" "`endfor" "`endprotect" "`endswitch"
                                             "`endwhile" "`for" "`format" "`if" "`let" "`protect" "`switch" "`timescale" "`time_scale" "`while" "after" "alias" "always" "always_comb" "always_ff" "always_latch"
@@ -36,7 +36,7 @@
                                             "untyped" "weak" "implements"
                                             "interconnect" "nettype" "soft"))
 ;; Obtained with: (dolist (word (cl-set-difference verilog-keywords verilog-type-keywords :test #'equal)) (insert "\"" word "\" "))
-(defvar verilog-ext-verilog-keywords-no-types-re (regexp-opt verilog-ext-keywords-no-types 'symbols))
+(defvar verilog-ext-keywords-no-types-re (regexp-opt verilog-ext-keywords-no-types 'symbols))
 
 ;;;; Functions
 ;; INFO: Search based fontification:
@@ -60,7 +60,7 @@ Arg LIMIT is used internally for fontification."
       (point))))
 
 
-(defun verilog-ext-verilog-match-translate-off-fontify (limit)
+(defun verilog-ext-match-translate-off-fontify (limit)
   "Match a translate-off block, setting `match-data' and returning t, else nil.
 Bound search by LIMIT.
 
@@ -93,8 +93,8 @@ Search for REGEX bound to LIMIT."
                   (re-search-forward regex limit t))
         (setq type (match-string-no-properties 1))
         (setq name (match-string-no-properties 3))
-        (unless (or (string-match verilog-ext-verilog-keywords-no-types-re type)
-                    (string-match verilog-ext-verilog-keywords-no-types-re name))
+        (unless (or (string-match verilog-ext-keywords-no-types-re type)
+                    (string-match verilog-ext-keywords-no-types-re name))
           (setq found t)
           (setq pos (point)))))
     (when found
@@ -102,18 +102,18 @@ Search for REGEX bound to LIMIT."
 
 
 (defun verilog-ext-find-verilog-variable-fwd-1 (limit)
-  (verilog-ext-find-verilog-variable-type-fwd verilog-ext-verilog-variable-re-1 limit))
+  (verilog-ext-find-verilog-variable-type-fwd verilog-ext-variable-re-1 limit))
 
 (defun verilog-ext-find-verilog-variable-fwd-2 (limit)
-  (verilog-ext-find-verilog-variable-type-fwd verilog-ext-verilog-variable-re-2 limit))
+  (verilog-ext-find-verilog-variable-type-fwd verilog-ext-variable-re-2 limit))
 
 (defun verilog-ext-find-verilog-variable-fwd-3 (limit)
-  (verilog-ext-find-verilog-variable-type-fwd verilog-ext-verilog-variable-re-3 limit))
+  (verilog-ext-find-verilog-variable-type-fwd verilog-ext-variable-re-3 limit))
 
 
 (defun verilog-ext-find-verilog-variable-type-fontify-1 (limit)
   "Search based fontification function of Verilog type 1 variable types.
-These are determined by variable `verilog-ext-verilog-variable-re-1'.
+These are determined by variable `verilog-ext-variable-re-1'.
 Regex search bound to LIMIT."
   (let (start end)
     (when (verilog-ext-find-verilog-variable-fwd-1 limit)
@@ -124,7 +124,7 @@ Regex search bound to LIMIT."
 
 (defun verilog-ext-find-verilog-variable-name-fontify-1 (limit)
   "Search based fontification function of Verilog type 1 variable names.
-These are determined by variable `verilog-ext-verilog-variable-re-1'.
+These are determined by variable `verilog-ext-variable-re-1'.
 Regex search bound to LIMIT."
   (let (start end)
     (when (verilog-ext-find-verilog-variable-fwd-1 limit)
@@ -135,7 +135,7 @@ Regex search bound to LIMIT."
 
 (defun verilog-ext-find-verilog-variable-type-fontify-2 (limit)
   "Search based fontification function of Verilog type 2 variable types.
-These are determined by variable `verilog-ext-verilog-variable-re-1'.
+These are determined by variable `verilog-ext-variable-re-1'.
 Regex search bound to LIMIT."
   (let (start end)
     (when (verilog-ext-find-verilog-variable-fwd-2 limit)
@@ -146,7 +146,7 @@ Regex search bound to LIMIT."
 
 (defun verilog-ext-find-verilog-variable-name-fontify-2 (limit)
   "Search based fontification function of Verilog type 2 variable names.
-These are determined by variable `verilog-ext-verilog-variable-re-1'.
+These are determined by variable `verilog-ext-variable-re-1'.
 Regex search bound to LIMIT."
   (let (start end)
     (when (verilog-ext-find-verilog-variable-fwd-2 limit)
@@ -157,7 +157,7 @@ Regex search bound to LIMIT."
 
 (defun verilog-ext-find-verilog-variable-type-fontify-3 (limit)
   "Search based fontification function of Verilog type 3 variable types.
-These are determined by variable `verilog-ext-verilog-variable-re-1'.
+These are determined by variable `verilog-ext-variable-re-1'.
 Regex search bound to LIMIT."
   (let (start end)
     (when (verilog-ext-find-verilog-variable-fwd-3 limit)
@@ -168,7 +168,7 @@ Regex search bound to LIMIT."
 
 (defun verilog-ext-find-verilog-variable-name-fontify-3 (limit)
   "Search based fontification function of Verilog type 3 variable names.
-These are determined by variable `verilog-ext-verilog-variable-re-1'.
+These are determined by variable `verilog-ext-variable-re-1'.
 Regex search bound to LIMIT."
   (let (start end)
     (when (verilog-ext-find-verilog-variable-fwd-3 limit)
@@ -180,7 +180,7 @@ Regex search bound to LIMIT."
 
 
 ;;;; Font-lock keywords
-(defvar verilog-ext-verilog-type-font-keywords
+(defvar verilog-ext-type-font-keywords
   (regexp-opt
    '("and" "buf" "bufif0" "bufif1" "cmos" "defparam" "event"
      "genvar" "highz0" "highz1" "inout" "input" "integer"
@@ -199,7 +199,7 @@ Regex search bound to LIMIT."
      ;; 1800-2012
      "interconnect" "nettype" ) nil))
 
-(defvar verilog-ext-verilog-pragma-keywords
+(defvar verilog-ext-pragma-keywords
   (regexp-opt
    '("surefire" "0in" "auto" "leda" "rtl_synthesis" "verilint"
      ;; Recognized by Vivado (check Xilinx attribute 'translate_off/translate_on'):
@@ -208,7 +208,7 @@ Regex search bound to LIMIT."
 
 ;; https://www.xilinx.com/support/documentation/sw_manuals/xilinx2017_3/ug901-vivado-synthesis.pdf
 ;; Chapter 2 (Some of them are also supported at XDC)
-(defvar verilog-ext-verilog-xilinx-attributes
+(defvar verilog-ext-xilinx-attributes
   (regexp-opt
    '("async_reg" "black_box" "cascade_height" "clock_buffer_type"
      "direct_enable" "direct_reset" "dont_touch" "extract_enable"
@@ -228,7 +228,7 @@ Regex search bound to LIMIT."
      ) nil))
 
 
-(defvar verilog-ext-verilog-font-general-keywords
+(defvar verilog-ext-font-general-keywords
   (regexp-opt
    ;; INFO: Same as the one in `verilog-mode' but excluding "include"
    ;; as it must be highlighted as a macro instead.
@@ -270,11 +270,11 @@ Regex search bound to LIMIT."
      ;; 1800-2012
      "implements" "soft" ) nil))
 
-(defvar verilog-ext-verilog-font-grouping-keywords
+(defvar verilog-ext-font-grouping-keywords
   (regexp-opt
    '( "begin" "end" "this") nil))  ; "this" is not grouping but looks better in green
 
-(defvar verilog-ext-verilog-special-macros
+(defvar verilog-ext-special-macros
   (regexp-opt
    '( ;; DMA Macros
      "DMA_MASTER_V2K_PORTS_READ" "DMA_MASTER_V2K_PORTS_WRITE" "DMA_MASTER_V2K_PORTS" "DMA_MASTER_V2K_PORTS_QOS"
@@ -336,7 +336,7 @@ Regex search bound to LIMIT."
      )
    nil)) ; Used for non-verilog constructs (i.e. custom preprocessing)
 
-(defvar verilog-ext-verilog-special-constructs
+(defvar verilog-ext-special-constructs
   (regexp-opt
    '(;; These constructs contain some special character that prevent them to be detected as symbols
      "@include" "@replace_ifdef" "@replace_end" "@insert_ifdef"
@@ -350,7 +350,7 @@ Regex search bound to LIMIT."
    nil)) ; Used for non-verilog constructs (i.e. custom preprocessing)
 
 
-(defvar verilog-ext-verilog-uvm-classes
+(defvar verilog-ext-uvm-classes
   (regexp-opt
    '(; Fetched through grep -R of classes starting with uvm_* and subsequent processing
      ; Does not include internal classes (such as m_uvm_*), nor enums, nor non-class typedefs such as vector derived
@@ -408,28 +408,28 @@ Regex search bound to LIMIT."
    'symbols)) ; Used to emphasize UVM specific constructs
 
 
-(defvar verilog-ext-verilog-font-lock-keywords
+(defvar verilog-ext-font-lock-keywords
   (list
    ;; Preprocessor macros and compiler directives
    '("`\\s-*[A-Za-z][A-Za-z0-9_]*" 0 hdl-ext-font-lock-preprocessor-face) ; Place at the top to have precendence in `else or `include 'macros over keywords
    ;; Special macros
-   (cons (concat "\\<\\(" verilog-ext-verilog-special-macros "\\)\\>") 'hdl-ext-xilinx-attributes-face)
+   (cons (concat "\\<\\(" verilog-ext-special-macros "\\)\\>") 'hdl-ext-xilinx-attributes-face)
    ;; Special constructs
-   (cons (concat "\\(" verilog-ext-verilog-special-constructs "\\)") 'hdl-ext-xilinx-attributes-face)
+   (cons (concat "\\(" verilog-ext-special-constructs "\\)") 'hdl-ext-xilinx-attributes-face)
    ;; UVM relevant constructs
-   (cons (concat "\\(" verilog-ext-verilog-uvm-classes "\\)") 'verilog-ext-uvm-classes-face)
+   (cons (concat "\\(" verilog-ext-uvm-classes "\\)") 'verilog-ext-uvm-classes-face)
    ;; Builtin keywords
-   (concat "\\<\\(" verilog-ext-verilog-font-general-keywords "\\)\\>") ; Default 'font-lock-keyword-face
+   (concat "\\<\\(" verilog-ext-font-general-keywords "\\)\\>") ; Default 'font-lock-keyword-face
    ;; User/System tasks and functions
-   (cons (concat "\\<\\(" verilog-ext-verilog-system-task-regex "\\)\\>") 'font-lock-builtin-face)
+   (cons (concat "\\<\\(" verilog-ext-system-task-re "\\)\\>") 'font-lock-builtin-face)
    ;; Grouping keywords
-   (cons (concat "\\<\\(" verilog-ext-verilog-font-grouping-keywords "\\)\\>") 'hdl-ext-font-lock-grouping-keywords-face)
+   (cons (concat "\\<\\(" verilog-ext-font-grouping-keywords "\\)\\>") 'hdl-ext-font-lock-grouping-keywords-face)
    ;; Types
-   (cons (concat "\\<\\(" verilog-ext-verilog-type-font-keywords "\\)\\>") 'font-lock-type-face)
+   (cons (concat "\\<\\(" verilog-ext-type-font-keywords "\\)\\>") 'font-lock-type-face)
    ))
 
-(defvar verilog-ext-verilog-font-lock-keywords-1
-  (append verilog-ext-verilog-font-lock-keywords
+(defvar verilog-ext-font-lock-keywords-1
+  (append verilog-ext-font-lock-keywords
           (list
            ;; Module definitions
            (list "\\<\\(?1:\\(macro\\|connect\\)?module\\|primitive\\|class\\|program\\|interface\\|package\\|task\\)\\>\\s-*\\(automatic\\s-+\\)?\\(?3:\\sw+\\)\\s-*\\(?4:#?\\)"
@@ -440,11 +440,11 @@ Regex search bound to LIMIT."
                  '(4 font-lock-function-name-face)) ; Match 3 is return type (might be void)
            )))
 
-(defvar verilog-ext-verilog-font-lock-keywords-2
-  (append verilog-ext-verilog-font-lock-keywords-1
+(defvar verilog-ext-font-lock-keywords-2
+  (append verilog-ext-font-lock-keywords-1
           (list
            ;; Pragmas
-           (list (concat "\\(//\\s-*\\(" verilog-ext-verilog-pragma-keywords " \\).*\\)")
+           (list (concat "\\(//\\s-*\\(" verilog-ext-pragma-keywords " \\).*\\)")
                  '(0 'verilog-ext-font-lock-translate-off-face prepend)
                  '(2 'verilog-ext-font-lock-preprocessor-face prepend))
            ;; Escaped names
@@ -455,25 +455,25 @@ Regex search bound to LIMIT."
            '("##\\(?1:\\sw+\\|\\[[^]]+\\]\\)" 1 font-lock-type-face append)
            )))
 
-(defvar verilog-ext-verilog-font-lock-keywords-3
-  (append verilog-ext-verilog-font-lock-keywords-2
+(defvar verilog-ext-font-lock-keywords-3
+  (append verilog-ext-font-lock-keywords-2
           (list
-           (list verilog-ext-verilog-time-unit-regex          2 hdl-ext-font-lock-time-unit-face)
-           (list verilog-ext-verilog-time-event-regex         0 hdl-ext-font-lock-time-event-face)
-           (list verilog-ext-verilog-port-connection-regex    1 hdl-ext-font-lock-port-connection-face)
-           (list verilog-ext-verilog-dot-itf-struct-regex     1 hdl-ext-font-lock-dot-expression-face)
-           (list verilog-ext-verilog-braces-content-regex     1 hdl-ext-font-lock-braces-content-face)
-           (list hdl-ext-punctuation-regex                0 hdl-ext-font-lock-punctuation-face)
-           (list hdl-ext-punctuation-bold-regex           0 hdl-ext-font-lock-punctuation-bold-face)
-           (list hdl-ext-braces-regex                     0 hdl-ext-font-lock-braces-face)
-           (list hdl-ext-brackets-regex                   0 hdl-ext-font-lock-brackets-face)
-           (list hdl-ext-curly-brackets-regex             0 hdl-ext-font-lock-curly-brackets-face)
-           (list verilog-ext-verilog-width-signal-regex
+           (list verilog-ext-time-unit-re          2 hdl-ext-font-lock-time-unit-face)
+           (list verilog-ext-time-event-re         0 hdl-ext-font-lock-time-event-face)
+           (list verilog-ext-port-connection-re    1 hdl-ext-font-lock-port-connection-face)
+           (list verilog-ext-dot-itf-struct-re     1 hdl-ext-font-lock-dot-expression-face)
+           (list verilog-ext-braces-content-re     1 hdl-ext-font-lock-braces-content-face)
+           (list hdl-ext-punctuation-re                0 hdl-ext-font-lock-punctuation-face)
+           (list hdl-ext-punctuation-bold-re           0 hdl-ext-font-lock-punctuation-bold-face)
+           (list hdl-ext-braces-re                     0 hdl-ext-font-lock-braces-face)
+           (list hdl-ext-brackets-re                   0 hdl-ext-font-lock-brackets-face)
+           (list hdl-ext-curly-brackets-re             0 hdl-ext-font-lock-curly-brackets-face)
+           (list verilog-ext-width-signal-re
                  '(1 hdl-ext-font-lock-width-num-face)
                  '(2 hdl-ext-font-lock-width-type-face))
 
            ;; Xilinx attributes
-           (list (concat "(\\*\\s-+" "\\<\\(?1:" verilog-ext-verilog-xilinx-attributes "\\)\\>" "\\s-+\\*)") 1 hdl-ext-xilinx-attributes-face)
+           (list (concat "(\\*\\s-+" "\\<\\(?1:" verilog-ext-xilinx-attributes "\\)\\>" "\\s-+\\*)") 1 hdl-ext-xilinx-attributes-face)
 
            ;; FUNCTION-Based search fontify
            ;; Modules/instances
@@ -491,12 +491,12 @@ Regex search bound to LIMIT."
              (0 'verilog-ext-font-lock-variable-type-face))
 
            ;; *_translate off regions
-           '(verilog-ext-verilog-match-translate-off-fontify
+           '(verilog-ext-match-translate-off-fontify
              (0 'verilog-ext-font-lock-translate-off-face prepend)) ; 3rd parameter (prepend or t) overrides previous fontlocking
            )
 
           ;; DANGER: Still experimental. Regexps are not solid enough.
-          (when verilog-ext-verilog-highlight-variable-declaration-names
+          (when verilog-ext-highlight-variable-declaration-names
             (list
              ;; A good approach would be fixing the function search based fontification to detect better variable declarations.
              '(verilog-ext-find-verilog-variable-name-fontify-1
@@ -511,14 +511,14 @@ Regex search bound to LIMIT."
 
 ;;;; Config
 (setq verilog-highlight-grouping-keywords     t)
-(setq verilog-highlight-translate-off       nil)  ; Conflict with `verilog-ext-verilog-match-translate-off-fontify' if enabled
+(setq verilog-highlight-translate-off       nil)  ; Conflict with `verilog-ext-match-translate-off-fontify' if enabled
 (setq verilog-highlight-modules             nil)  ; Analogous to `verilog-highlight-includes', would highlight module while hovering mouse. However it's experimental/incomplete as the regexp is not consistent.
 
 (font-lock-add-keywords 'verilog-mode
-                        (append verilog-ext-verilog-font-lock-keywords
-                                verilog-ext-verilog-font-lock-keywords-1
-                                verilog-ext-verilog-font-lock-keywords-2
-                                verilog-ext-verilog-font-lock-keywords-3) 'set)
+                        (append verilog-ext-font-lock-keywords
+                                verilog-ext-font-lock-keywords-1
+                                verilog-ext-font-lock-keywords-2
+                                verilog-ext-font-lock-keywords-3) 'set)
 
 
 

@@ -74,14 +74,19 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
   (let ((case-fold-search verilog-case-fold)
         (found nil)
         (pos))
+    ;; (save-excursion
     (with-verilog-shadow
       (forward-char) ; Needed to avoid getting stuck
       (while (and (not found)
                   (re-search-forward verilog-ext-token-re nil t))
-        (setq found t)
-        (if (called-interactively-p)
-            (setq pos (match-beginning 1))
-          (setq pos (point)))))
+        ;; TODO: Does not work with shadow, only with font-locked mode and save-excursion
+        (unless (or (equal (face-at-point) 'font-lock-comment-face)
+                    (equal (face-at-point) 'font-lock-string-face))
+          ;; TODO: Does not work with shadow, only with font-locked mode and save-excursion
+          (setq found t)
+          (if (called-interactively-p)
+              (setq pos (match-beginning 1))
+            (setq pos (point))))))
     (when found
       (goto-char pos))))
 
@@ -92,13 +97,18 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
   (let ((case-fold-search verilog-case-fold)
         (found nil)
         (pos))
-    (with-verilog-shadow
+    (save-excursion
+    ;; (with-verilog-shadow
       (while (and (not found)
                   (re-search-backward verilog-ext-token-re nil t))
-        (setq found t)
-        (if (called-interactively-p)
-            (setq pos (match-beginning 1))
-          (setq pos (point)))))
+          ;; TODO: Does not work with shadow, only with font-locked mode and save-excursion
+        (unless (or (equal (face-at-point) 'font-lock-comment-face)
+                    (equal (face-at-point) 'font-lock-string-face))
+          ;; TODO: Does not work with shadow, only with font-locked mode and save-excursion
+          (setq found t)
+          (if (called-interactively-p)
+              (setq pos (match-beginning 1))
+            (setq pos (point))))))
     (when found
       (goto-char pos))))
 

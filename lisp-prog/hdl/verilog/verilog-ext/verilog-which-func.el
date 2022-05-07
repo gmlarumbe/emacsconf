@@ -9,60 +9,93 @@ mode-line. For instance, if point is under \"module top\", `which-func' would
 show \"top\" but also show extra information that it's a \"module\".")
 
 
-(defun verilog-ext-which-func-function ()
+(defun verilog-ext-which-func-find-instance ()
   ""
-  (let (instance-type instance-name token-name token-full point-instance point-token token2-type token2-name)
+  (let (instance-point instance-type instance-name)
     (save-excursion
       (when (verilog-ext-find-module-instance-bwd)
+        (setq instance-point (point))
         (setq instance-type (match-string-no-properties 1))
-        (setq instance-name (match-string-no-properties 2))
-        (setq point-instance (point))))
+        (setq instance-name (match-string-no-properties 2))))
+    (list instance-point instance-type instance-name)))
+
+
+(defun verilog-ext-which-func-find-token ()
+  ""
+  (let (token-point token-type token-name)
     (save-excursion
-      (when (verilog-ext-find-task-function-class-bwd)
-        (setq token2-type (match-string-no-properties 1))
-        (setq token2-name (match-string-no-properties 2))))
-    ;; (save-excursion
-    ;;   (when (and (verilog-ext-find-token-bwd)
-    ;;              (not (string= (match-string-no-properties 1) "task"))
-    ;;              (not (string= (match-string-no-properties 1) "function")))
-    ;;     (setq point-token (point))
-    ;;     (setq token-name (match-string-no-properties 1))
-    ;;     (setq token-full (buffer-substring-no-properties point-token (point-at-eol)))))
+      (when (verilog-ext-find-token-bwd)
+        (setq token-point (point))
+        (setq token-type (match-string-no-properties 1))
+        ;; Similar to `verilog-ext-find-task-function-class-bwd'. TODO: Could be refactored?
+        (if (or (looking-at verilog-ext-function-re)
+                (looking-at verilog-ext-task-re)
+                (looking-at verilog-ext-class-re)
+                (looking-at verilog-ext-top-re))
+            (setq token-name (match-string-no-properties 2))
+          (setq token-name (buffer-substring-no-properties (point) (point-at-eol))))))
+    (list token-point token-type token-name)))
+
+
+
+(defun verilog-ext-which-func-maybe-shorten-token (token-type)
+  ""
+  (cond ((string= "module"      token-type) "mod")
+        ((string= "interface"   token-type) "itf")
+        ((string= "program"     token-type) "pgrm")
+        ((string= "package"     token-type) "pkg")
+        ((string= "class"       token-type) "cls")
+        ((string= "function"    token-type) "fun")
+        ((string= "task"        token-type) "task")
+        ;; The rest already show the whole line
+        (t "")))
+
+
+(defun verilog-ext-which-func-set-instance (instance-type instance-name)
+  ""
+  (setq verilog-ext-which-func-xtra instance-name)
+  instance-type)
+
+
+(defun verilog-ext-which-func-set-token (token-type token-name)
+  ""
+  (setq verilog-ext-which-func-xtra (verilog-ext-which-func-maybe-shorten-token token-type))
+  token-name)
+
+
+(defun verilog-ext-which-func-decide (instance-data token-data)
+  ""
+  (let ((instance-point (nth 0 instance-data))
+        (instance-type  (nth 1 instance-data))
+        (instance-name  (nth 2 instance-data))
+        (token-point (nth 0 token-data))
+        (token-type  (nth 1 token-data))
+        (token-name  (nth 2 token-data)))
     (cond (;; Instance found
-           (and point-instance (not point-token))
-           (setq verilog-ext-which-func-xtra instance-name)
-           instance-type)
+           (and instance-point (not token-point))
+           (verilog-ext-which-func-set-instance instance-type instance-name))
           ;; Token found
-          ((and (not point-instance) point-token)
-           (setq verilog-ext-which-func-xtra (cond
-                                              ;; ((string= "class"     token-name) "class")
-                                              ((string= "clocking"  token-name) "clk")
-                                              ((string= "`define"   token-name) "macro")
-                                              ((string= "group"     token-name) "group")
-                                              ((string= "module"    token-name) "mod")
-                                              ((string= "interface" token-name) "if")
-                                              ((string= "package"   token-name) "pkg")
-                                              ((string= "sequence"  token-name) "seq")
-                                              (t (substring token-name 0 4))))
-           token-full)
-          ;; Closest one
-          ;; TODO: Refactor previous choice of string= and use also here
-          ;; TODO: Use a more generic way of finding what comes after the token and use it here
-          ((and point-instance point-token)
-           (if (> point-instance point-token)
-               (progn
-                 (setq verilog-ext-which-func-xtra instance-name)
-                 instance-type)
-             (setq verilog-ext-which-func-xtra )
-             token-name)))))
+          ((and (not instance-point) token-point)
+           (verilog-ext-which-func-set-token token-type token-name))
+          ;; Both found: select closest one
+          ((and instance-point token-point)
+           (if (> instance-point token-point) ; which-func searches backwards, closest is the one with highest point value
+               (verilog-ext-which-func-set-instance instance-type instance-name)
+             (verilog-ext-which-func-set-token token-type token-name))))))
 
 
-;; TODO: Needs to be executed manually, dunno why it doesn't get loaded
+
+(defun verilog-ext-which-func-function ()
+  ""
+  (let ((instance-data (verilog-ext-which-func-find-instance))
+        (token-data    (verilog-ext-which-func-find-token)))
+    (verilog-ext-which-func-decide instance-data token-data)))
+
+
 (defun verilog-ext-which-func ()
   (setq-local which-func-functions '(verilog-ext-which-func-function)))
 
 
-;; TODO: Still add some function to
 (defun verilog-ext-which-func-update-format ()
   (setq-local which-func-format
               `("["

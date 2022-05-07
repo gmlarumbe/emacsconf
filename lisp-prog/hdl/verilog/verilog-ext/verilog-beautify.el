@@ -1,5 +1,8 @@
 ;;; verilog-beautify.el --- Verilog Beautify  -*- lexical-binding: t -*-
 ;;; Commentary:
+;;
+;; Beautify RTL instances
+;;
 ;;; Code:
 
 

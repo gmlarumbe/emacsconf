@@ -1,6 +1,7 @@
 ;;; verilog-templates.el --- Verilog Templates  -*- lexical-binding: t -*-
 ;;; Commentary:
-;; Should be deprecated by Hydra+YASnippet
+;;
+;; Many of these should be deprecated by Hydra+YASnippet
 ;;
 ;; Some customized functions extracted from `verilog-mode.el' and
 ;; tweaked to fulfill some specific functionality
@@ -14,135 +15,315 @@
 
 
 ;;; Own Verilog templates
-(defvar verilog-ext-verilog-reset-custom "Rst_n")
-(defvar verilog-ext-verilog-clock-custom "Clk")
-(defvar verilog-ext-verilog-block-comment-custom nil)
-(defvar verilog-ext-verilog-block-comment-width nil)
-
-;;;; Common
-(defun verilog-ext-verilog-prompt-reset-custom ()
-  "Prompt for the name of a state machine reset."
-  (setq verilog-ext-verilog-reset-custom (read-string "Active Low Reset Name: " "Rst_n")))
-
-(defun verilog-ext-verilog-prompt-clock-custom ()
-  "Prompt for the name of a clock."
-  (setq verilog-ext-verilog-clock-custom (read-string "Posedge clock name: " "Clk")))
-
-
 ;;;; Begin/end block
-(defun verilog-ext-verilog-begin-custom ()
-  "Insert begin end block.  Use the minibuffer to prompt for name.
-Written as `verilog-mode' original defun had issues with indentation."
+(defun verilog-ext-templ-begin-end ()
+  "Insert begin/end block."
   (interactive)
-  (electric-verilog-tab)                ; Initial indent (we wont know where we are...)
+  (electric-verilog-tab) ; Initial indent
   (insert "begin")
-  (progn (electric-verilog-terminate-line) nil)
+  (electric-verilog-terminate-line)
   (save-excursion
-    (progn (electric-verilog-terminate-line) nil)
+    (electric-verilog-terminate-line)
     (insert "end")
     (electric-verilog-tab))
   (electric-verilog-tab))
 
 
 ;;;; Comments
-(defun verilog-ext-verilog-add-block-comment ()
+(defun verilog-ext-templ-block-comment ()
   "Create a Verilog comment block.
-Useful to separate sections within code.
-Char code 47 corresponds to '/' character in Verilog"
+
+  ///////////////////
+  // Block comment //
+  ///////////////////
+"
   (interactive)
-  (setq verilog-ext-verilog-block-comment-custom (read-string "Name: "))
-  (setq verilog-ext-verilog-block-comment-width (string-width verilog-ext-verilog-block-comment-custom))
-  ;; Top line
-  (electric-verilog-tab)              ; Start indentation for comment block
-  (insert (concat (insert-char 47 (+ verilog-ext-verilog-block-comment-width 6) nil)))
-  (electric-verilog-terminate-line)
-  ;; Comment line
-  (insert (concat
-           (insert-char 47 2 nil)
-           (insert " ")
-           (insert verilog-ext-verilog-block-comment-custom)
-           (insert " ")
-           (insert-char 47 2 nil)))
-  (electric-verilog-terminate-line)
-  ;; Bottom line
-  (insert (concat (insert-char 47 (+ verilog-ext-verilog-block-comment-width 6) nil)))
-  (electric-verilog-terminate-line))
+  (let* ((block-comment-char 47) ; 47 = slash
+         (block-comment (read-string "Name: "))
+         (block-comment-width (string-width block-comment)))
+    (electric-verilog-tab) ; Initial indent
+    ;; Top line
+    (insert-char block-comment-char (+ block-comment-width 6))
+    (electric-verilog-terminate-line)
+    ;; Comment line
+    (insert-char block-comment-char 2)
+    (insert " ")
+    (insert block-comment)
+    (insert " ")
+    (insert-char block-comment-char 2)
+    (electric-verilog-terminate-line)
+    ;; Bottom line
+    (insert-char block-comment-char (+ block-comment-width 6) nil)
+    (electric-verilog-terminate-line)))
 
 
-;;;; State Machines
-(defvar verilog-ext-verilog-fsm-parameter-position nil
-  "Variable used to add parameters on-the-fly.")
+;;;; Case
+(defun verilog-ext-templ-case ()
+  "Fetched and modified from `verilog-state-machine-add-case-fold' for sync FSMs."
+  (interactive)
+  (let (param-read)
+    (insert "case (" (read-string "Expression: ") ")") (electric-verilog-terminate-line)
+    (while (not (string-equal (setq param-read (read-string "Case: ")) "")) ; Empty string ends with case addition
+      (insert (concat param-read ": begin"))           (electric-verilog-terminate-line)
+      (insert (concat "// Output statements... "))     (electric-verilog-terminate-line)
+      (insert (concat "end"))                          (electric-verilog-terminate-line)
+      (electric-verilog-terminate-line))
+    (insert "endcase")
+    (electric-verilog-terminate-line)))
 
-(defun verilog-ext-verilog-state-machine-add-case (param-read)
+
+;;;; Enum, Typedef, Struct
+(defun verilog-ext-templ--compute-vector-width ()
+  "Return [width-1:0] as a string for enum/struct templates.
+If a number is set, then calculus will be automatically performed.
+If set to 0 or 1, then do not set a vector.
+If a constant is set, then it will be set to [CONSTANT-1:0].
+
+DANGER: If width introduced is 0, it will be assumed as a human mistake and width 1 will be computed."
+  (let (width-str width-num)
+    (setq width-str (read-string "Width: "))
+    (setq width-num (string-to-number width-str))
+    ;; Corner case if width 0 or no width is introduced (assume 1)
+    (when (or (string-equal width-str "0") (string-equal width-str ""))
+      (setq width-num 1))
+    ;; End of corner case
+    (if (not (eq width-num 0)) ; width was a number different from 0, not a constant
+        (if (> width-num 1)    ; Greater than 1 (i.e. a vector with brackets)
+            (progn
+              (setq width-num (1- width-num))
+              (setq width-str (number-to-string width-num))
+              (setq width-str (concat "[" width-str ":0]")))
+          (setq width-str "")) ; Width was 1, just a signal without brackets
+      (setq width-str (concat "[" width-str "-1:0]"))))) ;; If width was not a number but a constant, format properly [width-1:0]
+
+
+(defun verilog-ext-templ-enum-typedef (&optional typedef)
+  "Insert enum contents for TYPEDEF enum template."
+  (let ((width "")
+        (enum-types '("logic" "bit" "int" "integer" "other"))
+        enum-item type)
+    ;; Set typedef if specified
+    (when typedef
+      (insert "typedef "))
+    ;; Select type for enum
+    (setq type (completing-read "Type: " enum-types))
+    (if (string-equal type "other")
+        (setq type (read-string "Type: ")))
+    ;; Select width
+    (if (or (string-equal type "logic")
+            (string-equal type "bit"))
+        (setq width (verilog-ext-templ--compute-vector-width))
+      (setq width "")) ; If not a vector disable width field
+    (insert "enum " type width " {")
+    (while (not (string-equal (setq enum-item (read-string "Item: ")) "")) ; Empty string ends with item addition
+      (insert enum-item ", "))
+    ;; Last item
+    (delete-char -2)
+    (insert "} ")
+    ;; Name
+    (if typedef
+        (insert (read-string "Type Name: ") ";") ; Typedef
+      (insert (read-string "Enum Name: ") ";"))  ; Enum
+    (electric-verilog-terminate-line)))
+
+
+(defun verilog-ext-templ-struct-typedef (&optional typedef union)
+  "Insert struct contents for TYPEDEF struct template.
+If UNION is non-nil, instantiate a union."
+  (let (struct-item type (width ""))
+    ;; Set typedef if specified
+    (when typedef
+      (insert "typedef "))
+    ;; Struct Header
+    (if union
+        (insert "union ")
+      (insert "struct "))
+    (when (yes-or-no-p "Packed?")
+      (insert "packed "))
+    (insert "{")
+    (electric-verilog-terminate-line)
+    ;; Struct fields
+    (while (not (string-equal (setq struct-item (read-string "Item: ")) "")) ; Empty string ends with item addition
+      (setq type (read-string "Type: " "logic"))
+      ;; Select width
+      (if (or (string-equal type "logic") (string-equal type "bit"))
+          (setq width (verilog-ext-templ--compute-vector-width))
+        (setq width "")) ; If not a vector disable width field
+      (insert type " " width " " struct-item ";")
+      (electric-verilog-terminate-line))
+    (insert "} ")
+    ;; Struct Name
+    (if typedef
+        (insert (read-string "Type Name: ") ";")   ; Typedef
+      (insert (read-string "Struct Name: ") ";"))  ; Enum
+    (electric-verilog-terminate-line)))
+
+
+;;;; Task
+(defun verilog-ext-templ-task--add-port (direction read)
+  "Add inputs to task template.
+DIRECTION should be either 'input' or 'output'.
+READ is assumed to be the signal name."
+  (let (type width)
+    ;; Select type
+    (setq type (read-string "Type: " "logic"))
+    ;; Select width
+    (if (or (string-equal type "logic") (string-equal type "bit"))
+        (setq width (verilog-ext-templ--compute-vector-width))
+      (setq width "")) ; If not a vector disable width field
+    ;; Insert port
+    (insert direction " " type " " width " " read ",")
+    (electric-verilog-terminate-line)))
+
+
+(defun verilog-ext-templ-task ()
+  "Insert a task definition."
+  (interactive)
+  (let ((case-fold-search verilog-case-fold)
+        (in-read)
+        (out-read))
+    (insert "task ")
+    (insert (read-string "Task name: ") " (")
+    (electric-verilog-terminate-line)
+    (while (not(string-equal (setq in-read (read-string "Input signal: ")) ""))
+      (verilog-ext-templ-task--add-port "input" in-read))
+    (while (not(string-equal (setq out-read (read-string "Output signal: ")) ""))
+      (verilog-ext-templ-task--add-port "output" out-read))
+    ;; INFO: "inout" or "ref" could be added in the future via universal-arg
+    (insert ");") (electric-verilog-terminate-line)
+    (save-excursion
+      (electric-verilog-terminate-line)
+      (insert (concat "endtask"))
+      (electric-verilog-terminate-line)
+      (electric-verilog-tab))
+    ;; Align port declarations
+    (re-search-backward "(")
+    (beginning-of-line)
+    (forward-line)
+    (verilog-pretty-declarations)
+    (re-search-forward ");")
+    (forward-line)
+    (electric-verilog-tab)))
+
+
+;;;; Signal definition
+(defun verilog-ext-templ-def-logic--insert (sig)
+  "Replace `verilog-sk-def-reg' for use within `verilog-ext-templ-def-logic'.
+Define a 'logic' signal named SIG."
+  (let (width str)
+    (split-line) ;; Keep indentation
+    (setq width (verilog-ext-templ--compute-vector-width))
+    (setq str (concat "logic " width " " sig ";"))
+    (insert str)
+    (message (concat "[Line " (format "%s" (line-number-at-pos)) "]: " str))))
+
+
+(defun verilog-ext-templ-def-logic ()
+  "Insert a definition of signal under point at top of module.
+INFO: Inspired from `verilog-sk-define-signal'."
+  (interactive "*")
+  (let* ((sig-re "[a-zA-Z0-9_]*")
+         (sig (buffer-substring
+               (save-excursion
+                 (skip-chars-backward sig-re)
+                 (point))
+               (save-excursion
+                 (skip-chars-forward sig-re)
+                 (point)))))
+    (if (not (member sig verilog-keywords))
+        (save-excursion
+          (verilog-beg-of-defun)
+          (verilog-end-of-statement)
+          (verilog-forward-syntactic-ws)
+          (verilog-ext-templ-def-logic--insert sig))
+      (message "object at point (%s) is a keyword" sig))))
+
+
+;;;; FSM
+(defvar verilog-ext-templ-fsm-reset "Rst_n")
+(defvar verilog-ext-templ-fsm-clock "Clk")
+(defvar verilog-ext-templ-fsm-param-pos nil)
+
+
+(defun verilog-ext-templ-fsm--prompt-reset ()
+  "Prompt for the name of an FSM reset."
+  (setq verilog-ext-templ-fsm-reset (read-string "Active Low Reset Name: " "Rst_n")))
+
+(defun verilog-ext-templ-fsm--prompt-clock ()
+  "Prompt for the name of an FSM clock."
+  (setq verilog-ext-templ-fsm-clock (read-string "Posedge clock name: " "Clk")))
+
+
+(defun verilog-ext-templ-fsm--add-case (param-read)
   "Fill cases within the next state and output logic.
 Declare them as parameters according to PARAM-READ at the beginning of the FSM.
 
-INFO: 1 parameter keyword per declaration."
+INFO: One parameter keyword per declaration."
   (save-excursion
-    (goto-char verilog-ext-verilog-fsm-parameter-position)
+    (goto-char verilog-ext-templ-fsm-param-pos)
     (electric-verilog-terminate-line)
     (insert (concat "parameter " param-read " = " (read-string "Param value: ") ";"))
-    (setq verilog-ext-verilog-fsm-parameter-position (point))))
+    (setq verilog-ext-templ-fsm-param-pos (point))))
 
 
-(defun verilog-ext-verilog-state-machine-async-custom-simple ()
+(defun verilog-ext-templ-fsm-async ()
   "Insert a state machine custom definition with two always blocks.
 One for next state and output logic and one for the state registers."
   (interactive)
   (let ((param-read)
         (state (read-string "Name of state variable: " "state")))
-    (electric-verilog-tab)              ; Start indentation for comment block
-    (insert (concat "// State registers for " state))                                                                                           (progn (electric-verilog-terminate-line) nil)
+    (electric-verilog-tab) ; Initial indent
+    (insert (concat "// State registers for " state))                                                                                         (electric-verilog-terminate-line)
     (insert (concat "reg [" (read-string "msb: " "31") ":" (read-string "lsb: " "0") "] " state ", next_" state ";"))
-    (setq verilog-ext-fsm-parameter-position (point))                                                                                       (progn (electric-verilog-terminate-line) nil)
-    (electric-verilog-terminate-line)
+    (setq verilog-ext-templ-fsm-param-pos (point))                                                                                            (electric-verilog-terminate-line)
+                                                                                                                                              (electric-verilog-terminate-line)
     ;; State registers
-    (insert (concat "// State FF for " state))                                                                                                  (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "always @ (posedge " (verilog-ext-prompt-clock-custom) " or negedge " (verilog-ext-prompt-reset-custom) ") begin")) (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "if (!" verilog-ext-reset-custom ")"))                                                                                  (progn (electric-verilog-terminate-line) nil)
-    (insert (concat state " <= IDLE;"))                                                                                                         (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "else"))                                                                                                                    (progn (electric-verilog-terminate-line) nil)
-    (insert (concat  state " <= next_" state ";"))                                                                                              (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                     (progn (electric-verilog-terminate-line) nil)
-    (electric-verilog-terminate-line)
+    (insert (concat "// State FF for " state))                                                                                                (electric-verilog-terminate-line)
+    (insert (concat "always @ (posedge " (verilog-ext-templ-fsm--prompt-clock) " or negedge " (verilog-ext-templ-fsm--prompt-reset) ") begin")) (electric-verilog-terminate-line)
+    (insert (concat "if (!" verilog-ext-templ-fsm-reset ")"))                                                                                 (electric-verilog-terminate-line)
+    (insert (concat state " <= IDLE;"))                                                                                                       (electric-verilog-terminate-line)
+    (insert (concat "else"))                                                                                                                  (electric-verilog-terminate-line)
+    (insert (concat  state " <= next_" state ";"))                                                                                            (electric-verilog-terminate-line)
+    (insert (concat "end"))                                                                                                                   (electric-verilog-terminate-line)
+                                                                                                                                              (electric-verilog-terminate-line)
     ;; Next state and output logic
-    (insert (concat "// Output and next State Logic for " state))                                                                               (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "always @ (posedge " verilog-ext-clock-custom  " or negedge " verilog-ext-reset-custom  ") begin"))                 (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "if (!" verilog-ext-reset-custom ") begin"))                                                                            (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "next_" state " <= IDLE;"))                                                                                                 (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "// Output resets..."))                                                                                                     (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                     (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "else begin"))                                                                                                              (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "// Output and next State Logic for " state))                                                                             (electric-verilog-terminate-line)
+    (insert (concat "always @ (posedge " verilog-ext-templ-fsm-clock  " or negedge " verilog-ext-templ-fsm-reset  ") begin"))                 (electric-verilog-terminate-line)
+    (insert (concat "if (!" verilog-ext-templ-fsm-reset ") begin"))                                                                           (electric-verilog-terminate-line)
+    (insert (concat "next_" state " <= IDLE;"))                                                                                               (electric-verilog-terminate-line)
+    (insert (concat "// Output resets..."))                                                                                                   (electric-verilog-terminate-line)
+    (insert (concat "end"))                                                                                                                   (electric-verilog-terminate-line)
+    (insert (concat "else begin"))                                                                                                            (electric-verilog-terminate-line)
     (insert (concat "case (" state ") "))
     ;; Case reading
     (while (not(string-equal (setq param-read (read-string "Case: ")) "")) ; Empty string ends with case addition
-      (verilog-ext-state-machine-add-case  param-read)                                                                                      (progn (electric-verilog-terminate-line) nil)
-      (insert (concat param-read ": begin"))                                                                                                    (progn (electric-verilog-terminate-line) nil)
-      (insert (concat "// Output statements... "))                                                                                              (progn (electric-verilog-terminate-line) nil)
-      (insert (concat "next_" state " <= <state>;"))                                                                                            (progn (electric-verilog-terminate-line) nil)
-      (insert (concat "end"))                                                                                                                   (progn (electric-verilog-terminate-line) nil))
-    (insert (concat "endcase"))                                                                                                                 (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                     (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                     (progn (electric-verilog-terminate-line) nil)))
+      (verilog-ext-templ-fsm--add-case  param-read)                                                                                            (electric-verilog-terminate-line)
+      (insert (concat param-read ": begin"))                                                                                                  (electric-verilog-terminate-line)
+      (insert (concat "// Output statements... "))                                                                                            (electric-verilog-terminate-line)
+      (insert (concat "next_" state " <= <state>;"))                                                                                          (electric-verilog-terminate-line)
+      (insert (concat "end"))                                                                                                                 (electric-verilog-terminate-line))
+    (insert (concat "endcase"))                                                                                                               (electric-verilog-terminate-line)
+    (insert (concat "end"))                                                                                                                   (electric-verilog-terminate-line)
+    (insert (concat "end"))                                                                                                                   (electric-verilog-terminate-line)))
 
 
-(defun verilog-ext-verilog-state-machine-add-case-fold (param-read pfx idx)
+(defun verilog-ext-templ-fsm-sync--add-case-fold (param-read pfx idx)
   "Fill cases within the next state and output logic.
 Declare them as parameters according to PARAM-READ at the beginning of the FSM.
 Insert prefix PFX (4'hx or 1'bz) along with IDX.
 
 Parameter keyword is used only once, improving readability."
   (save-excursion
-    (goto-char verilog-ext-verilog-fsm-parameter-position)
+    (goto-char verilog-ext-templ-fsm-param-pos)
     (delete-char -1)
     (insert ",")
     (electric-verilog-terminate-line)
     (insert (concat param-read " = " (read-string "Param value: " (concat pfx (number-to-string idx) ";"))))
-    (setq verilog-ext-verilog-fsm-parameter-position (point))))
+    (setq verilog-ext-templ-fsm-param-pos (point))))
 
 
 
-(defun verilog-ext-verilog-state-machine-get-prefix (msb-str lsb-str)
+(defun verilog-ext-templ-fsm-sync--get-prefix (msb-str lsb-str)
   "Get prefix depending on the FSM state width.
 This prefix will include MSB-STR and LSB-STR.
 
@@ -158,13 +339,11 @@ Return only \"4'h.\" or \"1'b.\" depending on msb and lsb."
       (message "4'h"))))
 
 
-;; Adds a state machine with two always blocks.
-;; Improves previous function with
-(defun verilog-ext-verilog-state-machine-sync-custom ()
+(defun verilog-ext-templ-fsm-sync ()
   "Insert a state machine custom definition with two always blocks.
 One for next state and output logic and one for the state registers.
 
-Improves `verilog-ext-verilog-state-machine-async-custom-simple' with automatic
+Improves `verilog-ext-templ-fsm-async' with automatic
 reset state insertion and automatic parameter width insertion."
   (interactive)
   (let ((param-read)
@@ -174,50 +353,51 @@ reset state insertion and automatic parameter width insertion."
         (pfx)
         (idx 0)
         (state (read-string "Name of state variable: " "state")))
-    (electric-verilog-tab)              ; Start indentation for comment block
-    (insert (concat "// State registers for " state))                                                                                        (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "logic [" (setq msb (read-string "msb: " "3")) ":" (setq lsb (read-string "lsb: " "0")) "] " state ", next_" state ";")) (progn (electric-verilog-terminate-line) nil)
-    (setq pfx (verilog-ext-verilog-state-machine-get-prefix msb  lsb))
+    (electric-verilog-tab) ; Initial indentation
+    (insert (concat "// State registers for " state))                                                                                        (electric-verilog-terminate-line)
+    (insert (concat "logic [" (setq msb (read-string "msb: " "3")) ":" (setq lsb (read-string "lsb: " "0")) "] " state ", next_" state ";")) (electric-verilog-terminate-line)
+    (setq pfx (verilog-ext-templ-fsm-sync--get-prefix msb  lsb))
     (insert (concat "localparam " (setq rst-state-name (read-string "Reset State Name: " "IDLE"))  " = " (read-string "Reset Value: " (concat pfx "0;"))))
-    (setq verilog-ext-fsm-parameter-position (point))                                                                                    (progn (electric-verilog-terminate-line) nil)
-    (electric-verilog-terminate-line)
+    (setq verilog-ext-templ-fsm-param-pos (point))                                                                                           (electric-verilog-terminate-line)
+                                                                                                                                             (electric-verilog-terminate-line)
     ;; State registers
-    (insert (concat "// State FF for " state))                                                                                               (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "always_ff @ (posedge " (verilog-ext-prompt-clock-custom) ") begin"))                                                (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "if (!" verilog-ext-reset-custom ")"))                                                                               (progn (electric-verilog-terminate-line) nil)
-    (insert (concat state " <= " rst-state-name ";"))                                                                                        (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "else"))                                                                                                                 (progn (electric-verilog-terminate-line) nil)
-    (insert (concat  state " <= next_" state ";"))                                                                                           (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                  (progn (electric-verilog-terminate-line) nil)
-    (electric-verilog-terminate-line)
+    (insert (concat "// State FF for " state))                                                                                               (electric-verilog-terminate-line)
+    (insert (concat "always_ff @ (posedge " (verilog-ext-templ-fsm--prompt-clock) ") begin"))                                                (electric-verilog-terminate-line)
+    (insert (concat "if (!" verilog-ext-templ-fsm-reset ")"))                                                                                (electric-verilog-terminate-line)
+    (insert (concat state " <= " rst-state-name ";"))                                                                                        (electric-verilog-terminate-line)
+    (insert (concat "else"))                                                                                                                 (electric-verilog-terminate-line)
+    (insert (concat  state " <= next_" state ";"))                                                                                           (electric-verilog-terminate-line)
+    (insert (concat "end"))                                                                                                                  (electric-verilog-terminate-line)
+                                                                                                                                             (electric-verilog-terminate-line)
     ;; Next state and output logic
-    (insert (concat "// Output and next State Logic for " state))                                                                            (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "always_ff @ (posedge " verilog-ext-clock-custom  ") begin"))                                                        (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "if (!" verilog-ext-reset-custom ") begin"))                                                                         (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "next_" state " <= "rst-state-name ";"))                                                                                 (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "// Output resets..."))                                                                                                  (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                  (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "else begin"))                                                                                                           (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "case (" state ") "))                                                                                                    (progn (electric-verilog-terminate-line) nil)
+    (insert (concat "// Output and next State Logic for " state))                                                                            (electric-verilog-terminate-line)
+    (insert (concat "always_ff @ (posedge " verilog-ext-templ-fsm-clock  ") begin"))                                                         (electric-verilog-terminate-line)
+    (insert (concat "if (!" verilog-ext-templ-fsm-reset ") begin"))                                                                          (electric-verilog-terminate-line)
+    (insert (concat "next_" state " <= "rst-state-name ";"))                                                                                 (electric-verilog-terminate-line)
+    (insert (concat "// Output resets..."))                                                                                                  (electric-verilog-terminate-line)
+    (insert (concat "end"))                                                                                                                  (electric-verilog-terminate-line)
+    (insert (concat "else begin"))                                                                                                           (electric-verilog-terminate-line)
+    (insert (concat "case (" state ") "))                                                                                                    (electric-verilog-terminate-line)
     ;; Reset State text insertion
-    (insert (concat rst-state-name ": begin"))                                                                                               (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "// Output statements... "))                                                                                             (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "next_" state " <= <state>;"))                                                                                           (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                  (progn (electric-verilog-terminate-line) nil)
+    (insert (concat rst-state-name ": begin"))                                                                                               (electric-verilog-terminate-line)
+    (insert (concat "// Output statements... "))                                                                                             (electric-verilog-terminate-line)
+    (insert (concat "next_" state " <= <state>;"))                                                                                           (electric-verilog-terminate-line)
+    (insert (concat "end"))                                                                                                                  (electric-verilog-terminate-line)
     ;; Case reading
     (while (not(string-equal (setq param-read (read-string "Case: ")) "")) ; Empty string ends with case addition
       (setq idx (1+ idx))
-      (verilog-ext-state-machine-add-case-fold param-read pfx idx)                                                                       (progn (electric-verilog-terminate-line) nil)
-      (insert (concat param-read ": begin"))                                                                                                 (progn (electric-verilog-terminate-line) nil)
-      (insert (concat "// Output statements... "))                                                                                           (progn (electric-verilog-terminate-line) nil)
-      (insert (concat "next_" state " <= <state>;"))                                                                                         (progn (electric-verilog-terminate-line) nil)
-      (insert (concat "end"))                                                                                                                (progn (electric-verilog-terminate-line) nil))
-    (insert (concat "endcase"))                                                                                                              (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                  (progn (electric-verilog-terminate-line) nil)
-    (insert (concat "end"))                                                                                                                  (progn (electric-verilog-terminate-line) nil)))
+      (verilog-ext-templ-fsm-sync--add-case-fold param-read pfx idx)                                                                         (electric-verilog-terminate-line)
+      (insert (concat param-read ": begin"))                                                                                                 (electric-verilog-terminate-line)
+      (insert (concat "// Output statements... "))                                                                                           (electric-verilog-terminate-line)
+      (insert (concat "next_" state " <= <state>;"))                                                                                         (electric-verilog-terminate-line)
+      (insert (concat "end"))                                                                                                                (electric-verilog-terminate-line))
+    (insert (concat "endcase"))                                                                                                              (electric-verilog-terminate-line)
+    (insert (concat "end"))                                                                                                                  (electric-verilog-terminate-line)
+    (insert (concat "end"))                                                                                                                  (electric-verilog-terminate-line)))
+
 
 ;;;; Headers
-(defun verilog-ext-verilog-header ()
+(defun verilog-ext-templ-header ()
   "Insert a standard Verilog file header.
 See also `verilog-sk-header' for an alternative format."
   (interactive)
@@ -254,7 +434,7 @@ See also `verilog-sk-header' for an alternative format."
     (verilog-insert-date)
     (search-forward "<author>") (replace-match "" t t)
     (insert (user-full-name))
-    (insert "  <gonzalomlarumbe@gmail.com> ")
+    (insert "  <" user-mail-address "> ")
     (search-forward "<modhist>") (replace-match "" t t)
     (verilog-insert-date)
     (insert " : created")
@@ -273,133 +453,70 @@ See also `verilog-sk-header' for an alternative format."
 
 
 
-(defun verilog-ext-verilog-header-hp ()
-  "Insert an HP Verilog file header.
-See also `verilog-header' for an alternative format."
-  (interactive)
-  (save-excursion
-    (let ((start (point-min)))
-      (goto-char start)
-      (insert "\
-/********1*********2*********3*********4*********5*********6*********7*********8
-*
-* FILE      : <filename>
-* HIERARCHY :
-* FUNCTION  : <function>
-* AUTHOR    : <author>
-*
-*_______________________________________________________________________________
-*
-* REVISION HISTORY
-*
-* Name      Date         Comments
-* ------------------------------------------------------------------------------
-* <user>  <credate>   Created
-* ------------------------------------------------------------------------------
-*_______________________________________________________________________________
-*
-* FUNCTIONAL DESCRIPTION
-* <description>
-*_______________________________________________________________________________
-*
-* (c) Copyright Hewlett-Packard Company, year
-* All rights reserved. Copying or other reproduction of this
-* program except for archival purposes is prohibited without
-* written consent of Hewlett-Packard Company.
-* HEWLETT-PACKARD COMPANY
-* INKJET COMERCIAL DIVISION
-*
-*********1*********2*********3*********4*********5*********6*********7*********/
-
-")
-      (goto-char start)
-      (search-forward "<filename>")
-      (replace-match (buffer-name) t t)
-      (search-forward "<author>") (replace-match "" t t)
-      (insert (user-full-name))
-      (insert "  <gonzalo.martinez.larumbe@hp.com>")
-      (search-forward "<user>")
-      (replace-match (user-login-name) t t)
-      (search-forward "<credate>") (replace-match "" t t)
-      (verilog-insert-date)
-      (if (called-interactively-p 'any)
-          (progn
-            (let (string)
-              (goto-char start)
-              (setq string (read-string "Function: "))
-              (search-forward "<function>")
-              (replace-match string t t)
-              (setq string (read-string "Description: "))
-              (search-forward "<description>")
-              (replace-match string t t)))
-        (progn
-          (goto-char start)
-          (search-forward "<function>")
-          (replace-match "" t t)
-          (search-forward "<description>")
-          (replace-match "" t t))))))
-
 ;;;; Instances
-(defvar verilog-ext-verilog-auto-template-header "// Beginning of Larumbe's Verilog AUTO_TEMPLATE")
-(defvar verilog-ext-verilog-auto-template-footer "// End of Larumbe's Verilog AUTO_TEMPLATE")
+(defvar verilog-ext-templ-inst-auto-header "// Beginning of Verilog AUTO_TEMPLATE")
+(defvar verilog-ext-templ-inst-auto-footer "// End of Verilog AUTO_TEMPLATE")
 
-(defmacro verilog-ext-verilog-auto-template (template)
+(defmacro verilog-ext-templ-inst-auto (template)
   "Insert header and footer to TEMPLATE strings for instantiation."
-  (concat "\n" verilog-ext-verilog-auto-template-header " " template " " verilog-ext-verilog-auto-template-footer "\n"))
+  (concat "\n" verilog-ext-templ-inst-auto-header " " template " " verilog-ext-templ-inst-auto-footer "\n"))
 
 
-(defvar verilog-ext-verilog-auto-template-connected-ports
-  (verilog-ext-verilog-auto-template "
+(defvar verilog-ext-templ-inst-auto-conn-ports
+  (verilog-ext-templ-inst-auto "
 /* <module> AUTO_TEMPLATE (
  .\\(.*\\) (\\1),
- ); */"))
+ ); */")
+  "Template with connected ports (same signal name as the port).")
 
-(defvar verilog-ext-verilog-auto-template-disconnected-ports
-  (verilog-ext-verilog-auto-template "
+(defvar verilog-ext-templ-inst-auto-disc-ports
+  (verilog-ext-templ-inst-auto "
 /* <module> AUTO_TEMPLATE (
  .\\(.*\\) (),
- ); */"))
+ ); */")
+  "Template with disconnected ports.")
 
-(defvar verilog-ext-verilog-auto-template-connected-ports-subscripts
-  (verilog-ext-verilog-auto-template "
+(defvar verilog-ext-templ-inst-auto-conn-ports-ss
+  (verilog-ext-templ-inst-auto "
 /* <module> AUTO_TEMPLATE (
  .\\(.*\\) (\\1[]),
- ); */"))
+ ); */")
+  "Template with connected ports and subscripts.")
 
 
-(defvar verilog-ext-verilog-autoinst-template-simple "\
+(defvar verilog-ext-templ-inst-auto--simple "\
 <module> <instance_name> (/*AUTOINST*/);
 ")
 
-(defvar verilog-ext-verilog-autoinst-autoparam-template "\
+(defvar verilog-ext-templ-inst-auto-autoparam "\
 <module> # (/*AUTOINSTPARAM*/) <instance_name> (/*AUTOINST*/);
 ")
 
 
 
-(defun verilog-ext-verilog-choose-template ()
+(defun verilog-ext-templ-inst-auto--choose-template ()
   "Choose current // AUTO_TEMPLATE for instantiation."
   (let (templates-list)
     (setq templates-list (completing-read "AUTO_TEMPLATE: " '("Connected Ports" "Disconnected Ports" "Connected Ports with subscripts")))
     (pcase templates-list
-      ("Connected Ports"                 (eval verilog-ext-verilog-auto-template-connected-ports))
-      ("Disconnected Ports"              (eval verilog-ext-verilog-auto-template-disconnected-ports))
-      ("Connected Ports with subscripts" (eval verilog-ext-verilog-auto-template-connected-ports-subscripts))
-      (_                                 (error "Error @ verilog-ext-verilog-choose-template: Unexpected string")))))
+      ("Connected Ports"                 (eval verilog-ext-templ-inst-auto-conn-ports))
+      ("Disconnected Ports"              (eval verilog-ext-templ-inst-auto-disc-ports))
+      ("Connected Ports with subscripts" (eval verilog-ext-templ-inst-auto-conn-ports-ss))
+      (_                                 (error "Error @ verilog-ext-templ-choose-template: Unexpected string")))))
 
-(defun verilog-ext-verilog-choose-autoinst ()
+(defun verilog-ext-templ-inst-auto--choose-autoinst ()
   "Choose current /*AUTOINST*/ (and /*AUTOPARAMINST*/) for instantiation."
   (let (autoinst-list)
     (setq autoinst-list (completing-read "AUTOINST:" '("Simple" "With Parameters")))
     (pcase autoinst-list
-      ("Simple"          (eval verilog-ext-verilog-autoinst-template-simple))
-      ("With Parameters" (eval verilog-ext-verilog-autoinst-autoparam-template))
-      (_                 (error "Error @ verilog-ext-verilog-choose-autoinst: Unexpected string")))))
+      ("Simple"          (eval verilog-ext-templ-inst-auto--simple))
+      ("With Parameters" (eval verilog-ext-templ-inst-auto-autoparam))
+      (_                 (error "Error @ verilog-ext-templ-choose-autoinst: Unexpected string")))))
 
 
-(defun verilog-ext-verilog-autoinst-processing ()
+(defun verilog-ext-templ-inst-auto--autoinst-processing ()
   "Syntactic sugar.
-Called from `verilog-ext-verilog-insert-instance-from-file'."
+Called from `verilog-ext-templ-inst-auto-from-file'."
   (let ((case-fold-search verilog-case-fold)
         (beg)
         (end))
@@ -417,9 +534,9 @@ Called from `verilog-ext-verilog-insert-instance-from-file'."
       (replace-string "/*AUTOINST*/" "" nil beg end))))
 
 
-(defun verilog-ext-verilog-autoparam-processing ()
+(defun verilog-ext-templ-inst-auto--autoparam-processing ()
   "Syntactic sugar.
-Called from `verilog-ext-verilog-insert-instance-from-file'."
+Called from `verilog-ext-templ-inst-auto-from-file'."
   (let ((case-fold-search verilog-case-fold)
         (beg)
         (end))
@@ -438,7 +555,7 @@ Called from `verilog-ext-verilog-insert-instance-from-file'."
       (kill-line 1))))
 
 
-(defun verilog-ext-verilog-insert-instance-from-file (file)
+(defun verilog-ext-templ-inst-auto-from-file (file)
   "Instantiate top module present in FILE.
 INFO: Assumes filename and module name are the same.
 INFO: In the future, a list that returns modules in a file could be retrieved
@@ -453,16 +570,16 @@ If universal argument is provided, then instantiate with parameters."
     ;; Prepare instantiation template
     (add-to-list 'verilog-library-files file)
     (if current-prefix-arg
-        (setq template (verilog-ext-verilog-choose-template)) ; If universal-arg given ask for AUTO_TEMPLATE and parameterized module to choose
-      (setq template verilog-ext-verilog-auto-template-connected-ports)) ; Default template
+        (setq template (verilog-ext-templ-inst-auto--choose-template)) ; If universal-arg given ask for AUTO_TEMPLATE and parameterized module to choose
+      (setq template verilog-ext-templ-inst-auto-conn-ports)) ; Default template
     (insert template)
     (save-excursion
       (goto-char start-template)
       (replace-string "<module>" module-name))
     (if current-prefix-arg
-        (when (equal verilog-ext-autoinst-autoparam-template (setq inst-template (verilog-ext-choose-autoinst))) ; If Universal Argument given, then ask for AUTOINST template
+        (when (equal verilog-ext-templ-inst-auto-autoparam (setq inst-template (verilog-ext-templ-inst-auto--choose-autoinst))) ; If Universal Argument given, then ask for AUTOINST template
           (setq autoparam t))
-      (setq inst-template verilog-ext-verilog-autoinst-template-simple)) ; Default AUTOINST with no parameters
+      (setq inst-template verilog-ext-templ-inst-auto--simple)) ; Default AUTOINST with no parameters
     (setq start-instance (point))
     ;; Instantiate module/instance
     (save-excursion
@@ -473,12 +590,12 @@ If universal argument is provided, then instantiate with parameters."
       (replace-string "<instance_name>" instance-name)
       (verilog-auto))
     ;; PostProcess instantiation
-    (verilog-ext-verilog-autoinst-processing)
+    (verilog-ext-templ-inst-auto--autoinst-processing)
     (when autoparam
-      (verilog-ext-verilog-autoparam-processing))
+      (verilog-ext-templ-inst-auto--autoparam-processing))
     ;; Remove AUTO_TEMPLATE comment code
-    (setq start-template (search-backward verilog-ext-verilog-auto-template-header))
-    (setq start-instance (search-forward verilog-ext-verilog-auto-template-footer))
+    (setq start-template (search-backward verilog-ext-templ-inst-auto-header))
+    (setq start-instance (search-forward verilog-ext-templ-inst-auto-footer))
     (delete-region start-template (1+ start-instance))
     ;; Beautify instantiation
     (save-excursion
@@ -495,15 +612,15 @@ If universal argument is provided, then instantiate with parameters."
         (verilog-ext-align-parameters-current-module module-name)))))
 
 
-(defun verilog-ext-verilog-insert-instance-from-file-with-params (file)
+(defun verilog-ext-templ-inst-auto-from-file-with-params (file)
   "Instantiate from FILE with parameter list."
   (interactive "FSelect module from file:")
   (setq current-prefix-arg 4)
-  (verilog-ext-verilog-insert-instance-from-file file))
+  (verilog-ext-templ-inst-auto-from-file file))
 
 
 ;;;; Testbenches
-(defun verilog-ext-verilog-testbench-insert-template-simple (file)
+(defun verilog-ext-templ-testbench-simple-from-file (file)
   "Instantiate basic testbench from FILE's top module."
   (interactive "FSelect DUT from file:")
   (let ((start (point))
@@ -576,14 +693,14 @@ endmodule // tb_<module_name>
     (goto-char start)
     (search-forward "// DUT Instantiation")
     (setq current-prefix-arg 4) ; Add DUT instance with parameters and choosing template
-    (verilog-ext-verilog-insert-instance-from-file file) ; Includes `verilog-auto' expansion
+    (verilog-ext-templ-inst-auto-from-file file) ; Includes `verilog-auto' expansion
     (goto-char start)
     (search-forward "/*AUTOINOUTPARAM") ;; Postprocess /*AUTOINOUTPARAM*/
     (save-excursion
       (replace-regexp "logic[[:blank:]]+" "localparam " nil (point) (search-forward "// End of /*AUTOINOUTPARAM*/")))
     (save-excursion
       (replace-regexp "\\(localparam [a-zA-Z0-9_-]+\\);" "\\1 = 0;" nil (point) (search-forward "// End of /*AUTOINOUTPARAM*/")))
-    (call-interactively #'verilog-ext-verilog-header-hp)
+    (call-interactively #'verilog-ext-templ-header-hp)
     (goto-char start)
     ;; Beautify declarations and initialize values
     (save-excursion
@@ -617,7 +734,7 @@ endmodule // tb_<module_name>
 
 
 
-(defun verilog-ext-verilog-testbench-environment-clocks (file)
+(defun verilog-ext-templ-testbench-env--clocks (file)
   "Create environment `tb_clocks' and save to FILE."
   (with-temp-file file
     (insert "\
@@ -646,11 +763,11 @@ module tb_clocks (
 endmodule: tb_clocks
 "))
   (find-file file)
-  (verilog-ext-verilog-header-hp)
+  (verilog-ext-templ-header-hp)
   (save-buffer))
 
 
-(defun verilog-ext-verilog-testbench-environment-program (file)
+(defun verilog-ext-templ-testbench-env--program (file)
   "Create environment `tb_program' and save to FILE."
   (with-temp-file file
     (insert "\
@@ -681,11 +798,11 @@ program automatic tb_program (
 endprogram: tb_program
 "))
   (find-file file)
-  (verilog-ext-verilog-header-hp)
+  (verilog-ext-templ-header-hp)
   (save-buffer))
 
 
-(defun verilog-ext-verilog-testbench-environment-defs-pkg (file)
+(defun verilog-ext-templ-testbench-env--defs-pkg (file)
   "Create environment `tb_defs_pkg' and save to FILE."
   (with-temp-file file
     (insert "\
@@ -703,12 +820,12 @@ package tb_defs_pkg;
 endpackage : tb_defs_pkg
 "))
   (find-file file)
-  (verilog-ext-verilog-header-hp)
+  (verilog-ext-templ-header-hp)
   (save-buffer))
 
 
 
-(defun verilog-ext-verilog-testbench-environment-classes-pkg (file)
+(defun verilog-ext-templ-testbench-env--classes-pkg (file)
   "Create environment `tb_classes_pkg' and save to FILE."
   (with-temp-file file
     (insert "\
@@ -726,11 +843,11 @@ package tb_classes_pkg;
 endpackage : tb_defs_pkg
 "))
   (find-file file)
-  (verilog-ext-verilog-header-hp)
+  (verilog-ext-templ-header-hp)
   (save-buffer))
 
 
-(defun verilog-ext-verilog-testbench-environment-top (file dut-file clocks-file)
+(defun verilog-ext-templ-testbench-env--top (file dut-file clocks-file)
   "Create environment top file and save to FILE.
 Instantiate dut from DUT-FILE and clocks from CLOCKS-FILE."
   (find-file file)
@@ -762,19 +879,19 @@ endmodule // tb_<module_name>
   (goto-char (point-min))
   (search-forward "// DUT Instantiation")
   (setq current-prefix-arg 4) ; Add DUT instance with parameters and choosing template
-  (verilog-ext-verilog-insert-instance-from-file dut-file) ; Includes `verilog-auto' expansion
+  (verilog-ext-templ-inst-auto-from-file dut-file) ; Includes `verilog-auto' expansion
   ;; Clocks
   (goto-char (point-min))
   (search-forward "// Clocks")
-  (verilog-ext-verilog-insert-instance-from-file clocks-file)
+  (verilog-ext-templ-inst-auto-from-file clocks-file)
   ;; Header and postprocessing
-  (verilog-ext-verilog-header-hp)
+  (verilog-ext-templ-header-hp)
   (save-buffer))
 
 
 
 
-(defun verilog-ext-verilog-testbench-environment (dut-file dir)
+(defun verilog-ext-templ-testbench-env-from-file (dut-file dir)
   "Create SystemVerilog testbench environment.
 
 DUT-FILE corresponds to the filepath of the DUT (assumes a module per file).
@@ -790,191 +907,12 @@ Environment files will be created at specified DIR (clocks, program, defs_pkg, c
         (classes-pkg-file (concat (file-name-as-directory dir) "tb_classes_pkg.sv"))
         (top-file         (concat (file-name-as-directory dir) "tb_top.sv")))
     ;; Create Environment files
-    (verilog-ext-verilog-testbench-environment-clocks      clocks-file)
-    (verilog-ext-verilog-testbench-environment-program     program-file)
-    (verilog-ext-verilog-testbench-environment-defs-pkg    defs-pkg-file)
-    (verilog-ext-verilog-testbench-environment-classes-pkg classes-pkg-file)
-    (verilog-ext-verilog-testbench-environment-top         top-file dut-file clocks-file)))
+    (verilog-ext-templ-testbench-env--clocks      clocks-file)
+    (verilog-ext-templ-testbench-env--program     program-file)
+    (verilog-ext-templ-testbench-env--defs-pkg    defs-pkg-file)
+    (verilog-ext-templ-testbench-env--classes-pkg classes-pkg-file)
+    (verilog-ext-templ-testbench-env--top         top-file dut-file clocks-file)))
 
-
-;;;; Case
-(defun verilog-ext-verilog-case-template ()
-  "Fetched and modified from `verilog-state-machine-add-case-fold' for sync FSMs."
-  (interactive)
-  (let (param-read)
-    (insert "case (" (read-string "Expression: ") ")") (progn (electric-verilog-terminate-line) nil)
-    (while (not(string-equal (setq param-read (read-string "Case: ")) "")) ; Empty string ends with case addition
-      (insert (concat param-read ": begin"))           (progn (electric-verilog-terminate-line) nil)
-      (insert (concat "// Output statements... "))     (progn (electric-verilog-terminate-line) nil)
-      (insert (concat "end"))                          (progn (electric-verilog-terminate-line) nil)
-      (electric-verilog-terminate-line))
-    (insert "endcase") (electric-verilog-terminate-line)))
-
-
-;;;; Enum, Typedef, Struct
-(defvar larumbe-verilog-enum-types '("logic" "bit" "int" "integer" "other"))
-
-(defun verilog-ext-verilog-compute-vector-width ()
-  "Return [width-1:0] as a string for enum/struct templates.
-If a number is set, then calculus will be automatically performed.
-If set to 0 or 1, then do not set a vector.
-If a constant is set, then it will be set to [CONSTANT-1:0].
-
-DANGER: If width introduced is 0, it will be assumed as a human mistake and width 1 will be computed."
-  (let (width-str width-num)
-    (setq width-str (read-string "Width: "))
-    (setq width-num (string-to-number width-str))
-    ;; Corner case if width 0 or no width is introduced (assume 1)
-    (when (or (string-equal width-str "0") (string-equal width-str ""))
-      (setq width-num 1))
-    ;; End of corner case
-    (if (not (eq width-num 0)) ; width was a number different from 0, not a constant
-        (if (> width-num 1)    ; Greater than 1 (i.e. a vector with brackets)
-            (progn
-              (setq width-num (1- width-num))
-              (setq width-str (number-to-string width-num))
-              (setq width-str (concat "[" width-str ":0]")))
-          (setq width-str "")) ; Width was 1, just a signal without brackets
-      (setq width-str (concat "[" width-str "-1:0]"))))) ;; If width was not a number but a constant, format properly [width-1:0]
-
-
-(defun verilog-ext-verilog-enum-typedef-template (&optional typedef)
-  "Insert enum contents for TYPEDEF enum template."
-  (let (enum-item type (width ""))
-    ;; Set typedef if specified
-    (when typedef
-      (insert "typedef "))
-    ;; Select type for enum
-    (setq type (completing-read "Type: " larumbe-verilog-enum-types))
-    (if (string-equal type "other")
-        (setq type (read-string "Type: ")))
-    ;; Select width
-    (if (or (string-equal type "logic") (string-equal type "bit"))
-        (setq width (verilog-ext-verilog-compute-vector-width))
-      (setq width "")) ; If not a vector disable width field
-    (insert "enum " type width " {")
-    (while (not (string-equal (setq enum-item (read-string "Item: ")) "")) ; Empty string ends with item addition
-      (insert enum-item ", "))
-    ;; Last item
-    (delete-char -2)
-    (insert "} ")
-    ;; Name
-    (if typedef
-        (insert (read-string "Type Name: ") ";") ; Typedef
-      (insert (read-string "Enum Name: ") ";"))  ; Enum
-    (electric-verilog-terminate-line)))
-
-
-(defun verilog-ext-verilog-struct-typedef-template (&optional typedef union)
-  "Insert struct contents for TYPEDEF struct template.
-If UNION is non-nil, instantiate a union."
-  (let (struct-item type (width ""))
-    ;; Set typedef if specified
-    (when typedef
-      (insert "typedef "))
-    ;; Struct Header
-    (if union
-        (insert "union ")
-      (insert "struct "))
-    (when (yes-or-no-p "Packed?")
-      (insert "packed "))
-    (insert "{")
-    (electric-verilog-terminate-line)
-    ;; Struct fields
-    (while (not (string-equal (setq struct-item (read-string "Item: ")) "")) ; Empty string ends with item addition
-      (setq type (read-string "Type: " "logic"))
-      ;; Select width
-      (if (or (string-equal type "logic") (string-equal type "bit"))
-          (setq width (verilog-ext-verilog-compute-vector-width))
-        (setq width "")) ; If not a vector disable width field
-      (insert type " " width " " struct-item ";")
-      (electric-verilog-terminate-line))
-    (insert "} ")
-    ;; Struct Name
-    (if typedef
-        (insert (read-string "Type Name: ") ";")   ; Typedef
-      (insert (read-string "Struct Name: ") ";"))  ; Enum
-    (electric-verilog-terminate-line)))
-
-
-;;;; Task
-(defun verilog-ext-verilog-task-add-port (direction read)
-  "Add inputs to task template.
-DIRECTION should be either 'input' or 'output'.
-READ is assumed to be the signal name."
-  (let (type width)
-    ;; Select type
-    (setq type (read-string "Type: " "logic"))
-    ;; Select width
-    (if (or (string-equal type "logic") (string-equal type "bit"))
-        (setq width (verilog-ext-verilog-compute-vector-width))
-      (setq width "")) ; If not a vector disable width field
-    ;; Insert port
-    (insert direction " " type " " width " " read ",")
-    (electric-verilog-terminate-line)))
-
-
-(defun verilog-ext-verilog-task-custom ()
-  "Insert a task definition."
-  (interactive)
-  (let ((case-fold-search verilog-case-fold)
-        (in-read)
-        (out-read))
-    (insert "task ")
-    (insert (read-string "Task name: ") " (")
-    (electric-verilog-terminate-line)
-    (while (not(string-equal (setq in-read (read-string "Input signal: ")) ""))
-      (verilog-ext-verilog-task-add-port "input" in-read))
-    (while (not(string-equal (setq out-read (read-string "Output signal: ")) ""))
-      (verilog-ext-verilog-task-add-port "output" out-read))
-    ;; INFO: "inout" or "ref" could be added in the future via universal-arg
-    (insert ");") (electric-verilog-terminate-line)
-    (save-excursion
-      (electric-verilog-terminate-line)
-      (insert (concat "endtask"))
-      (electric-verilog-terminate-line)
-      (electric-verilog-tab))
-    ;; Align port declarations
-    (re-search-backward "(")
-    (beginning-of-line)
-    (next-line)
-    (verilog-pretty-declarations)
-    (re-search-forward ");")
-    (next-line)
-    (electric-verilog-tab)))
-
-
-;;;; Signal definition
-(defun verilog-ext-verilog-def-logic (sig)
-  "Replace `verilog-sk-def-reg' for use within `verilog-ext-verilog-define-signal'.
-Define a 'logic' signal named SIG."
-  (let (width str)
-    (split-line) ;; Keep indentation
-    (setq width (verilog-ext-verilog-compute-vector-width))
-    (setq str (concat "logic " width " " sig ";"))
-    (insert str)
-    (message (concat "[Line " (format "%s" (line-number-at-pos)) "]: " str))))
-
-
-(defun verilog-ext-verilog-define-signal ()
-  "Insert a definition of signal under point at top of module.
-INFO: Inspired from `verilog-sk-define-signal'."
-  (interactive "*")
-  (let* ((sig-re "[a-zA-Z0-9_]*")
-         (sig (buffer-substring
-               (save-excursion
-                 (skip-chars-backward sig-re)
-                 (point))
-               (save-excursion
-                 (skip-chars-forward sig-re)
-                 (point)))))
-    (if (not (member sig verilog-keywords))
-        (save-excursion
-          (verilog-beg-of-defun)
-          (verilog-end-of-statement)
-          (verilog-forward-syntactic-ws)
-          (verilog-ext-verilog-def-logic sig))
-      (message "object at point (%s) is a keyword" sig))))
 
 
 ;;;; Hydra
@@ -1017,13 +955,13 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ("gn"  (verilog-ext-hydra-yasnippet "gn"))  ; generate
   ("it"  (verilog-ext-hydra-yasnippet "it"))  ; interface
   ("mp"  (verilog-ext-hydra-yasnippet "mp"))  ; Modport
-  ("cc"  (verilog-ext-verilog-case-template)) ; case
+  ("cc"  (verilog-ext-case-template)) ; case
   ("as"  (verilog-ext-hydra-yasnippet "as"))  ; assign
   ;; FSM
-  ("FS"  (verilog-ext-verilog-state-machine-sync-custom)) ; Sync FSM
+  ("FS"  (verilog-ext-templ-fsm-sync)) ; Sync FSM
   ;; Instances from file
-  ("IS"  (call-interactively #'verilog-ext-verilog-insert-instance-from-file))             ; Simple (no params)
-  ("IP"  (call-interactively #'verilog-ext-verilog-insert-instance-from-file-with-params)) ; With params
+  ("IS"  (call-interactively #'verilog-ext-templ-inst-auto-from-file))             ; Simple (no params)
+  ("IP"  (call-interactively #'verilog-ext-templ-inst-auto-from-file-with-params)) ; With params
 
   ;;;;;;;;;;;;;;;
   ;; TestBench ;;
@@ -1031,7 +969,7 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ("@"   (verilog-ext-hydra-yasnippet "@"))  ; Clk posedge
   ("in"  (verilog-ext-hydra-yasnippet "in")) ; Initial
   ("ta"  (verilog-ext-hydra-yasnippet "ta")) ; Task 1 line
-  ("tk"  (verilog-ext-verilog-task-custom))  ; Task multiple ports
+  ("tk"  (verilog-ext-task-custom))  ; Task multiple ports
   ("cl"  (verilog-ext-hydra-yasnippet "cl")) ; Class
   ("fv"  (verilog-ext-hydra-yasnippet "fv")) ; Forever
   ("rp"  (verilog-ext-hydra-yasnippet "rp")) ; Repeat
@@ -1049,8 +987,8 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ("pg"  (verilog-ext-hydra-yasnippet "pg")) ; Program
   ("cg"  (verilog-ext-hydra-yasnippet "cg")) ; Covergroup
   ;; Testbench from DUT file
-  ("TS"   (call-interactively #'verilog-ext-verilog-testbench-insert-template-simple))
-  ("TE"   (call-interactively #'verilog-ext-verilog-testbench-environment))
+  ("TS"   (call-interactively #'verilog-ext-templ-testbench-simple-from-file))
+  ("TE"   (call-interactively #'verilog-ext-templ-testbench-env-from-file))
   ;;  TODO: Coverage at some point?
   ;;      : More constraints, rand and randc
   ;;         - Distribution templates?
@@ -1058,6 +996,7 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ;;;;;;;;;;;;
   ;; Common ;;
   ;;;;;;;;;;;;
+  ;; ("beg" (verilog-ext-templ-begin-end))   ;; TODO: Add it
   ("for" (verilog-ext-hydra-yasnippet "for"))  ; For
   ("ff"  (verilog-ext-hydra-yasnippet "ff")) ; function
   ("ll"  (verilog-ext-hydra-yasnippet "ll")) ; logic signal
@@ -1073,16 +1012,16 @@ _IP_: Inst w/params            _d_:  display                     _wh_: while    
   ("wh"  (verilog-ext-hydra-yasnippet "wh")) ; While
   ("wd"  (verilog-ext-hydra-yasnippet "wd")) ; Do-while
   ("td"  (verilog-ext-hydra-yasnippet "td")) ; Generic typedef
-  ("en"  (verilog-ext-verilog-enum-typedef-template nil))     ; Enum
-  ("te"  (verilog-ext-verilog-enum-typedef-template t))       ; Typedef Enum
-  ("st"  (verilog-ext-verilog-struct-typedef-template nil))   ; Struct
-  ("ts"  (verilog-ext-verilog-struct-typedef-template t))     ; Typedef struct
-  ("un"  (verilog-ext-verilog-struct-typedef-template nil t)) ; Union
-  ("tu"  (verilog-ext-verilog-struct-typedef-template t t))   ; Typedef Union
+  ("en"  (verilog-ext-templ-enum-typedef nil))     ; Enum
+  ("te"  (verilog-ext-templ-enum-typedef t))       ; Typedef Enum
+  ("st"  (verilog-ext-templ-struct-typedef nil))   ; Struct
+  ("ts"  (verilog-ext-templ-struct-typedef t))     ; Typedef struct
+  ("un"  (verilog-ext-templ-struct-typedef nil t)) ; Union
+  ("tu"  (verilog-ext-templ-struct-typedef t t))   ; Typedef Union
   ("/"   (verilog-ext-hydra-yasnippet "/"))  ; Star comment
-  ("B"   (verilog-ext-verilog-add-block-comment))
-  ("D"   (verilog-ext-verilog-define-signal))
-  ("hd"  (call-interactively #'verilog-ext-verilog-header-hp)) ; header for HP
+  ("B"   (verilog-ext-templ-block-comment))
+  ("D"   (verilog-ext-templ-def-logic))
+  ("hd"  (call-interactively #'verilog-ext-templ-header-hp)) ; header for HP
 
   ;;;;;;;;;
   ;; UVM ;;
