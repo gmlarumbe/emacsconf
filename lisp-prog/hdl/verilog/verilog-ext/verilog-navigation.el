@@ -65,8 +65,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
                 (message (match-string 1)))
             (setq pos (point))))))
     (when found
-      (goto-char pos)
-      (match-string-no-properties 1))))
+      (goto-char pos))))
 
 
 (defun verilog-ext-find-token-fwd ()
@@ -78,7 +77,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
     (with-verilog-shadow
       (forward-char) ; Needed to avoid getting stuck
       (while (and (not found)
-                  (re-search-forward verilog-ext-verilog-token-re nil t))
+                  (re-search-forward verilog-ext-token-re nil t))
         (setq found t)
         (if (called-interactively-p)
             (setq pos (match-beginning 1))
@@ -95,7 +94,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
         (pos))
     (with-verilog-shadow
       (while (and (not found)
-                  (re-search-backward verilog-ext-verilog-token-re nil t))
+                  (re-search-backward verilog-ext-token-re nil t))
         (setq found t)
         (if (called-interactively-p)
             (setq pos (match-beginning 1))
@@ -172,7 +171,7 @@ Additionally add xref push marker to the stack."
       (if (and (verilog-ext-find-module-instance)
                verilog-ext-which-func-xtra)
           (progn
-            (ggtags-find-tag-dwim verilog-ext-which-func-xtra))
+            (ggtags-find-tag-dwim which-func-current))
         ;; Do `pop-tag-mark' if this command is called when the
         ;; point in *not* inside a verilog instance.
         (pop-tag-mark))

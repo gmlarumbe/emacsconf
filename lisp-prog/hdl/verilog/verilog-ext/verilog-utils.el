@@ -260,7 +260,8 @@ is returned and `verilog-ext-which-func-xtra' is updated to \"adder\".
                      instance-name)
             (setq return-val instance-name)))))
     (when (featurep 'which-func)
-      (modi/verilog-update-which-func-format))
+      ;; (modi/verilog-update-which-func-format)
+      )
     return-val))
 
 
@@ -312,7 +313,8 @@ for \"module\").
                          (t (substring block-type 0 4)))) ;First 4 chars
             (setq return-val block-name)))))
     (when (featurep 'which-func)
-      (modi/verilog-update-which-func-format))
+      ;; (modi/verilog-update-which-func-format)
+      )
     return-val))
 
 
@@ -325,7 +327,7 @@ for \"module\").
   (setq verilog-ext-flycheck-verilator-include-path verilog-ext-verilog-open-dirs)
   (flycheck-select-checker verilog-ext-flycheck-active-linter)
   (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `verilog-ext-electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
-  (verilog-ext-verilog-time-stamp-update)
+  (verilog-ext-time-stamp-update)
   (verilog-ext-verilog-find-semicolon-in-instance-comments)
   (setq-local yas-indent-line 'fixed))
 

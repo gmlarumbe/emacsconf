@@ -6,6 +6,7 @@
 (require 'init-hdl-font-lock)
 (require 'verilog-mode)
 (require 'verilog-navigation)
+(require 'verilog-rx)
 
 (defvar verilog-ext-uvm-classes-face 'verilog-ext-uvm-classes-face)
 (defface verilog-ext-uvm-classes-face
@@ -14,16 +15,7 @@
   :group 'hdl-font-lock-highlighting-faces)
 
 
-;;;; Variables
-;; Some regexps come from evaluated `(concat verilog-ext-identifier-re "\\s-+" verilog-ext-identifier-re)' with capture groups and additions depending on what they might detect.
-(defvar verilog-ext-verilog-system-task-regex "\\$[a-zA-Z][a-zA-Z0-9_\\$]*")
-(defvar verilog-ext-verilog-port-connection-regex "^[[:blank:]]*\\.\\([0-9a-zA-Z*_-]*\\)")
-(defvar verilog-ext-verilog-dot-itf-struct-regex "\\([a-zA-Z*_-][0-9a-zA-Z*_-]+\\)\\.\\([0-9a-zA-Z*_-]+\\)")
-(defvar verilog-ext-verilog-braces-content-regex "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
-(defvar verilog-ext-verilog-width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xzXZ]+\\)")
-(defvar verilog-ext-verilog-time-event-regex "\\([@#]\\)")
-(defvar verilog-ext-verilog-time-unit-regex "[0-9]+\\(\\.[0-9]+\\)?\\(?2:[umnpf]s\\)")
-
+;; TODO: Maybe move them somewhere else?
 ;; Variable declaration type/name font-lock
 (defvar verilog-ext-verilog-highlight-variable-declaration-names nil)
 (defvar verilog-ext-keywords-no-types '("`__FILE__" "`__LINE" "`begin_keywords" "`celldefine" "`default_nettype" "`define" "`else" "`elsif" "`end_keywords" "`endcelldefine" "`endif" "`ifdef" "`ifndef" "`include"
@@ -45,30 +37,6 @@
                                             "interconnect" "nettype" "soft"))
 ;; Obtained with: (dolist (word (cl-set-difference verilog-keywords verilog-type-keywords :test #'equal)) (insert "\"" word "\" "))
 (defvar verilog-ext-verilog-keywords-no-types-re (regexp-opt verilog-ext-keywords-no-types 'symbols))
-(defvar verilog-ext-verilog-variable-re-1
-  "\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(?2:\\[.*\\]\\s-*\\)?\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*\\(?4:=.*\\)?;"
-  "type_t asdf;
-   type_t [10:0] asdf;
-   type_t [10:0] asdf = 'h0;
-")
-(defvar verilog-ext-verilog-variable-re-2
-  "\\_<\\(?1:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\_>\\s-+\\(?3:\\([a-zA-Z_][a-zA-Z0-9$_]*\\s-*,\\s-*\\)+\\([a-zA-Z_][a-zA-Z0-9$_]*\\s-*\\)\\);"
-  "type_t asdf1, asdf2 , asdf4, asdf6[], asdf7 [25], asdf8 ;")
-(defvar verilog-ext-verilog-variable-re-3
-  "\\_<\\(input\\|output\\|inout\\|ref\\|parameter\\|localparam\\)\\_>\\s-+\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(\\[.*\\]\\)?\\s-*\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*"
-  " ...
-  parameter type_t a = 1,
-  localparam type_t b = 2
-  ) .. (
-  ...
-  task foo(
-      input type_t foo1,
-      input bit [ 4:0] foo2,
-      output type_t address,
-      inout type_t data []
-  );
- ")
-
 
 ;;;; Functions
 ;; INFO: Search based fontification:

@@ -24,13 +24,13 @@
      ,@body-forms))
 
 
-(defvar verilog-ext-module-instance-re
+(setq verilog-ext-module-instance-re
   (rx-verilog
    (rx bol (* blank)                                     ; Initial optional blanks
        (group-n 1 verilog-identifier) newline-or-space*  ; Identifier
-       (* "#" newline-or-space* verilog-param-port-list) ; Optional parameters
-       verilog-comments*                                 ; TODO: Review if this one is necessary
-       verilog-almost-anything-inside-port               ; Parameter contents
+       (* "#" newline-or-space* verilog-param-port-list verilog-almost-anything-inside-port) ; Optional parameters
+       ;; verilog-comments*                                 ; TODO: Review if this one is necessary
+                      ; Parameter contents
        (group-n 2 verilog-identifier)                    ; Instance name
        (* blank) verilog-array-content newline-or-space* ; SystemVerilog sometimes instantiates array of modules with brackets after instance name
        "("                                               ; Parenthesis before ports and connections
@@ -87,6 +87,59 @@
        ;; Allow parsing extern methods like class::task
        (group-n 2 (* verilog-identifier "::") verilog-identifier)
        word-boundary)))
+
+
+;;;; Used by Imenu
+;; Search by regexp: Used as regexps in `verilog-ext-imenu-generic-expression'
+(defvar verilog-ext-imenu-top-re        "^\\s-*\\(?1:connectmodule\\|m\\(?:odule\\|acromodule\\)\\|p\\(?:rimitive\\|rogram\\|ackage\\)\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
+(defvar verilog-ext-imenu-localparam-re "^\\s-*localparam\\(?1:\\s-+\\(logic\\|bit\\|int\\|integer\\)\\s-*\\(\\[.*\\]\\)?\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
+(defvar verilog-ext-imenu-define-re     "^\\s-*`define\\s-+\\([a-zA-Z0-9_.:]+\\)")
+(defvar verilog-ext-imenu-assign-re     "^\\s-*assign\\s-+\\([a-zA-Z0-9_.:]+\\)")
+(defvar verilog-ext-imenu-generate-re   "^\\s-*generate[ \t\n]*\\(?1:.*\\)")
+(defvar verilog-ext-imenu-always-re     "^\\s-*always\\(_ff\\|_comb\\|_latch\\)?\\s-*\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
+(defvar verilog-ext-imenu-initial-re    "^\\s-*initial\\s-+\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
+;; Search by function: Used for functions that will be passed as an argument of `verilog-ext-imenu-generic-expression'
+(defvar verilog-ext-task-re     "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*task\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
+(defvar verilog-ext-function-re "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*function\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?:\\w+\\s-+\\)?\\(?:\\(?:un\\)signed\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
+(defvar verilog-ext-class-re    "\\(?1:\\(?:\\(?:virtual\\|interface\\)\\s-+\\)?class\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
+(defvar verilog-ext-top-re      "\\(?1:package\\|program\\|module\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
+
+
+;;;; Used by font-lock
+;; Some regexps come from evaluated `(concat verilog-ext-identifier-re "\\s-+" verilog-ext-identifier-re)' with capture groups and additions depending on what they might detect.
+(defvar verilog-ext-verilog-system-task-regex "\\$[a-zA-Z][a-zA-Z0-9_\\$]*")
+(defvar verilog-ext-verilog-port-connection-regex "^[[:blank:]]*\\.\\([0-9a-zA-Z*_-]*\\)")
+(defvar verilog-ext-verilog-dot-itf-struct-regex "\\([a-zA-Z*_-][0-9a-zA-Z*_-]+\\)\\.\\([0-9a-zA-Z*_-]+\\)")
+(defvar verilog-ext-verilog-braces-content-regex "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
+(defvar verilog-ext-verilog-width-signal-regex "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xzXZ]+\\)")
+(defvar verilog-ext-verilog-time-event-regex "\\([@#]\\)")
+(defvar verilog-ext-verilog-time-unit-regex "[0-9]+\\(\\.[0-9]+\\)?\\(?2:[umnpf]s\\)")
+
+
+
+(defvar verilog-ext-verilog-variable-re-1
+  "\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(?2:\\[.*\\]\\s-*\\)?\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*\\(?4:=.*\\)?;"
+  "type_t asdf;
+   type_t [10:0] asdf;
+   type_t [10:0] asdf = 'h0;
+")
+(defvar verilog-ext-verilog-variable-re-2
+  "\\_<\\(?1:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\_>\\s-+\\(?3:\\([a-zA-Z_][a-zA-Z0-9$_]*\\s-*,\\s-*\\)+\\([a-zA-Z_][a-zA-Z0-9$_]*\\s-*\\)\\);"
+  "type_t asdf1, asdf2 , asdf4, asdf6[], asdf7 [25], asdf8 ;")
+(defvar verilog-ext-verilog-variable-re-3
+  "\\_<\\(input\\|output\\|inout\\|ref\\|parameter\\|localparam\\)\\_>\\s-+\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(\\[.*\\]\\)?\\s-*\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*"
+  " ...
+  parameter type_t a = 1,
+  localparam type_t b = 2
+  ) .. (
+  ...
+  task foo(
+      input type_t foo1,
+      input bit [ 4:0] foo2,
+      output type_t address,
+      inout type_t data []
+  );
+ ")
 
 
 
