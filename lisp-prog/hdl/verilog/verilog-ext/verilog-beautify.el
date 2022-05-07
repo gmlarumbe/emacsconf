@@ -7,7 +7,7 @@
 
 
 ;;;; Code beautifying
-(defun verilog-ext-align-ports-current-module ()
+(defun verilog-ext-align-ports-module-at-point ()
   "Align parenthesis ports of current module.
 Current module is the one pointed to by `verilog-ext-find-module-instance'.
 
@@ -35,7 +35,7 @@ Alignment is performed between instance name and end of instantiation."
       (message "Could not align ports!"))))
 
 
-(defun verilog-ext-align-parameters-current-module (&optional module)
+(defun verilog-ext-align-params-module-at-point (&optional module)
   "Align parameters of current module, the one pointed to by `which-func'.
 
 Alignment is performed between module name and instance name.
@@ -70,7 +70,7 @@ therefore not detecting the proper module but the previous one."
       (message "Could not align parameters!"))))
 
 
-(defun verilog-ext-indent-current-module (&optional module)
+(defun verilog-ext-indent-module-at-point (&optional module)
   "Indent current module, the one pointed to by `which-func'.
 
 If used programatically perform a backwards regexp-search of MODULE
@@ -103,18 +103,18 @@ therefore not detecting the proper module but the previous one."
     (message "Point is not inside a module instantiation")))
 
 
-(defun verilog-ext-beautify-current-module ()
+(defun verilog-ext-beautify-module-at-point ()
   "Beautify current module (open parenthesis, indent and align)."
   (interactive)
   (save-excursion
     ;; Leave indentation for the end to avoid conflicts with
     ;; point position due to update delay in which-func
-    (verilog-ext-align-ports-current-module)
-    (verilog-ext-align-parameters-current-module)
-    (verilog-ext-indent-current-module)))
+    (verilog-ext-align-ports-module-at-point)
+    (verilog-ext-align-params-module-at-point)
+    (verilog-ext-indent-module-at-point)))
 
 
-(defun verilog-ext-beautify-current-module ()
+(defun verilog-ext-beautify-current-file ()
   "Beautify current buffer.
 
 Indent whole buffer, beautify every instantiated module and
@@ -125,7 +125,7 @@ remove blanks in port connections."
     (verilog-ext-verilog-clean-port-blanks)
     (goto-char (point-min))
     (while (verilog-ext-find-module-instance-fwd)
-      (verilog-ext-beautify-current-module))))
+      (verilog-ext-beautify-module-at-point))))
 
 
 (defun verilog-ext-beautify-files (files)
@@ -139,7 +139,7 @@ FILES is a list of strings containing the paths to the files to beautify."
     (with-temp-file file
       (verilog-mode)
       (insert-file-contents file)
-      (verilog-ext-beautify-current-module)
+      (verilog-ext-beautify-current-file)
       (untabify-trailing-whitespace)
       (write-file file))))
 

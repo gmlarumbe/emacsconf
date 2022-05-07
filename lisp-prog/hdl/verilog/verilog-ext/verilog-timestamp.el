@@ -2,6 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'time-stamp)
 
 ;;;; Timestamp
 (defvar verilog-ext-time-stamp-profiles '("work" "personal"))
