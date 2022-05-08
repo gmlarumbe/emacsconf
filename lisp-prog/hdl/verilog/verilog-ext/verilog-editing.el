@@ -48,15 +48,17 @@ Ask for ports to be connected until no port is found at current line."
 
 
 (defun verilog-ext-clean-port-blanks ()
-  "Cleans blanks inside port connections of current buffer."
+  "Cleans blanks inside port connections of current buffer.
+
+Capture Groups:
+- Group 1: Beginning of line blanks
+- Group 2: Port name (after dot connection)
+- Group 3: Blanks after identifier
+- Group 4: Blanks after beginning of port connection '('
+- Group 5: Name of connection
+- Group 6: Blanks after end of port connection ')'
+"
   (interactive)
-  ;; Information about different capture groups:
-  ;;   Group 1: Beginning of line blanks
-  ;;   Group 2: Port name (after dot connection)
-  ;;   Group 3: Blanks after identifier
-  ;;   Group 4: Blanks after beginning of port connection '('
-  ;;   Group 5: Name of connection
-  ;;   Group 6: Blanks after end of port connection ')'
   (let ((old-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)(\\(?4:[ ]*\\)\\(?5:[^ ]+\\)\\(?6:[ ]*\\))")
         (new-re "\\1.\\2\\3\(\\5\)"))
     ;; TODO: Replace with more generic function
@@ -64,6 +66,31 @@ Ask for ports to be connected until no port is found at current line."
     (message "Removed blanks from current buffer port connections.")))
 
 
+(defun verilog-ext-block-end-comments-to-block-names ()
+  "Convert valid block-end comments to ': BLOCK_NAME'.
+
+Examples: endmodule // module_name             → endmodule : module_name
+          endfunction // some comment          → endfunction // some comment
+          endfunction // class_name::func_name → endfunction : func_name
+          end // block: block_name             → end : block_name "
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward verilog-ext-block-end-keywords-complete-re nil :noerror)
+      ;; Make sure that the matched string after "//" is not a verilog keyword.
+      (when (not (string-match-p verilog-ext-keywords-re (match-string 2)))
+        (replace-match "\\1 : \\2")))))
+
+
+(define-minor-mode verilog-ext-block-end-comments-to-block-names-mode
+  ""
+  :global nil
+  (if verilog-ext-block-end-comments-to-block-names-mode
+      (progn
+        (add-hook 'verilog-mode-hook (lambda () (add-hook 'before-save-hook #'verilog-ext-block-end-comments-to-block-names nil :local)))
+        (message "Enabled gtags-update-async-minor-mode [current buffer]"))
+    (remove-hook 'verilog-mode-hook (lambda () (add-hook 'before-save-hook #'verilog-ext-block-end-comments-to-block-names nil :local)))
+    (message "Disabled gtags-update-async-minor-mode [current buffer]")))
 
 
 (provide 'verilog-editing)

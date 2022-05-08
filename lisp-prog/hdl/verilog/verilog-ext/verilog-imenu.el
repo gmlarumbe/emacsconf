@@ -144,24 +144,9 @@ list obtained by using the imenu generic function."
 
 
 
-;;;; Interactive
-(defun verilog-ext-imenu ()
-  "Wrapper interactive Imenu function for Verilog mode.
-Checks if there is an instance with semicolon in mutiline comments of parameters."
-  (interactive)
-  (let (issue)
-    (setq imenu-create-index-function #'verilog-ext-imenu-index)
-    (setq issue (verilog-ext-find-semicolon-in-instance-comments))
-    (imenu-list)
-    (verilog-ext-imenu-hide-all t)
-    (when issue
-      (error "Imenu DANGER!: semicolon in comment instance!!"))))
-
-
 (defun verilog-ext-imenu-hide-all (&optional first)
   "Hides all the blocks @ Imenu-list buffer.
 If optional FIRST is used, then shows first block (Verilog *instances/interfaces*)"
-  (interactive)
   (if (string-equal major-mode "imenu-list-major-mode")
       (progn
         (goto-char (point-min))
@@ -176,95 +161,16 @@ If optional FIRST is used, then shows first block (Verilog *instances/interfaces
 
 
 
-;;;; Auxiliary
-;; TODO: Move them to a more generic place, navigation? Since these can be used by which-func and others...
-;; TODO: Can refactor this with a macro passing it the expressions to look at?
-(defun verilog-ext-find-class-bwd ()
-  "Meant to be used for Imenu class entry."
-  (let (found pos)
-    (save-excursion
-      (while (and (not found)
-                  (verilog-ext-find-token-bwd))
-        (when (looking-at verilog-ext-class-re)
-          (setq found t)
-          (setq pos (point)))))
-    (when found
-      (goto-char pos))))
-
-
-(defun verilog-ext-find-task-function-class-bwd ()
-  "Meant to be used for Imenu class entry."
-  (let (found pos)
-    (save-excursion
-      (while (and (not found)
-                  (verilog-ext-find-token-bwd))
-        (when (or (looking-at verilog-ext-function-re)
-                  (looking-at verilog-ext-task-re)
-                  (looking-at verilog-ext-class-re))
-          (setq found t)
-          (setq pos (point)))))
-    (when found
-      (goto-char pos))))
-
-(defun verilog-ext-find-task-function-outside-class-bwd ()
-  "Meant to be used for Imenu class entry."
-  (let (found pos)
-    (save-excursion
-      (while (and (not found)
-                  (verilog-ext-find-token-bwd))
-        (when (and (or (looking-at verilog-ext-function-re)
-                       (looking-at verilog-ext-task-re))
-                   (not (verilog-ext-func-task-inside-class)))
-          (setq found t)
-          (setq pos (point)))))
-    (when found
-      (goto-char pos))))
-
-
-(defun verilog-ext-func-task-inside-class ()
-  "Return non-nil if cursor is pointing a func/task inside a class."
+;;;###autoload
+(defun verilog-ext-imenu ()
+  "Wrapper interactive Imenu function for Verilog mode."
   (interactive)
-  (save-match-data
-    (unless (or (looking-at verilog-ext-task-re)
-                (looking-at verilog-ext-function-re))
-      (error "Pointer is not in a function/task!"))
-    (let ((task-point (point))
-          (endclass-point))
-      (save-excursion
-        (if (verilog-ext-find-class-bwd)
-            (progn
-              (verilog-forward-sexp)
-              (setq endclass-point (point))
-              (if (< task-point endclass-point)
-                  t
-                nil))
-          nil)))))
+  (setq imenu-create-index-function #'verilog-ext-imenu-index)
+  (imenu-list)
+  (verilog-ext-imenu-hide-all t))
 
 
-(defun verilog-ext-find-top-bwd ()
-  "Return non-nil if cursor is pointing at verilog top module."
-  (let (found pos)
-    (save-excursion
-      (while (and (not found)
-                  (verilog-ext-find-token-bwd))
-        (when (looking-at verilog-ext-top-re)
-          (setq found t)
-          (setq pos (point)))))
-    (when found
-      (goto-char pos))))
 
-
-;;;; Legacy
-;; INFO: These two methods were insufficient to implement Imenu with functions/tasks within classes.
-;; Code kept in case it is used in the future to add something new tag.
-(defun verilog-ext-imenu-prev-index-position-function ()
-  "Function to search backwards in the buffer for Imenu alist generation."
-  (verilog-ext-find-module-instance-bwd))
-
-(defun verilog-ext-imenu-extract-index-name ()
-  "Function to extract the tag."
-  (verilog-forward-syntactic-ws)
-  (thing-at-point 'symbol t))
 
 
 ;;;; Provide

@@ -14,7 +14,6 @@
 (require 'verilog-mode)
 
 
-;;; Own Verilog templates
 ;;;; Begin/end block
 (defun verilog-ext-templ-begin-end ()
   "Insert begin/end block."
@@ -913,127 +912,6 @@ Environment files will be created at specified DIR (clocks, program, defs_pkg, c
     (verilog-ext-templ-testbench-env--classes-pkg classes-pkg-file)
     (verilog-ext-templ-testbench-env--top         top-file dut-file clocks-file)))
 
-
-
-;;;; Hydra
-(defhydra hydra-verilog (:color blue
-                                :hint nil)
-  "
-RTL                          TESTBENCH                       COMMON
-^^
-_af_: always ff                _@_:  (posedge Clk)               _for_: for             _td_: typedef
-_ac_: always comb              _in_: initial                     _ff_: function         _en_: enum
-_aa_: always                   _ta_: task (1 line)               _ll_: logic signal     _te_: typedef enum
-_ms_: module simple            _tk_: task template               _lv_: logic vector     _st_: struct
-_md_: module w/params          _cl_: class                       _lp_: localparam       _ts_: typedef struct
-_gn_: generate                 _fv_: forever                     _pm_: parameter        _un_: union
-_it_: interface                _rp_: repeat                      _pc_: package          _tu_: typedef union
-_mp_: modport                  _fj_: fork-join                   _bg_: begin/end        ^^
-_cc_: case                     _fa_: fork-join any               _fe_: foreach          _/_: Star comment
-_as_: assign                   _fn_: fork-join none              _if_: if               _B_: Block comment
-_FS_: FSM sync                 _rn_: rand/constraint             _ei_: else if          _D_: Define signal
-_IS_: Inst simple              _cb_: clocking block              _el_: else             _hd_: HP Header
-_IP_: Inst w/params            _d_:  display                     _wh_: while            ^^
-^^                             _ai_: assert immediate            _wd_: do-while         ^^
-^^                             _ap_: assert property             ^^                     _uo_: UVM object
-^^                             _pr_: property                    ^^                     _uc_: UVM component
-^^                             _sq_: sequence                    ^^
-^^                             _fl_: final                       ^^
-^^                             _pg_: program                     ^^
-^^                             _cg_: covergroup                  ^^
-^^                             _TS_: Testbench Simple            ^^
-^^                             _TE_: Testbench Environment       ^^
-"
-  ;;;;;;;;;
-  ;; RTL ;;
-  ;;;;;;;;;
-  ("af"  (verilog-ext-hydra-yasnippet "af"))  ; always_ff
-  ("ac"  (verilog-ext-hydra-yasnippet "ac"))  ; always_comb
-  ("aa"  (verilog-ext-hydra-yasnippet "aa"))  ; always
-  ("ms"  (verilog-ext-hydra-yasnippet "ms"))  ; module simple
-  ("md"  (verilog-ext-hydra-yasnippet "md"))  ; module with parameter
-  ("gn"  (verilog-ext-hydra-yasnippet "gn"))  ; generate
-  ("it"  (verilog-ext-hydra-yasnippet "it"))  ; interface
-  ("mp"  (verilog-ext-hydra-yasnippet "mp"))  ; Modport
-  ("cc"  (verilog-ext-case-template)) ; case
-  ("as"  (verilog-ext-hydra-yasnippet "as"))  ; assign
-  ;; FSM
-  ("FS"  (verilog-ext-templ-fsm-sync)) ; Sync FSM
-  ;; Instances from file
-  ("IS"  (call-interactively #'verilog-ext-templ-inst-auto-from-file))             ; Simple (no params)
-  ("IP"  (call-interactively #'verilog-ext-templ-inst-auto-from-file-with-params)) ; With params
-
-  ;;;;;;;;;;;;;;;
-  ;; TestBench ;;
-  ;;;;;;;;;;;;;;;
-  ("@"   (verilog-ext-hydra-yasnippet "@"))  ; Clk posedge
-  ("in"  (verilog-ext-hydra-yasnippet "in")) ; Initial
-  ("ta"  (verilog-ext-hydra-yasnippet "ta")) ; Task 1 line
-  ("tk"  (verilog-ext-task-custom))  ; Task multiple ports
-  ("cl"  (verilog-ext-hydra-yasnippet "cl")) ; Class
-  ("fv"  (verilog-ext-hydra-yasnippet "fv")) ; Forever
-  ("rp"  (verilog-ext-hydra-yasnippet "rp")) ; Repeat
-  ("fj"  (verilog-ext-hydra-yasnippet "fj")) ; Fork-join
-  ("fa"  (verilog-ext-hydra-yasnippet "fa")) ; Fork-join_any
-  ("fn"  (verilog-ext-hydra-yasnippet "fn")) ; Fork-join_none
-  ("rn"  (verilog-ext-hydra-yasnippet "rn")) ; Rand/Constraint
-  ("cb"  (verilog-ext-hydra-yasnippet "cb")) ; Clocking block
-  ("d"   (verilog-ext-hydra-yasnippet "d"))  ; Display for debug
-  ("ai"  (verilog-ext-hydra-yasnippet "ai")) ; assert immediate
-  ("ap"  (verilog-ext-hydra-yasnippet "ap")) ; assert property
-  ("pr"  (verilog-ext-hydra-yasnippet "pr")) ; property
-  ("sq"  (verilog-ext-hydra-yasnippet "sq")) ; sequence
-  ("fl"  (verilog-ext-hydra-yasnippet "fl")) ; Final
-  ("pg"  (verilog-ext-hydra-yasnippet "pg")) ; Program
-  ("cg"  (verilog-ext-hydra-yasnippet "cg")) ; Covergroup
-  ;; Testbench from DUT file
-  ("TS"   (call-interactively #'verilog-ext-templ-testbench-simple-from-file))
-  ("TE"   (call-interactively #'verilog-ext-templ-testbench-env-from-file))
-  ;;  TODO: Coverage at some point?
-  ;;      : More constraints, rand and randc
-  ;;         - Distribution templates?
-
-  ;;;;;;;;;;;;
-  ;; Common ;;
-  ;;;;;;;;;;;;
-  ;; ("beg" (verilog-ext-templ-begin-end))   ;; TODO: Add it
-  ("for" (verilog-ext-hydra-yasnippet "for"))  ; For
-  ("ff"  (verilog-ext-hydra-yasnippet "ff")) ; function
-  ("ll"  (verilog-ext-hydra-yasnippet "ll")) ; logic signal
-  ("lv"  (verilog-ext-hydra-yasnippet "lv")) ; logic vector
-  ("lp"  (verilog-ext-hydra-yasnippet "lp")) ; Localparam
-  ("pm"  (verilog-ext-hydra-yasnippet "pm")) ; Parameter
-  ("pc"  (verilog-ext-hydra-yasnippet "pc")) ; Package
-  ("bg"  (verilog-ext-hydra-yasnippet "bg")) ; begin/end
-  ("fe"  (verilog-ext-hydra-yasnippet "fe")) ; Foreach
-  ("if"  (verilog-ext-hydra-yasnippet "if"))
-  ("ei"  (verilog-ext-hydra-yasnippet "ei")) ; Else if
-  ("el"  (verilog-ext-hydra-yasnippet "el")) ; else
-  ("wh"  (verilog-ext-hydra-yasnippet "wh")) ; While
-  ("wd"  (verilog-ext-hydra-yasnippet "wd")) ; Do-while
-  ("td"  (verilog-ext-hydra-yasnippet "td")) ; Generic typedef
-  ("en"  (verilog-ext-templ-enum-typedef nil))     ; Enum
-  ("te"  (verilog-ext-templ-enum-typedef t))       ; Typedef Enum
-  ("st"  (verilog-ext-templ-struct-typedef nil))   ; Struct
-  ("ts"  (verilog-ext-templ-struct-typedef t))     ; Typedef struct
-  ("un"  (verilog-ext-templ-struct-typedef nil t)) ; Union
-  ("tu"  (verilog-ext-templ-struct-typedef t t))   ; Typedef Union
-  ("/"   (verilog-ext-hydra-yasnippet "/"))  ; Star comment
-  ("B"   (verilog-ext-templ-block-comment))
-  ("D"   (verilog-ext-templ-def-logic))
-  ("hd"  (call-interactively #'verilog-ext-templ-header-hp)) ; header for HP
-
-  ;;;;;;;;;
-  ;; UVM ;;
-  ;;;;;;;;;
-  ("uc"  (verilog-ext-hydra-yasnippet "uc"))
-  ("uo"  (verilog-ext-hydra-yasnippet "uo"))
-
-  ;;;;;;;;;;;;
-  ;; Others ;;
-  ;;;;;;;;;;;;
-  ("q"   nil nil :color blue)
-  ("C-g" nil nil :color blue))
 
 
 (provide 'verilog-templates)

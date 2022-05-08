@@ -24,13 +24,13 @@
      ,@body-forms))
 
 
-(setq verilog-ext-module-instance-re
+(defvar verilog-ext-module-instance-re
   (rx-verilog
    (rx bol (* blank)                                     ; Initial optional blanks
        (group-n 1 verilog-identifier) newline-or-space*  ; Identifier
        (* "#" newline-or-space* verilog-param-port-list verilog-almost-anything-inside-port) ; Optional parameters
        ;; verilog-comments*                                 ; TODO: Review if this one is necessary
-                      ; Parameter contents
+                                        ; Parameter contents
        (group-n 2 verilog-identifier)                    ; Instance name
        (* blank) verilog-array-content newline-or-space* ; SystemVerilog sometimes instantiates array of modules with brackets after instance name
        "("                                               ; Parenthesis before ports and connections
@@ -82,6 +82,7 @@
    'symbols))
 
 
+;; TODO: Maybe use it along with tokens to get capture groups and make these re functions more generic?
 (defvar verilog-ext-header-re
   (rx-verilog
    (rx bol (* blank) keyword* ; Optional virtual, local, protected
@@ -91,6 +92,52 @@
        (group-n 2 (* verilog-identifier "::") verilog-identifier)
        word-boundary)))
 
+
+
+(defvar verilog-ext-block-end-keywords '("end"
+                                          "join" "join_any" "join_none"
+                                          "endchecker"
+                                          "endclass"
+                                          "endclocking"
+                                          "endconfig"
+                                          "endfunction"
+                                          "endgroup"
+                                          "endinterface"
+                                          "endmodule"
+                                          "endpackage"
+                                          "endprimitive"
+                                          "endprogram"
+                                          "endproperty"
+                                          "endsequence"
+                                          "endtask")
+  "Verilog/SystemVerilog block end keywords.
+IEEE 1800-2012 SystemVerilog Section 9.3.4 Block names.")
+
+(defvar verilog-ext-block-end-keywords-re
+  (regexp-opt verilog-ext-block-end-keywords 'symbols)
+  "Regexp to match the Verilog/SystemVerilog block end keywords.
+See `verilog-ext-block-end-keywords' for more.")
+
+
+(defvar verilog-ext-end-keywords-complete-re
+  (rx-verilog
+   (rx bol                                      
+       (group-n 1 (* blank) (regex verilog-ext-block-end-keywords-re))
+       (* blank) "//" (* blank)
+       (* (group (or "block:" (group verilog-identifier (* blank) "::")) (* blank)))
+       (group-n 2 verilog-identifier)
+       (* blank) eol)))
+
+;; (defvar verilog-ext-block-end-keywords-complete-re
+;;   (concat "^"
+;;           "\\(?1:[[:blank:]]*"
+;;           verilog-ext-block-end-keywords-re
+;;           "\\)"
+;;           "[[:blank:]]*//[[:blank:]]*"
+;;           "\\(\\(block:\\|"
+;;           modi/verilog-identifier-re "[[:blank:]]*::\\)[[:blank:]]*\\)*"
+;;           "\\(?2:" modi/verilog-identifier-re "\\)"
+;;           "[[:blank:]]*$"))
 
 ;;;; Used by Imenu
 ;; Search by regexp: Used as regexps in `verilog-ext-imenu-generic-expression'
@@ -104,8 +151,8 @@
 ;; Search by function: Used for functions that will be passed as an argument of `verilog-ext-imenu-generic-expression'
 (defvar verilog-ext-task-re     "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*task\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
 (defvar verilog-ext-function-re "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*function\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?:\\w+\\s-+\\)?\\(?:\\(?:un\\)signed\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
-(setq verilog-ext-class-re    "\\(?1:\\(?:\\(?:virtual\\)\\s-+\\)?class\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
-(setq verilog-ext-top-re      "\\(?1:package\\|program\\|module\\|interface\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
+(defvar verilog-ext-class-re    "\\(?1:\\(?:\\(?:virtual\\)\\s-+\\)?class\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
+(defvar verilog-ext-top-re      "\\(?1:package\\|program\\|module\\|interface\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
 
 
 ;;;; Used by font-lock

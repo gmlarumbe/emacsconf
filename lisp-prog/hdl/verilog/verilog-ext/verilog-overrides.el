@@ -5,37 +5,6 @@
 (require 'verilog-mode)
 
 
-;;;; Syntax table override functions
-;; https://www.veripool.org/issues/724-Verilog-mode-How-to-make-word-navigation-commands-stop-at-underscores-
-(defun verilog-ext-forward-word (&optional arg)
-  "Make verilog word navigation commands stop at underscores.
-Move forward ARG words."
-  (interactive "p")
-  (let ((table (make-syntax-table verilog-mode-syntax-table)))
-    (modify-syntax-entry ?_ "_" table)
-    (with-syntax-table table
-      (forward-word arg))))
-
-
-(defun verilog-ext-backward-word (&optional arg)
-  "Make verilog word navigation commands stop at underscores.
-Move backward ARG words."
-  (interactive "p")
-  (let ((table (make-syntax-table verilog-mode-syntax-table)))
-    (modify-syntax-entry ?_ "_" table)
-    (with-syntax-table table
-      (backward-word arg))))
-
-
-(defun verilog-ext-electric-verilog-tab ()
-  "Wrapper of the homonym verilog function to avoid indentation issues with compiler directives after setting custom hooks."
-  (interactive)
-  (let ((table (make-syntax-table verilog-mode-syntax-table)))
-    (modify-syntax-entry ?` "w" table)
-    (with-syntax-table table
-      (electric-verilog-tab))))
-
-
 ;;;; Advising
 (defun verilog-ext-forward-sexp ()
   "Same as `verilog-forward-sexp' but with additional support for:

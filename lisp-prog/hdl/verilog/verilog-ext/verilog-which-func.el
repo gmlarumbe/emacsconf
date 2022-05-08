@@ -9,6 +9,11 @@ mode-line. For instance, if point is under \"module top\", `which-func' would
 show \"top\" but also show extra information that it's a \"module\".")
 
 
+(defun hdl-ext-which-func-current ()
+  ""
+  (gethash (get-buffer-window) which-func-table))
+
+
 (defun verilog-ext-which-func-find-instance ()
   ""
   (let (instance-point instance-type instance-name)

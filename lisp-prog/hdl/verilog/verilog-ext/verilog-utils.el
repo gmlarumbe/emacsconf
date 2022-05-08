@@ -13,7 +13,7 @@
 Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
 (defvar verilog-ext-open-pkgs nil
   "List of currently opened SystemVerilog packages.")
-(defvar verilog-ext-project-pkg-list nil
+(defvar verilog-ext-open-pkgs-projectile nil
   "List of current open packages at projectile project.")
 
 
@@ -39,7 +39,7 @@ Used for flycheck and vhier packages."
 
 
 (defun verilog-ext-update-project-pkg-list ()
-  "Update currently open packages on `verilog-ext-project-pkg-list'.
+  "Update currently open packages on `verilog-ext-open-pkgs-projectile'.
 
 Only packages within current projectile project are added.
 To be used with vhier/flycheck.
@@ -49,15 +49,15 @@ INFO: Limitations:
  - Some sorting method could be used in the future:
    - Extracting them from buffer file but in the order they have been
      opened and reverse sorting, for example..."
-  (setq verilog-ext-project-pkg-list nil) ; Reset list
+  (setq verilog-ext-open-pkgs-projectile nil) ; Reset list
   (mapc
    (lambda (pkg)
      (when (string-prefix-p (projectile-project-root) pkg)
-       (unless (member pkg verilog-ext-project-pkg-list)
-         (push pkg verilog-ext-project-pkg-list))))
+       (unless (member pkg verilog-ext-open-pkgs-projectile)
+         (push pkg verilog-ext-open-pkgs-projectile))))
    verilog-ext-open-pkgs)
   ;; Return pkg-list
-  verilog-ext-project-pkg-list)
+  verilog-ext-open-pkgs-projectile)
 
 
 
@@ -83,106 +83,48 @@ Point to problematic regexp in case it is found."
 
 
 
-(defun verilog-ext-find-module-instance (&optional fwd)
-  "Return the module instance name within which the point is currently.
 
-If FWD is non-nil, do the verilog module/instance search in forward direction;
-otherwise in backward direction.
-
-This function updates the local variable `verilog-ext-which-func-xtra'.
-
-For example, if the point is as below (indicated by that rectangle), \"u_adder\"
-is returned and `verilog-ext-which-func-xtra' is updated to \"adder\".
-
-   adder u_adder
-   (
-    ▯
-    );"
-  (let (instance-name return-val)   ;return-val will be nil by default
-    (setq-local verilog-ext-which-func-xtra nil) ;Reset
+(defun verilog-ext-point-at-instance-p ()
+  "Return if point is inside a Verilog instance.
+Return list with TYPE and NAME."
+  (let ((point-cur (point))
+        point-instance-begin
+        point-instance-end
+        instance-type
+        instance-name)
     (save-excursion
-      (when (if fwd
-                (re-search-forward verilog-ext-header-re nil :noerror)
-              (re-search-backward verilog-ext-header-re nil :noerror))
-        ;; Ensure that text in line or block comments is not incorrectly
-        ;; parsed as a module instance
-        (when (not (equal (face-at-point) 'font-lock-comment-face))
-          ;; (message "---- 1 ---- %s" (match-string 1))
-          ;; (message "---- 2 ---- %s" (match-string 2))
-          ;; (message "---- 3 ---- %s" (match-string 3))
-          (setq-local verilog-ext-which-func-xtra (match-string 1)) ;module name
-          (setq instance-name (match-string 2)) ;Instance name
-
-          (when (and (stringp verilog-ext-which-func-xtra)
-                     (string-match verilog-ext-keywords-re
-                                   verilog-ext-which-func-xtra))
-            (setq-local verilog-ext-which-func-xtra nil))
-
-          (when (and (stringp instance-name)
-                     (string-match verilog-ext-keywords-re
-                                   instance-name))
-            (setq instance-name nil))
-
-          (when (and verilog-ext-which-func-xtra
-                     instance-name)
-            (setq return-val instance-name)))))
-    (when (featurep 'which-func)
-      ;; (modi/verilog-update-which-func-format)
-      )
-    return-val))
+      (when (verilog-ext-find-module-instance-bwd)
+        (setq instance-type (match-string-no-properties 1))
+        (setq instance-name (match-string-no-properties 2))
+        (setq point-instance-begin (point))
+        (verilog-ext-find-module-instance-fwd)
+        (re-search-forward ")\s*;") ; TODO: Do something in case finds a ); inside comment? Check if it is used somehwere else?
+        (setq point-instance-end (point))
+        (if (and (>= point-cur point-instance-begin)
+                 (<= point-cur point-instance-end))
+            (list instance-type instance-name)
+          nil)))))
 
 
-(defun verilog-ext-get-header (&optional fwd)
-  "Function to return the name of the block (module, class, package,
-function, task, `define) under which the point is currently present.
+(defun verilog-ext-point-inside-class-p ()
+  "Return non-nil if cursor is pointing a func/task inside a class."
+  (interactive)
+  (save-match-data
+    (unless (or (looking-at verilog-ext-task-re)
+                (looking-at verilog-ext-function-re))
+      (error "Pointer is not in a function/task!"))
+    (let ((task-point (point))
+          (endclass-point))
+      (save-excursion
+        (if (verilog-ext-find-class-bwd)
+            (progn
+              (verilog-forward-sexp)
+              (setq endclass-point (point))
+              (if (< task-point endclass-point)
+                  t
+                nil))
+          nil)))))
 
-If FWD is non-nil, do the block header search in forward direction;
-otherwise in backward direction.
-
-This function updates the local variable `verilog-ext-which-func-xtra'.
-
-For example, if the point is as below (indicated by that rectangle), \"top\"
-is returned and `verilog-ext-which-func-xtra' is updated to \"mod\" (short
-for \"module\").
-
-   module top ();
-   ▯
-   endmodule "
-  (let (block-type block-name return-val) ;return-val will be nil by default
-    (setq-local verilog-ext-which-func-xtra nil) ;Reset
-    (save-excursion
-      (when (if fwd
-                (re-search-forward verilog-ext-header-re nil :noerror)
-              (re-search-backward verilog-ext-header-re nil :noerror))
-        ;; Ensure that text in line or block comments is not incorrectly
-        ;; parsed as a Verilog block header
-        (when (not (equal (face-at-point) 'font-lock-comment-face))
-          ;; (message "---- 1 ---- %s" (match-string 1))
-          ;; (message "---- 2 ---- %s" (match-string 2))
-          ;; (message "---- 3 ---- %s" (match-string 3))
-          ;; (message "---- 4 ---- %s" (match-string 4))
-          (setq block-type (match-string 1))
-          (setq block-name (match-string 2))
-
-          (when (and (stringp block-name)
-                     (not (string-match verilog-ext-keywords-re
-                                        block-name)))
-            (setq-local verilog-ext-which-func-xtra
-                        (cond
-                         ((string= "class"     block-type) "class")
-                         ((string= "clocking"  block-type) "clk")
-                         ((string= "`define"   block-type) "macro")
-                         ((string= "group"     block-type) "group")
-                         ((string= "module"    block-type) "mod")
-                         ((string= "interface" block-type) "if")
-                         ((string= "package"   block-type) "pkg")
-                         ((string= "sequence"  block-type) "seq")
-                         (t (substring block-type 0 4)))) ;First 4 chars
-            (setq return-val block-name)))))
-    (when (featurep 'which-func)
-      ;; (modi/verilog-update-which-func-format)
-      )
-    return-val))
 
 
 ;;;; Hooks
@@ -197,60 +139,6 @@ for \"module\").
   (verilog-ext-time-stamp-update)
   (verilog-ext-find-semicolon-in-instance-comments)
   (setq-local yas-indent-line 'fixed))
-
-
-;;;; Modi
-(defvar modi/verilog-block-end-keywords '("end"
-                                          "join" "join_any" "join_none"
-                                          "endchecker"
-                                          "endclass"
-                                          "endclocking"
-                                          "endconfig"
-                                          "endfunction"
-                                          "endgroup"
-                                          "endinterface"
-                                          "endmodule"
-                                          "endpackage"
-                                          "endprimitive"
-                                          "endprogram"
-                                          "endproperty"
-                                          "endsequence"
-                                          "endtask")
-  "Verilog/SystemVerilog block end keywords.
-IEEE 1800-2012 SystemVerilog Section 9.3.4 Block names.")
-
-(defvar modi/verilog-block-end-keywords-re
-  (regexp-opt modi/verilog-block-end-keywords 'symbols)
-  "Regexp to match the Verilog/SystemVerilog block end keywords.
-See `modi/verilog-block-end-keywords' for more.")
-
-
-(defun modi/verilog-block-end-comments-to-block-names ()
-  "Convert valid block-end comments to ': BLOCK_NAME'.
-
-Examples: endmodule // module_name             → endmodule : module_name
-          endfunction // some comment          → endfunction // some comment
-          endfunction // class_name::func_name → endfunction : func_name
-          end // block: block_name             → end : block_name "
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward (concat "^"
-                                      "\\(?1:[[:blank:]]*"
-                                      modi/verilog-block-end-keywords-re
-                                      "\\)"
-                                      "[[:blank:]]*//[[:blank:]]*"
-                                      "\\(\\(block:\\|"
-                                      modi/verilog-identifier-re "[[:blank:]]*::\\)[[:blank:]]*\\)*"
-                                      "\\(?2:" modi/verilog-identifier-re "\\)"
-                                      "[[:blank:]]*$")
-                              nil :noerror)
-      ;; Make sure that the matched string after "//" is not a verilog
-      ;; keyword.
-      (when (not (string-match-p verilog-ext-keywords-re (match-string 2)))
-        (replace-match "\\1 : \\2")))))
-
-(add-hook 'verilog-mode-hook (lambda () (add-hook 'before-save-hook #'modi/verilog-block-end-comments-to-block-names nil :local)))
 
 
 
