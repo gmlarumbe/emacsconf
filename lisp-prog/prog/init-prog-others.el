@@ -213,6 +213,15 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
                       :inherit nil))
 
 
+;;;; SPECMAN/e
+(use-package specman-mode
+  :straight (:host github :repo "ooglyhLL/specman-mode")
+  :commands (specman-mode)
+  :mode (("\\.e\\'"     . specman-mode)
+         ("\\.ecom\\'"  . specman-mode)
+         ("\\.erld\\'"  . specman-mode)))
+
+
 ;;;; POLYMODE
 ;; https://polymode.github.io/defining-polymodes
 (use-package polymode
