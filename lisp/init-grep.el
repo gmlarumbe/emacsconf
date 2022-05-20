@@ -93,8 +93,7 @@ List of files provided by project's 'gtags.file' will filter the search."
 
 
 (use-package ripgrep
-  :straight (:repo "nlamirault/ripgrep.el"
-             :fork (:repo "gmlarumbe/ripgrep.el"))
+  :straight (:repo "nlamirault/ripgrep.el")
   :commands (larumbe/ripgrep-regexp-symbol-at-point
              larumbe/ripgrep-xref)
   :config
