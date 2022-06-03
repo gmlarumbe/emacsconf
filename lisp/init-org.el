@@ -45,16 +45,11 @@
          ("C-,"   . nil)                ; Unamps org-cycle-agenda-files to free `larumbe/ansi-term'
          ("C-c l" . org-store-link)
          ("C-c a" . org-agenda))
-  :bind (:map org-agenda-mode-map
-         ("C-w" . larumbe/org-agenda-do-next-week) ; replaces `delete-char' which has no effect since agenda is read-only
-         ("C-d" . larumbe/org-agenda-do-tomorrow)) ; replaces `whole-line-or-region-kill-region' which has no effect since agenda is read-only
   :bind (("C-x l" . larumbe/org-show-todos-agenda))
-  :hook ((org-agenda-mode    . larumbe/org-mode-hook)
-         (org-mode           . larumbe/org-mode-hook)
+  :hook ((org-mode           . larumbe/org-mode-hook)
          (org-insert-heading . larumbe/org-insert-current-header))
   :config
   (setq org-log-done 'time)
-  (setq org-agenda-files (list "~/TODO.org"))
   (setq org-todo-keywords
         '((sequence "TODO" "IN PROGRESS" "|" "DONE" "CANCELED" "POSTPONED")
           (sequence "|" "INFO")))
@@ -129,7 +124,18 @@ Meant to be used as a hook for `org-insert-heading-hook'"
            (thursday-idx 4))
       (and (= day last-day-of-month)
            (>= (calendar-day-of-week date) monday-idx)
-           (<= (calendar-day-of-week date) thursday-idx))))
+           (<= (calendar-day-of-week date) thursday-idx)))))
+
+
+(use-package org-agenda
+  :straight nil
+  :after org
+  :bind (:map org-agenda-mode-map
+         ("C-w" . larumbe/org-agenda-do-next-week) ; replaces `delete-char' which has no effect since agenda is read-only
+         ("C-d" . larumbe/org-agenda-do-tomorrow)) ; replaces `whole-line-or-region-kill-region' which has no effect since agenda is read-only
+  :hook ((org-agenda-mode . larumbe/org-mode-hook))
+  :config
+  (setq org-agenda-files (list "~/TODO.org"))
 
   (defun larumbe/org-agenda-do-tomorrow ()
     "Delay task for tomorrow."
