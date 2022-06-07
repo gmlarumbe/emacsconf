@@ -18,16 +18,16 @@ Selects between specific xref backends to find definitions.
 Assumes that prog-modes will have `dumb-jump' as a fallback backend before etags.
 In case definitions are not found and dumb-jump is detected ask for use it as a backend."
   (interactive)
-  (let ((file (thing-at-point 'filename))
-        (url  (thing-at-point 'url))
+  (let ((file (thing-at-point 'filename :noprop))
+        (url  (thing-at-point 'url      :noprop))
         (def  (thing-at-point 'symbol))
         (backend-xref)
         (skip))
-    (cond (url
-           ;; URL
+    (cond (;; URL
+           url
            (browse-url url))
-          ((and file (file-exists-p file))
-           ;; File
+          ;; File
+          ((and file (file-exists-p (substitute-in-file-name file)))
            (if (and (string= major-mode "python-mode")
                     (string= (file-name-extension file) "py"))
                (larumbe/find-file-at-point #'jedi:goto-definition-push-marker)
