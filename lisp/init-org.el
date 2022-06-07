@@ -143,7 +143,8 @@ Meant to be used as a hook for `org-insert-heading-hook'"
     (if current-prefix-arg
         (org-agenda-do-date-later -1)
       (org-agenda-do-date-later 1))
-    (org-agenda-next-line))
+    (let ((current-prefix-arg nil))
+      (org-agenda-next-line)))
 
   (defun larumbe/org-agenda-do-next-week ()
     "Delay task for next week."
@@ -151,7 +152,8 @@ Meant to be used as a hook for `org-insert-heading-hook'"
     (if current-prefix-arg
         (org-agenda-do-date-later -7)
       (org-agenda-do-date-later 7))
-    (org-agenda-next-line)))
+    (let ((current-prefix-arg nil))
+      (org-agenda-next-line))))
 
 
 
