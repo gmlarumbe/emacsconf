@@ -10,7 +10,7 @@
               ("e"       . vc-ediff)      ; Overrides vc-find-file, already mapped to `f'
               ("C-x v p" . svn-propedit)) ; dsvn function 'exported' to be used as well with vc-mode
   :config
-  (add-hook 'vc-dir-mode-hook '(lambda () (setq truncate-lines t))))
+  (add-hook 'vc-dir-mode-hook #'(lambda () (setq truncate-lines t))))
 
 
 
@@ -90,7 +90,7 @@
 (use-package git-timemachine
   :hook ((git-timemachine-mode . linum-mode))
   :config
-  (add-hook 'git-timemachine-mode-hook '(lambda () (setq truncate-lines t))))
+  (add-hook 'git-timemachine-mode-hook #'(lambda () (setq truncate-lines t))))
 
 
 ;;;; Repo
