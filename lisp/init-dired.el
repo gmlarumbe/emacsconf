@@ -124,7 +124,9 @@ Provides a more convenient solution to cluttering dired buffers than `dired-sing
         (with-current-buffer $buf
           (when (string= major-mode "dired-mode")
             (kill-buffer $buf)))))
-    (dired-jump))
+    (if (string= major-mode "dired-mode")
+        (previous-buffer)
+      (dired-jump)))
 
 
   (defun larumbe/dired-toggle-deletion-confirmer ()

@@ -9,6 +9,7 @@
   :bind (:map ivy-minibuffer-map
          ("C-l"     . ivy-backward-kill-word) ; Useful for `dired-do-copy'. Complement with M-i if want to yank result at point.
          ("C-o"     . ivy-occur)
+         ("S-SPC"   . nil) ; Unmap `ivy-restrict-to-matches' that erases input unintentionally if writing uppercase words
          ("C-c C-o" . hydra-ivy/body))
   :config
   (setq ivy-use-virtual-buffers t)      ; Add recent files and bookmarks to the ivy-switch-buffer
