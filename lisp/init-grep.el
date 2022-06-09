@@ -87,7 +87,7 @@ List of files provided by project's 'gtags.file' will filter the search."
   `("--line-number"       ; Line numbers
     "--smart-case"
     "--follow"            ; Follow symlinks
-    "--max-columns" "150" ; Emacs doesn't handle long line lengths very well
+    "--max-columns" "240" ; Emacs doesn't handle long line lengths very well
     "--ignore-file" ,larumbe/gitignore-global-file)
   "Default rg arguments used in functions (helm, counsel, `projectile')")
 

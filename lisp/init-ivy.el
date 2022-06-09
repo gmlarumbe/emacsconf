@@ -164,6 +164,11 @@ point between the symbol boundaries."
       (add-to-list 'counsel-ag-base-command arg :append))
 
     (setq counsel-rg-base-command (append '("rg") larumbe/rg-arguments))
+    ;; Needed for fixing the 'os error (2) error'
+    ;; - https://github.com/doomemacs/doomemacs/issues/3038 (solution with Doom Emacs macros by hlissner, and always returning 0 by io12
+    ;; - https://github.com/abo-abo/swiper/issues/2339
+    ;; Removing the --follow option seems to fix it for current configuration
+    (delete "--follow" counsel-rg-base-command)
     (dolist (arg `("--with-filename" "--no-heading" "--color" "never" "%s"))
       (add-to-list 'counsel-rg-base-command arg :append))
 
