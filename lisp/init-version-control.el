@@ -146,10 +146,33 @@
       (set-process-sentinel proc #'larumbe/update-repo-sentinel))))
 
 
+;;;; Gerrit
+(use-package gerrit
+  :bind (("C-x ;" . gerrit-dashboard)) ; Overrides `set-comment-column'
+  :config
+  ;; DANGER: Removed the -is:wip  and -is:ignored things
+  (setq gerrit-dashboard-query-alist
+    '(("Assigned to me"   . "assignee:self (owner:self OR assignee:self) is:open")
+      ("Work in progress" . "is:open owner:self")
+      ("Outgoing reviews" . "is:open owner:self")
+      ("Incoming reviews" . "is:open -owner:self (reviewer:self OR assignee:self)")
+      ("CCed On"          . "is:open  cc:self")
+      ("Recently closed"  . "is:closed  (owner:self) (owner:self OR reviewer:self OR assignee:self OR cc:self) limit:15")))
+
+;; (defun gerrit-magit-insert-status ()
+;;   "Show all open gerrit reviews.
+
+;; When called in the magit-status-section via `magit-status-section-hook'
+;; all open gerrit review are shown in the magit status buffer."
+  (add-hook 'magit-status-sections-hook #'gerrit-magit-insert-status t)
+
+  ;; (global-set-key (kbd "C-x i") 'gerrit-upload-transient)
+  ;; (global-set-key (kbd "C-x o") 'gerrit-download)
+  )
+
 ;;;; SVN
 (use-package dsvn
-  :commands (svn-status)
-  :bind (("C-x ;" . larumbe/svn-status)) ; Overrides `set-comment-column'
+  :commands (svn-status larumbe/svn-status)
   :config
   (define-obsolete-function-alias 'string-to-int 'string-to-number "22.1")
 
