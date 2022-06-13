@@ -162,6 +162,10 @@ C-s C-w [C-w] [C-w]... behaviour. "
   (global-hardcore-mode 1))
 
 
+(use-package avy
+  :bind (("C-:" . avy-goto-char-2)
+         ("C-;" . avy-goto-word-1)))
+
 
 ;;;; Editing
 (use-package drag-stuff
