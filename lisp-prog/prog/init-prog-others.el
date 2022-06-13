@@ -186,7 +186,8 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 
 
 ;;;; YAML
-(use-package yaml-mode)
+(use-package yaml-mode
+  :hook ((yaml-mode . larumbe/prog-mode-hook)))
 
 
 ;;;; SED
@@ -280,7 +281,24 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 
   (define-polymode poly-conf-c-mode
     :hostmode 'poly-conf-c-hostmode
-    :innermodes '(poly-conf-c-innermode))
+    :innermodes '(poly-conf-c-innermode)
+
+;;;;; YAML + Shell
+  (define-hostmode poly-yaml-hostmode
+    :mode 'yaml-mode)
+
+  (define-innermode poly-yaml-shell-innermode
+    :mode 'sh-mode
+    :head-matcher "\s*code\s*:\s*|"
+    :tail-matcher "publishers:"
+    :head-mode 'host
+    :tail-mode nil)
+
+  (define-polymode poly-yaml-shell-mode
+    :hostmode 'poly-yaml-hostmode
+    :innermodes '(poly-yaml-shell-innermode))
+
+    )
 
 
 (provide 'init-prog-others)
