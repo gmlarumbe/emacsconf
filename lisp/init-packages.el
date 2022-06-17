@@ -163,8 +163,8 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package avy
-  :bind (("C-:" . avy-goto-char-2)
-         ("C-;" . avy-goto-word-1)))
+  :bind (("C-;" . avy-goto-word-1)
+         ("C-:" . avy-goto-char-2)))
 
 
 ;;;; Editing
@@ -493,6 +493,23 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 ;; API of `coin-ticker' was outdated. Also tried `crypto-ticker-mode' but was a bit more complex than this one
 (use-package btc-ticker)
+
+
+;; https://emacs.stackexchange.com/questions/14403/how-can-i-copy-syntax-highlighted-code-as-rtf-or-html
+;; Steps:
+;;  1 - Open *scratch* buffer and set proper major-mode
+;;  2 - Copy code snippet to *scratch* buffer
+;;  3 - Run `htmlize-buffer'
+;;  4 - Copy text to file.html
+;;  5 - In apps like Outlook (Insert as text)
+;;
+;; Considerations
+;;  - If using `htmlize-region' directly on a non-scratch buffer the black background shows up (and not as a square)
+;;  - Check if `modi/htmlize-region-to-file' is defined for my-elisp-packages
+;;    + This one uses a CSS based on leuven css (light theme maybe more suitable for blank background emails)
+;;  - Package `highlight2clipboard' did not support gnu/linux
+(use-package htmlize)
+
 
 
 ;;;; Libraries

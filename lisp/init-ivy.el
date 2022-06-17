@@ -39,7 +39,7 @@
            ("C-w"   . bjm/ivy-yank-whole-word)
            ("C->"   . swiper-mc)
            ("C-<"   . swiper-mc)
-           ("C-:"   . swiper-avy))
+           ("C-;"   . swiper-avy))
     :bind (("C-s"   . larumbe/search-forward)
            ("C-r"   . larumbe/search-backward)
            ("M-s ." . larumbe/symbol-at-point))
