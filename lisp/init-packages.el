@@ -212,6 +212,8 @@ the vertical drag is done."
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("minor-modes/untabify-trailing-ws.el"))
   :demand
   :config
+  (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-mode.el") untabify-trailing-disable-on-files)
+  (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-test.el") untabify-trailing-disable-on-files)
   (untabify-trailing-ws-mode 1))
 
 
