@@ -9,6 +9,45 @@
 
 (require 'init-completion)
 
+
+(defun larumbe/prog-mode-report-backend (tag &optional ref-p backend)
+  ""
+  (unless backend
+    (setq backend (xref-find-backend)))
+  (if ref-p
+      (message "[%s] References of: %s" backend tag)
+    (message "[%s] Definitions of: %s" backend tag)))
+
+
+(defun larumbe/prog-mode-definitions-default (def)
+  ""
+  (let ((backend-xref (xref-find-backend))
+        skip)
+    ;; `dumb-jump' only supports definitions and does some basic processing of them
+    ;; Since sometimes these could not be the desired ones, ask for confirmation
+    (when (and (equal backend-xref 'dumb-jump)
+               (not (y-or-n-p "No definitions found, try dumb-jump? ")))
+      (setq skip t))
+    (unless skip
+      (xref-find-definitions def)
+      (larumbe/prog-mode-report-backend def))))
+
+
+(defun larumbe/prog-mode-references-default (ref)
+  ""
+  (let ((backend-xref (xref-find-backend)))
+    ;; `dumb-jump' only supports definitions (doesn't provide implementation for xref-find-references)
+    ;; Since references would be searched through grep and processed by default `semantic-symref'
+    ;; a customized ripgrep command is preferred.
+    (if (equal backend-xref 'dumb-jump)
+        (when (y-or-n-p "[Skipping dumb-jump] No refs found, try ripgrep? ")
+          (larumbe/ripgrep-xref ref))
+      ;; Find references with corresponding backend
+      (xref-find-references ref)
+      (larumbe/prog-mode-report-backend ref :ref))))
+
+
+
 (defun larumbe/prog-mode-definitions ()
   "Find definition of symbol at point.
 If pointing a URL/file, visit that URL/file instead.
@@ -33,22 +72,20 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
                (larumbe/find-file-at-point #'jedi:goto-definition-push-marker)
              (larumbe/find-file-at-point)))
           ;; If not pointing to a file choose between different navigation functions
-          ;; - Python: jedi
+          ;;   - Verilog: try to jump to module at point if not over a tag
+          ((string= major-mode "verilog-mode")
+           (if def
+               (larumbe/prog-mode-definitions-default def)
+             (setq def (verilog-ext-jump-to-module-at-point))
+             (larumbe/prog-mode-report-backend def)))
+          ;;   - Python: jedi
           ((string= major-mode "python-mode")
            (call-interactively #'jedi:goto-definition)
-           (message "[jedi] Definitions of: %s" def))
+           (larumbe/prog-mode-report-backend def nil "jedi"))
           ;; Default to use xref
           (t
-           (if def (progn
-                     (setq backend-xref (xref-find-backend))
-                     ;; `dumb-jump' only supports definitions and does some basic processing of them
-                     ;; Since sometimes these could not be the desired ones, ask for confirmation
-                     (when (and (equal backend-xref 'dumb-jump)
-                                (not (y-or-n-p "No definitions found, try dumb-jump? ")))
-                       (setq skip t))
-                     (unless skip
-                       (xref-find-definitions def)
-                       (message "[%s] Definitions of: %s" backend-xref def)))
+           (if def
+               (larumbe/prog-mode-definitions-default def)
              ;; Ask for input if there is no def at point
              (call-interactively #'xref-find-definitions))))))
 
@@ -62,21 +99,18 @@ In case references are not found, and dumb-jump is detected as a backend, perfor
 This ripgrep will be executed at `projectile-project-root' or `default-directory'
 and will be applied to only files of current `major-mode' if existing in `larumbe/ripgrep-types'."
   (interactive)
-  (let* ((ref (thing-at-point 'symbol))
-         (backend-xref))
-    (if ref (progn
-              (setq backend-xref (xref-find-backend))
-              ;; `dumb-jump' only supports definitions (doesn't provide implementation for xref-find-references)
-              ;; Since references would be searched through grep and processed by default `semantic-symref'
-              ;; a customized ripgrep command is preferred.
-              (if (equal backend-xref 'dumb-jump)
-                  (when (y-or-n-p "[Skipping dumb-jump] No refs found, try ripgrep? ")
-                    (larumbe/ripgrep-xref ref))
-                ;; Find references with corresponding backend
-                (xref-find-references ref)
-                (message "[%s] References of: %s" backend-xref ref)))
-      ;; Ask for input if there is no ref at point
-      (call-interactively #'xref-find-references))))
+  (let ((ref (thing-at-point 'symbol)))
+    (cond (;; Verilog
+           (string= major-mode "verilog-mode")
+           (if ref
+               (larumbe/prog-mode-references-default ref)
+             (setq ref (verilog-ext-jump-to-module-at-point :ref))
+             (larumbe/prog-mode-report-backend ref :ref)))
+          ;; Default
+          (t (if ref
+                 (larumbe/prog-mode-references-default ref)
+               ;; Ask for input if there is no ref at point
+               (call-interactively #'xref-find-references))))))
 
 
 
