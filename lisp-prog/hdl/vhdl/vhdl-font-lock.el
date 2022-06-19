@@ -9,20 +9,20 @@
 (require 'init-vhdl)
 
 ;;;; Variables
-(defvar larumbe/vhdl-common-constructs-regex
+(defvar larumbe/vhdl-common-constructs-re
   (concat
    "^\\s-*\\(\\w+\\)\\s-*:[ \t\n\r\f]*\\(\\("
    "assert\\|block\\|case\\|exit\\|for\\|if\\|loop\\|next\\|null\\|"
    "postponed\\|process\\|"
    "with\\|while"
    "\\)\\>\\|\\w+\\s-*\\(([^\n]*)\\|\\.\\w+\\)*\\s-*<=\\)"))
-(defvar larumbe/vhdl-labels-in-block-and-components-regex
+(defvar larumbe/vhdl-labels-in-block-and-components-re
   (concat
    "^\\s-*for\\s-+\\(\\w+\\(,\\s-*\\w+\\)*\\)\\>\\s-*"
    "\\(:[ \t\n\r\f]*\\(\\w+\\)\\|[^i \t]\\)"))
-(defvar larumbe/vhdl-brackets-content-range-regex "\\(?1:(\\)\\(?2:[ )+*/$0-9a-zA-Z:_-]*\\)\\s-+\\(?3:\\(down\\)?to\\)\\s-+\\(?4:[ (+*/$0-9a-zA-Z:_-]*\\)\\(?5:)\\)")
-(defvar larumbe/vhdl-brackets-content-index-regex "\\(?1:(\\)\\s-*\\(?2:[0-9]+\\)\\s-*\\(?3:)\\)")
-(defvar larumbe/vhdl-directive-keywords-regex (regexp-opt '("psl" "pragma" "synopsys" "synthesis") 'symbols))
+(defvar larumbe/vhdl-brackets-content-range-re "\\(?1:(\\)\\(?2:[ )+*/$0-9a-zA-Z:_-]*\\)\\s-+\\(?3:\\(down\\)?to\\)\\s-+\\(?4:[ (+*/$0-9a-zA-Z:_-]*\\)\\(?5:)\\)")
+(defvar larumbe/vhdl-brackets-content-index-re "\\(?1:(\\)\\s-*\\(?2:[0-9]+\\)\\s-*\\(?3:)\\)")
+(defvar larumbe/vhdl-directive-keywords-re (regexp-opt '("psl" "pragma" "synopsys" "synthesis") 'symbols))
 (defvar larumbe/vhdl-highlight-variable-declaration-names nil)
 
 
@@ -34,34 +34,34 @@
 
 (defun larumbe/vhdl-within-translate-off ()
   "Same as analogous `vhdl-mode' function.
-Take `larumbe/vhdl-directive-keywords-regex' words into account instead of only 'pragma'."
+Take `larumbe/vhdl-directive-keywords-re' words into account instead of only 'pragma'."
   (and (save-excursion
          (re-search-backward
           (concat
-           "^\\s-*--\\s-*" larumbe/vhdl-directive-keywords-regex "\\s-*translate_\\(on\\|off\\)\\s-*\n") nil t))
+           "^\\s-*--\\s-*" larumbe/vhdl-directive-keywords-re "\\s-*translate_\\(on\\|off\\)\\s-*\n") nil t))
        (equal "off" (match-string 1))
        (point)))
 
 (defun larumbe/vhdl-start-translate-off (limit)
   "Same as analogous `vhdl-mode' function.
 Regex search bound to LIMIT.
-Take `larumbe/vhdl-directive-keywords-regex' words into account instead of only 'pragma'."
+Take `larumbe/vhdl-directive-keywords-re' words into account instead of only 'pragma'."
   (when (re-search-forward
          (concat
-          "^\\s-*--\\s-*" larumbe/vhdl-directive-keywords-regex "\\s-*translate_off\\s-*\n") limit t)
+          "^\\s-*--\\s-*" larumbe/vhdl-directive-keywords-re "\\s-*translate_off\\s-*\n") limit t)
     (match-beginning 0)))
 
 (defun larumbe/vhdl-end-translate-off (limit)
   "Same as analogous `vhdl-mode' function.
 Regex search bound to LIMIT.
-Take `larumbe/vhdl-directive-keywords-regex' words into account instead of only 'pragma'."
+Take `larumbe/vhdl-directive-keywords-re' words into account instead of only 'pragma'."
   (re-search-forward
-   (concat "^\\s-*--\\s-*" larumbe/vhdl-directive-keywords-regex "\\s-*translate_on\\s-*\n") limit t))
+   (concat "^\\s-*--\\s-*" larumbe/vhdl-directive-keywords-re "\\s-*translate_on\\s-*\n") limit t))
 
 (defun larumbe/vhdl-match-translate-off (limit)
   "Same as analogous `vhdl-mode' function.
 Regex search bound to LIMIT.
-Take `larumbe/vhdl-directive-keywords-regex' words into account instead of only 'pragma'."
+Take `larumbe/vhdl-directive-keywords-re' words into account instead of only 'pragma'."
   (when (< (point) limit)
     (let ((start (or (larumbe/vhdl-within-translate-off)
                      (larumbe/vhdl-start-translate-off limit)))
@@ -76,7 +76,7 @@ Take `larumbe/vhdl-directive-keywords-regex' words into account instead of only 
   "Search based fontification function for VHDL common constructs.
 Needed since it sets match property as `font-lock-multiline'.
 Regex search bound to LIMIT."
-  (while (re-search-forward larumbe/vhdl-common-constructs-regex limit t)
+  (while (re-search-forward larumbe/vhdl-common-constructs-re limit t)
     (put-text-property (match-beginning 0) (match-end 0) 'font-lock-multiline t)
     (point)))
 
@@ -84,7 +84,7 @@ Regex search bound to LIMIT."
   "Search based fontification function for VHDL labels in blocks and components.
 Needed since it sets match property as `font-lock-multiline'.
 Regex search bound to LIMIT."
-  (while (re-search-forward larumbe/vhdl-labels-in-block-and-components-regex limit t)
+  (while (re-search-forward larumbe/vhdl-labels-in-block-and-components-re limit t)
     (put-text-property (match-beginning 0) (match-end 0) 'font-lock-multiline t)
     (point)))
 
@@ -95,7 +95,7 @@ Regex search bound to LIMIT."
   (list
    (list (concat "\\(^\\|[ \t(.']\\)\\(<" vhdl-template-prompt-syntax ">\\)")
          2 'vhdl-font-lock-prompt-face t)
-   (list (concat "--\\s-*" larumbe/vhdl-directive-keywords-regex "\\s-+\\(.*\\)$")
+   (list (concat "--\\s-*" larumbe/vhdl-directive-keywords-re "\\s-+\\(.*\\)$")
          '(0 'larumbe/font-lock-translate-off-face prepend)
          '(1 'larumbe/font-lock-preprocessor-face prepend))
    ;; highlight c-preprocessor directives
@@ -224,21 +224,21 @@ Regex search bound to LIMIT."
 
 
     ;; Own Verilog-based customization
-    (list larumbe/punctuation-regex                0 larumbe/font-lock-punctuation-face)
-    (list larumbe/punctuation-bold-regex           0 larumbe/font-lock-punctuation-bold-face)
-    (list larumbe/vhdl-brackets-content-range-regex ; Bit range
+    (list larumbe/punctuation-re                0 larumbe/font-lock-punctuation-face)
+    (list larumbe/punctuation-bold-re           0 larumbe/font-lock-punctuation-bold-face)
+    (list larumbe/vhdl-brackets-content-range-re ; Bit range
           '(1 larumbe/font-lock-curly-brackets-face prepend)
           '(5 larumbe/font-lock-curly-brackets-face prepend)
           '(2 larumbe/font-lock-braces-content-face prepend)
           '(4 larumbe/font-lock-braces-content-face prepend)
           '(3 larumbe/font-lock-dot-expression-face prepend))
-    (list larumbe/vhdl-brackets-content-index-regex ; Bit index
+    (list larumbe/vhdl-brackets-content-index-re ; Bit index
           '(1 larumbe/font-lock-curly-brackets-face prepend)
           '(3 larumbe/font-lock-curly-brackets-face prepend)
           '(2 larumbe/font-lock-braces-content-face prepend))
-    (list larumbe/braces-regex                  0 larumbe/font-lock-braces-face)
-    (list larumbe/brackets-regex                0 larumbe/font-lock-brackets-face)
-    (list larumbe/curly-brackets-regex          0 larumbe/font-lock-curly-brackets-face)
+    (list larumbe/braces-re                  0 larumbe/font-lock-braces-face)
+    (list larumbe/brackets-re                0 larumbe/font-lock-brackets-face)
+    (list larumbe/curly-brackets-re          0 larumbe/font-lock-curly-brackets-face)
     )
 
    ;; highlight signal/variable/constant declaration names

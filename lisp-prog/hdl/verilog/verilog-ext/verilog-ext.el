@@ -33,7 +33,6 @@
 (require 'verilog-editing)
 (require 'verilog-compile)
 (require 'verilog-templates)
-;; (require 'verilog-overrides) ; TODO: Remove if verilog-mode PR is accepted
 (require 'verilog-navigation)
 (require 'verilog-indentation)
 (require 'verilog-imenu)

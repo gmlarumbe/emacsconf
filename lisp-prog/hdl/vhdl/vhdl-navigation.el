@@ -64,6 +64,7 @@ Fetched from `modi/verilog-jump-to-module-at-point'"
   (if (and (executable-find "global")
            (projectile-project-root))
       (let ((module (gethash (get-buffer-window) which-func-table))) ; INFO: modi/verilog analogous uses `which-func-current' but it didn't work well here...
+                                        ; Maybe replace with `hdl-ext-which-func-current'?
         (if (save-excursion
               (larumbe/find-vhdl-module-instance-bwd))
             (ggtags-find-tag-dwim module))
