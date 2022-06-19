@@ -96,13 +96,18 @@
   ;; https://github.com/Fuco1/dired-hacks
   (use-package dired-narrow
     :bind (:map dired-mode-map
-           ("/" . dired-narrow-regexp)))
-
+           ("." . dired-narrow-regexp))) ; Unmaps `dired-clean-directory'
 
   (use-package dired-collapse
     :bind (:map dired-mode-map
            (";" . dired-collapse-mode)))
 
+  ;; INFO: `dired-filter-mode' is autoloaded, and sets "/" as a prefix key
+  ;; Setting "/" to `dired-filter-mode' allows enabling of this minor-mode with "/" and overriding
+  ;; with its common functions. To deactivate it but saving status, press "/" twice.
+  (use-package dired-filter
+    :bind (:map dired-mode-map
+           ("/" . dired-filter-mode)))
 
   ;; Show size in human readable format
   (setq dired-listing-switches "-alh")
@@ -119,7 +124,9 @@ Provides a more convenient solution to cluttering dired buffers than `dired-sing
         (with-current-buffer $buf
           (when (string= major-mode "dired-mode")
             (kill-buffer $buf)))))
-    (dired-jump))
+    (if (string= major-mode "dired-mode")
+        (previous-buffer)
+      (dired-jump)))
 
 
   (defun larumbe/dired-toggle-deletion-confirmer ()

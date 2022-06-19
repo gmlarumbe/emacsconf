@@ -162,6 +162,10 @@ C-s C-w [C-w] [C-w]... behaviour. "
   (global-hardcore-mode 1))
 
 
+(use-package avy
+  :bind (("C-;" . avy-goto-word-1)
+         ("C-:" . avy-goto-char-2)))
+
 
 ;;;; Editing
 (use-package drag-stuff
@@ -208,6 +212,8 @@ the vertical drag is done."
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("minor-modes/untabify-trailing-ws.el"))
   :demand
   :config
+  (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-mode.el") untabify-trailing-disable-on-files)
+  (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-test.el") untabify-trailing-disable-on-files)
   (untabify-trailing-ws-mode 1))
 
 
@@ -491,6 +497,38 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 (use-package btc-ticker)
 
 
+;; https://emacs.stackexchange.com/questions/14403/how-can-i-copy-syntax-highlighted-code-as-rtf-or-html
+;; Steps:
+;;  1 - Open *scratch* buffer and set proper major-mode
+;;  2 - Copy code snippet to *scratch* buffer
+;;  3 - Run `htmlize-buffer'
+;;  4 - Copy text to file.html
+;;  5 - In apps like Outlook (Insert as text)
+;;
+;; Considerations
+;;  - If using `htmlize-region' directly on a non-scratch buffer the black background shows up (and not as a square)
+;;  - Check if `modi/htmlize-region-to-file' is defined for my-elisp-packages
+;;    + This one uses a CSS based on leuven css (light theme maybe more suitable for blank background emails)
+;;  - Package `highlight2clipboard' did not support gnu/linux
+(use-package htmlize)
+
+
+;; Requires ImageMagick and makes use of binary "import"
+;;
+;; Prerequisites:
+;; - /etc/ImageMagick-6/policy.xml
+;; Change to:
+;; <policy domain="coder" rights="read | write" pattern="PS" />
+;;
+;; Procedure:
+;;  a) - `screenshot'
+;;     - Set filename: file.png, file.jpg, etc...
+;;     - Scheme: local (save in ~/images/ requires previous mkdir)
+;;  b) After executing a:
+;;     - `screenshot-take' (reuses previous filename and scheme)
+(use-package screenshot)
+
+
 ;;;; Libraries
 (use-package dash)
 (use-package f)
@@ -508,7 +546,8 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 (use-package others-functions
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/others-functions.el"))
-  :bind (("C-x d" . duplicate-current-line-or-region))) ; Replaces Dired (C-x C-j works better)
+  :bind (("C-x C-r" . er-sudo-edit)                       ; Unmap `find-file-read-only'
+         ("C-x d"   . duplicate-current-line-or-region))) ; Replaces Dired (C-x C-j works better)
 
 (use-package larumbe-functions
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/larumbe-functions.el"))

@@ -9,6 +9,7 @@
   :bind (:map ivy-minibuffer-map
          ("C-l"     . ivy-backward-kill-word) ; Useful for `dired-do-copy'. Complement with M-i if want to yank result at point.
          ("C-o"     . ivy-occur)
+         ("S-SPC"   . nil) ; Unmap `ivy-restrict-to-matches' that erases input unintentionally if writing uppercase words
          ("C-c C-o" . hydra-ivy/body))
   :config
   (setq ivy-use-virtual-buffers t)      ; Add recent files and bookmarks to the ivy-switch-buffer
@@ -37,7 +38,8 @@
            ("C-r"   . swiper-isearch-C-r)
            ("C-w"   . bjm/ivy-yank-whole-word)
            ("C->"   . swiper-mc)
-           ("C-<"   . swiper-mc))
+           ("C-<"   . swiper-mc)
+           ("C-;"   . swiper-avy))
     :bind (("C-s"   . larumbe/search-forward)
            ("C-r"   . larumbe/search-backward)
            ("M-s ." . larumbe/symbol-at-point))
@@ -163,6 +165,11 @@ point between the symbol boundaries."
       (add-to-list 'counsel-ag-base-command arg :append))
 
     (setq counsel-rg-base-command (append '("rg") larumbe/rg-arguments))
+    ;; Needed for fixing the 'os error (2) error'
+    ;; - https://github.com/doomemacs/doomemacs/issues/3038 (solution with Doom Emacs macros by hlissner, and always returning 0 by io12)
+    ;; - https://github.com/abo-abo/swiper/issues/2339
+    ;; Removing the --follow option seems to fix it for current configuration
+    (delete "--follow" counsel-rg-base-command)
     (dolist (arg `("--with-filename" "--no-heading" "--color" "never" "%s"))
       (add-to-list 'counsel-rg-base-command arg :append))
 

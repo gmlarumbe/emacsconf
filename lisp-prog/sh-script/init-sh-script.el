@@ -4,7 +4,8 @@
 
 (use-package sh-script
   :straight nil
-  :hook ((sh-mode . larumbe/sh-mode-hook))
+  :hook ((sh-mode . larumbe/sh-mode-hook)
+         (sh-mode . eglot-ensure))
   :bind (:map sh-mode-map
          ("C-c C-c" . sh-show-shell)
          ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)

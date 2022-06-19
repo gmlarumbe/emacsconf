@@ -176,11 +176,18 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 
 
 ;;;; CRON
-(use-package crontab-mode)
+(use-package crontab-mode
+  :hook ((crontab-mode . larumbe/crontab-hook))
+  :config
+  (defun larumbe/crontab-hook ()
+    "Crontab hook"
+    (interactive)
+    (setq truncate-lines t)))
 
 
 ;;;; YAML
-(use-package yaml-mode)
+(use-package yaml-mode
+  :hook ((yaml-mode . larumbe/prog-mode-hook)))
 
 
 ;;;; SED
@@ -205,6 +212,15 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
   (set-face-attribute 'hexl-ascii-region nil
                       :foreground "light yellow"
                       :inherit nil))
+
+
+;;;; SPECMAN/e
+(use-package specman-mode
+  :straight (:host github :repo "ooglyhLL/specman-mode")
+  :commands (specman-mode)
+  :mode (("\\.e\\'"     . specman-mode)
+         ("\\.ecom\\'"  . specman-mode)
+         ("\\.erld\\'"  . specman-mode)))
 
 
 ;;;; POLYMODE
@@ -265,7 +281,24 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 
   (define-polymode poly-conf-c-mode
     :hostmode 'poly-conf-c-hostmode
-    :innermodes '(poly-conf-c-innermode))
+    :innermodes '(poly-conf-c-innermode)
+
+;;;;; YAML + Shell
+  (define-hostmode poly-yaml-hostmode
+    :mode 'yaml-mode)
+
+  (define-innermode poly-yaml-shell-innermode
+    :mode 'sh-mode
+    :head-matcher "\s*code\s*:\s*|"
+    :tail-matcher "publishers:"
+    :head-mode 'host
+    :tail-mode nil)
+
+  (define-polymode poly-yaml-shell-mode
+    :hostmode 'poly-yaml-hostmode
+    :innermodes '(poly-yaml-shell-innermode))
+
+    )
 
 
 (provide 'init-prog-others)
