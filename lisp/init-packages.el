@@ -513,6 +513,21 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 (use-package htmlize)
 
 
+;; Requires ImageMagick and makes use of binary "import"
+;;
+;; Prerequisites:
+;; - /etc/ImageMagick-6/policy.xml
+;; Change to:
+;; <policy domain="coder" rights="read | write" pattern="PS" />
+;;
+;; Procedure:
+;;  a) - `screenshot'
+;;     - Set filename: file.png, file.jpg, etc...
+;;     - Scheme: local (save in ~/images/ requires previous mkdir)
+;;  b) After executing a:
+;;     - `screenshot-take' (reuses previous filename and scheme)
+(use-package screenshot)
+
 
 ;;;; Libraries
 (use-package dash)
