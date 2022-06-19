@@ -546,7 +546,8 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 (use-package others-functions
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/others-functions.el"))
-  :bind (("C-x d" . duplicate-current-line-or-region))) ; Replaces Dired (C-x C-j works better)
+  :bind (("C-x C-r" . er-sudo-edit)                       ; Unmap `find-file-read-only'
+         ("C-x d"   . duplicate-current-line-or-region))) ; Replaces Dired (C-x C-j works better)
 
 (use-package larumbe-functions
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/larumbe-functions.el"))
