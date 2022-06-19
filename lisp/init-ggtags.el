@@ -24,7 +24,8 @@
          ("M-<"     . nil))
   :bind (:map ggtags-mode-map
          ("M-."     . nil)
-         ("M-?"     . nil))
+         ("M-?"     . nil)
+         ("C-M-."   . nil)) ; Remap back `xref-find-apropos'
   :bind (:map ggtags-global-mode-map
          ("r"       . ggtags-query-replace))
   :config
