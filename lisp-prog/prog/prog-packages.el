@@ -234,6 +234,10 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
   (setq time-stamp-line-limit 20)) ; Default 8
 
 
+(use-package indent-tools
+  :bind ("C-c >" . indent-tools-hydra/body))
+
+
 ;; Global mode used by C, Python, HTML and others
 ;; INFO: Better use cscope and language servers with LSP
 (use-package semantic
