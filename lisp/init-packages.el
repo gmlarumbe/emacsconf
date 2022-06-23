@@ -328,6 +328,9 @@ the vertical drag is done."
          ("n" . next-line)
          ("p" . previous-line))
   :config
+  (setq jenkins-colwidth-name 50)
+  (setq larumbe/jenkins-compilation-parser "xrun")
+
   (defun larumbe/jenkins-switch-regex-parsing ()
     "Switch Jenkins regexp parsing for large files to save loading time.
 This is because regexp parsing blocks Emacs execution and might not be useful for large files."
