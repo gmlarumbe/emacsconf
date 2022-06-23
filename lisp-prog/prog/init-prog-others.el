@@ -187,7 +187,8 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 
 ;;;; YAML
 (use-package yaml-mode
-  :hook ((yaml-mode . larumbe/prog-mode-hook)))
+  :hook ((yaml-mode . larumbe/prog-mode-hook)
+         (yaml-mode . indent-guide-mode)))
 
 
 ;;;; SED
@@ -196,6 +197,10 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 
 ;;;; CSV
 (use-package csv-mode)
+
+
+;;;; INI
+(use-package ini-mode)
 
 
 ;;;; HEXL
