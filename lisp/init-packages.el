@@ -539,7 +539,14 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 (use-package with-editor)
 (use-package request)
 (use-package bind-key)
+(use-package yaml
+  :commands (yaml-parse-string
+             yaml-encode-object)) ; Full Elisp, worse performance but portable
+(use-package emacs-libyaml
+  :straight (:host github :repo "syohex/emacs-libyaml")) ; Dinamic binding for libyaml.so
 
+
+;;;; Functions & Utils
 (use-package xah-lee-functions
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/xah-lee-functions.el")))
 

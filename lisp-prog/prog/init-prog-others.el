@@ -188,7 +188,14 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 ;;;; YAML
 (use-package yaml-mode
   :hook ((yaml-mode . larumbe/prog-mode-hook)
-         (yaml-mode . indent-guide-mode)))
+         (yaml-mode . indent-guide-mode))
+  :bind (:map yaml-mode-map
+         ("C-M-n" . forward-same-indent)
+         ("C-M-p" . backward-same-indent)
+         ("C-M-u" . backward-to-indentation)
+         ("C-M-d" . forward-to-indentation))
+  :bind (:map yaml-mode-map
+         ("C-c C-s" . larumbe/yaml-shell-toggle)))
 
 
 ;;;; SED
@@ -227,83 +234,6 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
          ("\\.ecom\\'"  . specman-mode)
          ("\\.erld\\'"  . specman-mode)))
 
-
-;;;; POLYMODE
-;; https://polymode.github.io/defining-polymodes
-(use-package polymode
-  :mode (("\\.xml\\.ep\\'"           . poly-nxml-mode)
-         ("reg\\.sim\\.files\\.ep\\'" . poly-conf-perl-mode)
-         ("\\.ini\\'"               . poly-conf-c-mode))
-  :hook (poly-nxml-mode . larumbe/poly-nxml-mode-hook)
-  :config
-;;;;; nXML + Perl
-  (define-hostmode poly-nxml-hostmode
-    :mode 'nxml-mode)
-
-  (define-innermode poly-nxml-perl-innermode
-    :mode 'perl-mode
-    :head-matcher "%"
-    :tail-matcher "\n"
-    :head-mode 'host
-    :tail-mode 'host)
-
-  (define-polymode poly-nxml-mode
-    :hostmode 'poly-nxml-hostmode
-    :innermodes '(poly-nxml-perl-innermode))
-
-  (defun larumbe/poly-nxml-mode-hook ()
-    "nXML + Perl Hook."
-    (interactive)
-    (rng-validate-mode -1)) ; Do not parse Perl preprocessor headers in XML files
-
-
-;;;;; Conf + Perl
-  (define-hostmode poly-conf-hostmode
-    :mode 'conf-mode)
-
-  (define-innermode poly-conf-perl-innermode
-    :mode 'perl-mode
-    :head-matcher "%"
-    :tail-matcher "\n"
-    :head-mode 'host
-    :tail-mode 'host)
-
-  (define-polymode poly-conf-perl-mode
-    :hostmode 'poly-conf-hostmode
-    :innermodes '(poly-conf-perl-innermode)))
-
-
-;;;;; Conf + C
-  (define-hostmode poly-conf-c-hostmode
-    :mode 'conf-mode)
-
-  (define-innermode poly-conf-c-innermode
-    :mode 'c-mode
-    :head-matcher (cons "\\(?1:\\)#\\(if\\|else\\|endif\\|elsif\\|include\\|ITERATE\\)" 1) ; Capture group 1 is a hack to also include the #(word) inside the C mode
-    :tail-matcher "\n"
-    :head-mode 'host
-    :tail-mode 'host)
-
-  (define-polymode poly-conf-c-mode
-    :hostmode 'poly-conf-c-hostmode
-    :innermodes '(poly-conf-c-innermode)
-
-;;;;; YAML + Shell
-  (define-hostmode poly-yaml-hostmode
-    :mode 'yaml-mode)
-
-  (define-innermode poly-yaml-shell-innermode
-    :mode 'sh-mode
-    :head-matcher "\s*code\s*:\s*|"
-    :tail-matcher "publishers:"
-    :head-mode 'host
-    :tail-mode nil)
-
-  (define-polymode poly-yaml-shell-mode
-    :hostmode 'poly-yaml-hostmode
-    :innermodes '(poly-yaml-shell-innermode))
-
-    )
 
 
 (provide 'init-prog-others)
