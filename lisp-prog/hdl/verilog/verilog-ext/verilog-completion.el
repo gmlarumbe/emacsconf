@@ -2,9 +2,11 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'verilog-mode)
 (require 'company-keywords)
+(require 'yasnippet)
+(require 'verilog-mode)
 (require 'verilog-templates)
+
 
 ;;;; Company keywords for Verilog
 (add-to-list 'company-keywords-alist (append '(verilog-mode) verilog-keywords))

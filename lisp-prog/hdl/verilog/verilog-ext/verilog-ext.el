@@ -26,23 +26,23 @@
 (require 'verilog-rx)
 (require 'verilog-shadow)
 (require 'verilog-completion)
+(require 'verilog-navigation)
 (require 'verilog-which-func)
+(require 'verilog-utils)
 (require 'verilog-hideshow)
 (require 'verilog-beautify)
-(require 'verilog-utils)
 (require 'verilog-editing)
 (require 'verilog-compile)
 (require 'verilog-templates)
-(require 'verilog-navigation)
-(require 'verilog-indentation)
+;; (require 'verilog-indentation) ;  TODO: Probably this can be reduced to just remove blank spaces when detecting a outshine specific regexp in a particular line
 (require 'verilog-imenu)
 (require 'verilog-vhier)
 (require 'verilog-flycheck)
 (require 'verilog-font-lock)
-(require 'verilog-timestamp)
+(require 'verilog-timestamp) ; TODO: Change the 'work' section to a different name
+(require 'verilog-compilation) ; TODO: Add compilation regexp support for verilog here (as a derived compilation mode maybe?)
 (require 'verilog-lsp)
-;; TODO: Add compilation regexp support for verilog here (as a derived compilation mode maybe?)
-;; (require 'verilog-compilation)
+
 
 
 (provide 'verilog-ext)

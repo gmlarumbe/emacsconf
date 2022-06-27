@@ -58,7 +58,8 @@
 
 ;;;; Case
 (defun verilog-ext-templ-case ()
-  "Fetched and modified from `verilog-state-machine-add-case-fold' for sync FSMs."
+  "Case template.
+Fetched and modified from `verilog-state-machine-add-case-fold' for sync FSMs."
   (interactive)
   (let (param-read)
     (insert "case (" (read-string "Expression: ") ")") (electric-verilog-terminate-line)

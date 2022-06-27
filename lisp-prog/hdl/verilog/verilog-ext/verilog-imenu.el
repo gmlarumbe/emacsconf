@@ -40,9 +40,10 @@
 ;;; Code:
 
 (require 'imenu)
+(require 'hideshow)
 (require 'verilog-mode)
-(require 'verilog-navigation)
 (require 'verilog-rx)
+(require 'verilog-navigation)
 
 ;;;; Variables
 (defvar verilog-ext-imenu-generic-expression
@@ -120,8 +121,8 @@ Adapted from `python-mode' imenu build-tree function."
 
 INFO: Tasks/functions outside classes are obtained with a custom function search
 in the generic imenu-generic-function stage.
-INFO: Detection of nested classes is unsupported and leads to bad detection of class
-tasks/functions."
+INFO: Detection of nested classes is unsupported and leads to bad detection of
+class tasks/functions."
   (save-excursion
     (goto-char (point-max))
     (let ((index)
@@ -146,7 +147,8 @@ list obtained by using the imenu generic function."
 
 (defun verilog-ext-imenu-hide-all (&optional first)
   "Hides all the blocks @ Imenu-list buffer.
-If optional FIRST is used, then shows first block (Verilog *instances/interfaces*)"
+If optional FIRST is used, then shows first block
+(Verilog *instances/interfaces*)"
   (if (string-equal major-mode "imenu-list-major-mode")
       (progn
         (goto-char (point-min))

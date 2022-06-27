@@ -3,6 +3,9 @@
 ;;; Code:
 
 
+(require 'hideshow)
+
+
 (defvar verilog-ext-hs-block-start-keywords
   '("begin"
     "fork"
@@ -23,9 +26,9 @@
     "endtask"
     "endgenerate"))
 
-(defvar verilog-ext-hs-block-end-keywords-re (regexp-opt verilog-ext-hs-block-start-keywords 'symbols))
-(defvar verilog-ext-hs-block-end-keywords-re (regexp-opt verilog-ext-hs-block-end-keywords   'symbols))
-(add-to-list 'hs-special-modes-alist `(verilog-mode ,verilog-ext-hs-block-end-keywords-re
+(defvar verilog-ext-hs-block-start-keywords-re (regexp-opt verilog-ext-hs-block-start-keywords 'symbols))
+(defvar verilog-ext-hs-block-end-keywords-re (regexp-opt verilog-ext-hs-block-end-keywords 'symbols))
+(add-to-list 'hs-special-modes-alist `(verilog-mode ,verilog-ext-hs-block-start-keywords-re
                                                     ,verilog-ext-hs-block-end-keywords-re
                                                     nil
                                                     verilog-forward-sexp-function))

@@ -6,7 +6,9 @@
 ;;; Code:
 
 ;; TODO: Remove references to which-func
-
+(require 'verilog-mode)
+(require 'verilog-utils)
+(require 'verilog-editing)
 
 ;;;; Code beautifying
 (defun verilog-ext-align-ports-module-at-point ()
@@ -147,7 +149,8 @@ FILES is a list of strings containing the paths to the files to beautify."
       (verilog-mode)
       (insert-file-contents file)
       (verilog-ext-beautify-current-file)
-      (untabify-trailing-whitespace)
+      (untabify (point-min) (point-max))
+      (delete-trailing-whitespace (point-min) (point-max))
       (write-file file))))
 
 

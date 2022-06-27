@@ -3,6 +3,11 @@
 ;;; Code:
 
 
+(require 'which-func)
+(require 'verilog-rx)
+(require 'verilog-navigation)
+
+
 (defvar-local verilog-ext-which-func-xtra nil
   "Variable to hold extra information for `which-func' to show in the
 mode-line. For instance, if point is under \"module top\", `which-func' would

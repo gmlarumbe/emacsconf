@@ -9,12 +9,15 @@
 ;;
 ;;; Code:
 
-(require 'verilog-mode)
+;; (require 'ggtags) ; Gives strange error
 (require 'outline)
+(require 'verilog-mode)
+(require 'verilog-utils)
 
 ;;;; Hierarchy navigation
 (define-minor-mode vhier-outline-mode
-  "Frontend for Verilog-Perl `vhier' processed output for outline-minor-mode with outshine visualization."
+  "Frontend for Verilog-Perl `vhier'.
+Rocessed output for `outline-minor-mode' with outshine visualization."
   :lighter " vH"
   :keymap
   '(;; Fetched from https://www.emacswiki.org/emacs/OutlineMinorMode
@@ -153,16 +156,16 @@ Name of the project (+plus)
     (setq verilog-ext-vhier-input-files (nth 1 files-list))
     (setq verilog-ext-vhier-project-dir (nth 2 files-list))
     (setq verilog-ext-vhier-pp-outfile
-          (concat (larumbe/path-join verilog-ext-vhier-project-dir verilog-ext-vhier-top-module)
+          (concat (verilog-ext-path-join verilog-ext-vhier-project-dir verilog-ext-vhier-top-module)
                   "_pp.sv"))
     (setq verilog-ext-vhier-pp-args (concat "-o " verilog-ext-vhier-pp-outfile))
-    (setq verilog-ext-vhier-vhier-filelist-path (larumbe/path-join verilog-ext-vhier-project-dir verilog-ext-vhier-vhier-filelist-name))))
+    (setq verilog-ext-vhier-vhier-filelist-path (verilog-ext-path-join verilog-ext-vhier-project-dir verilog-ext-vhier-vhier-filelist-name))))
 
 
 
 (defun verilog-ext-vhier-create-filelist (&optional sort-defs-pkg)
-  "Generate verilog-ext-vhier-vhier-filelist-name filelist from `verilog-ext-vhier-input-files'
-file (normally gtags.files).
+  "Generate verilog-ext-vhier-vhier-filelist-name filelist.
+Generate from `verilog-ext-vhier-input-files'file (normally gtags.files).
 
 INFO: Assumes that files fetched from `verilog-ext-vhier-input-files' are
 relative paths.
@@ -176,10 +179,10 @@ to the beginning."
       (when debug
         (clone-indirect-buffer-other-window "*debug*" t))
       (insert-file-contents verilog-ext-vhier-input-files)
-      (larumbe/buffer-expand-filenames t exp-dir)
-      (larumbe/replace-regexp-whole-buffer "\\(.*/\\).*\.[s]?vh$" "-y \\1") ; Replace header `include' files with -y library flag
+      (verilog-ext-buffer-expand-filenames t exp-dir)
+      (verilog-ext-replace-regexp-whole-buffer "\\(.*/\\).*\.[s]?vh$" "-y \\1") ; Replace header `include' files with -y library flag
       (when sort-defs-pkg
-        (larumbe/sort-regexp-at-the-beginning-of-file "_defs_pkg.sv"))
+        (verilog-ext-sort-regexp-at-the-beginning-of-file "_defs_pkg.sv"))
       (write-file verilog-ext-vhier-vhier-filelist-path))))
 
 
@@ -192,8 +195,8 @@ INFO: Ensure ggtags works by writing OUTPUT-FILE into projectile root."
   (pop-to-buffer (get-buffer verilog-ext-vhier-buffer-name))
   (goto-char (point-min))
   (save-excursion
-    (larumbe/replace-regexp-whole-buffer "  " "*") ; Replace blank spaces by * for outline
-    (larumbe/replace-regexp-whole-buffer "*\\([a-zA-Z0-9_-]\\)" "* \\1") ; Add blank after asterisks
+    (verilog-ext-replace-regexp-whole-buffer "  " "*") ; Replace blank spaces by * for outline
+    (verilog-ext-replace-regexp-whole-buffer "*\\([a-zA-Z0-9_-]\\)" "* \\1") ; Add blank after asterisks
     ;; Add comments on every line for outshine detection
     (goto-char (point-min))
     (while (> (point-max) (point))
@@ -208,7 +211,7 @@ INFO: Ensure ggtags works by writing OUTPUT-FILE into projectile root."
       (open-line 2)
       (forward-line)
       (insert "// * Not found module references") ; Create level for not found
-      (larumbe/replace-string "// * " "// ** " (point) nil))
+      (verilog-ext-replace-string "// * " "// ** " (point) nil))
     ;; Insert local variables at the end of the file
     (goto-char (point-max))
     (newline 1)
@@ -236,13 +239,15 @@ INFO: Ensure ggtags works by writing OUTPUT-FILE into projectile root."
 
 ;;;###autoload
 (defun verilog-ext-vhier-extract-hierarchy ()
-  "Execute shell processes that preprocess hierarchy from `verilog-ext-vhier-vhier-filelist-name'
+  "Execute shell processes that preprocess hierarchy.
+Preprocess from `verilog-ext-vhier-vhier-filelist-name'
 and extract hierarchy from previous preprocessed file.
 
-INFO: Defined as interactive for the case when the command `verilog-ext-vhier-from-project'
-fails due to some reformatting needed on previously created `verilog-ext-vhier-vhier-filelist-name' via `verilog-ext-vhier-create-filelist'.
-  e.g: some included file was not added via -yDIR but as a source file and cannot be found.
-"
+INFO: Defined as interactive for the case when the command
+`verilog-ext-vhier-from-project'fails due to some reformatting needed on
+previously created `verilog-ext-vhier-vhier-filelist-name' via
+`verilog-ext-vhier-create-filelist'. e.g: some included file was not
+added via -yDIR but as a source file and cannot be found."
   (interactive)
   (let* ((shell-command-dont-erase-buffer t) ; Append output to buffer
          (pp-cmd (concat "vppreproc "
@@ -253,7 +258,7 @@ fails due to some reformatting needed on previously created `verilog-ext-vhier-v
                             verilog-ext-vhier-pp-outfile))
          (buf     verilog-ext-vhier-buffer-name)
          (buf-err verilog-ext-vhier-shell-cmds-buffer-name)
-         (file-path (larumbe/path-join verilog-ext-vhier-project-dir verilog-ext-vhier-vhier-outfile))
+         (file-path (verilog-ext-path-join verilog-ext-vhier-project-dir verilog-ext-vhier-vhier-outfile))
          (err-msg (format "returned with errors\nCheck %s buffer\nModify %s\nAnd finally run `verilog-ext-vhier-extract-hierarchy' instead of `verilog-ext-vhier-from-project' !"
                           buf-err verilog-ext-vhier-vhier-filelist-path)))
     ;; Preprocess and extract hierarchy (vppreproc && vhier)
@@ -288,14 +293,14 @@ fails due to some reformatting needed on previously created `verilog-ext-vhier-v
   (let* ((library-args (verilog-expand-command "__FLAGS__"))
          (pkg-files  (mapconcat #'identity (verilog-ext-update-project-pkg-list) " "))
          (vhier-args (mapconcat #'identity verilog-ext-vhier-vhier-args " "))
-         (top-module (file-title))
+         (top-module (verilog-ext-file-title))
          (cmd (concat "vhier "
                       pkg-files        " "
                       buffer-file-name " "
                       library-args     " "
                       vhier-args       " "
                       "--top-module " top-module))
-         (file-path (concat (larumbe/path-join (projectile-project-root) "vhier/") top-module ".v"))
+         (file-path (concat (verilog-ext-path-join (projectile-project-root) "vhier/") top-module ".v"))
          (buf verilog-ext-vhier-buffer-name)
          (buf-err verilog-ext-vhier-shell-cmds-buffer-name)
          (err-msg (format "vhier returned with errors\nCheck %s buffer" buf-err)))

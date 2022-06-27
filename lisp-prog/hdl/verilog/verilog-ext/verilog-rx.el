@@ -39,7 +39,7 @@
 
 (defvar verilog-ext-keywords-re (regexp-opt verilog-keywords 'symbols))
 
-(setq verilog-ext-token-re
+(defvar verilog-ext-token-re
   (regexp-opt
    '("module"
      "interface"
@@ -121,7 +121,7 @@ See `verilog-ext-block-end-keywords' for more.")
 
 (defvar verilog-ext-end-keywords-complete-re
   (rx-verilog
-   (rx bol                                      
+   (rx bol
        (group-n 1 (* blank) (regex verilog-ext-block-end-keywords-re))
        (* blank) "//" (* blank)
        (* (group (or "block:" (group verilog-identifier (* blank) "::")) (* blank)))

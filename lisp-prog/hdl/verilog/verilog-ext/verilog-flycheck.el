@@ -14,7 +14,8 @@
 
 
 (defun verilog-ext-flycheck-extra-actions-pre (linter)
-  "Extra actions to perform for speficic LINTER to work properly before enabling flycheck."
+  "Extra actions to perform for speficic LINTER.
+To work properly before enabling flycheck."
   (pcase linter
     ('verilog-verible
      (verilog-ext-verible-rules-fmt))
@@ -22,11 +23,12 @@
      (unless (and (executable-find "xrun")
                   (executable-find "hal"))
        (error "Could not find 'xrun' and 'hal' in $PATH"))
-     (verilog-ext-xrun-hal-script-create))))
+     (verilog-ext-hal-script-create))))
 
 
 (defun verilog-ext-flycheck-extra-actions-post ()
-  "Extra actions to perform for `verilog-ext-flycheck-active-linter' after enabling flycheck."
+  "Extra actions to perform after enabling flycheck.
+Actions for `verilog-ext-flycheck-active-linter'."
   (when (and (equal verilog-ext-flycheck-active-linter 'verilog-cadence-hal)
              (equal flycheck-mode t))
     (message "Cadence HAL linting...")))
@@ -61,7 +63,7 @@ to avoid minibuffer collisions."
   (if uarg
       (verilog-ext-flycheck-select-linter)
     ;; No uarg
-    (verilog-ext-verilog-update-project-pkg-list)
+    (verilog-ext-update-project-pkg-list)
     (verilog-ext-flycheck-eldoc-toggle)
     (verilog-ext-flycheck-extra-actions-post)))
 
@@ -73,8 +75,8 @@ to avoid minibuffer collisions."
 (defvar verilog-ext-xrun-hal-log-name    "xrun.log")
 (defvar verilog-ext-xrun-hal-script-name "hal.sh")
 
-(defvar verilog-ext-xrun-hal-log-path    (larumbe/path-join verilog-ext-xrun-hal-directory verilog-ext-xrun-hal-log-name))
-(defvar verilog-ext-xrun-hal-script-path (larumbe/path-join verilog-ext-xrun-hal-directory verilog-ext-xrun-hal-script-name))
+(defvar verilog-ext-xrun-hal-log-path    (verilog-ext-path-join verilog-ext-xrun-hal-directory verilog-ext-xrun-hal-log-name))
+(defvar verilog-ext-xrun-hal-script-path (verilog-ext-path-join verilog-ext-xrun-hal-directory verilog-ext-xrun-hal-script-name))
 (defvar verilog-ext-xrun-hal-script-code (concat "#!/bin/bash
 args=\"${@}\"
 xrun -hal $args
@@ -88,7 +90,7 @@ xcelium.d (INCA_libs) and lint logs will be saved at this path."
     dir))
 
 (defun verilog-ext-hal-script-create ()
-  "Create HAL wrapper script according to `verilog-ext-hal-script-code'.
+  "Create HAL wrapper script according to `verilog-ext-xrun-hal-script-code'.
 
 This is needed because the output of HAL is written to a logfile and
 flycheck parses stdout (didn't find the way to redirect xrun output to stdout).
@@ -100,7 +102,7 @@ try to output the log, it would throw a xrun fatal error since
   (let ((file verilog-ext-xrun-hal-script-path))
     (unless (file-exists-p verilog-ext-xrun-hal-script-path)
       (with-temp-buffer
-        (insert verilog-ext-hal-script-code)
+        (insert verilog-ext-xrun-hal-script-code)
         (write-file file)
         (set-file-modes file #o755)))))
 

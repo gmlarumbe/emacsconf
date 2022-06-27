@@ -3,6 +3,9 @@
 ;;; Code:
 
 
+(require 'verilog-rx)
+
+
 ;;;; Port connect/disconnect/blank cleaning
 (defun verilog-ext-toggle-connect-port (force-connect)
   "Toggle connect/disconnect port at current line.
@@ -61,8 +64,10 @@ Capture Groups:
   (interactive)
   (let ((old-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)(\\(?4:[ ]*\\)\\(?5:[^ ]+\\)\\(?6:[ ]*\\))")
         (new-re "\\1.\\2\\3\(\\5\)"))
-    ;; TODO: Replace with more generic function
-    (larumbe/replace-regexp-whole-buffer old-re new-re)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward old-re nil :noerror)
+        (replace-match new-re)))
     (message "Removed blanks from current buffer port connections.")))
 
 
@@ -76,7 +81,7 @@ Examples: endmodule // module_name             → endmodule : module_name
   (interactive)
   (save-excursion
     (goto-char (point-min))
-    (while (re-search-forward verilog-ext-block-end-keywords-complete-re nil :noerror)
+    (while (re-search-forward verilog-ext-end-keywords-complete-re nil :noerror)
       ;; Make sure that the matched string after "//" is not a verilog keyword.
       (when (not (string-match-p verilog-ext-keywords-re (match-string 2)))
         (replace-match "\\1 : \\2")))))

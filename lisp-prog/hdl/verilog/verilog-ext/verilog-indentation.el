@@ -5,9 +5,14 @@
 
 (require 'verilog-mode)
 
+;; TODO: Probably this can be deleted or reduced to just remove blank spaces when detecting
+;; a outshine specific regexp in a particular line
+
 
 ;;;; Modi
-;; http://emacs.stackexchange.com/a/8033/115
+;; Configure indentation logic to ignore certain lines:
+;; - http://emacs.stackexchange.com/a/8033/115
+
 (defvar modi/verilog-multi-line-define-line-cache nil
   "Variable set to non-nil if the current line is detected as any but the
 last line of a multi-line `define such as:
@@ -61,16 +66,17 @@ The match with \"//.\" resolves this issue:
                  outline-comment)
         (delete-horizontal-space))
       do-not-run-orig-fn)))
-;; Advise the indentation behavior of `indent-region' done using `C-M-\'
-;; (advice-add 'verilog-indent-line-relative :before-until #'modi/verilog-selective-indent)
-;; Advise the indentation done by hitting `TAB'
-;; (advice-add 'verilog-indent-line :before-until #'modi/verilog-selective-indent)
 
-
+;; Avoid indentation in lines determined by `modi/verilog-selective-indent':
+;;   1 - Outshine comments (// * )
+;;   2 - Line containing //. -> TODO: Maybe this part could be removed, related to issue 922
+;;   3 - Multi-line defines, assumed to end line in "\" -> TODO: Fix veripool issue 1082
+;;   
+;; TODO: Check modi's last version of this function/file
 
 ;; Do not break any `outline-mode'or `outshine' functionality
-(advice-add 'verilog-indent-line-relative :before-until #'modi/verilog-selective-indent) ;; Advise the indentation behavior of `indent-region' done using `C-M-\'
-(advice-add 'verilog-indent-line          :before-until #'modi/verilog-selective-indent) ;; Advise the indentation done by hitting `TAB' (modi multi-line defines)
+(advice-add 'verilog-indent-line-relative :before-until #'modi/verilog-selective-indent) ; Advise the indentation behavior of `indent-region' done using `C-M-\'
+(advice-add 'verilog-indent-line          :before-until #'modi/verilog-selective-indent) ; Advise the indentation done by hitting `TAB' (modi multi-line defines)
 
 
 

@@ -76,7 +76,8 @@ the same structure (point) as original buffer."
 
 ;;;###autoload
 (define-minor-mode verilog-shadow-mode
-  "Use verilog shadow buffers (without comments) for regexp parsing to detect instances."
+  "Use verilog shadow buffers for regexp parsing to detect instances.
+Shadow buffers are same buffers but without comments."
   :global nil
   (if verilog-shadow-mode
       (progn

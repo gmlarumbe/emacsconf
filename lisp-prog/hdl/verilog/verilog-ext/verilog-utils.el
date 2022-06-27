@@ -2,9 +2,12 @@
 ;;; Commentary:
 ;;; Code:
 
-
+(require 'flycheck)
+(require 'projectile)
 (require 'verilog-mode)
-
+(require 'verilog-rx)
+(require 'verilog-navigation)
+;; (require 'verilog-flycheck) ; TODO: Recursive inclusion or something like that?
 
 ;;;; Misc
 ;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
@@ -59,6 +62,95 @@ INFO: Limitations:
   ;; Return pkg-list
   verilog-ext-open-pkgs-projectile)
 
+
+(defun verilog-ext-path-join (arg1 arg2)
+  "Join path of ARG1 and ARG2.
+If more than 2 args are required, use `f-join'"
+  (if (and arg1 arg2)
+      (concat (file-name-as-directory arg1) arg2)
+    (error "Cannot join path with nil arguments.")
+    nil))
+
+
+(defun verilog-ext-file-title ()
+  "Return file title; e.g. for '/opt/asdf.txt' eval 'asdf'."
+  (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))
+
+
+(defun verilog-ext-buffer-expand-filenames (&optional absolute exp-dir)
+  "Expands filenames paths present in `current-buffer' line by line.
+If ABSOLUTE is nil expand relative to `default-directory'.
+If ABSOLUTE is non-nil filenames will expand to their absolute paths.
+If EXP-DIR is non-nil, expand relative to this argument instead
+of `default-directory'."
+  (let ((cur-line)
+        (default-directory (if exp-dir
+                               exp-dir
+                             default-directory)))
+    (save-excursion
+      (goto-char (point-min))
+      (while (< (point) (point-max))
+        (delete-horizontal-space)
+        (if absolute
+            (setq cur-line (expand-file-name (thing-at-point 'line) default-directory))
+          (setq cur-line (file-relative-name (thing-at-point 'line) default-directory)))
+        (kill-line 1)
+        (insert cur-line)))))
+
+
+(defun verilog-ext-replace-regexp (regexp to-string start end)
+  "Wrapper function for programatic use of `replace-regexp'.
+Replace REGEXP with TO-STRING from START to END."
+  (save-excursion
+    (goto-char start)
+    (while (re-search-forward regexp end t)
+      (replace-match to-string))))
+
+
+(defun verilog-ext-replace-regexp-whole-buffer (regexp to-string)
+  "Replace REGEXP with TO-STRING on whole current-buffer."
+  (verilog-ext-replace-regexp regexp to-string (point-min) nil))
+
+(defun verilog-ext-replace-string (string to-string start end &optional fixedcase)
+  "Wrapper function for programatic use of `replace-string'.
+Replace STRING with TO-STRING from START to END.
+
+If optional arg FIXEDCASE is non-nil, do not alter the case of
+the replacement text (see `replace-match' for more info)."
+  (save-excursion
+    (goto-char start)
+    (while (search-forward string end t)
+      (replace-match to-string fixedcase))))
+
+
+(defun verilog-ext-sort-regexp-at-the-beginning-of-file (regexp)
+  "Move lines containing REGEXP recursively at the beginning of the file.
+Done line by line, this might be useful when managing a list of files,
+one file at a line, and there is some need of sorting by regexp.
+For example, in SystemVerilog, packages might need to be included before other files."
+  (interactive)
+  (let ((sorted-files-p nil))
+    (goto-char (point-min))
+    (while (not sorted-files-p)
+      (save-excursion
+        (unless (search-forward-regexp regexp nil 1)
+          (setq sorted-files-p t))
+        (beginning-of-line)
+        (kill-line 1)) ; Kill trailing newline as well
+      (yank))))
+
+(defun verilog-ext-flycheck-eldoc-toggle ()
+  "Disable `eldoc-mode' when enabling `flycheck-mode'.
+Avoid minibuffer conflicts."
+  (interactive)
+  (if eldoc-mode
+      (progn
+        (eldoc-mode -1)
+        (flycheck-mode 1)
+        (message "Flycheck enabled"))
+    (eldoc-mode 1)
+    (flycheck-mode -1)
+    (message "Flycheck disabled")))
 
 
 ;;;; Others
