@@ -32,6 +32,13 @@
     ;; Setting following variable maps it to ";" instead
     (setq magit-lfs-suffix ";"))
 
+  ;; https://github.com/emacsorphanage/magit-gerrit/issues/59
+  ;; Original magit-gerrit was not maintained anymore and transfered to Emacsorphanage
+  ;; after Tarsius looked at many different forks
+  (use-package magit-gerrit
+    :straight (:repo "emacsorphanage/magit-gerrit")
+    :demand t)
+
   (use-package forge
     :config
     ;; Database storage in SQL
