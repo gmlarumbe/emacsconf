@@ -48,12 +48,14 @@
   "Search based fontification function of Verilog modules/instances.
 Arg LIMIT is used internally for fontification."
   (let (start-line end-line)
-    (when (verilog-ext-find-module-instance-fwd limit)
+    ;; (when (verilog-ext-find-module-instance-fwd limit) ; DANGER: Changed with new function for testing purposes
+    (when (verilog-ext-find-module-instance-fwd-4 limit) ; DANGER: Changed with new function for testing purposes
       (setq start-line (save-excursion
-                         (goto-char (match-beginning 0))
+                         (goto-char (match-beginning 1))
                          (point-at-bol)))
       (setq end-line (save-excursion
-                       (goto-char (match-end 0))
+                       ;; (goto-char (match-end 0)) ; DANGER: Hacked after this -fwd-4 functions to make font lock multiline work fine
+                       (goto-char (match-end 2))
                        (point-at-eol)))
       (unless (get-text-property (point) 'font-lock-multiline)
         (put-text-property start-line end-line 'font-lock-multiline t))
@@ -395,7 +397,7 @@ Regex search bound to LIMIT."
            '("##\\(?1:\\sw+\\|\\[[^]]+\\]\\)" 1 font-lock-type-face append)
            )))
 
-(defvar verilog-ext-font-lock-keywords-3
+(setq verilog-ext-font-lock-keywords-3
   (append verilog-ext-font-lock-keywords-2
           (list
            (list verilog-ext-time-unit-re          2 hdl-ext-font-lock-time-unit-face)
@@ -460,7 +462,7 @@ Regex search bound to LIMIT."
                                 verilog-ext-font-lock-keywords-2
                                 verilog-ext-font-lock-keywords-3) 'set)
 
-
+(add-hook 'verilog-mode-hook (lambda () (setq font-lock-multiline nil)))
 
 
 (provide 'verilog-font-lock)
