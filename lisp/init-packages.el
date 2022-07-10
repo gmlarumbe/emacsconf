@@ -35,11 +35,13 @@
   :bind (("C-x C-b" . ibuffer))
   :config
   (setq ibuffer-default-sorting-mode 'major-mode)
-  (setq ibuffer-expert t)
+  (setq ibuffer-expert t))
+
 
   ;; Projectile-sorted buffers
-  (use-package ibuffer-projectile
+(use-package ibuffer-projectile
     :hook ((ibuffer . modi/ibuffer-customization))
+    :after ibuffer
     :config
     (defun modi/ibuffer-customization ()
       "My customization for `ibuffer'."
@@ -47,7 +49,7 @@
       (ibuffer-projectile-set-filter-groups)
       (unless (eq ibuffer-sorting-mode 'alphabetic)
         (ibuffer-do-sort-by-alphabetic) ; first do alphabetic sort
-        (ibuffer-do-sort-by-major-mode)))))
+        (ibuffer-do-sort-by-major-mode))))
 
 
 (use-package ibuf-ext
@@ -290,15 +292,20 @@ the vertical drag is done."
          ("C-c / c" . google-this-translate-query-or-region))
   :config
   ;; Once a command present in :bind is executed the rest of `google-this-mode' commands will be available
-  (google-this-mode 1)
-  ;; Google translate
-  (use-package google-translate
-    :config
-    ;; BUG: https://github.com/atykhonov/google-translate/issues/52
-    (defun google-translate--search-tkk ()
-      "Search TKK."
-      (list 430675 2721866130))
-    (setq google-translate-backend-method 'curl)))
+  (google-this-mode 1))
+
+
+(use-package google-translate
+  :config
+  ;; BUG: https://github.com/atykhonov/google-translate/issues/52
+  ;; https://github.com/twlz0ne/multi-translate.el/issues/3
+  (defun google-translate--search-tkk@fix-137 ()
+    "Search TKK.
+Fix ttk search error https://github.com/atykhonov/google-translate/issues/137"
+    (list 430675 2721866130))
+
+  (advice-add 'google-translate--search-tkk :override 'google-translate--search-tkk@fix-137)
+  (setq google-translate-backend-method 'curl))
 
 
 (use-package howdoi
@@ -534,12 +541,21 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 ;;;; Libraries
 (use-package dash)
+(use-package s)
 (use-package f)
+(use-package ht)
 (use-package pcre2el)
 (use-package with-editor)
 (use-package request)
 (use-package bind-key)
+(use-package yaml
+  :commands (yaml-parse-string
+             yaml-encode-object)) ; Full Elisp, worse performance but portable
+(use-package emacs-libyaml
+  :straight (:host github :repo "syohex/emacs-libyaml")) ; Dinamic binding for libyaml.so
 
+
+;;;; Functions & Utils
 (use-package xah-lee-functions
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/xah-lee-functions.el")))
 

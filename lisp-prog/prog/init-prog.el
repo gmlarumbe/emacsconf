@@ -28,7 +28,7 @@
 (require 'init-tcl)
 (require 'init-c)
 (require 'init-prog-others)
-
+(require 'init-polymode)
 
 
 (provide 'init-prog)

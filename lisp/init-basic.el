@@ -19,6 +19,7 @@
 (defalias 'yes-or-no-p 'y-or-n-p)              ; Globally set y-or-n-p
 (setq confirm-kill-emacs #'y-or-n-p)           ; Avoid closing Emacs unexpectedly (helm prefix C-x c)
 (setq inhibit-startup-screen t)                ; Inhibit startup screen
+(setq initial-scratch-message nil)             ; Clear initial *scratch* message
 (setq disabled-command-function 'ignore)       ; Enable all commands
 (setq initial-major-mode 'fundamental-mode)    ; Avoid start *scratch* in `lisp-interaction-mode' and enabling default `prog-mode-hook.
 

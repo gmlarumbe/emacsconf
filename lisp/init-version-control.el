@@ -32,6 +32,13 @@
     ;; Setting following variable maps it to ";" instead
     (setq magit-lfs-suffix ";"))
 
+  ;; https://github.com/emacsorphanage/magit-gerrit/issues/59
+  ;; Original magit-gerrit was not maintained anymore and transfered to Emacsorphanage
+  ;; after Tarsius looked at many different forks
+  (use-package magit-gerrit
+    :straight (:repo "emacsorphanage/magit-gerrit")
+    :demand t)
+
   (use-package forge
     :config
     ;; Database storage in SQL
@@ -82,6 +89,13 @@
 
 
 ;;;;; Other packages
+;; This package provides several major modes for editing Git configuration files.
+;;   - `gitattributes-mode'
+;;   - `gitconfig-mode'
+;;   - `gitignore-mode'
+;; Adds to the `auto-mode-alist' these modes to their corresponding files.
+(use-package git-modes)
+
 ;; Create URLs for files and commits in GitHub/Bitbucket/GitLab/... repositories.
 (use-package git-link
   :bind ("C-c g l" . git-link))
@@ -148,27 +162,20 @@
 
 ;;;; Gerrit
 (use-package gerrit
-  :bind (("C-x ;" . gerrit-dashboard)) ; Overrides `set-comment-column'
+  :bind (("C-x ;" . gerrit-dashboard)        ; Overrides `set-comment-column'
+         ("C-x t" . gerrit-upload-transient)
+         ("C-x y" . gerrit-download))
   :config
-  ;; DANGER: Removed the -is:wip  and -is:ignored things
+  ;; INFO: Removed the -is:wip  and -is:ignored things from suggested config at https://github.com/thisch/gerrit.el
   (setq gerrit-dashboard-query-alist
-    '(("Assigned to me"   . "assignee:self (owner:self OR assignee:self) is:open")
-      ("Work in progress" . "is:open owner:self")
-      ("Outgoing reviews" . "is:open owner:self")
-      ("Incoming reviews" . "is:open -owner:self (reviewer:self OR assignee:self)")
-      ("CCed On"          . "is:open  cc:self")
-      ("Recently closed"  . "is:closed  (owner:self) (owner:self OR reviewer:self OR assignee:self OR cc:self) limit:15")))
-
-;; (defun gerrit-magit-insert-status ()
-;;   "Show all open gerrit reviews.
-
-;; When called in the magit-status-section via `magit-status-section-hook'
-;; all open gerrit review are shown in the magit status buffer."
-  (add-hook 'magit-status-sections-hook #'gerrit-magit-insert-status t)
-
-  ;; (global-set-key (kbd "C-x i") 'gerrit-upload-transient)
-  ;; (global-set-key (kbd "C-x o") 'gerrit-download)
-  )
+        '(("Assigned to me"   . "assignee:self (owner:self OR assignee:self) is:open")
+          ("Outgoing reviews" . "is:open owner:self")
+          ("Incoming reviews" . "is:open -owner:self (reviewer:self OR assignee:self)")
+          ("CCed On"          . "is:open  cc:self")
+          ("Recently closed"  . "is:closed  (owner:self) (owner:self OR reviewer:self OR assignee:self OR cc:self) limit:15")))
+  ;; When called in the magit-status-section via `magit-status-section-hook'
+  ;; all open gerrit review are shown in the magit status buffer."
+  (add-hook 'magit-status-sections-hook #'gerrit-magit-insert-status t))
 
 ;;;; SVN
 (use-package dsvn
@@ -187,9 +194,7 @@
 ;;;; Own utils
 (use-package larumbe-vc-utils
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/larumbe-vc-utils.el"))
-  :bind (("C-x t"   . larumbe/repohome-magit-status)
-         ("C-x y"   . larumbe/repohome-magit-reset-args)
-         ("C-<f12>" . larumbe/emacs-check-dirty-repos)))
+  :bind (("C-<f12>" . larumbe/emacs-check-dirty-repos)))
 
 (use-package git-dirty
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/git-dirty.el")))
