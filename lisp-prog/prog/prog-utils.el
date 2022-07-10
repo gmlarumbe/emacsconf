@@ -11,7 +11,7 @@
 
 
 (defun larumbe/prog-mode-report-backend (tag &optional ref-p backend)
-  ""
+  "Show in the minibuffer what is current used backend."
   (unless backend
     (setq backend (xref-find-backend)))
   (if ref-p
@@ -20,7 +20,7 @@
 
 
 (defun larumbe/prog-mode-definitions-default (def)
-  ""
+  "Default action to take when looking for definitions in a particular mode."
   (let ((backend-xref (xref-find-backend))
         skip)
     ;; `dumb-jump' only supports definitions and does some basic processing of them
@@ -34,7 +34,7 @@
 
 
 (defun larumbe/prog-mode-references-default (ref)
-  ""
+  "Default action to take when looking for references in a particular mode."
   (let ((backend-xref (xref-find-backend)))
     ;; `dumb-jump' only supports definitions (doesn't provide implementation for xref-find-references)
     ;; Since references would be searched through grep and processed by default `semantic-symref'
@@ -45,7 +45,6 @@
       ;; Find references with corresponding backend
       (xref-find-references ref)
       (larumbe/prog-mode-report-backend ref :ref))))
-
 
 
 (defun larumbe/prog-mode-definitions ()
@@ -113,7 +112,6 @@ and will be applied to only files of current `major-mode' if existing in `larumb
                (call-interactively #'xref-find-references))))))
 
 
-
 (defun larumbe/prog-mode-keys ()
   "Hook to set keys that will override the ones set in the derived major mode."
   (local-set-key (kbd "C-<tab>") #'hs-toggle-hiding)
@@ -124,6 +122,14 @@ and will be applied to only files of current `major-mode' if existing in `larumb
   (unless (or (string= major-mode "verilog-mode")
               (string= major-mode "emacs-lisp-mode"))
     (local-set-key (kbd "C-c C-f") #'flycheck-mode)))
+
+
+(defun larumbe/prog-mode-indent-tabs-mode ()
+  "Do not use TAB for indentation, except for Makefile modes."
+  (interactive)
+  (if (string-match "makefile-" (format "%s" major-mode))
+      (setq indent-tabs-mode t)
+    (setq indent-tabs-mode nil)))
 
 
 (defun larumbe/prog-mode-hook ()
@@ -142,7 +148,8 @@ and will be applied to only files of current `major-mode' if existing in `larumb
   (setq fill-column   80)
   (setq-local company-backends (larumbe/company-backend-compute))
   (larumbe/dumb-jump-local-enable)
-  (gtags-update-async-minor-mode 1))
+  (gtags-update-async-minor-mode 1)
+  (larumbe/prog-mode-indent-tabs-mode))
 
 
 

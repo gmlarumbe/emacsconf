@@ -30,7 +30,6 @@
   ;; Indentation
   (setq vhdl-basic-offset 4)
   (setq tab-width 4)          ; TAB Width for indentation (buffer local)
-  (setq indent-tabs-mode nil) ; Replace TAB with Spaces when indenting
   ;; Mode config
   (setq vhdl-clock-edge-condition 'function)
   (setq vhdl-company-name "HP Inc")

@@ -89,6 +89,13 @@
 
 
 ;;;;; Other packages
+;; This package provides several major modes for editing Git configuration files.
+;;   - `gitattributes-mode'
+;;   - `gitconfig-mode'
+;;   - `gitignore-mode'
+;; Adds to the `auto-mode-alist' these modes to their corresponding files.
+(use-package git-modes)
+
 ;; Create URLs for files and commits in GitHub/Bitbucket/GitLab/... repositories.
 (use-package git-link
   :bind ("C-c g l" . git-link))
