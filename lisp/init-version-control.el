@@ -95,8 +95,9 @@
 ;;   - `gitignore-mode'
 ;; Adds to the `auto-mode-alist' these modes to their corresponding files.
 (use-package git-modes
-  :config
-  (dolist (pattern '("\\.git_cfgs/gitconfig-*"))
+  :init
+  (dolist (pattern '("\\.git_cfgs/gitconfig-*"
+                     "/\\.gitreview\\'"))
     (add-to-list 'auto-mode-alist (cons pattern 'gitconfig-mode))))
 
 ;; Create URLs for files and commits in GitHub/Bitbucket/GitLab/... repositories.
