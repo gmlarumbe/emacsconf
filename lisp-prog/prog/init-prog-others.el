@@ -188,6 +188,7 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 ;;;; YAML
 (use-package yaml-mode
   :hook ((yaml-mode . larumbe/prog-mode-hook)
+         (yaml-mode . larumbe/prog-mode-keys)
          (yaml-mode . indent-guide-mode))
   :bind (:map yaml-mode-map
          ("C-M-n" . forward-same-indent)
@@ -195,7 +196,7 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
          ("C-M-u" . backward-to-indentation)
          ("C-M-d" . forward-to-indentation))
   :bind (:map yaml-mode-map
-         ("C-c C-s" . larumbe/yaml-shell-toggle)))
+         ("C-c C-o" . larumbe/yaml-shell-toggle)))
 
 
 ;;;; SED
