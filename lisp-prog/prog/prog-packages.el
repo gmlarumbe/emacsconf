@@ -7,7 +7,11 @@
 ;; - For syntax checking, they override `flymake' and `flycheck' variables, e.g. they execute (flycheck-select-checker 'lsp) or similar
 ;; - For code completion, they change `company-backends', overriding it with `company-capf' or adding it to existing ones
 ;; - etc...
-(use-package eglot)
+(use-package eglot
+  :config
+  ;; Prevent eglot from overriding value of `company-backends' (eglot value of `completion-at-point-functions' still works)
+  (setq eglot-stay-out-of '(company eldoc)))
+
 (use-package lsp-mode)
 (use-package lsp-ivy)
 
