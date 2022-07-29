@@ -25,36 +25,45 @@
   (setq py-use-font-lock-doc-face-p t)
   (define-key python-mode-map "\C-c@\C-\M-h" #'larumbe/python-hs-hide-all) ; Overrides `hs-hide-all' (Error if declaring with use-package :bind - Key sequence C-c @  starts with non-prefix key C-c @
 
+  (advice-add 'py-newline-and-indent :before-until #'larumbe/newline-advice)
   (defface larumbe/py-object-reference-face '((t (:foreground "dark olive green"))) "Face" :group 'python-faces)
   (setq py-object-reference-face 'larumbe/py-object-reference-face)
 
   (require 'python-utils)
   (larumbe/python-fix-hs-special-modes-alist) ; BUG Fix (check function docstring for more info)
-  (require 'python-templates)
+  (require 'python-templates))
 
-  (use-package jedi-core
-    :demand
-    :bind (:map jedi-mode-map
-           ("<C-tab>" . nil) ; Let C-tab to HideShow
-           ;; This config assumes that "M-." will be bound to `larumbe/prog-mode-definitions', and when the
-           ;; point is under a URL/file it will be browsed, but if in python-mode then Jedi will be used.
-           ("M-,"     . jedi:goto-definition-pop-marker)) ; Override `xref-pop-marker-stack'
-    :config
-    (use-package company-jedi)
-    (add-hook 'python-mode-hook #'jedi:setup)
 
-    (defun larumbe/jedi-restart-server ()
-      "Restart Jedi server.
 
+(use-package jedi-core
+  :demand
+  :after python-mode
+  :bind (:map jedi-mode-map
+         ("<C-tab>" . nil) ; Let C-tab to HideShow
+         ;; This config assumes that "M-." will be bound to `larumbe/prog-mode-definitions', and when the
+         ;; point is under a URL/file it will be browsed, but if in python-mode then Jedi will be used.
+         ("M-,"     . jedi:goto-definition-pop-marker)) ; Override `xref-pop-marker-stack'
+  :config
+  (use-package company-jedi)
+  (add-hook 'python-mode-hook #'jedi:setup)
+
+  (defun larumbe/jedi-restart-server ()
+    "Restart Jedi server.
 Useful after changing the $PYTHONPATH (e.g. env switching)."
-      (interactive)
-      (message "Restarting all servers...")
-      (jedi:stop-all-servers)
-      (when (string= major-mode "python-mode")
-        (message "Enabling jedi for current buffer...")
-        (jedi:setup))))
+    (interactive)
+    (message "Restarting all servers...")
+    (jedi:stop-all-servers)
+    (when (string= major-mode "python-mode")
+      (message "Enabling jedi for current buffer...")
+      (jedi:setup))))
 
-  (use-package elpy)) ; INFO: Deserves some attention if some day Python becomes a priority
+
+
+; INFO: Deserves some attention if some day Python becomes a priority
+(use-package elpy
+  :after python-mode)
+
+
 
 
 (provide 'init-python)
