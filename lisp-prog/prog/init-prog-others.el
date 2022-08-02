@@ -119,7 +119,8 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 (use-package cperl-mode
   ;; Since it is not a child of prog-mode, requires common configuration settings
   :hook ((cperl-mode . larumbe/prog-mode-keys)
-         (cperl-mode . larumbe/prog-mode-hook)))
+         (cperl-mode . larumbe/prog-mode-hook)
+         (cperl-mode . eglot-ensure)))
 
 
 ;;;; JSON

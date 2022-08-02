@@ -10,7 +10,14 @@
 (use-package eglot
   :config
   ;; Prevent eglot from overriding value of `company-backends' (eglot value of `completion-at-point-functions' still works)
-  (setq eglot-stay-out-of '(company eldoc)))
+  (setq eglot-stay-out-of '(company eldoc flymake))
+  ;; Use same binary for cperl-mode
+  (let ((cperl-program (cdr (assoc 'perl-mode eglot-server-programs)))
+        cperl-program-alist)
+    (push 'cperl-mode cperl-program-alist)
+    (dolist (arg cperl-program)
+      (add-to-list 'cperl-program-alist arg :append))
+    (add-to-list 'eglot-server-programs cperl-program-alist)))
 
 (use-package lsp-mode)
 (use-package lsp-ivy)

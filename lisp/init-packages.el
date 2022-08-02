@@ -562,6 +562,7 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
 
 (use-package man
   :straight nil
+  :commands (Man-getpage-in-background) ; Used by `sh-script'
   :config
   (setq Man-notify-method 'pushy))
 
