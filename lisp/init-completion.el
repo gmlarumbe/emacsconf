@@ -96,11 +96,17 @@
   (defun larumbe/company-backend-report ()
     "Show current backend used when running `company-other-backend'."
     (interactive)
-    (let (formatted-backend)
-      (unless (listp company-backend)
+    (let (formatted-backend
+          backend-list)
+      (if (listp company-backend)
+          (progn
+            (setq backend-list (remove :separate company-backend))
+            (setq formatted-backend (propertize (mapconcat #'symbol-name backend-list ", ")
+                                                'face '(:foreground "green"))))
         (setq formatted-backend (propertize (symbol-name company-backend)
                                             'face '(:foreground "green"))))
-      (run-with-timer 0.1 nil (lambda () (message "Current backend: %s" formatted-backend)))))
+      ;; Run with timer to overwrite first suggestion from company after showing results
+      (run-with-timer 0.1 nil (lambda () (message "Backend(s): %s" formatted-backend)))))
 
   (advice-add 'company-other-backend :after #'larumbe/company-backend-report))
 
