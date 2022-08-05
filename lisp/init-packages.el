@@ -27,8 +27,9 @@
 
 (use-package smart-mode-line
   :demand
-  :config
+  :init
   (setq sml/theme 'dark) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
+  :config
   (sml/setup))           ; Enable smart-mode-line
 
 
