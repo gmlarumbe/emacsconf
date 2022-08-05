@@ -9,16 +9,25 @@
   (popwin-mode 1))
 
 
+(use-package which-function
+  :demand
+  :config
+  (set-face-attribute 'which-func nil :foreground "green")
+  (which-function-mode))
+
+
+(use-package time
+  :demand
+  :config
+  (setq display-time-default-load-average nil) ; Display time on the status bar
+  (display-time-mode t))
+
+
 (use-package smart-mode-line
   :demand
   :config
   (setq sml/theme 'dark) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
-  (sml/setup)            ; Enable smart-mode-line
-  (which-function-mode)
-  (set-face-attribute 'which-func nil :foreground "green")
-  (setq line-number-mode nil) ; Hide current line number from mode-line
-  (setq display-time-default-load-average nil) ; Display time on the status bar
-  (display-time-mode t))
+  (sml/setup))           ; Enable smart-mode-line
 
 
 (use-package buffer-move
@@ -434,6 +443,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
          ("C-<f12>" . auto-fill-mode)
          ("<f12>"   . toggle-truncate-lines))
   :config
+  (setq line-number-mode nil)   ; Hide current line number from mode-line
   (setq save-interprogram-paste-before-kill t)
   (setq next-error-verbose nil) ; Hide "next-locus on <file> minibuffer messages that interfered with flycheck/eldoc"
 
