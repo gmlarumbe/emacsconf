@@ -9,7 +9,8 @@
   (popwin-mode 1))
 
 
-(use-package which-function
+(use-package which-func
+  :straight nil
   :demand
   :config
   (set-face-attribute 'which-func nil :foreground "green")
@@ -17,6 +18,7 @@
 
 
 (use-package time
+  :straight nil
   :demand
   :config
   (setq display-time-default-load-average nil) ; Display time on the status bar
