@@ -94,7 +94,7 @@ To cancel a copy call `dired-async-kill-process'. "
 (use-package dired-x
   :straight nil
   :demand
-  :afer dired
+  :after dired
   :diminish dired-omit-mode
   :hook ((dired-mode . dired-omit-mode)) ; hide backup, autosave, *.*~ files
   :init
@@ -157,10 +157,12 @@ To cancel a copy call `dired-async-kill-process'. "
 ;; Fuco1 `dired-hacks' extensions
 ;; https://github.com/Fuco1/dired-hacks
 (use-package dired-narrow
+  :after dired
   :bind (:map dired-mode-map
          ("." . dired-narrow-regexp))) ; Unmaps `dired-clean-directory'
 
 (use-package dired-collapse
+  :after dired
   :bind (:map dired-mode-map
          (";" . dired-collapse-mode)))
 
@@ -168,6 +170,7 @@ To cancel a copy call `dired-async-kill-process'. "
 ;; Setting "/" to `dired-filter-mode' allows enabling of this minor-mode with "/" and overriding
 ;; with its common functions. To deactivate it but saving status, press "/" twice.
 (use-package dired-filter
+  :after dired
   :bind (:map dired-mode-map
          ("/" . dired-filter-mode)))
 
