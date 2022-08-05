@@ -17,7 +17,9 @@
     (push 'cperl-mode cperl-program-alist)
     (dolist (arg cperl-program)
       (add-to-list 'cperl-program-alist arg :append))
-    (add-to-list 'eglot-server-programs cperl-program-alist)))
+    (add-to-list 'eglot-server-programs cperl-program-alist))
+  ;; Verilog verible (still in alpha version)
+  (add-to-list 'eglot-server-programs '(verilog-mode "verible-verilog-ls")))
 
 (use-package lsp-mode)
 (use-package lsp-ivy)
