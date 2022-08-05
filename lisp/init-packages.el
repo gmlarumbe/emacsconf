@@ -11,26 +11,19 @@
 
 (use-package which-func
   :straight nil
-  :demand
   :config
-  (set-face-attribute 'which-func nil :foreground "green")
-  (which-function-mode))
+  (set-face-attribute 'which-func nil :foreground "green"))
 
 
 (use-package time
   :straight nil
-  :demand
   :config
-  (setq display-time-default-load-average nil) ; Display time on the status bar
-  (display-time-mode t))
+  (setq display-time-default-load-average nil)) ; Display time on the status bar
 
 
 (use-package smart-mode-line
-  :demand
-  :init
-  (setq sml/theme 'dark) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
   :config
-  (sml/setup))           ; Enable smart-mode-line
+  (setq sml/theme 'dark)) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
 
 
 (use-package buffer-move
@@ -132,18 +125,14 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package winner
   :straight nil
-  :demand
-  :config
-  (winner-mode 1))
+  :config)
 
 
 (use-package beacon
-  :demand
   :diminish
   :config
   (setq beacon-size 20)
-  (add-to-list 'beacon-dont-blink-major-modes 'term-mode)
-  (beacon-mode 1))
+  (add-to-list 'beacon-dont-blink-major-modes 'term-mode))
 
 
 (use-package speedbar
@@ -167,13 +156,10 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package hardcore-mode
-  :demand
   :diminish hardcore-mode
   :init
   (setq too-hardcore-backspace t)
-  (setq too-hardcore-return    t)
-  :config
-  (global-hardcore-mode 1))
+  (setq too-hardcore-return    t))
 
 
 (use-package avy
@@ -224,11 +210,9 @@ the vertical drag is done."
 
 (use-package untabify-trailing-ws
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("minor-modes/untabify-trailing-ws.el"))
-  :demand
   :config
   (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-mode.el") untabify-trailing-disable-on-files)
-  (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-test.el") untabify-trailing-disable-on-files)
-  (untabify-trailing-ws-mode 1))
+  (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-test.el") untabify-trailing-disable-on-files))
 
 
 (use-package align
@@ -239,22 +223,14 @@ the vertical drag is done."
 
 
 (use-package elec-pair
-  :straight nil
-  :demand
-  :config
-  (electric-pair-mode 1))
+  :straight nil)
 
 
 (use-package whole-line-or-region
   :bind (("C-w" . whole-line-or-region-kill-region)))
 
 
-;; TODO: Verify that it's working properly. Remove otherwise
-(use-package smart-mark
-  :demand
-  :config
-  (smart-mark-mode 1))
-
+(use-package smart-mark)
 
 (use-package multiple-cursors
   :bind (("C->"     . mc/mark-next-like-this)
@@ -581,10 +557,7 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
 
 
 (use-package which-key
-  :diminish
-  :demand
-  :config
-  (which-key-mode 1))
+  :diminish)
 
 
 (use-package browse-url

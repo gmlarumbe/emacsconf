@@ -47,7 +47,6 @@
 (straight-use-package 'use-package)
 
 (use-package use-package
-  :demand
   :config
   (setq use-package-always-defer t)
   ;; Enables one to run M-x `use-package-report' to check Initialized/Declared/Configured packages
