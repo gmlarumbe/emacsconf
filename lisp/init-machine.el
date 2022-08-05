@@ -6,7 +6,7 @@
 ;;;; Common-enables of deferred packages
 (which-function-mode)
 (display-time-mode t)
-(sml/setup) ; Enable smart-mode-line
+(larumbe/sml-enable 'dark)
 (winner-mode 1)
 (beacon-mode 1)
 (global-hardcore-mode 1)

@@ -22,14 +22,26 @@
 
 
 (use-package smart-mode-line
-  :init
-  (let* ((straight-repos-dir (expand-file-name (concat (file-name-as-directory straight-base-dir) "straight/repos")))
-         (theme (concat (file-name-as-directory straight-repos-dir) "smart-mode-line/smart-mode-line-dark-theme.el"))
-         (theme-buf (get-file-buffer theme))
-         (hash (secure-hash 'sha256 theme-buf)))
-    (unless (member hash custom-safe-themes)
-      (push hash custom-safe-themes)))
-  (setq sml/theme 'dark)) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
+  :commands (larumbe/sml-enable)
+  :config
+  (defun larumbe/sml-enable (theme)
+    "Wrapper around `sml/enable'.
+Takes into account if current theme exists and if it has been added to `custom-safe-themes'.
+This was needed in order to allow GitHub actions to work properly."
+    (interactive)
+    (unless theme
+      (error "No theme selected!"))
+    ;; Handle `custom-safe-themes'.
+    (let* ((straight-repos-dir (expand-file-name (concat (file-name-as-directory straight-base-dir) "straight/repos")))
+           (theme-file (concat (file-name-as-directory straight-repos-dir) "smart-mode-line/smart-mode-line-dark-theme.el"))
+           (hash (with-temp-buffer
+                   (insert-file-contents theme-file)
+                   (secure-hash 'sha256 (current-buffer)))))
+      (unless (member hash custom-safe-themes)
+        (push hash custom-safe-themes)))
+    ;; Set theme and save
+    (setq sml/theme theme) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
+    (sml/setup)))
 
 
 (use-package buffer-move
