@@ -5,7 +5,7 @@
 
 ;;;; Window/Frame Display
 (use-package smart-mode-line
-  :demand
+  ;; :demand
   :config
   (setq sml/theme 'dark) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
   (sml/setup)            ; Enable smart-mode-line
