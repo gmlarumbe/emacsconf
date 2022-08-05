@@ -16,12 +16,11 @@
          ("J"       . dired-goto-file)                                ; Switch from 'j' to 'J'
          ("j"       . larumbe/dired-do-async-shell-command-or-okular) ; Open file-at-point directly with Okular if is a PDF and delete async process window. Otherwise it will ask for default program
          (","       . larumbe/dired-toggle-deletion-confirmer)        ; https://superuser.com/questions/332590/how-to-prevent-delete-confirmation-in-emacs-dired
-         ("I"       . dired-kill-subdir)                              ; Replaces `dired-info', requires `dired-aux', mapping in dired-aux use-package didn't work
          ("a"       . larumbe/dired-async-toggle)                     ; Replaces `dired-find-alternate-file', never used it though...
          ("C-x C-q" . wdired-change-to-wdired-mode))                  ; Previously overriden by EXWM global keybinding
-  :bind (("C-x C-j" . larumbe/dired-jump))
+  :bind (("C-x C-j" . larumbe/dired-jump))                            ; Bind keybinding globally
   :hook ((dired-mode . larumbe/dired-hook))
-  :commands (dired-do-async-shell-command dired-hide-details-mode)
+  :commands (dired-hide-details-mode)
   :config
   (setq dired-listing-switches "-alh") ; Show size in human readable format
 
@@ -65,6 +64,7 @@ Provides a more convenient solution to cluttering dired buffers than `dired-sing
         (call-interactively #'dired-do-async-shell-command))))
 
   ;; `dired-async-mode' is an autoload from `async' package in straight repo "emacs-async"
+  ;; Seems more reasonable to reference it here than in async's use-package call
   (defun larumbe/dired-async-toggle ()
     "Run asynchronously dired commands for copying, renaming and symlinking, through async library.
 Useful since sometimes it takes longer renaming/copying for small files due to async processing overhead.
@@ -88,7 +88,11 @@ To cancel a copy call `dired-async-kill-process'. "
 ;; less commonly used parts of dired (autoloads for native dired functions)
 (use-package dired-aux
   :straight nil
-  :after dired)
+  :after dired
+  :commands (dired-do-async-shell-command)
+  :bind (:map dired-mode-map
+         ("I" . dired-kill-subdir))) ; Replaces `dired-info', requires `dired-aux', mapping in dired-aux use-package didn't work
+
 
 ;; X-tra Dired functionality
 (use-package dired-x
