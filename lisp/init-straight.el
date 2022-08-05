@@ -51,7 +51,7 @@
   (setq use-package-always-defer t)
   ;; Enables one to run M-x `use-package-report' to check Initialized/Declared/Configured packages
   ;; -  https://github.com/jwiegley/use-package#gathering-statistics
-  (setq use-package-compute-statistics t))
+  (setq use-package-compute-statistics nil))
 
 (use-package straight
   :commands (larumbe/straight-packages
