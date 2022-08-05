@@ -22,7 +22,12 @@
 
 
 (use-package smart-mode-line
-  :config
+  :init
+  (let* ((straight-repos-dir (expand-file-name (larumbe/path-join straight-base-dir "straight/repos")))
+         (theme (larumbe/path-join straight-repos-dir "smart-mode-line/smart-mode-line-dark-theme.el"))
+         (hash (secure-hash 'sha256 theme)))
+    (unless (member hash custom-safe-themes)
+      (push hash custom-safe-themes)))
   (setq sml/theme 'dark)) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
 
 
