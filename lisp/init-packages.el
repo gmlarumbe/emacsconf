@@ -380,15 +380,6 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   :commands (erc-login
              larumbe/erc-login)
   :config
-  (use-package erc-sasl
-    :straight (:host github :repo "psachin/erc-sasl")
-    :demand)
-  (setq erc-sasl-use-sasl t)
-  ;; Provides a way of authenticating before actually connecting to the server.
-  ;; Requires providing the nick and password in the `erc-tls' function.
-  (add-to-list 'erc-sasl-server-regexp-list "irc\\.freenode\\.net")
-  (add-to-list 'erc-sasl-server-regexp-list "chat\\.freenode\\.net")
-
   (defun larumbe/erc-login ()
     "Perform user authentication at the IRC server."
     (erc-log (format "login: nick: %s, user: %s %s %s :%s"
@@ -413,6 +404,18 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
     (erc-update-mode-line))
 
   (advice-add 'erc-login :override #'larumbe/erc-login))
+
+
+(use-package erc-sasl
+  :straight (:host github :repo "psachin/erc-sasl")
+  :demand
+  :after erc
+  :config
+  (setq erc-sasl-use-sasl t)
+  ;; Provides a way of authenticating before actually connecting to the server.
+  ;; Requires providing the nick and password in the `erc-tls' function.
+  (add-to-list 'erc-sasl-server-regexp-list "irc\\.freenode\\.net")
+  (add-to-list 'erc-sasl-server-regexp-list "chat\\.freenode\\.net"))
 
 
 (use-package env-switch
