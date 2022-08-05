@@ -4,6 +4,11 @@
 
 
 ;;;; Window/Frame Display
+(use-package popwin
+  :config
+  (popwin-mode 1))
+
+
 (use-package smart-mode-line
   :demand
   :config
@@ -14,11 +19,6 @@
   (setq line-number-mode nil) ; Hide current line number from mode-line
   (setq display-time-default-load-average nil) ; Display time on the status bar
   (display-time-mode t))
-
-
-(use-package popwin
-  :config
-  (popwin-mode 1))
 
 
 (use-package buffer-move
