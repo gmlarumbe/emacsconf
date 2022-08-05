@@ -16,8 +16,8 @@
     (unless backend
       (setq backend (xref-find-backend)))
     ;; Add some coloring
-    (setq formatted-backend (propertize (symbol-name backend) 'face '(:foreground "green" :weight bold)))
-    (setq formatted-tag (propertize tag 'face '(:foreground "goldenrod")))
+    (setq formatted-backend (propertize (symbol-name backend) 'face '(:foreground "goldenrod" :weight bold)))
+    (setq formatted-tag (propertize tag 'face '(:foreground "green")))
     ;; Report backend and tag
     (if ref-p
         (message "[%s] Refs of: %s" formatted-backend formatted-tag)
@@ -80,7 +80,8 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
              ;; TODO: Context based jump if no thing-at-point:
              ;;  - If inside a module (RTL) and in an instance (create function to make sure of that): (verilog-ext-jump-to-module-at-point)
              ;;  - If inside a class: Prompt for class name
-             (setq def (verilog-ext-jump-to-module-at-point))
+             ;; (setq def (verilog-ext-jump-to-module-at-point))
+             (call-interactively #'xref-find-definitions)
              (larumbe/prog-mode-report-backend def)))
           ;;   - Python: elpy
           ((string= major-mode "python-mode")
@@ -113,7 +114,8 @@ and will be applied to only files of current `major-mode' if existing in `larumb
              ;; TODO: Context based jump if no thing-at-point:
              ;;  - If inside a module (RTL) and in an instance (create function to make sure of that): (verilog-ext-jump-to-module-at-point)
              ;;  - If inside a class: Prompt for class name
-             (setq ref (verilog-ext-jump-to-module-at-point :ref))
+             ;; (setq ref (verilog-ext-jump-to-module-at-point :ref))
+             (call-interactively #'xref-find-references)
              (larumbe/prog-mode-report-backend ref :ref)))
           (;; Python
            (string= major-mode "python-mode")
