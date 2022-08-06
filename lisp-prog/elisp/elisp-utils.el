@@ -18,21 +18,6 @@
   (byte-compile-file buffer-file-name))
 
 
-(defun larumbe/elisp-flycheck-mode (&optional arg)
-  "Flycheck-mode Elisp wrapper function.
-Disable function `eldoc-mode' if flycheck is enabled
-to avoid minibuffer collisions.
-Argument ARG sets `flycheck-mode' non-interactively."
-  (interactive)
-  ;; Non-interactive
-  (if arg
-      (progn
-        (flycheck-mode arg)
-        (eldoc-mode (* -1 arg)))
-    ;; Interactive
-    (larumbe/flycheck-eldoc-toggle)))
-
-
 (defun larumbe/insert-time-stamp-elisp ()
   "Insert time-stamp for Elisp buffers.
 Try to add it before Commentary section."

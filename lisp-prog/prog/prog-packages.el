@@ -7,7 +7,20 @@
 ;; - For syntax checking, they override `flymake' and `flycheck' variables, e.g. they execute (flycheck-select-checker 'lsp) or similar
 ;; - For code completion, they change `company-backends', overriding it with `company-capf' or adding it to existing ones
 ;; - etc...
-(use-package eglot)
+(use-package eglot
+  :config
+  ;; Prevent eglot from overriding value of `company-backends' (eglot value of `completion-at-point-functions' still works)
+  (setq eglot-stay-out-of '(company eldoc flymake))
+  ;; Use same binary for cperl-mode
+  (let ((cperl-program (cdr (assoc 'perl-mode eglot-server-programs)))
+        cperl-program-alist)
+    (push 'cperl-mode cperl-program-alist)
+    (dolist (arg cperl-program)
+      (add-to-list 'cperl-program-alist arg :append))
+    (add-to-list 'eglot-server-programs cperl-program-alist))
+  ;; Verilog verible (still in alpha version)
+  (add-to-list 'eglot-server-programs '(verilog-mode "verible-verilog-ls")))
+
 (use-package lsp-mode)
 (use-package lsp-ivy)
 

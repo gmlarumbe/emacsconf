@@ -78,7 +78,6 @@
          ("C-n" . company-select-next-or-abort)
          ("C-p" . company-select-previous-or-abort)
          ("C-j" . company-complete-selection))
-  :commands (larumbe/company-backend-compute)
   :config
   (setq company-idle-delay nil) ; Disable auto complete
   (setq company-transformers '(delete-consecutive-dups company-sort-by-occurrence)) ; Remove duplicate and sort by occurrence
@@ -94,19 +93,22 @@
   ;; - https://company-mode.github.io/manual/Backends.html#Grouped-Backends
   (defvar larumbe/company-backends-common '(company-files (company-capf company-keywords company-gtags :separate)))
 
-  (defun larumbe/company-backend-compute ()
-    "Select `company-backends' based on current major-mode.
+  (defun larumbe/company-backend-report ()
+    "Show current backend used when running `company-other-backend'."
+    (interactive)
+    (let (formatted-backend
+          backend-list)
+      (if (listp company-backend)
+          (progn
+            (setq backend-list (remove :separate company-backend))
+            (setq formatted-backend (propertize (mapconcat #'symbol-name backend-list ", ")
+                                                'face '(:foreground "green"))))
+        (setq formatted-backend (propertize (symbol-name company-backend)
+                                            'face '(:foreground "green"))))
+      ;; Run with timer to overwrite first suggestion from company after showing results
+      (run-with-timer 0.1 nil (lambda () (message "Backend(s): %s" formatted-backend)))))
 
-Normally it will return the grouped value of `larumbe/company-backends-common' plus
-some additional major-mode dependent backend."
-    (cond
-     ((string= major-mode "python-mode")
-      ;; CAPF functions for `python-mode' are more related to shell, and only add gtags-completion-at-point (unnecessary)
-      ;; Plus, unless elpy mode is tested some day, jedi makes the best guesses so far so has the highest precedence.
-      '(company-files (company-jedi company-keywords company-gtags)))
-     ;; Default (common)
-     (t
-      larumbe/company-backends-common))))
+  (advice-add 'company-other-backend :after #'larumbe/company-backend-report))
 
 
 ;;;; Yasnippet

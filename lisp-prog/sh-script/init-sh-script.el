@@ -10,7 +10,8 @@
          ("C-c C-c" . sh-show-shell)
          ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)
          ("C-c C-k" . sh-send-line-or-region-and-step)
-         ("C-c C-t" . hydra-sh/body))
+         ("C-c C-t" . hydra-sh/body)
+         ("C-?"     . larumbe/sh-man-thing-at-point))
   :config
   (require 'sh-script-utils)
   (require 'sh-script-templates))

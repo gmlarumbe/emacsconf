@@ -4,21 +4,44 @@
 
 
 ;;;; Window/Frame Display
-(use-package smart-mode-line
-  :demand
-  :config
-  (setq sml/theme 'dark) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
-  (sml/setup)            ; Enable smart-mode-line
-  (which-function-mode)
-  (set-face-attribute 'which-func nil :foreground "green")
-  (setq line-number-mode nil) ; Hide current line number from mode-line
-  (setq display-time-default-load-average nil) ; Display time on the status bar
-  (display-time-mode t))
-
-
 (use-package popwin
   :config
   (popwin-mode 1))
+
+
+(use-package which-func
+  :straight nil
+  :config
+  (set-face-attribute 'which-func nil :foreground "green"))
+
+
+(use-package time
+  :straight nil
+  :config
+  (setq display-time-default-load-average nil)) ; Display time on the status bar
+
+
+(use-package smart-mode-line
+  :commands (larumbe/sml-enable)
+  :config
+  (defun larumbe/sml-enable (theme)
+    "Wrapper around `sml/enable'.
+Takes into account if current theme exists and if it has been added to `custom-safe-themes'.
+This was needed in order to allow GitHub actions to work properly."
+    (interactive)
+    (unless theme
+      (error "No theme selected!"))
+    ;; Handle `custom-safe-themes'.
+    (let* ((straight-repos-dir (expand-file-name (concat (file-name-as-directory straight-base-dir) "straight/repos")))
+           (theme-file (concat (file-name-as-directory straight-repos-dir) "smart-mode-line/smart-mode-line-dark-theme.el"))
+           (hash (with-temp-buffer
+                   (insert-file-contents theme-file)
+                   (secure-hash 'sha256 (current-buffer)))))
+      (unless (member hash custom-safe-themes)
+        (push hash custom-safe-themes)))
+    ;; Set theme and save
+    (setq sml/theme theme) ; Other choices would be 'light or 'respectful. By default, sml will try to figure out the best sml theme to go with your Emacs theme.
+    (sml/setup)))
 
 
 (use-package buffer-move
@@ -120,18 +143,14 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package winner
   :straight nil
-  :demand
-  :config
-  (winner-mode 1))
+  :config)
 
 
 (use-package beacon
-  :demand
   :diminish
   :config
   (setq beacon-size 20)
-  (add-to-list 'beacon-dont-blink-major-modes 'term-mode)
-  (beacon-mode 1))
+  (add-to-list 'beacon-dont-blink-major-modes 'term-mode))
 
 
 (use-package speedbar
@@ -155,13 +174,10 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package hardcore-mode
-  :demand
   :diminish hardcore-mode
   :init
   (setq too-hardcore-backspace t)
-  (setq too-hardcore-return    t)
-  :config
-  (global-hardcore-mode 1))
+  (setq too-hardcore-return    t))
 
 
 (use-package avy
@@ -212,11 +228,9 @@ the vertical drag is done."
 
 (use-package untabify-trailing-ws
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("minor-modes/untabify-trailing-ws.el"))
-  :demand
   :config
   (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-mode.el") untabify-trailing-disable-on-files)
-  (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-test.el") untabify-trailing-disable-on-files)
-  (untabify-trailing-ws-mode 1))
+  (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-test.el") untabify-trailing-disable-on-files))
 
 
 (use-package align
@@ -227,22 +241,14 @@ the vertical drag is done."
 
 
 (use-package elec-pair
-  :straight nil
-  :demand
-  :config
-  (electric-pair-mode 1))
+  :straight nil)
 
 
 (use-package whole-line-or-region
   :bind (("C-w" . whole-line-or-region-kill-region)))
 
 
-;; TODO: Verify that it's working properly. Remove otherwise
-(use-package smart-mark
-  :demand
-  :config
-  (smart-mark-mode 1))
-
+(use-package smart-mark)
 
 (use-package multiple-cursors
   :bind (("C->"     . mc/mark-next-like-this)
@@ -374,15 +380,6 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   :commands (erc-login
              larumbe/erc-login)
   :config
-  (use-package erc-sasl
-    :straight (:host github :repo "psachin/erc-sasl")
-    :demand)
-  (setq erc-sasl-use-sasl t)
-  ;; Provides a way of authenticating before actually connecting to the server.
-  ;; Requires providing the nick and password in the `erc-tls' function.
-  (add-to-list 'erc-sasl-server-regexp-list "irc\\.freenode\\.net")
-  (add-to-list 'erc-sasl-server-regexp-list "chat\\.freenode\\.net")
-
   (defun larumbe/erc-login ()
     "Perform user authentication at the IRC server."
     (erc-log (format "login: nick: %s, user: %s %s %s :%s"
@@ -407,6 +404,18 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
     (erc-update-mode-line))
 
   (advice-add 'erc-login :override #'larumbe/erc-login))
+
+
+(use-package erc-sasl
+  :straight (:host github :repo "psachin/erc-sasl")
+  :demand
+  :after erc
+  :config
+  (setq erc-sasl-use-sasl t)
+  ;; Provides a way of authenticating before actually connecting to the server.
+  ;; Requires providing the nick and password in the `erc-tls' function.
+  (add-to-list 'erc-sasl-server-regexp-list "irc\\.freenode\\.net")
+  (add-to-list 'erc-sasl-server-regexp-list "chat\\.freenode\\.net"))
 
 
 (use-package env-switch
@@ -434,9 +443,100 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
          ("C-<f12>" . auto-fill-mode)
          ("<f12>"   . toggle-truncate-lines))
   :config
+  (setq line-number-mode nil)   ; Hide current line number from mode-line
   (setq save-interprogram-paste-before-kill t)
   (setq next-error-verbose nil) ; Hide "next-locus on <file> minibuffer messages that interfered with flycheck/eldoc"
-  (advice-add 'newline :before-until #'larumbe/newline-advice)) ; Kill *ag* and *xref* active buffers with RET/C-m
+
+  ;; INFO: Same as `newline' but withouth the (interactive "*" form):
+  ;;  - https://www.gnu.org/software/emacs/manual/html_node/elisp/Using-Interactive.html
+  ;;  - If ‘*’ appears at the beginning of the string, then an error is signaled if the buffer is read-only.
+  ;;  - This prevents signaling an error when pressing C-m (RET) if buffer is read-only
+  ;;  i.e. var `buffer-read-only' was non-nil.
+  ;;  - If this was the case, the function `larumbe/newline-advice' could not be used properly
+  ;;  on read-only buffers to kill xref/help/ag popups since the read-only error had
+  ;;  precedence over the call to `larumbe/newline-advice'. This seems to be implemented
+  ;;  in C instead of Elisp and therefore is not possible to easily override it.
+  ;;  - Plus, this function calls `barf-if-buffer-read-only' so the (interactive "*") check
+  ;;  in C seems redundant.
+  ;;
+  ;; - Copied from <emacs-dir>/share/emacs/28.1/lisp/simple.el.gz
+  ;; - Tried creating a `larumbe/newline' function and adding both
+  ;; :override and :before-until advices to newline but did not seem to work,
+  ;; (might be due to order of advice dependency).
+  ;;
+  (defun newline (&optional arg interactive)
+    "Insert a newline, and move to left margin of the new line.
+With prefix argument ARG, insert that many newlines.
+
+If `electric-indent-mode' is enabled, this indents the final new line
+that it adds, and reindents the preceding line.  To just insert
+a newline, use \\[electric-indent-just-newline].
+
+If `auto-fill-mode' is enabled, this may cause automatic line
+breaking of the preceding line.  A non-nil ARG inhibits this.
+
+If `use-hard-newlines' is enabled, the newline is marked with the
+text-property `hard'.
+
+A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
+    (interactive "P\np") ; DANGER: Only change with respect to original one
+    (barf-if-buffer-read-only)
+    (when (and arg
+               (< (prefix-numeric-value arg) 0))
+      (error "Repetition argument has to be non-negative"))
+    ;; Call self-insert so that auto-fill, abbrev expansion etc. happen.
+    ;; Set last-command-event to tell self-insert what to insert.
+    (let* ((was-page-start (and (bolp) (looking-at page-delimiter)))
+           (beforepos (point))
+           (last-command-event ?\n)
+           ;; Don't auto-fill if we have a prefix argument.
+           (auto-fill-function (if arg nil auto-fill-function))
+           (arg (prefix-numeric-value arg))
+           (procsym (make-symbol "newline-postproc")) ;(bug#46326)
+           (postproc
+            ;; Do the rest in post-self-insert-hook, because we want to do it
+            ;; *before* other functions on that hook.
+            (lambda ()
+              (remove-hook 'post-self-insert-hook procsym t)
+              ;; Mark the newline(s) `hard'.
+              (if use-hard-newlines
+                  (set-hard-newline-properties
+                   (- (point) arg) (point)))
+              ;; If the newline leaves the previous line blank, and we
+              ;; have a left margin, delete that from the blank line.
+              (save-excursion
+                (goto-char beforepos)
+                (beginning-of-line)
+                (and (looking-at "[ \t]+$")
+                     (> (current-left-margin) 0)
+                     (delete-region (point)
+                                    (line-end-position))))
+              ;; Indent the line after the newline, except in one case:
+              ;; when we added the newline at the beginning of a line that
+              ;; starts a page.
+              (or was-page-start
+                  (move-to-left-margin nil t)))))
+      (fset procsym postproc)
+      (if (not interactive)
+          ;; FIXME: For non-interactive uses, many calls actually
+          ;; just want (insert "\n"), so maybe we should do just
+          ;; that, so as to avoid the risk of filling or running
+          ;; abbrevs unexpectedly.
+          (let ((post-self-insert-hook (list postproc)))
+            (self-insert-command arg))
+        (unwind-protect
+            (progn
+              (add-hook 'post-self-insert-hook procsym nil t)
+              (self-insert-command arg))
+          ;; We first used let-binding to protect the hook, but that
+          ;; was naive since add-hook affects the symbol-default
+          ;; value of the variable, whereas the let-binding might
+          ;; protect only the buffer-local value.
+          (remove-hook 'post-self-insert-hook procsym t))))
+    nil)
+
+  ;; Kill *ag*/*xref* and other active buffers with RET/C-m
+  (advice-add 'newline :before-until #'larumbe/newline-advice))
 
 
 (use-package menu-bar
@@ -472,15 +572,13 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 (use-package man
   :straight nil
+  :commands (Man-getpage-in-background) ; Used by `sh-script'
   :config
   (setq Man-notify-method 'pushy))
 
 
 (use-package which-key
-  :diminish
-  :demand
-  :config
-  (which-key-mode 1))
+  :diminish)
 
 
 (use-package browse-url

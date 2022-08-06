@@ -17,19 +17,20 @@
   (setq enable-recursive-minibuffers t) ; Allow minibuffer commands while in the minibuffer.
   ;; Do not break compatibility with Helm for switching buffers
   (if (equal larumbe/completion-framework 'ivy)
-      (progn
-        (ivy-mode 1)
-        (use-package ivy-rich
-          :demand
-          :config
-          (ivy-rich-mode 1)))
+      (ivy-mode 1)
     ;; Else (using helm)
-    (ivy-mode -1))
+    (ivy-mode -1)))
 
 
-  ;; Dependencies
-  (use-package ivy-hydra))
+(use-package ivy-rich
+  :demand
+  :after ivy
+  :config
+  (ivy-rich-mode 1))
 
+
+(use-package ivy-hydra
+  :after ivy)
 
 
 (when (equal larumbe/completion-framework 'ivy)

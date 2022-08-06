@@ -133,6 +133,30 @@ If called witih prefix arg HIDEALL, execute `hs-hide-all' (including classes)"
     (hs-hide-all)))
 
 
+;;;; Newline workaround for ag/xref/ripgrep buffers
+;; INFO: Same as `py-newline-and-indent' but withouth the (interactive "*" form):
+;;  - Check comments of `newline' overriden function
+(defun py-newline-and-indent ()
+  "Add a newline and indent to outmost reasonable indent.
+When indent is set back manually, this is honoured in following lines."
+  (interactive) ; DANGER: Only change from original
+  (let* ((orig (point))
+         ;; lp:1280982, deliberatly dedented by user
+         (this-dedent
+          (when (and (or (eq 10 (char-after))(eobp))(looking-back "^[ \t]*" (line-beginning-position)))
+            (current-column)))
+         erg)
+    (newline 1)
+    (py--delete-trailing-whitespace orig)
+    (setq erg
+          (cond (this-dedent
+                 (indent-to-column this-dedent))
+                ((and py-empty-line-closes-p (or (eq this-command last-command)(py--after-empty-line)))
+                 (indent-to-column (save-excursion (py-backward-statement)(- (current-indentation) py-indent-offset))))
+                (t
+                 (fixup-whitespace)
+                 (indent-to-column (py-compute-indentation)))))
+    erg))
 
 (provide 'python-utils)
 

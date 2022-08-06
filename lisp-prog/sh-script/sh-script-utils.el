@@ -21,6 +21,12 @@
     (goto-char end)))
 
 
+(defun larumbe/sh-man-thing-at-point ()
+  "Find man entry for thing-at-point."
+  (interactive)
+  (Man-getpage-in-background (thing-at-point 'symbol :no-props)))
+
+
 (defun larumbe/sh-mode-hook ()
   "Custom shell script hook."
   (modify-syntax-entry ?+ "."))

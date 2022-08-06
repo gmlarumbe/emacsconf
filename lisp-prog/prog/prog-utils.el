@@ -12,11 +12,16 @@
 
 (defun larumbe/prog-mode-report-backend (tag &optional ref-p backend)
   "Show in the minibuffer what is current used backend."
-  (unless backend
-    (setq backend (xref-find-backend)))
-  (if ref-p
-      (message "[%s] References of: %s" backend tag)
-    (message "[%s] Definitions of: %s" backend tag)))
+  (let (formatted-backend formatted-tag)
+    (unless backend
+      (setq backend (xref-find-backend)))
+    ;; Add some coloring
+    (setq formatted-backend (propertize (symbol-name backend) 'face '(:foreground "goldenrod" :weight bold)))
+    (setq formatted-tag (propertize tag 'face '(:foreground "green")))
+    ;; Report backend and tag
+    (if ref-p
+        (message "[%s] Refs of: %s" formatted-backend formatted-tag)
+      (message "[%s] Defs of: %s" formatted-backend formatted-tag))))
 
 
 (defun larumbe/prog-mode-definitions-default (def)
@@ -58,7 +63,7 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
   (interactive)
   (let ((file (thing-at-point 'filename :noprop))
         (url  (thing-at-point 'url      :noprop))
-        (def  (thing-at-point 'symbol))
+        (def  (thing-at-point 'symbol   :noprop))
         (backend-xref)
         (skip))
     (cond (;; URL
@@ -66,21 +71,24 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
            (browse-url url))
           ;; File
           ((and file (file-exists-p (substitute-in-file-name file)))
-           (if (and (string= major-mode "python-mode")
-                    (string= (file-name-extension file) "py"))
-               (larumbe/find-file-at-point #'jedi:goto-definition-push-marker)
-             (larumbe/find-file-at-point)))
+           (larumbe/find-file-at-point))
           ;; If not pointing to a file choose between different navigation functions
           ;;   - Verilog: try to jump to module at point if not over a tag
           ((string= major-mode "verilog-mode")
            (if def
                (larumbe/prog-mode-definitions-default def)
-             (setq def (verilog-ext-jump-to-module-at-point))
+             ;; TODO: Context based jump if no thing-at-point:
+             ;;  - If inside a module (RTL) and in an instance (create function to make sure of that): (verilog-ext-jump-to-module-at-point)
+             ;;  - If inside a class: Prompt for class name
+             ;; (setq def (verilog-ext-jump-to-module-at-point))
+             (call-interactively #'xref-find-definitions)
              (larumbe/prog-mode-report-backend def)))
-          ;;   - Python: jedi
+          ;;   - Python: elpy
           ((string= major-mode "python-mode")
-           (call-interactively #'jedi:goto-definition)
-           (larumbe/prog-mode-report-backend def nil "jedi"))
+           (if def
+               (xref-find-definitions (elpy-xref--identifier-at-point))
+             (call-interactively #'xref-find-definitions))
+           (larumbe/prog-mode-report-backend def))
           ;; Default to use xref
           (t
            (if def
@@ -103,8 +111,18 @@ and will be applied to only files of current `major-mode' if existing in `larumb
            (string= major-mode "verilog-mode")
            (if ref
                (larumbe/prog-mode-references-default ref)
-             (setq ref (verilog-ext-jump-to-module-at-point :ref))
+             ;; TODO: Context based jump if no thing-at-point:
+             ;;  - If inside a module (RTL) and in an instance (create function to make sure of that): (verilog-ext-jump-to-module-at-point)
+             ;;  - If inside a class: Prompt for class name
+             ;; (setq ref (verilog-ext-jump-to-module-at-point :ref))
+             (call-interactively #'xref-find-references)
              (larumbe/prog-mode-report-backend ref :ref)))
+          (;; Python
+           (string= major-mode "python-mode")
+           (if ref
+               (xref-find-references (elpy-xref--identifier-at-point))
+             (call-interactively #'xref-find-references))
+           (larumbe/prog-mode-report-backend ref :ref))
           ;; Default
           (t (if ref
                  (larumbe/prog-mode-references-default ref)
@@ -146,7 +164,7 @@ and will be applied to only files of current `major-mode' if existing in `larumb
   (wide-column-mode    1)
   (setq truncate-lines t)
   (setq fill-column   80)
-  (setq-local company-backends (larumbe/company-backend-compute))
+  (setq-local company-backends larumbe/company-backends-common)
   (larumbe/dumb-jump-local-enable)
   (gtags-update-async-minor-mode 1)
   (larumbe/prog-mode-indent-tabs-mode))
