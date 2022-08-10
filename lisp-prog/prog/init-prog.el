@@ -26,6 +26,7 @@
 (require 'init-python)
 (require 'init-sh-script)
 (require 'init-tcl)
+(require 'init-perl)
 (require 'init-c)
 (require 'init-prog-others)
 (require 'init-polymode)

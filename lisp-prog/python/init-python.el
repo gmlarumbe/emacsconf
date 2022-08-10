@@ -25,6 +25,8 @@
   :bind (:map python-mode-map
               ("C-c C-t" . larumbe/hydra-python-placeholder)   ; Unmaps `py-toggle-shell' which was not declared at the time of implementing...
               ("C-c C-f" . larumbe/flycheck-eldoc-mode))
+  :init
+  (setq py-pdbtrack-do-tracking-p nil) ; `python-mode' pdbtrack feature caused a BUG in window switching in gud/realgud when moving to next command in source window
   :config
   (setq python-check-command        "pylint")
   (setq py-number-face              font-lock-doc-face)
@@ -41,7 +43,9 @@
   (define-key python-mode-map "\C-c@\C-\M-h" #'larumbe/python-hs-hide-all)
   (advice-add 'py-newline-and-indent :before-until #'larumbe/newline-advice) ; Kill def/refs buffers with C-RET
   (defface larumbe/py-object-reference-face '((t (:foreground "dark olive green"))) "Face" :group 'python-faces) ; self. green face
-  (setq py-object-reference-face 'larumbe/py-object-reference-face))
+  (setq py-object-reference-face 'larumbe/py-object-reference-face)
+  ;; `python-mode' adds a defadvice to `pdb' that makes use of this variable
+  (setq py-pdb-path (intern (executable-find "pdb"))))
 
 
 (use-package jedi-core
