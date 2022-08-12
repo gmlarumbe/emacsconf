@@ -11,10 +11,21 @@
          ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)
          ("C-c C-k" . sh-send-line-or-region-and-step)
          ("C-c C-t" . hydra-sh/body)
-         ("C-?"     . larumbe/sh-man-thing-at-point))
+         ("C-?"     . larumbe/sh-man-thing-at-point)
+         ("C-M-?"   . larumbe/sh-bro))
   :config
   (require 'sh-script-utils)
   (require 'sh-script-templates))
+
+
+(use-package company-shell
+  :after sh-script
+  :demand
+  :hook ((sh-mode . larumbe/company-shell-hook))
+  :config
+  (defun larumbe/company-shell-hook ()
+    "Hook to set `company-backends' for `sh-mode'."
+    (setq-local company-backends (append '(company-shell) company-backends))))
 
 
 (provide 'init-sh-script)

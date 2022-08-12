@@ -59,6 +59,10 @@ If prefix arg is provided, force creation of a new ansi-term."
     (hardcore-mode -1)))
 
 
+(use-package vterm
+  :init
+  (setq vterm-keymap-exceptions '("C-c" "C-x" "C-u" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y")) ; Exclude C-g
+  )
 
 (use-package aweshell
   :straight (:host github :repo "manateelazycat/aweshell")
@@ -68,6 +72,7 @@ If prefix arg is provided, force creation of a new ansi-term."
   :init
   (setq aweshell-search-history-key "C-r")
   :config
+  (setq eshell-visual-subcommands '(("git" "log" "diff" "show")))
 
   ;; TODO: Tweak the ls commands
   ;; TODO: Remove the aliases (ls is an internal elisp command, the aliases break everything)

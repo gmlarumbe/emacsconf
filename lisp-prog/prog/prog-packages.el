@@ -24,6 +24,20 @@
 (use-package lsp-mode)
 (use-package lsp-ivy)
 
+(use-package tree-sitter
+  :init
+  (setq tsc-dyn-get-from '(:compilation)))
+(use-package tree-sitter-langs)
+
+
+(use-package realgud)
+(use-package apheleia ; TODO: Do a PR to submit formatter: https://github.com/radian-software/apheleia section "Adding a formatter"
+  :diminish
+  :config
+  (add-to-list 'apheleia-formatters '(verible . ("verible-verilog-format"
+                                                 "--indentation_spaces" (number-to-string verilog-indent-level)
+                                                 "-")))
+  (add-to-list 'apheleia-mode-alist '(verilog-mode . verible)))
 
 (use-package fic-mode
   :commands (larumbe/clean-fic-keywords-dir

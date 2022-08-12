@@ -91,7 +91,7 @@
   ;; Company only uses one backend at a time, so set a backend for files/dirs and a grouped backend with keywords/tags/etc...
   ;; To keep the candidates organized in accordance with the grouped backends order, add the keyword :separate to the list of the grouped backends.
   ;; - https://company-mode.github.io/manual/Backends.html#Grouped-Backends
-  (defvar larumbe/company-backends-common '(company-files (company-capf company-keywords company-gtags :separate)))
+  (defvar larumbe/company-backends-common '(company-files (company-capf company-keywords company-gtags :separate) company-tabnine))
 
   (defun larumbe/company-backend-report ()
     "Show current backend used when running `company-other-backend'."
@@ -109,6 +109,14 @@
       (run-with-timer 0.1 nil (lambda () (message "Backend(s): %s" formatted-backend)))))
 
   (advice-add 'company-other-backend :after #'larumbe/company-backend-report))
+
+
+(use-package company-tabnine
+  :after company
+  :config
+  (unless (executable-find (company-tabnine--executable-path))
+    (company-tabnine-install-binary)) ; INFO: Check `company-tabnine-install-static-binary' if there are glibc conflicts
+  (company-tabnine-start-process))
 
 
 ;;;; Yasnippet
