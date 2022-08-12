@@ -87,6 +87,18 @@ some day some change on a key is needed, make them be in sync."
   (setq magit-lfs-suffix ";"))
 
 
+;; INFO: More config needed
+;; INFO: Still a bit experimental, works fine in terminal but not so well in *ansi-term*/magit
+;; INFO: In terminal it can detect lines of code moved thanks to git diff, but not in magit?
+;; INFO: Modi's information with respect to this: https://scripter.co/using-git-delta-with-magit/
+;; INFO: Do not forget to check .gitconfig modifications
+;; https://dandavison.github.io/delta/delta-configs-used-in-screenshots.html
+(use-package magit-delta
+  :after magit
+  :if (executable-find "delta")
+  :demand
+  :hook (magit-mode . magit-delta-mode))
+
 
 ;;;;; Gerrit
 ;; https://github.com/emacsorphanage/magit-gerrit/issues/59
