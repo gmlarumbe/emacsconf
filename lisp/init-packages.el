@@ -638,6 +638,22 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
 (use-package screenshot)
 
 
+
+(use-package helpful
+  :bind (
+         ("C-h f" . helpful-callable)
+         ("C-h v" . helpful-variable)
+         ("C-h k" . helpful-key)
+         ("C-h d" . helpful-at-point)
+         ("C-h F" . helpful-function)
+         ("C-h C" . helpful-command)
+         )
+  :config
+  (setq counsel-describe-function-function #'helpful-callable)
+  (setq counsel-describe-variable-function #'helpful-variable)
+  )
+
+
 ;;;; Libraries
 (use-package dash)
 (use-package s)

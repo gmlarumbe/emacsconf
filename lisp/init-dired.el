@@ -35,9 +35,19 @@ Provides a more convenient solution to cluttering dired buffers than `dired-sing
         (with-current-buffer $buf
           (when (string= major-mode "dired-mode")
             (kill-buffer $buf)))))
-    (if (string= major-mode "dired-mode")
-        (previous-buffer)
-      (dired-jump)))
+    (cond ((string= major-mode "dired-mode")
+           (previous-buffer))
+          ((string= major-mode "vterm-mode")
+           ;; INFO: Updates `default-directory' from current shell through file write/read
+           (let* ((pwd-file "/tmp/vterm-last-dir")
+                  (pwd-cmd (concat "echo -n $(pwd) > " pwd-file "\n"))
+                  (default-directory default-directory)) ; Save global status of `default-directory'
+             (larumbe/sh-send-string-vterm pwd-cmd)
+             (sleep-for 0.15) ; Without this line point moved far above in *vterm*
+             (setq default-directory (shell-command-to-string (concat "cat " pwd-file)))
+             (dired-jump)))
+          (t
+           (dired-jump))))
 
   (defun larumbe/dired-toggle-deletion-confirmer ()
     "Toggles deletion confirmer for dired from (y-or-n) to nil and viceversa."
