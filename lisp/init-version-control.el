@@ -48,7 +48,6 @@ some day some change on a key is needed, make them be in sync."
           :description "Magit-Gerrit")))
     ;; `gerrit'
     (when (locate-library "gerrit")
-      (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)
       (define-key magit-status-mode-map "," #'gerrit-dashboard)
       (transient-append-suffix 'magit-dispatch "H"
         `(gerrit-dashboard
@@ -76,6 +75,10 @@ some day some change on a key is needed, make them be in sync."
   ;; Magit config
   (setq magit-diff-refine-hunk t) ; Show word-granularity differences within diff hunks
   (setq magit-diff-highlight-hunk-body nil) ; Disable background gray highlighting of current hunk
+  ;; INFO: Adding the same hook many times to the same function does not result in being executed more than once
+  (advice-add 'gerrit-dashboard        :before #'(lambda () (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)))
+  (advice-add 'gerrit-download         :before #'(lambda () (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)))
+  (advice-add 'gerrit-upload-transient :before #'(lambda () (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)))
   (larumbe/magit-customize-dispatch))
 
 
