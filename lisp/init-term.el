@@ -10,7 +10,6 @@
          ("M->" . end-of-buffer)
          ("M-<" . beginning-of-buffer)
          ("M-x" . counsel-M-x))
-  :bind (("C-," . larumbe/ansi-term-dwim))
   :hook ((term-mode . larumbe/term-hook))
   :config
   (setq comint-process-echoes t)
@@ -60,7 +59,9 @@ If prefix arg is provided, force creation of a new ansi-term."
 
 
 (use-package vterm
+  :bind (("C-," . vterm))
   :init
+  (setq vterm-shell "zsh")
   (setq vterm-keymap-exceptions '("C-c" "C-x" "C-u" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y")) ; Exclude C-g
   )
 

@@ -150,7 +150,8 @@ C-s C-w [C-w] [C-w]... behaviour. "
   :diminish
   :config
   (setq beacon-size 20)
-  (add-to-list 'beacon-dont-blink-major-modes 'term-mode))
+  (add-to-list 'beacon-dont-blink-major-modes 'term-mode)
+  (add-to-list 'beacon-dont-blink-major-modes 'vterm-mode))
 
 
 (use-package speedbar

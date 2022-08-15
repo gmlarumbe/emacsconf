@@ -74,7 +74,8 @@ some day some change on a key is needed, make them be in sync."
         '("'" "Forge" forge-dispatch))))
 
   ;; Magit config
-  (setq magit-diff-refine-hunk t) ; Highlight differences of selected hunk
+  (setq magit-diff-refine-hunk t) ; Show word-granularity differences within diff hunks
+  (setq magit-diff-highlight-hunk-body nil) ; Disable background gray highlighting of current hunk
   (larumbe/magit-customize-dispatch))
 
 
@@ -87,17 +88,19 @@ some day some change on a key is needed, make them be in sync."
   (setq magit-lfs-suffix ";"))
 
 
-;; INFO: More config needed
-;; INFO: Still a bit experimental, works fine in terminal but not so well in *ansi-term*/magit
-;; INFO: In terminal it can detect lines of code moved thanks to git diff, but not in magit?
-;; INFO: Modi's information with respect to this: https://scripter.co/using-git-delta-with-magit/
-;; INFO: Do not forget to check .gitconfig modifications
-;; https://dandavison.github.io/delta/delta-configs-used-in-screenshots.html
+;; INFO: Requires xterm-256color to work properly (*ansi-term* is not enough)
+;; - https://dandavison.github.io/delta/delta-configs-used-in-screenshots.html
+;; - https://scripter.co/using-git-delta-with-magit/
+;; - Magit uses its own configuration for faces/highlighting (not the config from .gitconfig)
 (use-package magit-delta
   :after magit
   :if (executable-find "delta")
   :demand
-  :hook (magit-mode . magit-delta-mode))
+  :hook (magit-mode . magit-delta-mode)
+  :config
+  (setq magit-delta-default-dark-theme "none")
+  (setq magit-delta-default-light-theme "none")
+  (setq magit-delta-delta-args '("--max-line-distance" "0.6" "--true-color" "never" "--diff-so-fancy")))
 
 
 ;;;;; Gerrit
