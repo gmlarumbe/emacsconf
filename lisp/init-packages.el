@@ -686,7 +686,8 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
 
 (use-package larumbe-functions
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/larumbe-functions.el"))
-  :bind (("M-w"             . larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
+  :bind (("C-x C-f"         . larumbe/find-file-dwim)                 ; Context based `find-file-at-point'
+         ("M-w"             . larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
          ("C-z"             . larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
          ("C-x C-z"         . larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
          ("C-x C-/"         . larumbe/pwd-to-kill-ring)

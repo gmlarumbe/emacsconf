@@ -70,8 +70,11 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
            url
            (browse-url url))
           ;; File
-          ((and file (file-exists-p (substitute-in-file-name file)))
-           (larumbe/find-file-at-point))
+          ((and file (file-exists-p (larumbe/strip-file-line-number (substitute-in-file-name file))))
+           (larumbe/find-file-dwim))
+          ;;   - Org: `org-open-at-point'
+          ((string= major-mode "org-mode")
+           (call-interactively #'org-open-at-point))
           ;; If not pointing to a file choose between different navigation functions
           ;;   - Verilog: try to jump to module at point if not over a tag
           ((string= major-mode "verilog-mode")
