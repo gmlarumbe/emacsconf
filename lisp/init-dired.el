@@ -99,7 +99,7 @@ To cancel a copy call `dired-async-kill-process'. "
 (use-package dired-aux
   :straight nil
   :after dired
-  :commands (dired-do-async-shell-command)
+  :demand
   :bind (:map dired-mode-map
          ("I" . dired-kill-subdir))) ; Replaces `dired-info', requires `dired-aux', mapping in dired-aux use-package didn't work
 

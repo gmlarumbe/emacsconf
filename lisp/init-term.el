@@ -59,11 +59,16 @@ If prefix arg is provided, force creation of a new ansi-term."
 
 
 (use-package vterm
+  :bind (:map vterm-mode-map
+         ("C-c C-t" . nil) ; Remap `vterm-copy-mode' to C-c C-k
+         ("C-c C-k" . vterm-copy-mode))
+  :bind (:map vterm-copy-mode-map
+         ("C-c C-t" . nil)
+         ("C-c C-k" . vterm-copy-mode-done))
   :bind (("C-," . vterm))
   :init
-  (setq vterm-shell "zsh")
-  (setq vterm-keymap-exceptions '("C-c" "C-x" "C-u" "C-h" "C-l" "M-x" "M-o" "C-y" "M-y")) ; Exclude C-g
-  )
+  (setq vterm-keymap-exceptions '("C-c" "C-x" "C-u" "C-h" "C-l" "M-x" "M-O" "M-o" "C-y" "M-y")) ; Exclude C-g
+  (setq vterm-shell "zsh"))
 
 (use-package aweshell
   :straight (:host github :repo "manateelazycat/aweshell")
