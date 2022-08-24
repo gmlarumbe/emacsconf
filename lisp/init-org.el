@@ -61,6 +61,8 @@
           ("POSTPONED"   . "cyan")
           ("INFO"        . "light blue")))
 
+  (setq org-priority-lowest ?E)          ; Set priority range [A-E]
+  (setq org-priority-default ?C)         ; Default priority to average C
   (add-to-list 'org-export-backends 'md) ; Add markdown to export backends
 
   (defun larumbe/org-show-todos-agenda ()

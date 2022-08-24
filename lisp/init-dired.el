@@ -112,14 +112,14 @@ To cancel a copy call `dired-async-kill-process'. "
   :diminish dired-omit-mode
   :hook ((dired-mode . dired-omit-mode)) ; hide backup, autosave, *.*~ files
   :init
-  (setq dired-bind-jump nil) ; Prevents overriding of `larumbe/dired-jump' for C-x C-j keybinding
+  (setq dired-bind-jump nil) ; Prevent overriding of `larumbe/dired-jump' for C-x C-j keybinding
+  (setq dired-bind-info nil) ; Prevent overriding of `dired-kill-subdir'
   :config
   (setq dired-omit-verbose nil)
   (delete ".bin" dired-omit-extensions)
   (setq dired-guess-shell-alist-user ; Program mappings to dired-do-shell-command (precedence over `dired-guess-shell-alist-default')
         '(("\\.pdf\\'"  "okular")
-          ("\\.lxt2\\'" "gtkwave")))
-  (setq dired-bind-info nil))
+          ("\\.lxt2\\'" "gtkwave"))))
 
 
 ;; EmacsWiki: `dired+'
