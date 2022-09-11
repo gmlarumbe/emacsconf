@@ -93,6 +93,21 @@ Used for some ripgrep/dumb-jump xref related functions."
       default-directory)))
 
 
+(use-package consult-projectile
+  :diminish
+  :after projectile
+  :bind (:map projectile-mode-map
+         ("C-c p s" . consult-projectile-switch-project)
+         ("C-c p f" . consult-projectile-find-file)
+         ("C-c p b" . consult-projectile-switch-to-buffer)
+         ;; ("C-c p a" . larumbe/consult-projectile-ag)
+         ;; ("C-c p r" . larumbe/consult-projectile-rg)
+         ("C-c p g" . consult-projectile-grep))
+  ;; TODO: Implement the equivalent ivy functions
+  ;; :config
+  )
+
+
 (when (equal larumbe/completion-framework 'helm)
   (use-package helm-projectile
     :diminish

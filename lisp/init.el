@@ -16,6 +16,7 @@
 (require 'init-org)
 (require 'init-packages)
 (require 'init-grep)
+;; (require 'init-vertico)
 (require 'init-helm)
 (require 'init-ivy)
 (require 'init-projectile)
