@@ -24,10 +24,14 @@
 (use-package lsp-mode)
 (use-package lsp-ivy)
 
+;; INFO: Requires libtree-sitter.so
 (use-package tree-sitter
   :init
   (setq tsc-dyn-get-from '(:compilation))
   :config
+  ;; TODO: Verilog still does not have a highlights.scm in tree-sitter-langs required by emacs-lisp-tree-sitter
+  ;; /home/gonz/.emacs.d/straight/repos/tree-sitter-langs/queries/verilog/highlights.scm
+  ;; Created manually but not being used so far
   (add-to-list 'tree-sitter-major-mode-language-alist (cons 'verilog-mode 'verilog)))
 (use-package tree-sitter-langs)
 
@@ -191,6 +195,19 @@ Same as `hs-toggle-hiding', but do not exec: (posn-set-point (event-end e))"
   (set-face-attribute 'ediff-current-diff-A nil :background "darkorange3" :foreground "white" :inherit nil)
   (set-face-attribute 'ediff-fine-diff-A    nil :background "cyan4"       :foreground "white" :inherit nil)
   (set-face-attribute 'ediff-even-diff-A    nil :background "Grey50"      :foreground "White" :inherit nil))
+
+
+;; INFO: `delta' binary requires libc >= 2.28 and may not be usable on old machines
+(use-package diff-ansi
+  :commands (diff-ansi-mode diff-ansi-buffer)
+  :config
+  ;; TODO: Setup depending on machine (delta with diff-so-fancy setting might be a better option)
+  ;; INFO: Requires enabling of `diff-ansi-mode', which is buffer local.
+  ;;       diff-so-fancy experience:
+  ;;         - Requires updating .gitconfig with .e.g $ diff-so-fancy --set-defaults
+  ;;         - Plus, configuration doesn't allow navigating chunks in magit, while `magit-delta' does.
+  (setq diff-ansi-tool 'diff-so-fancy)
+  (setq diff-ansi-use-magit-revision-diff t))
 
 
 
