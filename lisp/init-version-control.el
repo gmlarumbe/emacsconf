@@ -214,8 +214,6 @@ some day some change on a key is needed, make them be in sync."
 
 ;;;; Repo
 (use-package repo
-  :straight (:repo "canatella/repo-el"
-             :fork (:repo "gmlarumbe/repo-el" :branch "dev"))
   :bind (:map repo-mode-map
          ("U" . larumbe/update-repo))
   :config
@@ -264,6 +262,14 @@ some day some change on a key is needed, make them be in sync."
     (svn-status default-directory)
     (setq truncate-lines t)))
 
+
+
+;;;; Misc
+(use-package diff-hl
+  :bind (("M-<f10>" . global-diff-hl-mode))
+  :config
+  (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
 
 ;;;; Own utils

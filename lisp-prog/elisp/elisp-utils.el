@@ -315,7 +315,16 @@ Lisp function does not specify a special indentation."
 
 
 
-;;;; Packages
+;;;; Lint
+;; Needed to submit packages to MELPA. Helpful to write other modes.
+(use-package package-lint)
+;; Only enabled if package has comments with: "Version" "Package-Version" "Package-Requires"
+;; i.e: `package-lint-looks-like-a-package-p' is t for `current-buffer'
+(use-package flycheck-package
+  :after package-lint)
+
+
+;;;; Misc
 (use-package lively
   :demand
   :config
