@@ -25,7 +25,7 @@ i.e. one absolute file path per line"
 
   (defun larumbe/ag-search-project-gtags ()
     "Search `symbol-at-point' based on current projectile project.
-List of files provided by project's 'gtags.file' will filter the search."
+List of files provided by project's 'gtags.files' will filter the search."
     (interactive)
     (let* ((proj-dir   (projectile-project-root))
            (gtags-file (concat proj-dir "gtags.files")))

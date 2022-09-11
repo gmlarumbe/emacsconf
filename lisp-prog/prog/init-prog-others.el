@@ -110,6 +110,10 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
   :straight nil)
 
 
+;;;; RUST
+(use-package rust-mode)
+
+
 ;;;; JSON
 (use-package json-mode)
 

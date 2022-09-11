@@ -22,6 +22,7 @@
 (setq initial-scratch-message nil)             ; Clear initial *scratch* message
 (setq disabled-command-function 'ignore)       ; Enable all commands
 (setq initial-major-mode 'fundamental-mode)    ; Avoid start *scratch* in `lisp-interaction-mode' and enabling default `prog-mode-hook.
+(setq completions-detailed t)                  ; New in Emacs 28
 
 ;; Save some screen real estate
 (menu-bar-mode -1)
@@ -38,19 +39,33 @@
 (defvar larumbe/emacs-conf-repos-packages '("~/.emacs.d/straight/repos/my-elisp-packages" "~/.emacs.d/straight/repos/my-elisp-packages-priv"))
 (defvar larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos-core larumbe/emacs-conf-repos-packages))
 (defvar larumbe/emacs-conf-straight-forked
-  '("~/.emacs.d/straight/repos/yasnippet-snippets"
-    "~/.emacs.d/straight/repos/verilog-mode"
-    "~/.emacs.d/straight/repos/ssh-tunnels"
-    "~/.emacs.d/straight/repos/ripgrep.el"
-    "~/.emacs.d/straight/repos/repo-el"
-    "~/.emacs.d/straight/repos/org-jira"
-    "~/.emacs.d/straight/repos/kmodi"
-    "~/.emacs.d/straight/repos/jenkins.el"
-    "~/.emacs.d/straight/repos/ivy-youtube"
-    "~/.emacs.d/straight/repos/emacs-btc-ticker"
-    "~/.emacs.d/straight/repos/emacs"
-    "~/.emacs.d/straight/repos/arch-packer")
+  '("~/.emacs.d/straight/repos/org-jira"           ; Keep forked: changes for non-Atlassian accounts
+    "~/.emacs.d/straight/repos/yasnippet-snippets" ; Keep forked: get updates with --rebase
+    "~/.emacs.d/straight/repos/jenkins.el"         ; Keep forked: deferred additions with some larumbe/
+    "~/.emacs.d/straight/repos/kmodi"              ; Try to not depend on modi/instance regexps to avoid commenting code and all of that (rebased local commits pushed on fork/larumbe)
+    "~/.emacs.d/straight/repos/arch-packer"        ; Maybe with some refactoring, updates after 5 years, no PR in this project. Wait until I get arch in new computer
+    "~/.emacs.d/straight/repos/helm-navi"          ; PR pending review
+    "~/.emacs.d/straight/repos/elpy"               ; PR pending review
+    "~/.emacs.d/straight/repos/emacs"              ; TODO: vhdl-mode hierarchy error fixed in Emacs 29
+    "~/.emacs.d/straight/repos/verilog-mode")      ; Development as a maintainer
+  ;; TODO: Add PR to apheleia?
+  ;; TODO: Add PR to tree-sitter?
+  ;; TODO: Add PR to aweshell?
   "Obtained through evaluation of: `(larumbe/git-check-forked-repos (larumbe/straight-packages))'")
+
+
+;; Native compilation
+;;   How to enable it:
+;;   - Install libgccjit
+;;   - Install libjansson (JSON native for lsp/eglot)
+;;   - Build emacs: $ ./configure --with-native-compilation && make && make install
+;;   - Check if it's enabled:
+;;      - (native-comp-available-p) -> t
+;;      - (functionp 'json-serialize) -> t
+;;
+;; (when (native-comp-available-p)
+;;   (setq native-comp-deferred-compilation t)) ; Defer compilation of .elc loaded modules until they are used
+
 
 
 

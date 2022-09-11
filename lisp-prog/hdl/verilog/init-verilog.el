@@ -28,22 +28,24 @@
   (setq verilog-indent-level-directive   larumbe/verilog-indent-level)
   (setq verilog-case-indent              larumbe/verilog-indent-level)
   (setq verilog-cexp-indent              larumbe/verilog-indent-level)
-  (setq verilog-indent-lists                  nil) ; If set to nil, indentation will not properly detect we are inside a parenthesized expression (instance or ports/parameters)
+  (setq verilog-indent-lists                  nil)
   (setq verilog-indent-begin-after-if           t)
   (setq verilog-tab-always-indent               t) ; Indent even though we are not at the beginning of line
   (setq verilog-tab-to-comment                nil)
   (setq verilog-date-scientific-format          t)
   (setq verilog-case-fold                     nil) ; Regexps should NOT ignore case
   (setq verilog-align-ifelse                  nil)
-  (setq verilog-minimum-comment-distance       10)
   ;; Verilog AUTO
   (setq verilog-auto-delete-trailing-whitespace t) ; ‘delete-trailing-whitespace’ in ‘verilog-auto’.
   (setq verilog-auto-indent-on-newline          t) ; Self-explaining
   (setq verilog-auto-lineup                   nil) ; other options are 'declarations or 'all
   (setq verilog-auto-newline                  nil)
   (setq verilog-auto-endcomments                t)
-  ;; Others
-  (setq verilog-typedef-regexp "_t$")
+  (setq verilog-minimum-comment-distance        1) ; INFO: (default 10) Only applies to AUTOs, called in `verilog-set-auto-endcomments'
+  ;; Alignment
+  (setq verilog-align-assign-expr t)
+  (setq verilog-align-typedef-words nil) ; INFO: Set on specific machines
+  (setq verilog-align-typedef-regexp (concat "\\<" verilog-identifier-re "_t\\>")) ; INFO: Set on specific machines
   ;; Mode config
   (remove-hook 'compilation-mode-hook 'verilog-error-regexp-add-emacs) ; `verilog-mode' automatically adds useless compilation regexp alists
   (advice-add 'electric-verilog-terminate-line :before-until #'larumbe/newline-advice)) ; Quit *xref* buffer with C-m/RET

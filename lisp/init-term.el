@@ -58,6 +58,7 @@ If prefix arg is provided, force creation of a new ansi-term."
     (hardcore-mode -1)))
 
 
+
 (use-package vterm
   :bind (:map vterm-mode-map
          ("C-c C-t" . nil) ; Remap `vterm-copy-mode' to C-c C-k
@@ -69,6 +70,8 @@ If prefix arg is provided, force creation of a new ansi-term."
   :init
   (setq vterm-keymap-exceptions '("C-c" "C-x" "C-u" "C-h" "C-l" "M-x" "M-O" "M-o" "C-y" "M-y")) ; Exclude C-g
   (setq vterm-shell "zsh"))
+
+
 
 (use-package aweshell
   :straight (:host github :repo "manateelazycat/aweshell")
@@ -84,8 +87,8 @@ If prefix arg is provided, force creation of a new ansi-term."
   ;; TODO: Remove the aliases (ls is an internal elisp command, the aliases break everything)
 
   ;; INFO: Plan9 style shell (eshell related things)
-  ;; (require 'em-smart)
-  ;; (eshell-smart-initialize)
+  (require 'em-smart)
+  (eshell-smart-initialize)
 
   (defun larumbe/aweshell-delchar-or-eof (arg)
     "Delete ARG characters forward, or send an EOF to process if at end of buffer."

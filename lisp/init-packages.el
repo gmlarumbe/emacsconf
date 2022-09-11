@@ -428,6 +428,9 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 (use-package exec-path-from-shell)
 
 
+(use-package ytdl)
+
+
 ;;;; Misc
 ;; GUI and Clipboard
 (use-package select
@@ -639,20 +642,26 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
 (use-package screenshot)
 
 
+(use-package camcorder
+  :commands (camcorder-start
+             camcorder-record
+             camcorder-stop))
+
+
+(use-package font-lock-studio)
+
 
 (use-package helpful
-  :bind (
-         ("C-h f" . helpful-callable)
+  :bind (("C-h f" . helpful-callable)
          ("C-h v" . helpful-variable)
          ("C-h k" . helpful-key)
          ("C-h d" . helpful-at-point)
          ("C-h F" . helpful-function)
-         ("C-h C" . helpful-command)
-         )
+         ("C-h C" . helpful-command))
   :config
   (setq counsel-describe-function-function #'helpful-callable)
-  (setq counsel-describe-variable-function #'helpful-variable)
-  )
+  (setq counsel-describe-variable-function #'helpful-variable))
+
 
 
 ;;;; Libraries
@@ -689,7 +698,6 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
   :bind (("C-x C-f"         . larumbe/find-file-dwim)                 ; Context based `find-file-at-point'
          ("M-w"             . larumbe/copy-region-or-symbol-at-point) ; Overrides `kill-ring-save'
          ("C-z"             . larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
-         ("C-x C-z"         . larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
          ("C-x C-/"         . larumbe/pwd-to-kill-ring)
          ("C-x C-,"         . larumbe/revert-buffer-maybe-no-confirm)
          ("C-M-<backspace>" . larumbe/kill-sexp-backwards)

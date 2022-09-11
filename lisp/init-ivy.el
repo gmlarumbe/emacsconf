@@ -60,7 +60,6 @@ Use isearch if uarg is provided (e.g. large files where swiper could be a bit sl
     (defun larumbe/search-backward (&optional uarg)
       "Use isearch for dired-mode and swiper for the rest.
 Use isearch if uarg is provided (e.g. large files where swiper could be a bit slow)."
-      (interactive)
       (interactive "P")
       (if (or (string= major-mode "dired-mode")
               uarg)
@@ -213,8 +212,6 @@ Otherwise, smart-case is performed (similar to case-fold-search)."
 
 
   (use-package ivy-youtube
-    :straight (:repo "squiter/ivy-youtube"
-               :fork (:repo "gmlarumbe/ivy-youtube"))
     :bind (("C-x c y" . ivy-youtube))))
 
 
