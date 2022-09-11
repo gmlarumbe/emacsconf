@@ -3,11 +3,11 @@
 ;;; Code:
 
 
-(defun larumbe/sh-send-line-or-region-and-step-ansi ()
-  "Same as `sh-send-line-or-region-and-step' but for *ansi-term* process."
+(defun larumbe/sh-send-line-or-region-and-step (buffer)
+  "Same as `sh-send-line-or-region-and-step' but for process in BUFFER."
   (interactive)
-  (unless (get-buffer "*ansi-term*")
-    (error "Buffer *ansi-term* does not exist"))
+  (unless (get-buffer buffer)
+    (error "Buffer %s does not exist" buffer))
   (let (from to end)
     (if (use-region-p)
         (setq from (region-beginning)
@@ -16,9 +16,31 @@
       (setq from (line-beginning-position)
             to (line-end-position)
             end (1+ to)))
-    (comint-send-string (get-buffer-process "*ansi-term*")
-                        (concat (buffer-substring-no-properties from to) "\n"))
+    (process-send-string (get-buffer-process buffer)
+                         (concat (buffer-substring-no-properties from to) "\n"))
     (goto-char end)))
+
+
+(defun larumbe/sh-send-line-or-region-and-step-ansi ()
+  "Send current line or region to *ansi-term* and go to next line."
+  (interactive)
+  (larumbe/sh-send-line-or-region-and-step "*ansi-term*"))
+
+
+(defun larumbe/sh-send-line-or-region-and-step-vterm ()
+  "Send current line or region to *vterm* go to next line."
+  (interactive)
+  (larumbe/sh-send-line-or-region-and-step "*vterm*"))
+
+
+(defun larumbe/sh-send-string-vterm (string)
+  "Send STRING to *vterm* process."
+  (interactive)
+  (let* ((buf "*vterm*")
+         (proc (get-buffer-process buf)))
+    (unless (get-buffer buf)
+      (error "Buffer %s does not exist" buffer))
+    (process-send-string proc string)))
 
 
 (defun larumbe/sh-man-thing-at-point ()

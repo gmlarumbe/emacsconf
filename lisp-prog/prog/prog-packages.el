@@ -26,7 +26,9 @@
 
 (use-package tree-sitter
   :init
-  (setq tsc-dyn-get-from '(:compilation)))
+  (setq tsc-dyn-get-from '(:compilation))
+  :config
+  (add-to-list 'tree-sitter-major-mode-language-alist (cons 'verilog-mode 'verilog)))
 (use-package tree-sitter-langs)
 
 

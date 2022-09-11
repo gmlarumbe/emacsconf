@@ -3,8 +3,7 @@
 ;;; Code:
 
 (use-package cc-mode
-  :mode (("\\.ino\\'"  . c-mode)
-         ("\\.vsif\\'" . c-mode))
+  :mode (("\\.ino\\'"  . c-mode))
   :diminish hide-ifdef-mode
   :bind (:map c-mode-map ; Also inherited by c++ buffers, not in the other direction!
               ("C-c f" . semantic-ia-show-summary)

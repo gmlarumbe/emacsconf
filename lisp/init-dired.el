@@ -35,9 +35,19 @@ Provides a more convenient solution to cluttering dired buffers than `dired-sing
         (with-current-buffer $buf
           (when (string= major-mode "dired-mode")
             (kill-buffer $buf)))))
-    (if (string= major-mode "dired-mode")
-        (previous-buffer)
-      (dired-jump)))
+    (cond ((string= major-mode "dired-mode")
+           (previous-buffer))
+          ((string= major-mode "vterm-mode")
+           ;; INFO: Updates `default-directory' from current shell through file write/read
+           (let* ((pwd-file "/tmp/vterm-last-dir")
+                  (pwd-cmd (concat "echo -n $(pwd) > " pwd-file "\n"))
+                  (default-directory default-directory)) ; Save global status of `default-directory'
+             (larumbe/sh-send-string-vterm pwd-cmd)
+             (sleep-for 0.15) ; Without this line point moved far above in *vterm*
+             (setq default-directory (shell-command-to-string (concat "cat " pwd-file)))
+             (dired-jump)))
+          (t
+           (dired-jump))))
 
   (defun larumbe/dired-toggle-deletion-confirmer ()
     "Toggles deletion confirmer for dired from (y-or-n) to nil and viceversa."
@@ -89,7 +99,7 @@ To cancel a copy call `dired-async-kill-process'. "
 (use-package dired-aux
   :straight nil
   :after dired
-  :commands (dired-do-async-shell-command)
+  :demand
   :bind (:map dired-mode-map
          ("I" . dired-kill-subdir))) ; Replaces `dired-info', requires `dired-aux', mapping in dired-aux use-package didn't work
 
@@ -102,14 +112,14 @@ To cancel a copy call `dired-async-kill-process'. "
   :diminish dired-omit-mode
   :hook ((dired-mode . dired-omit-mode)) ; hide backup, autosave, *.*~ files
   :init
-  (setq dired-bind-jump nil) ; Prevents overriding of `larumbe/dired-jump' for C-x C-j keybinding
+  (setq dired-bind-jump nil) ; Prevent overriding of `larumbe/dired-jump' for C-x C-j keybinding
+  (setq dired-bind-info nil) ; Prevent overriding of `dired-kill-subdir'
   :config
   (setq dired-omit-verbose nil)
   (delete ".bin" dired-omit-extensions)
   (setq dired-guess-shell-alist-user ; Program mappings to dired-do-shell-command (precedence over `dired-guess-shell-alist-default')
         '(("\\.pdf\\'"  "okular")
-          ("\\.lxt2\\'" "gtkwave")))
-  (setq dired-bind-info nil))
+          ("\\.lxt2\\'" "gtkwave"))))
 
 
 ;; EmacsWiki: `dired+'

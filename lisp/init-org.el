@@ -44,7 +44,8 @@
          ("M-,"   . org-mark-ring-goto) ; Override xref-pop-marker-stack, used now to pop back links
          ("C-,"   . nil)                ; Unamps org-cycle-agenda-files to free `larumbe/ansi-term'
          ("C-c l" . org-store-link)
-         ("C-c a" . org-agenda))
+         ("C-c a" . org-agenda)
+         ("M-."   . nil))               ; Will be overriden by `larumbe/prog-mode-definitions'
   :bind (("C-x l" . larumbe/org-show-todos-agenda))
   :hook ((org-mode           . larumbe/org-mode-hook)
          (org-insert-heading . larumbe/org-insert-current-header))
@@ -60,6 +61,8 @@
           ("POSTPONED"   . "cyan")
           ("INFO"        . "light blue")))
 
+  (setq org-priority-lowest ?E)          ; Set priority range [A-E]
+  (setq org-priority-default ?C)         ; Default priority to average C
   (add-to-list 'org-export-backends 'md) ; Add markdown to export backends
 
   (defun larumbe/org-show-todos-agenda ()

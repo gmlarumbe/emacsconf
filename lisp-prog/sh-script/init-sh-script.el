@@ -8,7 +8,7 @@
          (sh-mode . eglot-ensure))
   :bind (:map sh-mode-map
          ("C-c C-c" . sh-show-shell)
-         ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-ansi)
+         ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-vterm)
          ("C-c C-k" . sh-send-line-or-region-and-step)
          ("C-c C-t" . hydra-sh/body)
          ("C-?"     . larumbe/sh-man-thing-at-point)
