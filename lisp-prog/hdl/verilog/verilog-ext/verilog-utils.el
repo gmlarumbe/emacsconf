@@ -141,7 +141,7 @@ For example, in SystemVerilog, packages might need to be included before other f
 
 (defun verilog-ext-flycheck-eldoc-toggle ()
   "Disable `eldoc-mode' when enabling `flycheck-mode'.
-Avoid minibuffer conflicts."
+Avoid minibuffer conflicts between ggtags use of eldoc and flycheck."
   (interactive)
   (if eldoc-mode
       (progn

@@ -24,7 +24,7 @@
 ;;   - Check timestamp
 
 (require 'verilog-rx)
-(require 'verilog-shadow)
+;; (require 'verilog-shadow)
 (require 'verilog-completion)
 (require 'verilog-navigation)
 (require 'verilog-which-func)

@@ -13,10 +13,16 @@
   :bind (:map verilog-mode-map
          ([delete]  . delete-forward-char)
          ("C-%"     . hide/show-comments-toggle)
+         (";"       . nil) ; Unmap automatically indent lines after ;
+         ;; TODO: Remove these when proper PR sets them as default?
          ("C-M-a"   . verilog-beg-of-defun)
          ("C-M-e"   . verilog-end-of-defun)
          ("C-M-h"   . verilog-mark-defun)
+         ;; End of TODO
          ("C-c C-o" . verilog-pretty-expr) ; C-c C-i same as C-c TAB that executes `verilog-pretty-declarations'
+         ("C-c C-b" . nil)                 ; Unmap `verilog-submit-bug-report', leave space for something else
+         ("C-c C-d" . nil)                 ; Unmap `verilog-goto-defun' until it's fixed, leave space for some verilog-ext function
+         ("C-c /"   . nil)                 ; Unmap `verilog-star-comment'
          ("M-RET"   . nil)) ; Leave space for `company-complete'
   :config
   ;; Indentation

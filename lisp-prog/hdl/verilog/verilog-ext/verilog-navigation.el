@@ -159,7 +159,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
       (goto-char start))))
 
 
-;; TODO: Implement optional verilog-array-content
+;; TODO: Try to optimize it not to do the forward-line thing
 (defun verilog-ext-find-module-instance-fwd-4 (&optional limit)
   "Search for a Verilog module/instance regexp.
 
@@ -178,7 +178,9 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
         (when (called-interactively-p) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
           (forward-char))  ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
         (while (and (not (eobp))
-                    (> limit (point))
+                    (if limit
+                        (> limit (point))
+                      t)
                     (not (and (verilog-re-search-forward (concat "\\s-*" identifier-re) limit t) ; Initial blank + module name identifier
                               (unless (member (match-string-no-properties 1) verilog-keywords)
                                 (setq module-name (match-string-no-properties 1))
@@ -191,6 +193,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
                                        (verilog-forward-syntactic-ws-t)
                                        (looking-at "(")
                                        (progn
+                                         ;; TODO: Do this condition-case or ignore-errors to make sure it works
                                          (verilog-forward-sexp)
                                          t)
                                        (verilog-forward-syntactic-ws-t))
@@ -210,6 +213,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
                                 t)
                               (looking-at "(")
                               (progn
+                                ;; TODO: Do this condition-case or ignore-errors to make sure it works
                                 (verilog-forward-sexp)
                                 t)
                               (verilog-forward-syntactic-ws-t)
