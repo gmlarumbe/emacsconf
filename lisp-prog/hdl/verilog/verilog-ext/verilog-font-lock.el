@@ -48,14 +48,12 @@
   "Search based fontification function of Verilog modules/instances.
 Arg LIMIT is used internally for fontification."
   (let (start-line end-line)
-    ;; (when (verilog-ext-find-module-instance-fwd limit) ; DANGER: Changed with new function for testing purposes
-    (when (verilog-ext-find-module-instance-fwd-4 limit) ; DANGER: Changed with new function for testing purposes
+    (when (verilog-ext-find-module-instance-fwd limit)
       (setq start-line (save-excursion
                          (goto-char (match-beginning 1))
                          (point-at-bol)))
       (setq end-line (save-excursion
-                       ;; (goto-char (match-end 0)) ; DANGER: Hacked after this -fwd-4 functions to make font lock multiline work fine
-                       (goto-char (match-end 2))
+                       (goto-char (match-end 2))  ; DANGER: Hacked after this -fwd-4 functions to make font lock multiline work fine
                        (point-at-eol)))
       (unless (get-text-property (point) 'font-lock-multiline)
         (put-text-property start-line end-line 'font-lock-multiline t))

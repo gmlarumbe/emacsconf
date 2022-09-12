@@ -19,6 +19,9 @@
          ("C-M-e"   . verilog-end-of-defun)
          ("C-M-h"   . verilog-mark-defun)
          ;; End of TODO
+         ;; TODO: Checking
+         ("C-M-d"   . verilog-ext-find-module-instance-fwd)
+         ;; End of TODO
          ("C-c C-o" . verilog-pretty-expr) ; C-c C-i same as C-c TAB that executes `verilog-pretty-declarations'
          ("C-c C-b" . nil)                 ; Unmap `verilog-submit-bug-report', leave space for something else
          ("C-c C-d" . nil)                 ; Unmap `verilog-goto-defun' until it's fixed, leave space for some verilog-ext function

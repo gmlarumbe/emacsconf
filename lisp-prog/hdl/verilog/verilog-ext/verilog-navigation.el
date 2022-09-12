@@ -74,93 +74,36 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
       (goto-char pos))))
 
 
-;; TODO: Trying with verilog-regexp-search with a line by line approach
-(defun verilog-ext-find-module-instance-2 (&optional limit fwd)
-  "Search for a Verilog module/instance regexp.
 
-Since this regexp might collide with other Verilog constructs,
-it ignores the ones that contain Verilog keywords and continues until found.
-
-LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
-  (let ((instance-re '("^\\s-*"))             ; Each element of the list is a line to search
-        (case-fold-search verilog-case-fold)
-        (found nil)
-        (pos))
-    ;; TODO Maybe can be done more efficiently with looking-at than with re-search-forward (cdr (bounds-of-thing-at-point 'symbol)) since with
-    ;; (verilog-forward-syntactic-ws) comments are already skipped
-    (verilog-re-search-forward "^\\s-*\\(\\<[a-zA-Z_][a-zA-Z0-9_]*\\>\\)" nil t) ; Initial blank + module name identifier
-    (verilog-forward-syntactic-ws)                                        ; Whitespace/comments
-    ;; TODO: Implement the # + parameters option
-    ;; (verilog-re-search-forward-try "#" nil t)
-    ;; End of TODO
-    (verilog-re-search-forward "\\(\\<[a-zA-Z_][a-zA-Z0-9_]*\\>\\)" (cdr (bounds-of-thing-at-point 'symbol)) t) ; Instance name just afterwards
-    (verilog-forward-syntactic-ws)
-    (verilog-re-search-forward "(" (cdr (bounds-of-thing-at-point 'symbol)) t)
-    (verilog-forward-syntactic-ws)
-    (verilog-re-search-forward ";" (cdr (bounds-of-thing-at-point 'symbol)) t)
-    (verilog-backward-syntactic-ws)
-    (verilog-re-search-backward ")" (cdr (bounds-of-thing-at-point 'symbol)) t)
-
-    ;; TODO: Implement optional verilog-array-content
-    ;; (verilog-re-search-forward "(" (cdr (bounds-of-thing-at-point 'symbol)) t)
-    ;; End of TODO
-))
-
-; TODO: Trying with verilog-regexp-search with a line by line approach
-(defun verilog-forward-syntactic-ws-t ()
+(defun verilog-ext-forward-syntactic-ws ()
   (verilog-forward-syntactic-ws)
-  t)
+  (point))
 
-(defun forward-word-t ()
+(defun verilog-ext-forward-word ()
   (forward-word)
-  t)
+  (point))
 
-(defun forward-char-t ()
+(defun verilog-ext-forward-char ()
   (forward-char)
-  t)
+  (point))
 
-(defun verilog-ext-find-module-instance-3 (&optional limit fwd)
-  "Search for a Verilog module/instance regexp.
+(defun verilog-ext-forward-sexp ()
+  (ignore-errors
+    (forward-sexp)
+    (point)))
 
-Since this regexp might collide with other Verilog constructs,
-it ignores the ones that contain Verilog keywords and continues until found.
+(defmacro when-t (cond &rest body)
+  "Same as `when' from subr.el but returning t if COND is nil."
+  (declare (indent 1) (debug t))
+  (list 'if cond (cons 'progn body) t))
 
-LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
-  (let ((case-fold-search verilog-case-fold)
-        (start (point))
-        found
-        module-name
-        instance-name)
-    (and (verilog-re-search-forward "^\\s-*\\(\\<[a-zA-Z_][a-zA-Z0-9_]*\\>\\)" nil t) ; Initial blank + module name identifier
-         (setq module-name (match-string-no-properties 1))
-         (verilog-forward-syntactic-ws-t)
-         (if (looking-at "#")
-             (and (forward-char-t)
-                  (verilog-forward-syntactic-ws-t)
-                  (looking-at "(")
-                  (progn
-                    (verilog-forward-sexp)
-                    t)
-                  (verilog-forward-syntactic-ws-t))
-           t)
-         (looking-at "\\(\\<[a-zA-Z_][a-zA-Z0-9_]*\\>\\)") ; Instance name just afterwards
-         (setq instance-name (match-string-no-properties 1))
-         (forward-word)
-         (verilog-forward-syntactic-ws-t)
-         (looking-at "(")
-         (progn
-           (verilog-forward-sexp)
-           t)
-         (verilog-forward-syntactic-ws-t)
-         (looking-at ";")
-         (setq found t))
-    (if found
-        (cons module-name instance-name)
-      (goto-char start))))
 
 
 ;; TODO: Try to optimize it not to do the forward-line thing
-(defun verilog-ext-find-module-instance-fwd-4 (&optional limit)
+;; TODO: Right now the `verilog-identifier-sym-re' catches things such as (Rst_n) and .Rst_n
+;; It would be nice if it only recognized things that have an space before and after (a real symbol).
+;; TODO: Could this be done modifying temporarily the syntax table? But that might be an issue for font-locking?
+(defun verilog-ext-find-module-instance-fwd (&optional limit)
   "Search for a Verilog module/instance regexp.
 
 Since this regexp might collide with other Verilog constructs,
@@ -169,54 +112,58 @@ it ignores the ones that contain Verilog keywords and continues until found.
 LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
   (interactive)
   (let ((case-fold-search verilog-case-fold)
-        (start (point))
-        (identifier-re "\\(\\<[a-zA-Z_][a-zA-Z0-9_]*\\>\\)")
+        (identifier-re (concat "\\(" verilog-identifier-sym-re "\\)"))
         found module-name instance-name module-pos
-        module-match-data instance-match-data )
+        module-match-data instance-match-data
+        pos)
     (save-excursion
       (save-match-data
         (when (called-interactively-p) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
           (forward-char))  ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
         (while (and (not (eobp))
-                    (if limit
-                        (> limit (point))
-                      t)
+                    (when-t limit
+                      (> limit (point)))
                     (not (and (verilog-re-search-forward (concat "\\s-*" identifier-re) limit t) ; Initial blank + module name identifier
+                              (not (verilog-parenthesis-depth)) ; Optimize search by avoiding looking for identifiers in parenthesized expressions
                               (unless (member (match-string-no-properties 1) verilog-keywords)
                                 (setq module-name (match-string-no-properties 1))
                                 (setq module-pos (match-beginning 1))
                                 ;; (setq module-match-data (match-data :integers)))
                                 (setq module-match-data (match-data)))
-                              (verilog-forward-syntactic-ws-t)
-                              (if (looking-at "#")
-                                  (and (forward-char-t)
-                                       (verilog-forward-syntactic-ws-t)
-                                       (looking-at "(")
-                                       (progn
-                                         ;; TODO: Do this condition-case or ignore-errors to make sure it works
-                                         (verilog-forward-sexp)
-                                         t)
-                                       (verilog-forward-syntactic-ws-t))
-                                t)
+                              (verilog-ext-forward-syntactic-ws)
+                              (when-t (looking-at "#")
+                                (and (verilog-ext-forward-char)
+                                     (verilog-ext-forward-syntactic-ws)
+                                     (looking-at "(")
+                                     (verilog-ext-forward-sexp)
+                                     (progn
+                                       (backward-char)
+                                       (looking-at ")"))
+                                     (progn
+                                       (forward-char)
+                                       (verilog-ext-forward-syntactic-ws))))
                               (looking-at identifier-re) ; Instance name just afterwards
                               (unless (member (match-string-no-properties 1) verilog-keywords)
                                 (setq instance-name (match-string-no-properties 1))
-                                ;; (setq instance-match-data (match-data :integers)))
                                 (setq instance-match-data (match-data)))
                               (forward-word)
-                              (verilog-forward-syntactic-ws-t)
-                              (if (looking-at "\\[")
-                                  (and (progn
-                                         (verilog-forward-sexp)
-                                         t)
-                                       (verilog-forward-syntactic-ws-t))
-                                t)
+                              (verilog-ext-forward-syntactic-ws)
+                              (when-t (looking-at "\\[")
+                                (and (verilog-ext-forward-sexp)
+                                     (progn
+                                       (backward-char)
+                                       (looking-at "\\]"))
+                                     (progn
+                                       (forward-char)
+                                       (verilog-ext-forward-syntactic-ws))))
                               (looking-at "(")
+                              (verilog-ext-forward-sexp)
                               (progn
-                                ;; TODO: Do this condition-case or ignore-errors to make sure it works
-                                (verilog-forward-sexp)
-                                t)
-                              (verilog-forward-syntactic-ws-t)
+                                (backward-char)
+                                (looking-at ")"))
+                              (progn
+                                (forward-char)
+                                (verilog-ext-forward-syntactic-ws))
                               (looking-at ";")
                               (setq found t)
                               (if (called-interactively-p)
@@ -224,67 +171,19 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
                                     (setq pos module-pos)
                                     (message module-name))
                                 (setq pos (point))))))
-          ;; (verilog-end-of-statement)        ; INFO: Gave problems in some instances inside generate begin blocks
-          (forward-line)                    ; Find something maybe more efficient?
-          ))
-      )
+          ;; TODO: Check how to advance
+          (if (verilog-parenthesis-depth)
+              (verilog-backward-up-list -1)
+            (forward-line)))))
     (when found
-      ;; (set-match-data `(,module-name ,instance-name))
-      ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Entire-Match-Data.html
       (set-match-data (list (nth 0 module-match-data)     ; Beg of whole expression for module-match-data
                             (nth 3 instance-match-data)   ; End of whole expression for instance-match-data
                             (nth 2 module-match-data)     ; (match-beginning 1)
                             (nth 3 module-match-data)     ; (match-end 1)
                             (nth 2 instance-match-data)   ; (match-beginning 2)
                             (nth 3 instance-match-data))) ; (match-end 2)
-      ;; (set-match-data (append module-match-data instance-match-data))
-
-      ;; INFO: This one worked with integers
-      ;; (set-match-data (list (nth 0 module-match-data)   ; Beg of whole expression for module-match-data
-      ;;                       (nth 1 instance-match-data) ; End of whole expression for instance-match-data
-      ;;                       (nth 2 module-match-data)   ; (match-beginning 1)
-      ;;                       (nth 3 module-match-data)   ; (match-end 1)
-      ;;                       (nth 2 instance-match-data) ; (match-beginning 2)
-      ;;                       (nth 3 instance-match-data) ; (match-end 2)
-      ;;                       (car (last module-match-data))    ; Buffer name
-      ;;                       ))
-      ;; (remove (car ) module-match-data)
-      ;; (remove (car (cdr instance-match-data)) instance-match-data)))
       (goto-char pos))))
 
-    ;; (save-excursion
-    ;;   (when (called-interactively-p) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
-    ;;     (if fwd
-    ;;         (forward-char) ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
-    ;;       (backward-char)))
-    ;;   (while (and (not found)
-    ;;               (if fwd
-    ;;                   (re-search-forward instance-re limit t)
-    ;;                 (re-search-backward instance-re limit t)))
-    ;;     (unless (or (string-match verilog-ext-keywords-re (match-string-no-properties 1))
-    ;;                 (string-match verilog-ext-keywords-re (match-string-no-properties 2)))
-    ;;       ;; TODO: Add thing of comments back when not using shadowing?
-    ;;       ;; TODO: Still fails to find some regexps (can see it with coloring)
-    ;;       (setq found t)
-    ;;       (if (called-interactively-p)
-    ;;           (progn
-    ;;             (setq pos (match-beginning 1))
-    ;;             (message (match-string 1)))
-    ;;         (setq pos (point))))))
-    ;; (when found
-    ;;   (goto-char pos))))
-;; End of TODO:
-
-
-(defun verilog-ext-find-module-instance-fwd (&optional limit)
-  "Search forward for a Verilog module/instance regexp.
-
-Since this regexp might collide with other Verilog constructs,
-it ignores the ones that contain Verilog keywords and continues until found.
-
-LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
-  (interactive)
-  (verilog-ext-find-module-instance limit t))
 
 
 (defun verilog-ext-find-module-instance-bwd (&optional limit)
