@@ -83,10 +83,6 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
   (verilog-backward-syntactic-ws)
   (point))
 
-(defun verilog-ext-forward-word ()
-  (forward-word)
-  (point))
-
 (defun verilog-ext-forward-char ()
   (forward-char)
   (point))
@@ -104,6 +100,14 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
   (ignore-errors
     (backward-sexp)
     (point)))
+
+(defun verilog-ext-skip-identifier-backwards ()
+  ""
+  (< (skip-chars-backward "a-zA-Z0-9_") 0))
+
+(defun verilog-ext-skip-identifier-forward ()
+  ""
+  (> (skip-chars-forward "a-zA-Z0-9_") 0))
 
 (defmacro when-t (cond &rest body)
   "Same as `when' from subr.el but returning t if COND is nil."
@@ -143,34 +147,28 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
                                 (setq module-pos (match-beginning 1))
                                 (setq module-match-data (match-data)))
                               (verilog-ext-forward-syntactic-ws)
-                              (when-t (looking-at "#")
+                              (when-t (= (following-char) ?\#)
                                 (and (verilog-ext-forward-char)
                                      (verilog-ext-forward-syntactic-ws)
-                                     (looking-at "(")
+                                     (= (following-char) ?\()
                                      (verilog-ext-forward-sexp)
-                                     (verilog-ext-backward-char)
-                                     (looking-at ")")
-                                     (verilog-ext-forward-char)
+                                     (= (preceding-char) ?\))
                                      (verilog-ext-forward-syntactic-ws)))
                               (looking-at identifier-re) ; Instance name just afterwards
                               (unless (member (match-string-no-properties 1) verilog-keywords)
                                 (setq instance-name (match-string-no-properties 1))
                                 (setq instance-match-data (match-data)))
-                              (forward-word)
+                              (verilog-ext-skip-identifier-forward)
                               (verilog-ext-forward-syntactic-ws)
-                              (when-t (looking-at "\\[")
+                              (when-t (= (following-char) ?\[)
                                 (and (verilog-ext-forward-sexp)
-                                     (verilog-ext-backward-char)
-                                     (looking-at "\\]")
-                                     (verilog-ext-forward-char)
+                                     (= (preceding-char) ?\])
                                      (verilog-ext-forward-syntactic-ws)))
-                              (looking-at "(")
+                              (= (following-char) ?\()
                               (verilog-ext-forward-sexp)
-                              (verilog-ext-backward-char)
-                              (looking-at ")")
-                              (verilog-ext-forward-char)
+                              (= (preceding-char) ?\))
                               (verilog-ext-forward-syntactic-ws)
-                              (looking-at ";")
+                              (= (following-char) ?\;)
                               (setq found t)
                               (if (called-interactively-p)
                                   (progn
@@ -180,15 +178,20 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
           (if (verilog-parenthesis-depth)
               (verilog-backward-up-list -1)
             (forward-line)))))
-    (when found
-      (set-match-data (list (nth 0 module-match-data)     ; Beg of whole expression for module-match-data
-                            (nth 3 instance-match-data)   ; End of whole expression for instance-match-data
-                            (nth 2 module-match-data)     ; (match-beginning 1)
-                            (nth 3 module-match-data)     ; (match-end 1)
-                            (nth 2 instance-match-data)   ; (match-beginning 2)
-                            (nth 3 instance-match-data))) ; (match-end 2)
-      (goto-char pos))))
-
+    (if found
+        (progn
+          (set-match-data (list (nth 0 module-match-data)     ; Beg of whole expression for module-match-data
+                                (nth 3 instance-match-data)   ; End of whole expression for instance-match-data
+                                (nth 2 module-match-data)     ; (match-beginning 1)
+                                (nth 3 module-match-data)     ; (match-end 1)
+                                (nth 2 instance-match-data)   ; (match-beginning 2)
+                                (nth 3 instance-match-data))) ; (match-end 2)
+          (goto-char pos)
+          (if (called-interactively-p)
+              (message "%s : %s" module-name instance-name)
+            (point))) ; INFO: Need to return point for fontification
+      (when (called-interactively-p)
+        (message "Could not find any instance forward")))))
 
 
 (defun verilog-ext-find-module-instance-bwd (&optional limit)
@@ -222,7 +225,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
                                 (and (verilog-ext-backward-sexp)
                                      (= (following-char) ?\[)
                                      (verilog-ext-backward-syntactic-ws)))
-                              (backward-word)
+                              (verilog-ext-skip-identifier-backwards)
                               (looking-at identifier-re)
                               (unless (member (match-string-no-properties 1) verilog-keywords)
                                 (setq instance-name (match-string-no-properties 1))
@@ -235,7 +238,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
                                      (= (preceding-char) ?\#)
                                      (verilog-ext-backward-char)
                                      (verilog-ext-backward-syntactic-ws)))
-                              (backward-word)
+                              (verilog-ext-skip-identifier-backwards)
                               (looking-at identifier-re)
                               (unless (member (match-string-no-properties 1) verilog-keywords)
                                 (setq module-name (match-string-no-properties 1))
@@ -250,9 +253,16 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
             (beginning-of-line)))))
     (if found
         (progn
+          (set-match-data (list (nth 0 module-match-data)     ; Beg of whole expression for module-match-data
+                                (nth 3 instance-match-data)   ; End of whole expression for instance-match-data
+                                (nth 2 module-match-data)     ; (match-beginning 1)
+                                (nth 3 module-match-data)     ; (match-end 1)
+                                (nth 2 instance-match-data)   ; (match-beginning 2)
+                                (nth 3 instance-match-data))) ; (match-end 2)
           (goto-char pos)
-          (when (called-interactively-p)
-            (message "%s : %s" module-name instance-name)))
+          (if (called-interactively-p)
+              (message "%s : %s" module-name instance-name)
+            (point)))
       (when (called-interactively-p)
         (message "Could not find any instance backwards")))))
 

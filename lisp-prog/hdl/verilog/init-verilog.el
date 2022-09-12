@@ -22,6 +22,7 @@
          ;; TODO: Checking
          ("C-M-d"   . verilog-ext-find-module-instance-fwd)
          ("C-M-u"   . verilog-ext-find-module-instance-bwd)
+         ("M-i"     . verilog-ext-imenu)
          ;; End of TODO
          ("C-c C-o" . verilog-pretty-expr) ; C-c C-i same as C-c TAB that executes `verilog-pretty-declarations'
          ("C-c C-b" . nil)                 ; Unmap `verilog-submit-bug-report', leave space for something else
