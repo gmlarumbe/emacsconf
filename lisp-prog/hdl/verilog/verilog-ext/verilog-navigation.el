@@ -79,6 +79,10 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
   (verilog-forward-syntactic-ws)
   (point))
 
+(defun verilog-ext-backward-syntactic-ws ()
+  (verilog-backward-syntactic-ws)
+  (point))
+
 (defun verilog-ext-forward-word ()
   (forward-word)
   (point))
@@ -87,9 +91,18 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
   (forward-char)
   (point))
 
+(defun verilog-ext-backward-char ()
+  (backward-char)
+  (point))
+
 (defun verilog-ext-forward-sexp ()
   (ignore-errors
     (forward-sexp)
+    (point)))
+
+(defun verilog-ext-backward-sexp ()
+  (ignore-errors
+    (backward-sexp)
     (point)))
 
 (defmacro when-t (cond &rest body)
@@ -118,17 +131,16 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
         pos)
     (save-excursion
       (save-match-data
-        (when (called-interactively-p) ; DANGER: If applied to verilog-font-locking will break multiline font locking.
+        (when (called-interactively-p) ; INFO: If applied to verilog-font-locking will break multiline font locking.
           (forward-char))  ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
         (while (and (not (eobp))
                     (when-t limit
                       (> limit (point)))
-                    (not (and (verilog-re-search-forward (concat "\\s-*" identifier-re) limit t) ; Initial blank + module name identifier
+                    (not (and (verilog-re-search-forward (concat "\\s-*" identifier-re) limit 'move) ; Initial blank + module name identifier
                               (not (verilog-parenthesis-depth)) ; Optimize search by avoiding looking for identifiers in parenthesized expressions
                               (unless (member (match-string-no-properties 1) verilog-keywords)
                                 (setq module-name (match-string-no-properties 1))
                                 (setq module-pos (match-beginning 1))
-                                ;; (setq module-match-data (match-data :integers)))
                                 (setq module-match-data (match-data)))
                               (verilog-ext-forward-syntactic-ws)
                               (when-t (looking-at "#")
@@ -136,12 +148,10 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
                                      (verilog-ext-forward-syntactic-ws)
                                      (looking-at "(")
                                      (verilog-ext-forward-sexp)
-                                     (progn
-                                       (backward-char)
-                                       (looking-at ")"))
-                                     (progn
-                                       (forward-char)
-                                       (verilog-ext-forward-syntactic-ws))))
+                                     (verilog-ext-backward-char)
+                                     (looking-at ")")
+                                     (verilog-ext-forward-char)
+                                     (verilog-ext-forward-syntactic-ws)))
                               (looking-at identifier-re) ; Instance name just afterwards
                               (unless (member (match-string-no-properties 1) verilog-keywords)
                                 (setq instance-name (match-string-no-properties 1))
@@ -150,28 +160,23 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
                               (verilog-ext-forward-syntactic-ws)
                               (when-t (looking-at "\\[")
                                 (and (verilog-ext-forward-sexp)
-                                     (progn
-                                       (backward-char)
-                                       (looking-at "\\]"))
-                                     (progn
-                                       (forward-char)
-                                       (verilog-ext-forward-syntactic-ws))))
+                                     (verilog-ext-backward-char)
+                                     (looking-at "\\]")
+                                     (verilog-ext-forward-char)
+                                     (verilog-ext-forward-syntactic-ws)))
                               (looking-at "(")
                               (verilog-ext-forward-sexp)
-                              (progn
-                                (backward-char)
-                                (looking-at ")"))
-                              (progn
-                                (forward-char)
-                                (verilog-ext-forward-syntactic-ws))
+                              (verilog-ext-backward-char)
+                              (looking-at ")")
+                              (verilog-ext-forward-char)
+                              (verilog-ext-forward-syntactic-ws)
                               (looking-at ";")
                               (setq found t)
                               (if (called-interactively-p)
                                   (progn
                                     (setq pos module-pos)
-                                    (message module-name))
+                                    (message "%s : %s" module-name instance-name))
                                 (setq pos (point))))))
-          ;; TODO: Check how to advance
           (if (verilog-parenthesis-depth)
               (verilog-backward-up-list -1)
             (forward-line)))))
@@ -194,7 +199,62 @@ it ignores the ones that contain Verilog keywords and continues until found.
 
 LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
   (interactive)
-  (verilog-ext-find-module-instance limit nil))
+  (let ((case-fold-search verilog-case-fold)
+        (identifier-re (concat "\\(" verilog-identifier-sym-re "\\)"))
+        found module-name instance-name module-pos
+        module-match-data instance-match-data
+        pos)
+    (save-excursion
+      (save-match-data
+        (when (called-interactively-p) ; INFO: If applied to verilog-font-locking will break multiline font locking.
+          (backward-char))  ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
+        (while (and (not (bobp))
+                    (when-t limit
+                      (< limit (point)))
+                    (not (and (verilog-re-search-backward ";" limit 'move)
+                              (not (verilog-parenthesis-depth))
+                              (verilog-ext-backward-syntactic-ws)
+                              (= (preceding-char) ?\))
+                              (verilog-ext-backward-sexp)
+                              (= (following-char) ?\()
+                              (verilog-ext-backward-syntactic-ws)
+                              (when-t (= (preceding-char) ?\])
+                                (and (verilog-ext-backward-sexp)
+                                     (= (following-char) ?\[)
+                                     (verilog-ext-backward-syntactic-ws)))
+                              (backward-word)
+                              (looking-at identifier-re)
+                              (unless (member (match-string-no-properties 1) verilog-keywords)
+                                (setq instance-name (match-string-no-properties 1))
+                                (setq instance-match-data (match-data)))
+                              (verilog-ext-backward-syntactic-ws)
+                              (when-t (= (preceding-char) ?\))
+                                (and (verilog-ext-backward-sexp)
+                                     (= (following-char) ?\()
+                                     (verilog-ext-backward-syntactic-ws)
+                                     (= (preceding-char) ?\#)
+                                     (verilog-ext-backward-char)
+                                     (verilog-ext-backward-syntactic-ws)))
+                              (backward-word)
+                              (looking-at identifier-re)
+                              (unless (member (match-string-no-properties 1) verilog-keywords)
+                                (setq module-name (match-string-no-properties 1))
+                                (setq module-pos (match-beginning 1))
+                                (setq module-match-data (match-data)))
+                              (setq found t)
+                              (if (called-interactively-p)
+                                  (setq pos module-pos)
+                                (setq pos (point))))))
+          (if (verilog-parenthesis-depth)
+              (verilog-backward-up-list 1)
+            (beginning-of-line)))))
+    (if found
+        (progn
+          (goto-char pos)
+          (when (called-interactively-p)
+            (message "%s : %s" module-name instance-name)))
+      (when (called-interactively-p)
+        (message "Could not find any instance backwards")))))
 
 
 
