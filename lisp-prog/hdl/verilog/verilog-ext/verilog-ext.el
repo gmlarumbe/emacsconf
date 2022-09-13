@@ -55,8 +55,13 @@
 (require 'verilog-imenu)
 ;; (require 'verilog-templates) ; TODO: Revise thoroughly
 ;; (require 'verilog-compile) ; TODO: Rename to makefile? Add compilation regexps?
-
-
+;; (require 'verilog-vhier)
+;; (require 'verilog-flycheck)
+;; (require 'verilog-font-lock)
+;; (require 'verilog-timestamp) ; TODO: Change the 'work' section to a different name
+;; (require 'verilog-lsp)
+;; TODO: Add these things for apheleia, tree-sitter, etc...
+;; TODO: Add the defun-funcs and font-lock branches of verilog-mode
 
 
 (provide 'verilog-ext)

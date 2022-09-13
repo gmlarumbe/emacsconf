@@ -67,7 +67,7 @@
 
          ("C-M-d"   . verilog-ext-find-module-instance-fwd)
          ("C-M-u"   . verilog-ext-find-module-instance-bwd)
-         ("M-i"     . verilog-ext-imenu)
+         ("M-i"     . verilog-ext-imenu-list)
 
          ("C-M-."   . verilog-ext-jump-to-module-at-point-def)
          ("C-M-/"   . verilog-ext-jump-to-module-at-point-ref)

@@ -1,0 +1,38 @@
+* Imenu
+ INFO: Issues with instance detection
+
+ 1 - Imenu must work on current buffer.  Creates an alist of (elements . #<mark pos at buffer>)
+     Therefore, must be executed on the buffer on which it will have the effect (cannot use with-temp-buffer in a buffer with no comments
+     and trying to reassociate afterwards)
+
+ 2 - Imenu just ignores comments starting at the beginning of line, not inline comments that might be within the instance regexp.
+
+ 3 - It is not possible to work with (with-comments-hidden) since it makes comments invisible, and imenu ignores invisible characters
+     by looking for the next non-invisible regexp, since `re-search-forward' cannot ignore invisible, just skip to the next.
+     The problem is that instances regexp are multiline, and if an unexpected character such as comment with semicolon appears, it won't
+     be recognized, and there wont be any chance of skip to the next.  It will be missed.
+
+ 4 - A first solution seemed to be executing `imenu' after erasing comments from current buffer and then returning it to its initial state
+     But that would require use of `delete-comments-from-buffer' (very slow) and `undo', with some issues programatically.
+     That would need  to be done with `verilog-ext-find-module-instance-fwd' as well.
+     The profit would not be worth the effort due to an extreme fall in performance.
+
+ 5 - Best solution is to create a function that checks if there are problematic regexps in a verilog file, and set is as a hook every time
+     a file is opened, or Imenu is executed.
+
+
+ INFO: There are 3 ways of creating the index-alist for Imenu mode (from simpler to more complex):
+
+   1 - Define `imenu-generic-expression' (categories and regexps).  This is the most common and default one.
+
+   2 - Define `imenu-prev-index-position-function' and `imenu-extract-index-name-function'.
+       If these variables are defined, the imenu-list creation function uses them to find the tags.  For example:
+
+         (setq imenu-prev-index-position-function 'verilog-ext-imenu-prev-index-position-function)
+         (setq imenu-extract-index-name-function 'verilog-ext-imenu-extract-index-name)
+
+       Check `verilog-ext-imenu-prev-index-position-function' and `verilog-ext-imenu-extract-index-name'
+
+   3 - Redefine `imenu-create-index-function' to make a custom more complex alist (e.g a tree recursively for nested classes)
+       This is the most complex and the one used in python mode.  Check `verilog-ext-imenu-index'.
+
