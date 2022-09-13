@@ -17,23 +17,6 @@
 ;; - `verilog-coverage' still not implemented as there are not many free alternatives...
 
 
-;;;;; Preprocessor
-(defun verilog-ext-preprocess ()
-  "Allow choosing between programs with a wrapper of `verilog-preprocess'.
-All the libraries/incdirs are computed internally at `verilog-mode' via
-`verilog-expand'.
-INFO: `iverilog' command syntax requires writing to an output file
-(defaults to a.out)."
-  (interactive)
-  (let (iver-out-file)
-    (pcase (completing-read "Select tool: " '("verilator" "vppreproc" "iverilog"))
-      ("verilator" (setq verilog-preprocessor "verilator -E __FLAGS__ __FILE__"))
-      ("vppreproc" (setq verilog-preprocessor "vppreproc __FLAGS__ __FILE__"))
-      ("iverilog"  (progn (setq iver-out-file (read-string "Output filename: " (concat (file-name-sans-extension (file-name-nondirectory (buffer-file-name))) "_pp.sv")))
-                          (setq verilog-preprocessor (concat "iverilog -E -o" iver-out-file " __FILE__ __FLAGS__")))))
-    (verilog-preprocess)))
-
-
 ;;;;; Iverilog/verilator Makefile development
 (defun verilog-ext-makefile-create ()
   "Create Iverilog/verilator Yasnippet based Makefile.

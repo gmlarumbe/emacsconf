@@ -52,6 +52,9 @@
 (require 'verilog-which-func)
 (require 'verilog-hideshow)
 (require 'verilog-beautify)
+(require 'verilog-imenu)
+;; (require 'verilog-templates) ; TODO: Revise thoroughly
+;; (require 'verilog-compile) ; TODO: Rename to makefile? Add compilation regexps?
 
 
 
