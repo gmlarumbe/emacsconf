@@ -112,6 +112,7 @@ This way gtags can be easily integrated in the workflow."
 
 
 ;;;; Hierarchy extraction
+;;;;; Vars
 ;; INFO: First preprocesses input files for `include' and `define' expansion.
 ;; Then extracts hierarchy from that preprocessed file.
 (defvar verilog-ext-vhier-buffer-name "*Verilog-Perl*"
@@ -143,8 +144,73 @@ Name of the project (+plus)
 (defvar verilog-ext-vhier-input-files nil)
 
 
+;;;;; Utility functions
+(defun verilog-ext-buffer-expand-filenames (&optional absolute exp-dir)
+  "Expands filenames paths present in `current-buffer' line by line.
+If ABSOLUTE is nil expand relative to `default-directory'.
+If ABSOLUTE is non-nil filenames will expand to their absolute paths.
+If EXP-DIR is non-nil, expand relative to this argument instead
+of `default-directory'."
+  (let ((cur-line)
+        (default-directory (if exp-dir
+                               exp-dir
+                             default-directory)))
+    (save-excursion
+      (goto-char (point-min))
+      (while (< (point) (point-max))
+        (delete-horizontal-space)
+        (if absolute
+            (setq cur-line (expand-file-name (thing-at-point 'line) default-directory))
+          (setq cur-line (file-relative-name (thing-at-point 'line) default-directory)))
+        (kill-line 1)
+        (insert cur-line)))))
 
+(defun verilog-ext-replace-regexp (regexp to-string start end)
+  "Wrapper function for programatic use of `replace-regexp'.
+Replace REGEXP with TO-STRING from START to END."
+  (save-excursion
+    (goto-char start)
+    (while (re-search-forward regexp end t)
+      (replace-match to-string))))
+
+
+(defun verilog-ext-replace-regexp-whole-buffer (regexp to-string)
+  "Replace REGEXP with TO-STRING on whole current-buffer."
+  (verilog-ext-replace-regexp regexp to-string (point-min) nil))
+
+(defun verilog-ext-replace-string (string to-string start end &optional fixedcase)
+  "Wrapper function for programatic use of `replace-string'.
+Replace STRING with TO-STRING from START to END.
+
+If optional arg FIXEDCASE is non-nil, do not alter the case of
+the replacement text (see `replace-match' for more info)."
+  (save-excursion
+    (goto-char start)
+    (while (search-forward string end t)
+      (replace-match to-string fixedcase))))
+
+
+(defun verilog-ext-sort-regexp-at-the-beginning-of-file (regexp)
+  "Move lines containing REGEXP recursively at the beginning of the file.
+Done line by line, this might be useful when managing a list of files,
+one file at a line, and there is some need of sorting by regexp.
+For example, in SystemVerilog, packages might need to be included before other files."
+  (interactive)
+  (let ((sorted-files-p nil))
+    (goto-char (point-min))
+    (while (not sorted-files-p)
+      (save-excursion
+        (unless (search-forward-regexp regexp nil 1)
+          (setq sorted-files-p t))
+        (beginning-of-line)
+        (kill-line 1)) ; Kill trailing newline as well
+      (yank))))
+
+
+
+;;;;; Actual logic
 (defun verilog-ext-vhier-set-active-project ()
+
   "Retrieve Vhier project list and set variables accordingly."
   (let ((vhier-project)
         (files-list))
@@ -293,7 +359,7 @@ added via -yDIR but as a source file and cannot be found."
   (let* ((library-args (verilog-expand-command "__FLAGS__"))
          (pkg-files  (mapconcat #'identity (verilog-ext-update-project-pkg-list) " "))
          (vhier-args (mapconcat #'identity verilog-ext-vhier-vhier-args " "))
-         (top-module (verilog-ext-file-title))
+         (top-module (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))
          (cmd (concat "vhier "
                       pkg-files        " "
                       buffer-file-name " "

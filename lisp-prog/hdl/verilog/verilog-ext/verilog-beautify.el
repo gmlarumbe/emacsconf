@@ -5,133 +5,88 @@
 ;;
 ;;; Code:
 
-;; TODO: Remove references to which-func
-(require 'verilog-mode)
-(require 'verilog-utils)
-(require 'verilog-editing)
 
 ;;;; Code beautifying
-(defun verilog-ext-align-ports-module-at-point ()
-  "Align parenthesis ports of current module.
-Current module is the one pointed to by `verilog-ext-find-module-instance'.
-
-Alignment is performed between instance name and end of instantiation."
-  (interactive)
-  (let ((case-fold-search verilog-case-fold)
-        (current-ids)
-        (current-module)
-        (current-instance)
-        (beg)
-        (end)
-        (re-beg-pos)
-        (re-end-pos))
-    (unless (setq current-ids (verilog-ext-point-at-instance-p))
-      (error "Not inside an instance!"))
-    (setq current-module   (car current-ids))
-    (setq current-instance (car (cdr current-ids)))
+(defun verilog--ext-module-at-point-align (thing)
+  "Align THING of current module (ports/parameters)."
+  (let ((case-fold-search nil)
+        (re "\\(\\s-*\\)(")
+        (current-ids (verilog-ext-instance-at-point))
+        (idx (cond ((eq thing 'parameters) 1)
+                   ((eq thing 'ports) 2)
+                   (t (error "Invalid thing to align"))))
+        current-module beg end)
+    (unless current-ids
+      (user-error "Not inside an instance!"))
+    (setq current-module (car current-ids))
     (save-excursion
-      (setq re-beg-pos (re-search-backward (concat "\\_<" current-instance "\\_>") nil t))
-      (forward-line) ; Assumes ports start at next line from instance name
+      (goto-char (match-beginning idx))
+      (verilog-re-search-forward "(" nil t)
+      (verilog-forward-syntactic-ws)
       (setq beg (point))
-      (setq re-end-pos (re-search-forward ")\s*;" nil t))
-      (setq end re-end-pos))
-    (if (and re-beg-pos re-end-pos)
-        (progn
-          (align-regexp beg end "\\(\\s-*\\)(" 1 1 nil) ; Requires one capture group: https://stackoverflow.com/questions/14583702/align-regexp-from-emacs-lisp
-          (message "Ports of %s aligned..." current-module))
-      (error "Could not align ports!"))))
+      (verilog-backward-up-list -1)
+      (backward-char)
+      (verilog-backward-syntactic-ws)
+      (setq end (point)))
+    (align-regexp beg end re 1 1 nil)
+    (if (eq idx 1)
+        (message "Parameters of %s aligned..." current-module)
+      (message "Ports of %s aligned..." current-module))))
 
 
-(defun verilog-ext-align-params-module-at-point ()
-  "Align parameters of current module, the one pointed to by `which-func'.
-
-Alignment is performed between module name and instance name.
-
-If used programatically perform a backwards regexp-search of MODULE
-and start indentation at that point.
-This is because current-module is determined by `which-func' and it takes time,
-therefore not detecting the proper module but the previous one."
+(defun verilog-ext-module-at-point-align-ports ()
+  "Align parenthesis ports of current module."
   (interactive)
-  (let ((case-fold-search verilog-case-fold)
-        (current-ids)
-        (current-module)
-        (current-instance)
-        (beg)
-        (end)
-        (re-beg-pos)
-        (re-end-pos))
-    (unless (setq current-ids (verilog-ext-point-at-instance-p))
-      (error "Not inside an instance!"))
-    (setq current-module   (car current-ids))
-    (setq current-instance (car (cdr current-ids)))
-    (save-excursion
-      (setq re-beg-pos (re-search-backward (concat "\\_<" current-module "\\_>") nil t))
-      (forward-line) ; Assumes ports start at next line from instance name
-      (setq beg (point))
-      (when current-instance
-        (setq re-end-pos (re-search-forward current-instance nil t)))
-      (setq end re-end-pos))
-    (if (and re-beg-pos re-end-pos)
-        (progn
-          (align-regexp beg end "\\(\\s-*\\)(" 1 1 nil) ; Requires one capture group: https://stackoverflow.com/questions/14583702/align-regexp-from-emacs-lisp
-          (message "Parameters of %s  aligned..." current-module))
-      (error "Could not align parameters!"))))
+  (verilog--ext-module-at-point-align 'ports))
 
 
-(defun verilog-ext-indent-module-at-point ()
-  "Indent current module, the one pointed to by `which-func'.
-
-If used programatically perform a backwards regexp-search of MODULE
-and start indentation at that point.
-This is because current-module is determined by `which-func' and it takes time,
-therefore not detecting the proper module but the previous one."
+(defun verilog-ext-module-at-point-align-params ()
+  "Align parameters of current module."
   (interactive)
-  (let ((case-fold-search verilog-case-fold)
-        (current-ids)
-        (current-module)
-        (current-instance)
-        (re-beg-pos)
-        (re-end-pos))
-    (unless (setq current-ids (verilog-ext-point-at-instance-p))
-      (error "Not inside an instance!"))
-    (setq current-module   (car current-ids))
-    (setq current-instance (car (cdr current-ids)))
+  (verilog--ext-module-at-point-align 'parameters))
+
+
+(defun verilog-ext-module-at-point-indent ()
+  "Indent current module."
+  (interactive)
+  (let ((case-fold-search nil)
+        (current-ids (verilog-ext-instance-at-point))
+        current-module beg end)
+    (unless current-ids
+      (user-error "Not inside an instance!"))
+    (setq current-module (car current-ids))
     (save-excursion
-      (setq re-beg-pos (re-search-backward (concat "\\_<" current-module "\\_>") nil t))
+      (goto-char (match-beginning 0))
       (beginning-of-line)
-      (setq re-end-pos (re-search-forward verilog-ext-module-instance-re nil t)))
-    (if (and re-beg-pos re-end-pos)
-        (save-excursion
-          (goto-char re-beg-pos)
-          (beginning-of-line)
-          (set-mark (point))
-          (goto-char re-end-pos)
-          (backward-char)                 ; Point at instance opening parenthesis
-          (electric-verilog-forward-sexp) ; Point at instance closing parenthesis
-          (end-of-line)
-          (electric-verilog-tab)
-          (message "Indented %s" current-module))
-      (error "Point is not inside a module instantiation"))))
+      (setq beg (point))
+      (goto-char (match-end 0))
+      (end-of-line)
+      (setq end (point)))
+    (indent-region beg end)
+    (message "Indented %s" current-module)))
 
 
-(defun verilog-ext-beautify-module-at-point ()
-  "Beautify current module (open parenthesis, indent and align)."
+(defun verilog-ext-module-at-point-beautify ()
+  "Beautify current module: indent, align ports and parameters."
   (interactive)
   (save-excursion
-    (verilog-ext-indent-module-at-point)
-    (verilog-ext-align-ports-module-at-point)
-    (verilog-ext-align-params-module-at-point)))
+    (verilog-ext-module-at-point-indent)
+    (verilog-ext-module-at-point-align-ports)
+    (verilog-ext-module-at-point-align-params)))
+
 
 
 (defun verilog-ext-beautify-current-file ()
-  "Beautify current buffer.
-
-Indent whole buffer, beautify every instantiated module and
-remove blanks in port connections."
+  "Beautify current buffer:
+- Indent whole buffer
+- Beautify every instantiated module
+- TODO: Remove blanks in port connections, align declarations/expressions"
   (interactive)
   (save-excursion
     (indent-region (point-min) (point-max))
-    (verilog-ext-clean-port-blanks)
+     ; TODO: Add back at some point?
+    ;; (verilog-ext-clean-port-blanks)
+    ;; TODO: Add something about alignment of declarations/expressions?
     (goto-char (point-min))
     (while (verilog-ext-find-module-instance-fwd)
       (verilog-ext-beautify-module-at-point))))
@@ -140,7 +95,7 @@ remove blanks in port connections."
 (defun verilog-ext-beautify-files (files)
   "Beautify Verilog FILES.
 
-FILES is a list of strings containing the paths to the files to beautify."
+FILES is a list of strings containing the files paths."
   (dolist (file files)
     (unless (file-exists-p file)
       (error "File %s does not exist! Aborting..." file)))

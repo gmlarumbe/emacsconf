@@ -258,6 +258,24 @@ See URL `https://github.com/dalance/svlint'"
 
 
 
+;;; Misc
+(defun verilog-ext-flycheck-eldoc-toggle ()
+  "Disable `eldoc-mode' when enabling `flycheck-mode'.
+Avoid minibuffer conflicts between ggtags use of eldoc and flycheck."
+  (interactive)
+  (if eldoc-mode
+      (progn
+        (eldoc-mode -1)
+        (flycheck-mode 1)
+        (message "Flycheck enabled"))
+    (eldoc-mode 1)
+    (flycheck-mode -1)
+    (message "Flycheck disabled")))
+
+
+
+
+
 (provide 'verilog-flycheck)
 
 ;;; verilog-flycheck.el ends here

@@ -8,6 +8,43 @@
 (require 'verilog-navigation)
 (require 'verilog-rx)
 
+
+;; Some regexps come from evaluated `(concat verilog-ext-identifier-re "\\s-+" verilog-ext-identifier-re)' with capture groups and additions depending on what they might detect.
+(defvar verilog-ext-system-task-re "\\$[a-zA-Z][a-zA-Z0-9_\\$]*")
+(defvar verilog-ext-port-connection-re "^[[:blank:]]*\\.\\([0-9a-zA-Z*_-]*\\)")
+(defvar verilog-ext-dot-itf-struct-re "\\([a-zA-Z*_-][0-9a-zA-Z*_-]+\\)\\.\\([0-9a-zA-Z*_-]+\\)")
+(defvar verilog-ext-braces-content-re "\\[\\(?1:[ +\*/()$0-9a-zA-Z:_-]*\\)\\]")
+(defvar verilog-ext-width-signal-re "\\(?1:[0-9]*\\)'\\(?2:[hdxbo]\\)\\(?3:[0-9a-fA-F_xzXZ]+\\)")
+(defvar verilog-ext-time-event-re "\\([@#]\\)")
+(defvar verilog-ext-time-unit-re "[0-9]+\\(\\.[0-9]+\\)?\\(?2:[umnpf]s\\)")
+
+
+
+(defvar verilog-ext-variable-re-1
+  "\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(?2:\\[.*\\]\\s-*\\)?\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*\\(?4:=.*\\)?;"
+  "type_t asdf;
+   type_t [10:0] asdf;
+   type_t [10:0] asdf = 'h0;
+")
+(defvar verilog-ext-variable-re-2
+  "\\_<\\(?1:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\_>\\s-+\\(?3:\\([a-zA-Z_][a-zA-Z0-9$_]*\\s-*,\\s-*\\)+\\([a-zA-Z_][a-zA-Z0-9$_]*\\s-*\\)\\);"
+  "type_t asdf1, asdf2 , asdf4, asdf6[], asdf7 [25], asdf8 ;")
+(defvar verilog-ext-variable-re-3
+  "\\_<\\(input\\|output\\|inout\\|ref\\|parameter\\|localparam\\)\\_>\\s-+\\_<\\(?1:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-+\\(\\[.*\\]\\)?\\s-*\\_<\\(?3:\\(?:[a-zA-Z_][a-zA-Z0-9$_]*\\)\\|\\(?:\\\\[!-~]+\\)\\)\\_>\\s-*\\(\\[.*\\]\\)?\\s-*"
+  " ...
+  parameter type_t a = 1,
+  localparam type_t b = 2
+  ) .. (
+  ...
+  task foo(
+      input type_t foo1,
+      input bit [ 4:0] foo2,
+      output type_t address,
+      inout type_t data []
+  );
+ ")
+
+
 (defvar verilog-ext-uvm-classes-face 'verilog-ext-uvm-classes-face)
 (defface verilog-ext-uvm-classes-face
   '((t (:foreground "light blue")))

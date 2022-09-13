@@ -23,27 +23,36 @@
 ;;   - Clean up/review functions doc
 ;;   - Check timestamp
 
-(require 'verilog-rx)
-;; (require 'verilog-shadow)
+;; (require 'verilog-rx)
+;; ;; (require 'verilog-shadow)
+;; (require 'verilog-completion)
+;; (require 'verilog-navigation)
+;; (require 'verilog-which-func)
+;; (require 'verilog-hideshow)
+;; (require 'verilog-utils)
+;; (require 'verilog-beautify)
+;; (require 'verilog-editing)
+;; (require 'verilog-compile)
+;; (require 'verilog-templates)
+;; ;; TODO: This can be reduced to just remove blank spaces when detecting a outshine specific regexp in a particular line
+;; ;; TODO: Set the variable for ignore custom regexp to "\\s-*//\\*"and the other to ignore multiline defines
+;; ;; (require 'verilog-indentation)
+;; (require 'verilog-imenu)
+;; (require 'verilog-vhier)
+;; (require 'verilog-flycheck)
+;; (require 'verilog-font-lock)
+;; (require 'verilog-timestamp) ; TODO: Change the 'work' section to a different name
+;; (require 'verilog-compile) ; TODO: Add compilation regexp support for verilog here (as a derived compilation mode maybe?)
+;; (require 'verilog-lsp)
+
+
+(require 'verilog-utils)
 (require 'verilog-completion)
 (require 'verilog-navigation)
 (require 'verilog-which-func)
-(require 'verilog-utils)
 (require 'verilog-hideshow)
 (require 'verilog-beautify)
-(require 'verilog-editing)
-(require 'verilog-compile)
-(require 'verilog-templates)
-;; TODO: This can be reduced to just remove blank spaces when detecting a outshine specific regexp in a particular line
-;; TODO: Set the variable for ignore custom regexp to "\\s-*//\\*"and the other to ignore multiline defines
-;; (require 'verilog-indentation)
-(require 'verilog-imenu)
-(require 'verilog-vhier)
-(require 'verilog-flycheck)
-(require 'verilog-font-lock)
-(require 'verilog-timestamp) ; TODO: Change the 'work' section to a different name
-(require 'verilog-compile) ; TODO: Add compilation regexp support for verilog here (as a derived compilation mode maybe?)
-(require 'verilog-lsp)
+
 
 
 

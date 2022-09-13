@@ -19,11 +19,6 @@
          ("C-M-e"   . verilog-end-of-defun)
          ("C-M-h"   . verilog-mark-defun)
          ;; End of TODO
-         ;; TODO: Checking
-         ("C-M-d"   . verilog-ext-find-module-instance-fwd)
-         ("C-M-u"   . verilog-ext-find-module-instance-bwd)
-         ("M-i"     . verilog-ext-imenu)
-         ;; End of TODO
          ("C-c C-o" . verilog-pretty-expr) ; C-c C-i same as C-c TAB that executes `verilog-pretty-declarations'
          ("C-c C-b" . nil)                 ; Unmap `verilog-submit-bug-report', leave space for something else
          ("C-c C-d" . nil)                 ; Unmap `verilog-goto-defun' until it's fixed, leave space for some verilog-ext function
@@ -62,6 +57,33 @@
   (advice-add 'electric-verilog-terminate-line :before-until #'larumbe/newline-advice)) ; Quit *xref* buffer with C-m/RET
 
 
+;; TODO: Checking
+(use-package verilog-ext
+  :straight nil
+  :bind (:map verilog-mode-map
+         ("M-f"      . verilog-ext-forward-word)
+         ("M-b"      . verilog-ext-backward-word)
+         ;; ("TAB"      . verilog-ext-electric-verilog-tab) ; TODO: Needed?
+
+         ("C-M-d"   . verilog-ext-find-module-instance-fwd)
+         ("C-M-u"   . verilog-ext-find-module-instance-bwd)
+         ("M-i"     . verilog-ext-imenu)
+
+         ("C-M-."   . verilog-ext-jump-to-module-at-point-def)
+         ("C-M-/"   . verilog-ext-jump-to-module-at-point-ref)
+
+         ("C-c a"    . verilog-ext-module-at-point-align-ports)
+         ("C-c l"    . verilog-ext-module-at-point-align-params)
+         ("C-c i"    . verilog-ext-module-at-point-indent)
+         ("C-c b"    . verilog-ext-module-at-point-beautify)
+
+         )
+  :config
+  (message "Setting up verilog-ext"))
+
+
+
+
 ;; (use-package verilog-ext
 ;;   :straight nil
 ;;   :after verilog-mode
@@ -79,7 +101,7 @@
 ;;          ("C-M-u"    . verilog-ext-find-module-instance-bwd)
 ;;          ("C-M-d"    . verilog-ext-find-module-instance-fwd)
 ;;          ;; ("C-M-h"    . xah-select-current-block) ; TODO: Create an analogous utility, that selects current 'defun'
-;;          ("C-c i"    . verilog-ext-indent-module-at-point)
+;;          ("C-c i"    . verilog-ext-module-at-point-indent)
 ;;          ("C-c b"    . verilog-ext-beautify-module-at-point)
 ;;          ("C-c B"    . verilog-ext-beautify-module-at-point)
 ;;          ("C-c c"    . verilog-ext-toggle-connect-port)

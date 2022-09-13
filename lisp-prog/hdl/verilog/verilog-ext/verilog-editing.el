@@ -50,25 +50,6 @@ Ask for ports to be connected until no port is found at current line."
     (verilog-ext-toggle-connect-port t)))
 
 
-(defun verilog-ext-clean-port-blanks ()
-  "Cleans blanks inside port connections of current buffer.
-
-Capture Groups:
-- Group 1: Beginning of line blanks
-- Group 2: Port name (after dot connection)
-- Group 3: Blanks after identifier
-- Group 4: Blanks after beginning of port connection '('
-- Group 5: Name of connection
-- Group 6: Blanks after end of port connection ')'
-"
-  (interactive)
-  (let ((old-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)(\\(?4:[ ]*\\)\\(?5:[^ ]+\\)\\(?6:[ ]*\\))")
-        (new-re "\\1.\\2\\3\(\\5\)"))
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward old-re nil :noerror)
-        (replace-match new-re)))
-    (message "Removed blanks from current buffer port connections.")))
 
 
 (defun verilog-ext-block-end-comments-to-block-names ()

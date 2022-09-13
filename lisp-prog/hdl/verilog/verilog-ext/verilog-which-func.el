@@ -4,7 +4,7 @@
 
 
 (require 'which-func)
-(require 'verilog-rx)
+;; (require 'verilog-rx)
 (require 'verilog-navigation)
 
 
@@ -14,16 +14,18 @@ mode-line. For instance, if point is under \"module top\", `which-func' would
 show \"top\" but also show extra information that it's a \"module\".")
 
 
+;; TODO: Seems it's not used!
 (defun hdl-ext-which-func-current ()
   ""
   (gethash (get-buffer-window) which-func-table))
+;; End of TODO
 
 
 (defun verilog-ext-which-func-find-instance ()
   ""
   (let (instance-point instance-type instance-name)
     (save-excursion
-      (when (verilog-ext-find-module-instance-bwd)
+      (when (verilog-ext-instance-at-point)
         (setq instance-point (point))
         (setq instance-type (match-string-no-properties 1))
         (setq instance-name (match-string-no-properties 2))))
@@ -119,6 +121,7 @@ show \"top\" but also show extra information that it's a \"module\".")
                 "]")))
 
 ;;;;; Setup
+;; TODO: Do a minor-mode that adds/removes the hooks?
 (add-hook 'verilog-mode-hook #'verilog-ext-which-func)
 (add-hook 'verilog-mode-hook #'verilog-ext-which-func-update-format)
 

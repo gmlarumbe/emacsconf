@@ -45,6 +45,23 @@
 (require 'verilog-rx)
 (require 'verilog-navigation)
 
+;;;; Imenu-regexp
+;; Search by regexp: Used as regexps in `verilog-ext-imenu-generic-expression'
+(defvar verilog-ext-imenu-top-re        "^\\s-*\\(?1:connectmodule\\|m\\(?:odule\\|acromodule\\)\\|p\\(?:rimitive\\|rogram\\|ackage\\)\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
+(defvar verilog-ext-imenu-localparam-re "^\\s-*localparam\\(?1:\\s-+\\(logic\\|bit\\|int\\|integer\\)\\s-*\\(\\[.*\\]\\)?\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
+(defvar verilog-ext-imenu-define-re     "^\\s-*`define\\s-+\\([a-zA-Z0-9_.:]+\\)")
+(defvar verilog-ext-imenu-assign-re     "^\\s-*assign\\s-+\\([a-zA-Z0-9_.:]+\\)")
+(defvar verilog-ext-imenu-generate-re   "^\\s-*generate[ \t\n]*\\(?1:.*\\)")
+(defvar verilog-ext-imenu-always-re     "^\\s-*always\\(_ff\\|_comb\\|_latch\\)?\\s-*\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
+(defvar verilog-ext-imenu-initial-re    "^\\s-*initial\\s-+\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
+;; Search by function: Used for functions that will be passed as an argument of `verilog-ext-imenu-generic-expression'
+(defvar verilog-ext-task-re     "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*task\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
+(defvar verilog-ext-function-re "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*function\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?:\\w+\\s-+\\)?\\(?:\\(?:un\\)signed\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)")
+(defvar verilog-ext-class-re    "\\(?1:\\(?:\\(?:virtual\\)\\s-+\\)?class\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
+(defvar verilog-ext-top-re      "\\(?1:package\\|program\\|module\\|interface\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)")
+
+
+
 ;;;; Variables
 (defvar verilog-ext-imenu-generic-expression
       `((nil                ,verilog-ext-imenu-top-re 2)
@@ -170,6 +187,86 @@ If optional FIRST is used, then shows first block
   (setq imenu-create-index-function #'verilog-ext-imenu-index)
   (imenu-list)
   (verilog-ext-imenu-hide-all t))
+
+
+
+;;;; Utility
+(defun verilog-ext-find-class-bwd ()
+  "Meant to be used for Imenu class entry."
+  (let (found pos)
+    (save-excursion
+      (while (and (not found)
+                  (verilog-ext-find-token-bwd))
+        (when (looking-at verilog-ext-class-re)
+          (setq found t)
+          (setq pos (point)))))
+    (when found
+      (goto-char pos))))
+
+
+
+(defun verilog-ext-point-inside-class-p ()
+  "Return non-nil if cursor is pointing a func/task inside a class."
+  (interactive)
+  (save-match-data
+    (unless (or (looking-at verilog-ext-task-re)
+                (looking-at verilog-ext-function-re))
+      (error "Pointer is not in a function/task!"))
+    (let ((task-point (point))
+          (endclass-point))
+      (save-excursion
+        (if (verilog-ext-find-class-bwd)
+            (progn
+              (verilog-forward-sexp)
+              (setq endclass-point (point))
+              (if (< task-point endclass-point)
+                  t
+                nil))
+          nil)))))
+
+
+(defun verilog-ext-find-task-function-class-bwd ()
+  "Meant to be used for Imenu class entry."
+  (let (found pos)
+    (save-excursion
+      (while (and (not found)
+                  (verilog-ext-find-token-bwd))
+        (when (or (looking-at verilog-ext-function-re)
+                  (looking-at verilog-ext-task-re)
+                  (looking-at verilog-ext-class-re))
+          (setq found t)
+          (setq pos (point)))))
+    (when found
+      (goto-char pos))))
+
+
+(defun verilog-ext-find-task-function-outside-class-bwd ()
+  "Meant to be used for Imenu class entry."
+  (let (found pos)
+    (save-excursion
+      (while (and (not found)
+                  (verilog-ext-find-token-bwd))
+        (when (and (or (looking-at verilog-ext-function-re)
+                       (looking-at verilog-ext-task-re))
+                   (not (verilog-ext-point-inside-class-p)))
+          (setq found t)
+          (setq pos (point)))))
+    (when found
+      (goto-char pos))))
+
+
+;; TODO: Is this one actually used anywhere?
+(defun verilog-ext-find-top-bwd ()
+  "Return non-nil if cursor is pointing at verilog top module."
+  (let (found pos)
+    (save-excursion
+      (while (and (not found)
+                  (verilog-ext-find-token-bwd))
+        (when (looking-at verilog-ext-top-re)
+          (setq found t)
+          (setq pos (point)))))
+    (when found
+      (goto-char pos))))
 
 
 
