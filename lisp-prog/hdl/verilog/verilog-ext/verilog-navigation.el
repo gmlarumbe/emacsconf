@@ -297,62 +297,6 @@ Return list with TYPE and NAME."
 
 
 
-;; TODO: Rename this token thing with something else as this is used inside verilog-mode
-;;;; Token/Class-related
-(defvar verilog-ext-token-re
-  (regexp-opt
-   '("module"
-     "interface"
-     "program"
-     "package"
-     "class"
-     "function"
-     "task"
-     "initial"
-     "always"
-     "always_ff"
-     "always_comb"
-     "generate"
-     "property"
-     "sequence"
-     "`define")
-   'symbols))
-
-(defun verilog-ext-find-token (&optional fwd)
-  "Search forward for a Verilog token regexp."
-  (let ((token-re verilog-ext-token-re)
-        (case-fold-search verilog-case-fold) ; TODO: What about case fold
-        (found nil)
-        (pos))
-    (save-excursion
-      (when fwd
-        (forward-char)) ; Needed to avoid getting stuck
-      (while (and (not found)
-                  (if fwd
-                      (re-search-forward token-re nil t)
-                    (re-search-backward token-re nil t)))
-        (unless (or (equal (face-at-point) 'font-lock-comment-face)
-                    (equal (face-at-point) 'font-lock-string-face))
-          (setq found t)
-          (if (called-interactively-p)
-              (setq pos (match-beginning 1))
-            (setq pos (point))))))
-    (when found
-      (goto-char pos))))
-
-
-(defun verilog-ext-find-token-fwd ()
-  "Search forward for a Verilog token regexp."
-  (interactive)
-  (verilog-ext-find-token t))
-
-
-(defun verilog-ext-find-token-bwd ()
-  "Search backwards for a Verilog token regexp."
-  (interactive)
-  (verilog-ext-find-token nil))
-
-
 
 
 

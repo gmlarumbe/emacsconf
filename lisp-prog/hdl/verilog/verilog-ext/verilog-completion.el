@@ -23,10 +23,11 @@
 ;;
 ;; TODO: Add some CAPF that uses global to determine what current definition type is?
 ;;  - E.g.:
-;;   - if current definition is a class, get its attributes and methods in a list and prompt them as completion candidates, plus randomize() method etc
-;;   - if current definition is an array prompt for array methods
-;;   - if is an enum for enum methods, if is a queue for queue methods, etc... Some semantic analysis
-;;   - Could be done with tree-sitter?
+;;   - Use regular completion, except when after .
+;;      - if current definition is a class, get its attributes and methods in a list and prompt them as completion candidates, plus randomize() method etc
+;;      - if current definition is an array prompt for array methods
+;;      - if is an enum for enum methods, if is a queue for queue methods, etc... Some semantic analysis
+;;      - Could be done with tree-sitter?
 
 
 ;;;; YaSnippet
