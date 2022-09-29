@@ -34,46 +34,6 @@ Move backward ARG words."
 
 
 
-;;;; Utility
-(defun verilog-ext-forward-syntactic-ws ()
-  (verilog-forward-syntactic-ws)
-  (point))
-
-(defun verilog-ext-backward-syntactic-ws ()
-  (verilog-backward-syntactic-ws)
-  (point))
-
-(defun verilog-ext-forward-char ()
-  (forward-char)
-  (point))
-
-(defun verilog-ext-backward-char ()
-  (backward-char)
-  (point))
-
-(defun verilog-ext-forward-sexp ()
-  (ignore-errors
-    (forward-sexp)
-    (point)))
-
-(defun verilog-ext-backward-sexp ()
-  (ignore-errors
-    (backward-sexp)
-    (point)))
-
-(defun verilog-ext-skip-identifier-backwards ()
-  ""
-  (< (skip-chars-backward "a-zA-Z0-9_") 0))
-
-(defun verilog-ext-skip-identifier-forward ()
-  ""
-  (> (skip-chars-forward "a-zA-Z0-9_") 0))
-
-(defmacro when-t (cond &rest body)
-  "Same as `when' from subr.el but returning t if COND is nil."
-  (declare (indent 1) (debug t))
-  (list 'if cond (cons 'progn body) t))
-
 
 ;;;; Module related
 ;; TODO: Try to optimize it not to do the forward-line thing

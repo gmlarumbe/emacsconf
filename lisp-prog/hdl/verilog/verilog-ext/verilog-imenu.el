@@ -142,7 +142,7 @@ list obtained by using the imenu generic function."
 
 (defun verilog-ext-imenu-hook ()
   ""
-  (setq imenu-create-index-function #'verilog-ext-imenu-index))
+  (setq imenu-create-index-function #'verilog-ext-imenu-index)) ; TODO: Use setq-local instead?
 
 
 

@@ -7,7 +7,7 @@
 
 
 ;;;; Code beautifying
-(defun verilog--ext-module-at-point-align (thing)
+(defun verilog-ext-module-at-point--align (thing)
   "Align THING of current module (ports/parameters)."
   (let ((case-fold-search nil)
         (re "\\(\\s-*\\)(")
@@ -37,13 +37,13 @@
 (defun verilog-ext-module-at-point-align-ports ()
   "Align parenthesis ports of current module."
   (interactive)
-  (verilog--ext-module-at-point-align 'ports))
+  (verilog-ext-module-at-point--align 'ports))
 
 
 (defun verilog-ext-module-at-point-align-params ()
   "Align parameters of current module."
   (interactive)
-  (verilog--ext-module-at-point-align 'parameters))
+  (verilog-ext-module-at-point--align 'parameters))
 
 
 (defun verilog-ext-module-at-point-indent ()
