@@ -1,9 +1,6 @@
 ;;; verilog-templates.el --- Verilog Templates  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;
-;; TODO: Substitute the replace-string with search-forward + replace match
-;; to avoid lint warnings and make it faster.
-;;
 ;;; Code:
 
 (require 'verilog-mode)
@@ -406,7 +403,9 @@ Called from `verilog-ext-templ-inst-auto-from-file'."
       (if (re-search-forward ")[[:blank:]]*;[[:blank:]]*// Templated" nil t)
           (setq end (point))
         (error "Couldn't process AUTOINST.  Does module have ports?"))
-      (replace-regexp "[[:blank:]]*// Templated" "" nil beg end))
+      (goto-char beg)
+      (while (re-search-forward "[[:blank:]]*// Templated" end t)
+        (replace-match "")))
     (save-excursion ;; Open final parenthesis
       (re-search-forward "));")
       (backward-char 2)
@@ -414,13 +413,15 @@ Called from `verilog-ext-templ-inst-auto-from-file'."
     (save-excursion ;; Remove /*AUTOINST*/
       (setq beg (point))
       (setq end (re-search-forward ");")) ; Last /*AUTOINST*/ comment by AUTO_TEMPLATE
-      (replace-string "/*AUTOINST*/" "" nil beg end))))
+      (goto-char beg)
+      (while (search-forward "/*AUTOINST*/" end t)
+        (replace-match  "")))))
 
 
 (defun verilog-ext-templ-inst-auto--autoparam-processing ()
   "Syntactic sugar.
 Called from `verilog-ext-templ-inst-auto-from-file'."
-  (let (beg end error)
+  (let (beg end)
     (save-excursion
       (setq beg (point))
       (if (re-search-forward "))" nil t)
@@ -431,7 +432,9 @@ Called from `verilog-ext-templ-inst-auto-from-file'."
     (save-excursion ; Remove /*AUTOINSTPARAM*/
       (setq beg (point))
       (setq end (re-search-forward ");" nil t))
-      (replace-string "/*AUTOINSTPARAM*/" "" nil beg end))
+      (goto-char beg)
+      (while (search-forward "/*AUTOINSTPARAM*/" end t)
+        (replace-match  "")))
     (save-excursion ; Remove ' // Parameters ' string
       (forward-line 1)
       (beginning-of-line)
@@ -456,11 +459,12 @@ Return found one, or prompt for list of found ones if there is more than one."
       (car modules))))
 
 
-;; TODO: Fix docstring
 (defun verilog-ext-templ-inst-auto-from-file (file &optional template inst-template)
   "Instantiate top module present in FILE.
 If there is more than one module, prompt for a list of detected modules.
-If PROMPT is non-nil or called with universal arg, ask for template to instantiate."
+
+Use auto TEMPLATE or prompt to choose one if is nil.
+Use inst INST-TEMPLATE or prompt to choose one if is nil."
   (interactive "FSelect module from file:\nP")
   (let* ((module-name (verilog-ext-templ-inst-auto--read-file-modules file))
          (start-template (point))
@@ -468,6 +472,8 @@ If PROMPT is non-nil or called with universal arg, ask for template to instantia
     ;; Checks and env setup
     (unless module-name
       (error "No module found in %s" file))
+    (unless (verilog-ext-point-inside-block-p 'module)
+      (error "Point is not inside a module block.  Cannot instantiate block"))
     (setq instance-name (read-string "Instance-name: " (concat "I_" (upcase module-name))))
     (add-to-list 'verilog-library-files file)
     ;; Prepare instantiation template
@@ -481,14 +487,17 @@ If PROMPT is non-nil or called with universal arg, ask for template to instantia
     (insert template)
     (save-excursion
       (goto-char start-template)
-      (replace-string "<module>" module-name))
+      (while (search-forward "<module>" nil t)
+        (replace-match module-name)))
     (setq start-instance (point))
     (save-excursion
       (insert inst-template)
       (goto-char start-instance)
-      (replace-string "<module>" module-name)
+      (while (search-forward "<module>" nil t)
+        (replace-match module-name))
       (goto-char start-instance)
-      (replace-string "<instance_name>" instance-name)
+      (while (search-forward "<instance_name>" nil t)
+        (replace-match instance-name))
       (verilog-auto))
     ;; PostProcess instantiation
     (verilog-ext-templ-inst-auto--autoinst-processing)
@@ -504,12 +513,12 @@ If PROMPT is non-nil or called with universal arg, ask for template to instantia
       (verilog-ext-module-at-point-indent))
     (save-excursion
       (search-forward instance-name)
-      (next-line 1)
+      (forward-line)
       (verilog-ext-module-at-point-align-ports))
     (when autoparam
       (save-excursion
         (search-forward instance-name)
-        (next-line 1)
+        (forward-line)
         (verilog-ext-module-at-point-align-params)))))
 
 
@@ -544,7 +553,8 @@ Required by tb instantiation to auto detect width of signals."
   (when (file-exists-p outfile)
     (error "File %s exists" outfile))
   (let ((module-name (verilog-ext-templ-inst-auto--read-file-modules file))
-        beg end)
+        (end-marker (make-marker))
+        beg end )
     (find-file outfile)
     (insert "\
 module tb_<module_name> () ;
@@ -607,31 +617,44 @@ module tb_<module_name> () ;
 endmodule // tb_<module_name>
 ")
     ;; Replace template parameteres, instantiate DUT and create header
-    (replace-string "<module_name>" module-name nil (point-min) (point-max))
-    (replace-string "<clock>" verilog-ext-templ-clock nil (point-min) (point-max))
-    (replace-string "<resetn>" verilog-ext-templ-resetn nil (point-min) (point-max))
+    (goto-char (point-min))
+    (while (search-forward "<module_name>" nil t)
+      (replace-match module-name))
+    (goto-char (point-min))
+    (while (search-forward "<clock>" nil t)
+      (replace-match verilog-ext-templ-clock))
+    (goto-char (point-min))
+    (while (search-forward "<resetn>" nil t)
+      (replace-match verilog-ext-templ-resetn))
+    (goto-char (point-min))
     (search-forward "// DUT Instantiation")
     (verilog-ext-templ-inst-auto-from-file-tb-dut file)
     (verilog-ext-templ-header)
     ;; Postprocess /*AUTOINOUTPARAM*/
     (save-excursion
       (goto-char (point-min))
-      (search-forward (concat "/*AUTOINOUTPARAM(\"" module-name "\")*/"))
-      (replace-regexp (concat "logic\\s-+\\(" verilog-identifier-re "\\)") "localparam \\1 = 0" nil (point) (search-forward "// End of /*AUTOINOUTPARAM*/"))
-      (beginning-of-line)
-      (verilog-pretty-expr))
+      (setq beg (search-forward (concat "/*AUTOINOUTPARAM(\"" module-name "\")*/")))
+      (set-marker end-marker (search-forward "// End of /*AUTOINOUTPARAM*/"))
+      (goto-char beg)
+      (while (re-search-forward (concat "logic\\s-+\\(" verilog-identifier-re "\\)") (marker-position end-marker) t)
+        (replace-match "localparam \\1 = 0")))
     ;; Beautify declarations and initialize values
     (save-excursion
       (goto-char (point-min))
       (search-forward "/*AUTOREGINPUT*/")
-      (beginning-of-line)
-      (verilog-pretty-declarations)
+      ;; (beginning-of-line)
       (save-excursion ; Init to '0 every input signal
         (setq beg (point))
         (forward-paragraph 1)
-        (setq end (point))
-        (replace-regexp (concat "\\(logic " verilog-identifier-re "\\);") "\\1 = '0;" nil beg end))
-      (save-excursion ; Align // To or // From auto comments
+        (set-marker end-marker (point))
+        (goto-char beg)
+        (while (re-search-forward (concat "\\(logic\\s-+\\(\\[[^]]*\\]\\s-*\\)*" verilog-identifier-re "\\);") (marker-position end-marker) t)
+          (replace-match "\\1 = '0;"))
+        (goto-char beg)
+        (forward-line 2)
+        (verilog-pretty-declarations)
+        (verilog-pretty-expr))
+      (save-excursion ; Align // To or // From auto comments if `verilog-auto-wire-comment' is non-nil
         (setq beg (point))
         (forward-paragraph 2)
         (setq end (point))
@@ -655,7 +678,7 @@ endmodule // tb_<module_name>
         (beginning-of-line)
         (kill-line 1)))
     (search-forward "// TODO")
-    (write-file)))
+    (write-file outfile)))
 
 
 
