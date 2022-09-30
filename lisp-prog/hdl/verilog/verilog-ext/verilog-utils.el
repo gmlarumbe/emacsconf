@@ -36,12 +36,12 @@
 
 (defun verilog-ext-forward-sexp ()
   (ignore-errors
-    (forward-sexp)
+    (verilog-forward-sexp)
     (point)))
 
 (defun verilog-ext-backward-sexp ()
   (ignore-errors
-    (backward-sexp)
+    (verilog-backward-sexp)
     (point)))
 
 (defun verilog-ext-skip-identifier-backwards ()
@@ -95,6 +95,36 @@
                (< pos block-end-point))
           t
         nil))))
+
+
+(defun verilog-ext-replace-regexp (regexp to-string start end)
+  "Wrapper function for programatic use of `replace-regexp'.
+Replace REGEXP with TO-STRING from START to END."
+  (let* ((marker (make-marker))
+         (endpos (set-marker marker end)))
+    (save-excursion
+      (goto-char start)
+      (while (re-search-forward regexp endpos t)
+        (replace-match to-string)))))
+
+
+(defun verilog-ext-replace-regexp-whole-buffer (regexp to-string)
+  "Replace REGEXP with TO-STRING on whole current-buffer."
+  (verilog-ext-replace-regexp regexp to-string (point-min) nil))
+
+
+(defun verilog-ext-replace-string (string to-string start end &optional fixedcase)
+  "Wrapper function for programatic use of `replace-string'.
+Replace STRING with TO-STRING from START to END.
+
+If optional arg FIXEDCASE is non-nil, do not alter the case of
+the replacement text (see `replace-match' for more info)."
+  (let* ((marker (make-marker))
+         (endpos (set-marker marker end)))
+    (save-excursion
+      (goto-char start)
+      (while (search-forward string endpos t)
+        (replace-match to-string fixedcase)))))
 
 
 
