@@ -1,17 +1,15 @@
 ;;; verilog-templates.el --- Verilog Templates  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;
-;; Many of these should be deprecated by Hydra+YASnippet
-;;
-;; Some customized functions extracted from `verilog-mode.el' and
-;; tweaked to fulfill some specific functionality
-;;
-;; Had some issues trying to implement it with skeletons.
-;; Finally decided on interactive functions.
+;; TODO: Substitute the replace-string with search-forward + replace match
+;; to avoid lint warnings and make it faster.
 ;;
 ;;; Code:
 
 (require 'verilog-mode)
+
+(defvar verilog-ext-templ-resetn "Rst_n")
+(defvar verilog-ext-templ-clock "Clk")
 
 
 (defmacro with-verilog-template (&rest body)
@@ -248,12 +246,10 @@ DIRECTION should be either 'input or 'output."
 
 
 ;;;; FSM
-(defvar verilog-ext-templ-fsm-reset "Rst_n")
-(defvar verilog-ext-templ-fsm-clock "Clk")
-
 (defun verilog-ext-templ-fsm (&optional async)
   "Insert a state machine custom definition with two always blocks.
-One for next state and output logic and one for the state registers."
+One for next state and output logic and one for the state registers.
+If ASYNC is non-nil create an asynchronous reset."
   (interactive)
   (let* ((state-type (read-string "Name of state typedef: " "state_t"))
          (state-var  (read-string "Name of state variable: " "state"))
@@ -267,11 +263,11 @@ One for next state and output logic and one for the state registers."
     ;; Synchronous logic
     (with-verilog-template
       (insert "// State FF for " state-var "\n")
-      (insert "always_ff @ (posedge " verilog-ext-templ-fsm-clock)
+      (insert "always_ff @ (posedge " verilog-ext-templ-clock)
       (when async
-        (insert " or negedge " verilog-ext-templ-fsm-reset))
+        (insert " or negedge " verilog-ext-templ-resetn))
       (insert ") begin\n")
-      (insert "if (!" verilog-ext-templ-fsm-reset ")\n")
+      (insert "if (!" verilog-ext-templ-resetn ")\n")
       (insert state-var " <= " (car enum-labels) ";\n")
       (insert "else\n")
       (insert  state-var " <= " next-state-var ";\n")
@@ -404,12 +400,12 @@ One for next state and output logic and one for the state registers."
 (defun verilog-ext-templ-inst-auto--autoinst-processing ()
   "Syntactic sugar.
 Called from `verilog-ext-templ-inst-auto-from-file'."
-  (let (beg end error)
+  (let (beg end)
     (save-excursion ;; Remove comments
       (setq beg (point))
       (if (re-search-forward ")[[:blank:]]*;[[:blank:]]*// Templated" nil t)
           (setq end (point))
-        (error "Couldn't process AUTOINST. Does module have ports?"))
+        (error "Couldn't process AUTOINST.  Does module have ports?"))
       (replace-regexp "[[:blank:]]*// Templated" "" nil beg end))
     (save-excursion ;; Open final parenthesis
       (re-search-forward "));")
@@ -437,7 +433,7 @@ Called from `verilog-ext-templ-inst-auto-from-file'."
       (setq end (re-search-forward ");" nil t))
       (replace-string "/*AUTOINSTPARAM*/" "" nil beg end))
     (save-excursion ; Remove ' // Parameters ' string
-      (next-line 1)
+      (forward-line 1)
       (beginning-of-line)
       (kill-line 1))))
 
@@ -460,27 +456,27 @@ Return found one, or prompt for list of found ones if there is more than one."
       (car modules))))
 
 
-(defun verilog-ext-templ-inst-auto-from-file (file &optional prompt)
+;; TODO: Fix docstring
+(defun verilog-ext-templ-inst-auto-from-file (file &optional template inst-template)
   "Instantiate top module present in FILE.
 If there is more than one module, prompt for a list of detected modules.
 If PROMPT is non-nil or called with universal arg, ask for template to instantiate."
   (interactive "FSelect module from file:\nP")
   (let* ((module-name (verilog-ext-templ-inst-auto--read-file-modules file))
          (start-template (point))
-         instance-name start-instance template inst-template autoparam)
+         instance-name start-instance autoparam)
     ;; Checks and env setup
     (unless module-name
       (error "No module found in %s" file))
     (setq instance-name (read-string "Instance-name: " (concat "I_" (upcase module-name))))
     (add-to-list 'verilog-library-files file)
     ;; Prepare instantiation template
-    (if prompt
-        (progn
-          (setq template (verilog-ext-templ-inst-auto--choose-template))
-          (when (equal verilog-ext-templ-inst-auto-autoparam (setq inst-template (verilog-ext-templ-inst-auto--choose-autoinst)))
-            (setq autoparam t)))
-      (setq template verilog-ext-templ-inst-auto-conn-ports)
-      (setq inst-template verilog-ext-templ-inst-auto--simple))
+    (unless template
+      (setq template (verilog-ext-templ-inst-auto--choose-template)))
+    (unless inst-template
+      (setq inst-template (verilog-ext-templ-inst-auto--choose-autoinst)))
+    (when (equal inst-template verilog-ext-templ-inst-auto-autoparam)
+      (setq autoparam t))
     ;; Instantiate module/instance
     (insert template)
     (save-excursion
@@ -517,45 +513,58 @@ If PROMPT is non-nil or called with universal arg, ask for template to instantia
         (verilog-ext-module-at-point-align-params)))))
 
 
-;; TODO: Find a better name?
-(defun verilog-ext-templ-inst-auto-from-file-complex (file)
+(defun verilog-ext-templ-inst-auto-from-file-simple (file)
   "Instantiate from FILE and prompt for template and parameters."
   (interactive "FSelect module from file:")
-  (verilog-ext-templ-inst-auto-from-file file :prompt))
+  (verilog-ext-templ-inst-auto-from-file file
+                                         verilog-ext-templ-inst-auto-conn-ports
+                                         verilog-ext-templ-inst-auto--simple))
+
+
+(defun verilog-ext-templ-inst-auto-from-file-tb-dut (file)
+  "Instantiate from FILE and prompt for template and parameters.
+Required by tb instantiation to auto detect width of signals."
+  (interactive "FSelect module from file:")
+  (verilog-ext-templ-inst-auto-from-file file
+                                         verilog-ext-templ-inst-auto-conn-ports-ss
+                                         verilog-ext-templ-inst-auto-autoparam))
+
+
+(defun verilog-ext-templ-inst-auto-from-file-prompt (file)
+  "Instantiate from FILE and prompt for template and parameters."
+  (interactive "FSelect module from file:")
+  (verilog-ext-templ-inst-auto-from-file file))
 
 
 
-;; TODO: Here I left
-;; TODO: Better do a simple UVM environment
 ;;;; Testbenches
-(defun verilog-ext-templ-testbench-simple-from-file (file)
-  "Instantiate basic testbench from FILE's top module."
-  (interactive "FSelect DUT from file:")
-  (let ((start (point))
-        (module-name (verilog-ext-templ-inst-auto--read-file-modules file))
-        (current-prefix-arg)
+(defun verilog-ext-templ-testbench-simple-from-file (file outfile)
+  "Instantiate basic testbench from FILE's top module into OUTFILE."
+  (interactive "FSelect DUT from file:\nFOutput file: ")
+  (when (file-exists-p outfile)
+    (error "File %s exists" outfile))
+  (let ((module-name (verilog-ext-templ-inst-auto--read-file-modules file))
         beg end)
+    (find-file outfile)
     (insert "\
-// TODO: unit space imported packages
-// import AxiLiteBfm_pkg::*;
-
 module tb_<module_name> () ;
 
     // Simulation parameters
     timeprecision 1ps;
     timeunit      1ns;
+
     localparam CLKT = 10ns;  // 100 MHz
 
-    // TODO: Don't forget to INIT after (verilog-auto)!!
+    // TODO: INIT after (verilog-auto)!!
     // DUT instance parameters
     /*AUTOINOUTPARAM(\"<module_name>\")*/
     // End of /*AUTOINOUTPARAM*/
 
     // Non-auto signals
-    logic Clk   = 1'b0;
-    logic Rst_n = 1'b1;
+    logic <clock> = 1'b0;
+    logic <resetn> = 1'b1;
 
-    // TODO: Init during declaration (before simulation time 0) to avoid unexpected triggering events
+    // TODO: Init during declaration (before simulation time 0) to avoid race conditions
     /* DUT Inputs */
     /*AUTOREGINPUT*/
 
@@ -565,53 +574,55 @@ module tb_<module_name> () ;
 
     // System Clock
     always begin
-        #(CLKT/2) Clk = ~Clk;
+        #(CLKT/2) <clock> = ~<clock>;
     end
 
     // TODO: Declare/Connect interfaces
-    // axi4_lite_if axil_if_<module_name> (.AClk(Clk), .AReset_n(Rst_n));
+    // axi4_lite_if axil_if_<module_name> (.Clk(<clock>), .Rst_n(<resetn>));
     // ...
 
     // TODO: Ensure SV interfaces connections
     // DUT Instantiation
 
-    // TODO: Tasks
+    // TODO: Tasks/functions
     // ...
 
-    // TODO: TB Object declarations
-    // AxiLiteBfm axil;
+    // TODO: TB Objects
+    // axi4_lite_bfm bfm;
 
     // TODO: Stimuli
     initial begin
-        // axil = new(axil_if_<module_name>);
-        // axil.wait_out_of_reset();
-        // ...
+        // bfm = new(axil_if_<module_name>);
+        //
         // #10 Rst_n = 0;
+        //
+        // bfm.read();
+        // bfm.write();
         // ...
-        // $display(\"@%0d: TEST PASSED\", $time);
-        // $finish;
         // ...
+        $display(\"@%0d: TEST PASSED\", $time);
+        $finish;
     end
-
 
 endmodule // tb_<module_name>
 ")
-    (goto-char start)
-    (replace-string "<module_name>" module-name)
-    (goto-char start)
+    ;; Replace template parameteres, instantiate DUT and create header
+    (replace-string "<module_name>" module-name nil (point-min) (point-max))
+    (replace-string "<clock>" verilog-ext-templ-clock nil (point-min) (point-max))
+    (replace-string "<resetn>" verilog-ext-templ-resetn nil (point-min) (point-max))
     (search-forward "// DUT Instantiation")
-    (setq current-prefix-arg 4) ; Add DUT instance with parameters and choosing template
-    (verilog-ext-templ-inst-auto-from-file file) ; Includes `verilog-auto' expansion
-    (goto-char start)
-    (search-forward "/*AUTOINOUTPARAM") ;; Postprocess /*AUTOINOUTPARAM*/
+    (verilog-ext-templ-inst-auto-from-file-tb-dut file)
+    (verilog-ext-templ-header)
+    ;; Postprocess /*AUTOINOUTPARAM*/
     (save-excursion
-      (replace-regexp "logic[[:blank:]]+" "localparam " nil (point) (search-forward "// End of /*AUTOINOUTPARAM*/")))
-    (save-excursion
-      (replace-regexp "\\(localparam [a-zA-Z0-9_-]+\\);" "\\1 = 0;" nil (point) (search-forward "// End of /*AUTOINOUTPARAM*/")))
-    (call-interactively #'verilog-ext-templ-header-hp)
-    (goto-char start)
+      (goto-char (point-min))
+      (search-forward (concat "/*AUTOINOUTPARAM(\"" module-name "\")*/"))
+      (replace-regexp (concat "logic\\s-+\\(" verilog-identifier-re "\\)") "localparam \\1 = 0" nil (point) (search-forward "// End of /*AUTOINOUTPARAM*/"))
+      (beginning-of-line)
+      (verilog-pretty-expr))
     ;; Beautify declarations and initialize values
     (save-excursion
+      (goto-char (point-min))
       (search-forward "/*AUTOREGINPUT*/")
       (beginning-of-line)
       (verilog-pretty-declarations)
@@ -619,13 +630,18 @@ endmodule // tb_<module_name>
         (setq beg (point))
         (forward-paragraph 1)
         (setq end (point))
-        (replace-regexp "\\(logic [a-zA-Z0-9_-]+\\);" "\\1 = '0;" nil beg end))
+        (replace-regexp (concat "\\(logic " verilog-identifier-re "\\);") "\\1 = '0;" nil beg end))
       (save-excursion ; Align // To or // From auto comments
         (setq beg (point))
         (forward-paragraph 2)
         (setq end (point))
         (align-regexp beg end "\\(\\s-*\\)//" 1 1 nil)))
-    ;; Delete /*AUTO[.*]*/ and generated code
+    ;; Delete /*AUTO[.*]*/ , generated code and instantiation subscripts (needed to autodetect width of signals)
+    (goto-char (point-min))
+    (save-excursion
+      (search-forward "// DUT Instantiation")
+      (while (re-search-forward (concat "\\(\\." verilog-identifier-re "\\s-*(" verilog-identifier-re "\\)\\(\\[.*\\]\\)") (verilog-pos-at-end-of-statement) t)
+        (replace-match "\\1")))
     (save-excursion
       (while (re-search-forward "/\\*AUTO.*\*\/" nil t)
         (beginning-of-line)
@@ -638,188 +654,9 @@ endmodule // tb_<module_name>
       (while (search-forward "// End of automatics" nil t)
         (beginning-of-line)
         (kill-line 1)))
-    (search-forward "// TODO")))
+    (search-forward "// TODO")
+    (write-file)))
 
-
-
-(defun verilog-ext-templ-testbench-env--clocks (file)
-  "Create environment `tb_clocks' and save to FILE."
-  (with-temp-file file
-    (insert "\
-import tb_defs_pkg::CLKT;
-// import other clock periods
-
-module tb_clocks (
-    output logic Clk
-    // Other clocks
-    );
-
-    // System Clock
-    always begin
-        #(CLKT/2) Clk = ~Clk;
-    end
-
-    // Other clocks
-    // ...
-
-    // Initial clock values
-    initial begin
-        Clk = 1;
-    end
-
-
-endmodule: tb_clocks
-"))
-  (find-file file)
-  (verilog-ext-templ-header-hp)
-  (save-buffer))
-
-
-(defun verilog-ext-templ-testbench-env--program (file)
-  "Create environment `tb_program' and save to FILE."
-  (with-temp-file file
-    (insert "\
-import tb_defs_pkg::*;
-import tb_classes::*;
-// import Bfms
-
-program automatic tb_program (
-    // Interfaces from/to DUT
-    // ...
-    input logic Clk,
-    output logic Rst_n
-    );
-
-
-    // Testbench tb;
-
-    initial begin
-        // tb = new();
-        $display(\"Starting simulation...\");
-
-
-
-        // tb.finish_simulation();
-    end
-
-
-endprogram: tb_program
-"))
-  (find-file file)
-  (verilog-ext-templ-header-hp)
-  (save-buffer))
-
-
-(defun verilog-ext-templ-testbench-env--defs-pkg (file)
-  "Create environment `tb_defs_pkg' and save to FILE."
-  (with-temp-file file
-    (insert "\
-package tb_defs_pkg;
-    // Simulation parameters
-    timeprecision   = 1ps;
-    timeunit        = 1ns;
-    localparam CLKT = 10ns;  // 100 MHz
-
-    // DUT instance parameters
-    // ...
-
-    // Other parameters
-    // ...
-endpackage : tb_defs_pkg
-"))
-  (find-file file)
-  (verilog-ext-templ-header-hp)
-  (save-buffer))
-
-
-
-(defun verilog-ext-templ-testbench-env--classes-pkg (file)
-  "Create environment `tb_classes_pkg' and save to FILE."
-  (with-temp-file file
-    (insert "\
-package tb_classes_pkg;
-
-// Drivers
-// ...
-
-// Monitor
-// ...
-
-// Test
-// ...
-
-endpackage : tb_defs_pkg
-"))
-  (find-file file)
-  (verilog-ext-templ-header-hp)
-  (save-buffer))
-
-
-(defun verilog-ext-templ-testbench-env--top (file dut-file clocks-file)
-  "Create environment top file and save to FILE.
-Instantiate dut from DUT-FILE and clocks from CLOCKS-FILE."
-  (find-file file)
-  (insert "\
-// TODO: unit space imported packages
-
-module tb_top () ;
-
-    logic Clk;
-    logic Rst_n;
-
-    // TODO: Declare/Connect interfaces
-    // axi4_lite_if axil_if (.AClk(Clk), .AReset_n(Rst_n));
-    // ...
-
-    // Clocks
-
-    // Testbench
-    tb_program I_TB_PROGRAM (
-        .Clk   (Clk),
-        .Rst_n (Rst_n)
-        );
-
-
-    // DUT Instantiation
-
-endmodule // tb_<module_name>
-")
-  (goto-char (point-min))
-  (search-forward "// DUT Instantiation")
-  (setq current-prefix-arg 4) ; Add DUT instance with parameters and choosing template
-  (verilog-ext-templ-inst-auto-from-file dut-file) ; Includes `verilog-auto' expansion
-  ;; Clocks
-  (goto-char (point-min))
-  (search-forward "// Clocks")
-  (verilog-ext-templ-inst-auto-from-file clocks-file)
-  ;; Header and postprocessing
-  (verilog-ext-templ-header-hp)
-  (save-buffer))
-
-
-
-
-(defun verilog-ext-templ-testbench-env-from-file (dut-file dir)
-  "Create SystemVerilog testbench environment.
-
-DUT-FILE corresponds to the filepath of the DUT (assumes a module per file).
-DIR selects the directory where the environment will be created.
-
-If called interactively, prompt for these two previous values.
-Environment files will be created at specified DIR (clocks, program, defs_pkg, classes_pkg...)"
-  (interactive "FSelect module from file: \nDSelect environment directory: ")
-  (let ((module-name (verilog-ext-templ-inst-auto--read-file-modules dut-file))
-        (clocks-file      (concat (file-name-as-directory dir) "tb_clocks.sv"))
-        (program-file     (concat (file-name-as-directory dir) "tb_program.sv"))
-        (defs-pkg-file    (concat (file-name-as-directory dir) "tb_defs_pkg.sv"))
-        (classes-pkg-file (concat (file-name-as-directory dir) "tb_classes_pkg.sv"))
-        (top-file         (concat (file-name-as-directory dir) "tb_top.sv")))
-    ;; Create Environment files
-    (verilog-ext-templ-testbench-env--clocks      clocks-file)
-    (verilog-ext-templ-testbench-env--program     program-file)
-    (verilog-ext-templ-testbench-env--defs-pkg    defs-pkg-file)
-    (verilog-ext-templ-testbench-env--classes-pkg classes-pkg-file)
-    (verilog-ext-templ-testbench-env--top         top-file dut-file clocks-file)))
 
 
 

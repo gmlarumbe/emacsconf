@@ -32,7 +32,7 @@
 ;; (require 'verilog-utils)
 ;; (require 'verilog-beautify)
 ;; (require 'verilog-editing)
-;; (require 'verilog-compile)
+;; (require 'verilog-compile) ; TODO: Rename to makefile? Add compilation regexps?
 ;; (require 'verilog-templates)
 ;; ;; TODO: This can be reduced to just remove blank spaces when detecting a outshine specific regexp in a particular line
 ;; ;; TODO: Set the variable for ignore custom regexp to "\\s-*//\\*"and the other to ignore multiline defines
@@ -44,6 +44,8 @@
 ;; (require 'verilog-timestamp) ; TODO: Change the 'work' section to a different name
 ;; (require 'verilog-compile) ; TODO: Add compilation regexp support for verilog here (as a derived compilation mode maybe?)
 ;; (require 'verilog-lsp)
+;; TODO: Add these things for apheleia, tree-sitter, etc...
+;; TODO: Add the defun-funcs and font-lock branches of verilog-mode
 
 
 (require 'verilog-utils)
@@ -53,15 +55,10 @@
 (require 'verilog-hideshow)
 (require 'verilog-beautify)
 (require 'verilog-imenu)
-;; (require 'verilog-templates) ; TODO: Revise thoroughly
-;; (require 'verilog-compile) ; TODO: Rename to makefile? Add compilation regexps?
+(require 'verilog-templates)
 ;; (require 'verilog-vhier)
 ;; (require 'verilog-flycheck)
 ;; (require 'verilog-font-lock)
-;; (require 'verilog-timestamp) ; TODO: Change the 'work' section to a different name
-;; (require 'verilog-lsp)
-;; TODO: Add these things for apheleia, tree-sitter, etc...
-;; TODO: Add the defun-funcs and font-lock branches of verilog-mode
 
 
 (provide 'verilog-ext)

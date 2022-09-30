@@ -491,3 +491,190 @@ INFO: `iverilog' command syntax requires writing to an output file
                           (setq verilog-preprocessor (concat "iverilog -E -o" iver-out-file " __FILE__ __FLAGS__")))))
     (verilog-preprocess)))
 
+
+
+
+;;; Templates
+;;;; UVM env
+;; TODO: Convert this into a UVM env template
+;; - Remove 'program' bullshit
+;; - Add assertions file (bind to DUT)
+;; - And so on...
+(defun verilog-ext-templ-testbench-env--clocks (file)
+  "Create environment `tb_clocks' and save to FILE."
+  (with-temp-file file
+    (insert "\
+import tb_defs_pkg::CLKT;
+// import other clock periods
+
+module tb_clocks (
+    output logic Clk
+    // Other clocks
+    );
+
+    // System Clock
+    always begin
+        #(CLKT/2) Clk = ~Clk;
+    end
+
+    // Other clocks
+    // ...
+
+    // Initial clock values
+    initial begin
+        Clk = 1;
+    end
+
+
+endmodule: tb_clocks
+"))
+  (find-file file)
+  (verilog-ext-templ-header-hp)
+  (save-buffer))
+
+
+(defun verilog-ext-templ-testbench-env--program (file)
+  "Create environment `tb_program' and save to FILE."
+  (with-temp-file file
+    (insert "\
+import tb_defs_pkg::*;
+import tb_classes::*;
+// import Bfms
+
+program automatic tb_program (
+    // Interfaces from/to DUT
+    // ...
+    input logic Clk,
+    output logic Rst_n
+    );
+
+
+    // Testbench tb;
+
+    initial begin
+        // tb = new();
+        $display(\"Starting simulation...\");
+
+
+
+        // tb.finish_simulation();
+    end
+
+
+endprogram: tb_program
+"))
+  (find-file file)
+  (verilog-ext-templ-header-hp)
+  (save-buffer))
+
+
+(defun verilog-ext-templ-testbench-env--defs-pkg (file)
+  "Create environment `tb_defs_pkg' and save to FILE."
+  (with-temp-file file
+    (insert "\
+package tb_defs_pkg;
+    // Simulation parameters
+    timeprecision   = 1ps;
+    timeunit        = 1ns;
+    localparam CLKT = 10ns;  // 100 MHz
+
+    // DUT instance parameters
+    // ...
+
+    // Other parameters
+    // ...
+endpackage : tb_defs_pkg
+"))
+  (find-file file)
+  (verilog-ext-templ-header-hp)
+  (save-buffer))
+
+
+
+(defun verilog-ext-templ-testbench-env--classes-pkg (file)
+  "Create environment `tb_classes_pkg' and save to FILE."
+  (with-temp-file file
+    (insert "\
+package tb_classes_pkg;
+
+// Drivers
+// ...
+
+// Monitor
+// ...
+
+// Test
+// ...
+
+endpackage : tb_defs_pkg
+"))
+  (find-file file)
+  (verilog-ext-templ-header-hp)
+  (save-buffer))
+
+
+(defun verilog-ext-templ-testbench-env--top (file dut-file clocks-file)
+  "Create environment top file and save to FILE.
+Instantiate dut from DUT-FILE and clocks from CLOCKS-FILE."
+  (find-file file)
+  (insert "\
+// TODO: unit space imported packages
+
+module tb_top () ;
+
+    logic Clk;
+    logic Rst_n;
+
+    // TODO: Declare/Connect interfaces
+    // axi4_lite_if axil_if (.AClk(Clk), .AReset_n(Rst_n));
+    // ...
+
+    // Clocks
+
+    // Testbench
+    tb_program I_TB_PROGRAM (
+        .Clk   (Clk),
+        .Rst_n (Rst_n)
+        );
+
+
+    // DUT Instantiation
+
+endmodule // tb_<module_name>
+")
+  (goto-char (point-min))
+  (search-forward "// DUT Instantiation")
+  (setq current-prefix-arg 4) ; Add DUT instance with parameters and choosing template
+  (verilog-ext-templ-inst-auto-from-file dut-file) ; Includes `verilog-auto' expansion
+  ;; Clocks
+  (goto-char (point-min))
+  (search-forward "// Clocks")
+  (verilog-ext-templ-inst-auto-from-file clocks-file)
+  ;; Header and postprocessing
+  (verilog-ext-templ-header-hp)
+  (save-buffer))
+
+
+
+
+(defun verilog-ext-templ-testbench-env-from-file (dut-file dir)
+  "Create SystemVerilog testbench environment.
+
+DUT-FILE corresponds to the filepath of the DUT (assumes a module per file).
+DIR selects the directory where the environment will be created.
+
+If called interactively, prompt for these two previous values.
+Environment files will be created at specified DIR (clocks, program, defs_pkg, classes_pkg...)"
+  (interactive "FSelect module from file: \nDSelect environment directory: ")
+  (let ((module-name (verilog-ext-templ-inst-auto--read-file-modules dut-file))
+        (clocks-file      (concat (file-name-as-directory dir) "tb_clocks.sv"))
+        (program-file     (concat (file-name-as-directory dir) "tb_program.sv"))
+        (defs-pkg-file    (concat (file-name-as-directory dir) "tb_defs_pkg.sv"))
+        (classes-pkg-file (concat (file-name-as-directory dir) "tb_classes_pkg.sv"))
+        (top-file         (concat (file-name-as-directory dir) "tb_top.sv")))
+    ;; Create Environment files
+    (verilog-ext-templ-testbench-env--clocks      clocks-file)
+    (verilog-ext-templ-testbench-env--program     program-file)
+    (verilog-ext-templ-testbench-env--defs-pkg    defs-pkg-file)
+    (verilog-ext-templ-testbench-env--classes-pkg classes-pkg-file)
+    (verilog-ext-templ-testbench-env--top         top-file dut-file clocks-file)))
