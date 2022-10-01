@@ -299,6 +299,89 @@ Additionally add xref push marker to the stack."
         (ag-regexp module-instance-pcre (projectile-project-root))))))
 
 
+;;;; Defun find
+;; TODO: These were fetched from verilog-mode, but many things changed
+;; Probably can be used with info from tree-sitter
+(defun verilog-defun-level-up (&optional arg)
+  "Move up one defun-level."
+  (interactive)
+  ;; Order of conditions is relevant here
+  (cond ((or (verilog-in-function-p)
+             (verilog-in-task-p))
+         (verilog-re-search-backward (concat "\\<\\(function\\|task\\)\\>") nil 'move))
+        ((verilog-in-class-p)
+         (verilog-re-search-backward "\\<class\\>" nil 'move))
+        ((verilog-in-package-p)
+         (verilog-re-search-backward "\\<package\\>" nil 'move))
+        ((or (verilog-in-module-p)
+             (verilog-in-program-p)
+             (verilog-in-interface-p))
+         (verilog-re-search-backward (concat "\\<\\(module\\|program\\|interface\\)\\>") nil 'move))
+        (t
+         nil)))
+
+(defun verilog-defun-level-down (&optional arg)
+  "Move down one defun-level."
+  (interactive)
+  (let (limit)
+    ;; Order of conditions is relevant here
+    (cond ((or (verilog-in-function-p :x)
+               (verilog-in-task-p :x))
+           nil)
+          ((verilog-in-class-p :x)
+           (setq limit (verilog-re-search-forward-try (concat "\\<endclass\\>") nil 'move :only-pos))
+           (verilog-re-search-forward-try (concat "\\<\\(function\\|task\\)\\>") limit 'move))
+          ((verilog-in-package-p :x)
+           (setq limit (verilog-re-search-forward-try (concat "\\<endpackage\\>") nil 'move :only-pos))
+           (verilog-re-search-forward-try "\\<class\\>" limit 'move))
+          ((or (verilog-in-module-p :x)
+               (verilog-in-program-p :x)
+               (verilog-in-interface-p :x))
+           (setq limit (verilog-re-search-forward-try (concat "\\<end\\(package\\|module\\|interface\\)\\>") nil 'move :only-pos))
+           (verilog-re-search-forward-try (concat "\\<\\(function\\|task\\)\\>") limit 'move))
+          (t
+           nil))))
+
+(defun verilog-defun-same-level-next ()
+  ""
+  (interactive)
+  (let (limit)
+    ;; Order of conditions is relevant here
+    (cond (;; Functions/task inside task/module/package/interface/program
+           (or (verilog-in-function-p :x)
+               (verilog-in-task-p :x))
+           (when (looking-at (concat "\\<\\(function\\|task\\)\\>"))
+             (forward-word))
+           (setq limit (verilog-re-search-forward-try (concat "\\<end\\(class\\|package\\|module\\|interface\\|program\\)\\>") nil 'move :only-pos))
+           (verilog-re-search-forward-try (concat "\\<\\(function\\|task\\)\\>") limit 'move)) ; TODO: Add static, protected, etc.. tags
+          (;; Classes inside package
+           (verilog-in-class-p :x)
+           (when (looking-at (concat "\\<class\\>"))
+             (forward-word))
+           (setq limit (verilog-re-search-forward-try (concat "\\<endpackage\\>") nil 'move :only-pos))
+           (verilog-re-search-forward-try "\\<class\\>" limit 'move))
+          (;; Package (top)
+           (verilog-in-package-p :x)
+           (when (looking-at (concat "\\<package\\>"))
+             (forward-word))
+           (verilog-re-search-forward-try "\\<package\\>" nil 'move))
+          (;; Module/program/interface
+           (or (verilog-in-module-p :x)
+               (verilog-in-program-p :x)
+               (verilog-in-interface-p :x))
+           (when (looking-at (concat "\\<\\(module\\|program\\|interface\\)\\>"))
+             (forward-word))
+           (verilog-re-search-forward-try (concat "\\<\\(module\\|program\\|interface\\)\\>") nil 'move))
+          (t
+           nil))))
+
+(defun verilog-defun-same-level-prev ()
+  ""
+  (interactive)
+  ;; TODO: Do it analogously to 'prev' function
+  )
+
+
 
 ;;; Utils
 ;;;; Misc
@@ -355,6 +438,7 @@ INFO: Limitations:
   verilog-ext-open-pkgs-projectile)
 
 
+
 ;;;; Hooks
 (defun verilog-ext-hook ()
   "Verilog hook."
@@ -396,6 +480,28 @@ Capture Groups:
       (while (re-search-forward old-re nil :noerror)
         (replace-match new-re)))
     (message "Removed blanks from current buffer port connections.")))
+
+
+;; TODO Add a function (C-c C-M-i) that aligns declarations of current paragraph
+;; TODO Add a function (C-c C-M-o) that aligns expressions of current paragraph
+;; TODO: Problem: paragraphs might not always be blocks of decl/expressions if there are no blank lines in between
+
+;; (defun verilog-ext-align-decl-current-block ()
+;;   ""
+;;   (interactive)
+;;   ()
+;;   ()
+;;   )
+
+;; (defun verilog-ext-align-expr-current-block ()
+;;   ""
+;;   (interactive)
+
+;;   )
+
+;; TODO: Create function to gather typedefs of a directory and subdirectory?
+;;  - Useful for typedef alignment
+
 
 
 ;;; Editing
@@ -678,3 +784,329 @@ Environment files will be created at specified DIR (clocks, program, defs_pkg, c
     (verilog-ext-templ-testbench-env--defs-pkg    defs-pkg-file)
     (verilog-ext-templ-testbench-env--classes-pkg classes-pkg-file)
     (verilog-ext-templ-testbench-env--top         top-file dut-file clocks-file)))
+
+
+;;; Font-lock
+;;;; Variables
+(defvar verilog-ext-font-lock-variable-type-face 'verilog-ext-font-lock-variable-type-face)
+(defface verilog-ext-font-lock-variable-type-face
+  '((t (:foreground "powder blue")))
+  "Face for variable types."
+  :group 'verilog-ext-font-lock-faces)
+
+(defvar verilog-ext-font-lock-variable-name-face 'verilog-ext-font-lock-variable-name-face)
+(defface verilog-ext-font-lock-variable-name-face
+  '((t (:foreground "DarkSeaGreen1")))
+  "Face for variable names."
+  :group 'verilog-ext-font-lock-faces)
+
+
+;; TODO: Do something with this or use default's verilog-mode?
+(defvar verilog-ext-highlight-variable-declaration-names nil)
+
+
+;; TODO: Check `verilog-declaration-varname-matcher' and `verilog-single-declaration-end'
+;; TODO: There should be mandatory space between logic[3:0] ? For unpacked arrays is not mandatory, is it?
+(defconst verilog-ext-variable-re-1
+  (concat "\\<\\(?1:" verilog-identifier-re "\\)\\>" verilog-ext-range-optional-re ; Var type
+          "\\<\\(?3:" verilog-identifier-re "\\)\\>" verilog-ext-range-optional-re ; Var name
+          "\\s-*\\(?4:=.*\\)?;")                                                  ; Optional initialization value
+  "type_t foo;
+   type_t [10:0] foo;
+   type_t [10:0] foo = 'h0;
+")
+;; TODO: Check `verilog-declaration-varname-matcher' and `verilog-single-declaration-end'
+(defconst verilog-ext-variable-re-2
+  (concat "\\<\\(?1:" verilog-identifier-re "\\)\\>"
+          "\\s-+\\(?3:\\(" verilog-identifier-re "\\s-*,\\s-*\\)+\\(" verilog-identifier-re "\\s-*\\)\\);")
+  "type_t foo1, foo2 , foo4, foo6[], foo7 [25], foo8 ;")
+
+;; TODO: Check `verilog-declaration-varname-matcher' and `verilog-single-declaration-end'
+(defconst verilog-ext-variable-re-3
+  (concat "\\<\\(input\\|output\\|inout\\|ref\\|parameter\\|localparam\\)\\>\\s-+"
+          "\\<\\(?1:" verilog-identifier-re "\\)\\>\\s-+" verilog-ext-range-optional-re
+          "\\<\\(?3:" verilog-identifier-re "\\)\\>\\s-*" verilog-ext-range-optional-re)
+  " ...
+  parameter type_t a = 1,
+  localparam type_t b = 2
+  ) .. (
+  ...
+  task foo(
+      input type_t foo1,
+      input bit [ 4:0] foo2,
+      output type_t address,
+      inout type_t data []
+  );
+ ")
+
+
+(defun verilog-ext-find-verilog-variable-type-fwd (regex limit)
+  "Generic search based fontification function of Verilog variable types.
+INFO: It is not necessary to check that variable is not within string/comment
+since these both have precedence over custom fontify.
+
+Search for REGEX bound to LIMIT."
+  (let ((found nil)
+        (pos)
+        (case-fold-search verilog-case-fold)
+        (type)
+        (name))
+    (save-excursion
+      (while (and (not found)
+                  (re-search-forward regex limit t))
+        (setq type (match-string-no-properties 1))
+        (setq name (match-string-no-properties 3))
+        (unless (or (string-match verilog-ext-keywords-no-types-re type)
+                    (string-match verilog-ext-keywords-no-types-re name))
+          (setq found t)
+          (setq pos (point)))))
+    (when found
+      (goto-char pos))))
+
+
+(defun verilog-ext-find-verilog-variable-fwd-1 (limit)
+  (verilog-ext-find-verilog-variable-type-fwd verilog-ext-variable-re-1 limit))
+
+(defun verilog-ext-find-verilog-variable-fwd-2 (limit)
+  (verilog-ext-find-verilog-variable-type-fwd verilog-ext-variable-re-2 limit))
+
+(defun verilog-ext-find-verilog-variable-fwd-3 (limit)
+  (verilog-ext-find-verilog-variable-type-fwd verilog-ext-variable-re-3 limit))
+
+
+(defun verilog-ext-find-verilog-variable-type-fontify-1 (limit)
+  "Search based fontification function of Verilog type 1 variable types.
+These are determined by variable `verilog-ext-variable-re-1'.
+Regex search bound to LIMIT."
+  (let (start end)
+    (when (verilog-ext-find-verilog-variable-fwd-1 limit)
+      (setq start (match-beginning 1))
+      (setq end (match-end 1))
+      (set-match-data (list start end))
+      (point))))
+
+(defun verilog-ext-find-verilog-variable-name-fontify-1 (limit)
+  "Search based fontification function of Verilog type 1 variable names.
+These are determined by variable `verilog-ext-variable-re-1'.
+Regex search bound to LIMIT."
+  (let (start end)
+    (when (verilog-ext-find-verilog-variable-fwd-1 limit)
+      (setq start (match-beginning 3))
+      (setq end (match-end 3))
+      (set-match-data (list start end))
+      (point))))
+
+(defun verilog-ext-find-verilog-variable-type-fontify-2 (limit)
+  "Search based fontification function of Verilog type 2 variable types.
+These are determined by variable `verilog-ext-variable-re-1'.
+Regex search bound to LIMIT."
+  (let (start end)
+    (when (verilog-ext-find-verilog-variable-fwd-2 limit)
+      (setq start (match-beginning 1))
+      (setq end (match-end 1))
+      (set-match-data (list start end))
+      (point))))
+
+(defun verilog-ext-find-verilog-variable-name-fontify-2 (limit)
+  "Search based fontification function of Verilog type 2 variable names.
+These are determined by variable `verilog-ext-variable-re-1'.
+Regex search bound to LIMIT."
+  (let (start end)
+    (when (verilog-ext-find-verilog-variable-fwd-2 limit)
+      (setq start (match-beginning 2))
+      (setq end (match-end 2))
+      (set-match-data (list start end))
+      (point))))
+
+(defun verilog-ext-find-verilog-variable-type-fontify-3 (limit)
+  "Search based fontification function of Verilog type 3 variable types.
+These are determined by variable `verilog-ext-variable-re-1'.
+Regex search bound to LIMIT."
+  (let (start end)
+    (when (verilog-ext-find-verilog-variable-fwd-3 limit)
+      (setq start (match-beginning 1))
+      (setq end (match-end 1))
+      (set-match-data (list start end))
+      (point))))
+
+(defun verilog-ext-find-verilog-variable-name-fontify-3 (limit)
+  "Search based fontification function of Verilog type 3 variable names.
+These are determined by variable `verilog-ext-variable-re-1'.
+Regex search bound to LIMIT."
+  (let (start end)
+    (when (verilog-ext-find-verilog-variable-fwd-3 limit)
+      (setq start (match-beginning 3))
+      (setq end (match-end 3))
+      (set-match-data (list start end))
+      (point))))
+
+
+;;;; Custom constructs
+(defconst verilog-ext-special-macros
+  (verilog-regexp-words
+   '( ;; DMA Macros
+     "MY_CUSTOM_MACRO"
+     ))) ; Used for non-verilog constructs (i.e. custom preprocessing)
+
+(defconst verilog-ext-special-constructs
+  (verilog-regexp-words
+   '(;; These constructs contain some special character that prevent them to be detected as symbols
+     "@special_construct"
+     "%special_construct"
+     ))) ; Used for non-verilog constructs (i.e. custom preprocessing)
+
+
+;; Put inside `verilog-ext-font-lock-keywords', after macros
+   ;; Special macros
+   (cons (concat "\\<\\(" verilog-ext-special-macros "\\)\\>") 'verilog-ext-font-lock-xilinx-attributes-face)
+   ;; Special constructs
+   (cons (concat "\\(" verilog-ext-special-constructs "\\)") 'verilog-ext-font-lock-xilinx-attributes-face)
+
+
+;; Put inside `verilog-ext-font-lock-keywords-3'
+
+    ;; Variable types
+    '(verilog-ext-find-verilog-variable-type-fontify-1
+      (0 'verilog-ext-font-lock-variable-type-face))
+    '(verilog-ext-find-verilog-variable-type-fontify-2
+      (0 'verilog-ext-font-lock-variable-type-face))
+    '(verilog-ext-find-verilog-variable-type-fontify-3
+      (0 'verilog-ext-font-lock-variable-type-face))
+
+   ;; DANGER: Still experimental. Regexps are not solid enough.
+   (when verilog-ext-highlight-variable-declaration-names
+     (list
+      ;; A good approach would be fixing the function search based fontification to detect better variable declarations.
+      '(verilog-ext-find-verilog-variable-name-fontify-1
+        (0 'verilog-ext-font-lock-variable-name-face))
+      '(verilog-ext-find-verilog-variable-name-fontify-2
+        (0 'verilog-ext-font-lock-variable-name-face))
+      '(verilog-ext-find-verilog-variable-name-fontify-3
+        (0 'verilog-ext-font-lock-variable-name-face))
+      ))
+
+
+;; Put inside `verilog-ext-font-lock-keywords-3'
+;; TODO: Copied from verilog-mode (to fontify variables controlled by knob)
+   ;; Variables fontification
+   (list
+    verilog-declaration-re
+    (list
+     ;; Anchored matcher (lookup Search-Based Fontification)
+     'verilog-declaration-varname-matcher
+     ;; Pre-form for this anchored matcher:
+     ;; First, avoid declaration keywords written in comments,
+     ;; which can also trigger this anchor.
+     '(if (and (not (verilog-in-comment-p))
+               (not (member (thing-at-point 'symbol) verilog-keywords)))
+          (verilog-single-declaration-end verilog-highlight-max-lookahead)
+        (point)) ;; => current declaration statement is of 0 length
+     nil ;; Post-form: nothing to be done
+     '(0 verilog-ext-font-lock-variable-name-face)))
+
+
+
+;;;; Enum/Structs issue
+;; INFO: Most likely issue has to do with `font-lock-multiline' stuff.
+;; Instead of using an anchor, maybe the best thing is to use the multiline property
+;; Same as with modules/instances, instead of using anchors
+
+(defvar verilog-ext-font-lock-struct-face 'verilog-ext-font-lock-struct-face)
+(defface verilog-ext-font-lock-struct-face
+  '((t (:foreground "light blue")))
+  "Face for struct variables."
+  :group 'verilog-ext-font-lock-faces)
+
+(defvar verilog-ext-font-lock-enum-face 'verilog-ext-font-lock-enum-face)
+(defface verilog-ext-font-lock-enum-face
+  '((t (:foreground "light blue")))
+  "Face for enum variables."
+  :group 'verilog-ext-font-lock-faces)
+
+
+;; TODO:
+;; - [-] font lock checks @ autoinst_bug373
+;;   - Branch: font-lock
+;;   - [ ] There seemed to be a big issue with enum/struct multi fontifying
+;;     - [ ] Everytime there was a change in the text buffer, the font-lock was lost
+;;     - [ ] `font-lock-fontify-buffer' or `region' would fix it, but it has to be executed at some type of hook every time the file is saved or modified?
+
+(defun verilog-ext-font-lock-enum-fontify-anchor (limit)
+  "Fontify enum declaration anchor."
+  (when (and verilog-fontify-variables
+             (verilog-re-search-forward verilog-typedef-enum-re limit t)
+             (progn (verilog-forward-syntactic-ws)
+                    (looking-at "{"))
+             (progn (ignore-errors (forward-sexp))
+                    (backward-char)
+                    (looking-at "}")))
+    (forward-char)
+    (point)))
+
+(defun verilog-ext-font-lock-struct-fontify-anchor (limit)
+  "Fontify struct declarations."
+  (when (and verilog-fontify-variables
+             (verilog-re-search-forward verilog-ext-font-lock-typedef-struct-re limit t)
+             (verilog-re-search-forward "{" limit t)
+             (progn (backward-char)
+                    (ignore-errors (forward-sexp))
+                    (backward-char)
+                    (looking-at "}")))
+    (forward-char)
+    (point)))
+;; End of TODO:
+
+
+;; TODO: Put this inside `verilog-ext-font-lock-keywords-3'
+   ;; Fontify (typedef) enum vars
+   (list
+    'verilog-ext-font-lock-enum-fontify-anchor
+    (list
+     verilog-identifier-sym-re
+     '(verilog-pos-at-end-of-statement)
+     nil
+     '(0 'font-lock-builtin-face))) ; TODO: Choose proper colors
+   ;; Fontify (typedef) struct vars
+   (list
+    'verilog-ext-font-lock-struct-fontify-anchor
+    (list
+     verilog-identifier-sym-re
+     nil
+     nil
+     '(0 'font-lock-builtin-face))) ; TODO: Choose proper colors
+   ;; ;; End of TODO
+
+
+;;;; Typedef
+(defvar verilog-ext-font-lock-typedef-face 'verilog-ext-font-lock-typedef-face)
+(defface verilog-ext-font-lock-typedef-face
+  '((t (:foreground "light blue")))
+  "Face for user defined types."
+  :group 'verilog-ext-font-lock-faces)
+
+(defun verilog-ext-font-lock-typedef-decl-fontify (limit)
+  "Fontify typedef declarations."
+  (let* ((decl-typedef-re (verilog-get-declaration-typedef-re))
+         start end found var-start var-end)
+    (when (and verilog-fontify-variables
+               (verilog-align-typedef-enabled-p))
+      (while (and (not found)
+                  (verilog-re-search-forward decl-typedef-re limit t))
+        (when (save-excursion
+                (beginning-of-line)
+                (looking-at decl-typedef-re))
+          (setq found t)))
+      (when found
+        (setq start (match-beginning 5))
+        (setq end (match-end 5))
+        (setq var-start (car (bounds-of-thing-at-point 'symbol)))
+        (setq var-end (cdr (bounds-of-thing-at-point 'symbol)))
+        (set-match-data (list start end var-start var-end))
+        (point)))))
+
+
+   ;; ;; TODO
+   ;; Fontify user types declarations
+   '(verilog-ext-font-lock-typedef-decl-fontify
+     (0 'verilog-ext-font-lock-typedef-face)
+     (1 'font-lock-doc-face)) ; TODO: Choose proper colors
