@@ -88,9 +88,14 @@ This was needed in order to allow GitHub actions to work properly."
 ;;;; Navigation
 (use-package isearch
   :straight nil
+  :bind (("M-s M-." . isearch-forward-symbol-at-point))
   :bind (:map isearch-mode-map
          ("C-w" . my-isearch-yank-word-or-char-from-beginning) ; Override `isearch-yank-word-or-char'
-         ("C-j" . isearch-exit)) ; Overrides `isearch-printing-char' to search for newlines
+         ("C-j" . isearch-exit)  ; Overrides `isearch-printing-char' to search for newlines
+         ("C-n" . isearch-repeat-forward)
+         ("C-p" . isearch-repeat-backward)
+         ("M-<" . isearch-beginning-of-buffer)
+         ("M->" . isearch-end-of-buffer))
   :config
   ;; Default was 'not-yanks, so text yanked into the search string in Isearch mode was always downcased.
   ;; Setting to t, upper case chars disable case fold searching (e.g. search symbol at point)
@@ -115,17 +120,17 @@ C-s C-w [C-w] [C-w]... behaviour. "
   :straight nil
   :diminish
   :bind (:map view-mode-map
-              ("n"   . next-line)
-              ("p"   . previous-line)
-              ("f"   . forward-char)
-              ("b"   . backward-char)
-              ("C-j" . scroll-up-command)
-              ("C-k" . scroll-down-command)
-              ("j"   . View-scroll-line-forward)
-              ("k"   . View-scroll-line-backward)
-              ("l"   . recenter-top-bottom)
-              ("RET" . nil)
-              ("C-m" . nil))
+         ("n"   . next-line)
+         ("p"   . previous-line)
+         ("f"   . forward-char)
+         ("b"   . backward-char)
+         ("C-j" . scroll-up-command)
+         ("C-k" . scroll-down-command)
+         ("j"   . View-scroll-line-forward)
+         ("k"   . View-scroll-line-backward)
+         ("l"   . recenter-top-bottom)
+         ("RET" . nil)
+         ("C-m" . nil))
   :config
   (setq view-read-only t))
 

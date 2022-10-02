@@ -52,19 +52,23 @@
       "Use isearch for dired-mode and swiper for the rest.
 Use isearch if uarg is provided (e.g. large files where swiper could be a bit slow)."
       (interactive "P")
-      (if (or (string= major-mode "dired-mode")
-              uarg)
-          (call-interactively #'isearch-forward)
-        (call-interactively #'swiper)))
+      (cond ((string= major-mode "dired-mode")
+             (call-interactively #'isearch-forward))
+            (uarg
+             (call-interactively #'swiper-isearch))
+            (t
+             (call-interactively #'swiper))))
 
     (defun larumbe/search-backward (&optional uarg)
       "Use isearch for dired-mode and swiper for the rest.
 Use isearch if uarg is provided (e.g. large files where swiper could be a bit slow)."
       (interactive "P")
-      (if (or (string= major-mode "dired-mode")
-              uarg)
-          (call-interactively #'isearch-backward)
-        (call-interactively #'swiper-backward)))
+      (cond ((string= major-mode "dired-mode")
+             (call-interactively #'isearch-forward))
+            (uarg
+             (call-interactively #'swiper-isearch))
+            (t
+             (call-interactively #'swiper-backward))))
 
     (defun larumbe/symbol-at-point ()
       "Use isearch for dired-mode and swiper for the rest."
