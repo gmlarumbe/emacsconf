@@ -73,7 +73,7 @@
 
 
 (defun verilog-ext-point-inside-block-p (block)
-  "Return non-nil if cursor is inside specified BLOCK."
+  "Return block name if cursor is inside specified BLOCK type."
   (let ((pos (point))
         (re (cond ((eq block 'function)  "\\<\\(function\\)\\>")
                   ((eq block 'task)      "\\<\\(task\\)\\>")
@@ -82,23 +82,72 @@
                   ((eq block 'interface) "\\<\\(interface\\)\\>")
                   ((eq block 'package)   "\\<\\(package\\)\\>")
                   ((eq block 'program)   "\\<\\(program\\)\\>")
+                  ((eq block 'always)    "\\<\\(always\\(_ff\\|_comb\\|_latch\\)?\\)\\>")
+                  ((eq block 'initial)   "\\<\\(initial\\)\\>")
+                  ((eq block 'final)     "\\<\\(final\\)\\>")
+                  ((eq block 'generate)  "\\<\\(generate\\)\\>")
                   (t (error "Incorrect block argument"))))
-        temp-pos block-beg-point block-end-point)
+        temp-pos block-beg-point block-end-point block-name)
     (save-match-data
       (save-excursion
-        (and (verilog-re-search-backward re nil t)
-             (setq temp-pos (point))
-             (verilog-re-search-forward ";" nil t)
-             (setq block-beg-point (point))
-             (goto-char temp-pos)
-             (verilog-ext-forward-sexp) ; Make sure there are no errors and return non-nil
-             (backward-word)
-             (setq block-end-point (point))))
-      (if (and block-beg-point block-end-point
-               (>= pos block-beg-point)
-               (< pos block-end-point))
-          t
-        nil))))
+        ;; Else
+        (cond ((member block '(function task class module interface package program))
+               (and (verilog-re-search-backward re nil t)
+                    (or (looking-at verilog-ext-function-re)
+                        (looking-at verilog-ext-task-re)
+                        (looking-at verilog-ext-class-re)
+                        (looking-at verilog-ext-top-re))
+                    (setq block-name (match-string-no-properties 2))
+                    (setq temp-pos (point))
+                    (verilog-re-search-forward ";" nil t)
+                    (setq block-beg-point (point))
+                    (goto-char temp-pos)
+                    (verilog-ext-forward-sexp)
+                    (backward-word)
+                    (setq block-end-point (point))))
+              ((member block '(always initial final))
+               (and (verilog-re-search-backward re nil t)
+                    (verilog-ext-skip-identifier-forward)
+                    (verilog-ext-forward-syntactic-ws)
+                    (setq block-beg-point (point))
+                    (setq block-name (buffer-substring-no-properties (point) (line-end-position)))
+                    (verilog-re-search-forward "begin" nil t)
+                    (verilog-ext-forward-sexp)
+                    (backward-word)
+                    (setq block-end-point (point))))
+              ((equal block 'generate)
+               (and (verilog-re-search-backward re nil t)
+                    (verilog-ext-skip-identifier-forward)
+                    (save-excursion
+                      (verilog-ext-forward-syntactic-ws)
+                      (setq block-name (buffer-substring-no-properties (point) (line-end-position))))
+                    (setq block-beg-point (point))
+                    (verilog-ext-forward-sexp)
+                    (backward-word)
+                    (setq block-end-point (point))))
+              (t
+               (error "Invalid condition")))
+        (if (and block-beg-point block-end-point
+                 (>= pos block-beg-point)
+                 (< pos block-end-point))
+            (cons block block-name)
+          nil)))))
+
+
+(defun verilog-ext-block-at-point ()
+  ""
+  ;; INFO: From inner to outer blocks
+  (or (verilog-ext-point-inside-block-p 'function)
+      (verilog-ext-point-inside-block-p 'task)
+      (verilog-ext-point-inside-block-p 'class)
+      (verilog-ext-point-inside-block-p 'package)
+      (verilog-ext-point-inside-block-p 'always)
+      (verilog-ext-point-inside-block-p 'initial)
+      (verilog-ext-point-inside-block-p 'final)
+      (verilog-ext-point-inside-block-p 'generate)
+      (verilog-ext-point-inside-block-p 'module)
+      (verilog-ext-point-inside-block-p 'interface)
+      (verilog-ext-point-inside-block-p 'program)))
 
 
 (defun verilog-ext-replace-regexp (regexp to-string start end)

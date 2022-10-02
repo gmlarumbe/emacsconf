@@ -4,21 +4,11 @@
 
 
 (require 'which-func)
-;; (require 'verilog-rx)
 (require 'verilog-navigation)
 
 
 (defvar-local verilog-ext-which-func-xtra nil
-  "Variable to hold extra information for `which-func' to show in the
-mode-line. For instance, if point is under \"module top\", `which-func' would
-show \"top\" but also show extra information that it's a \"module\".")
-
-
-;; TODO: Seems it's not used!
-(defun hdl-ext-which-func-current ()
-  ""
-  (gethash (get-buffer-window) which-func-table))
-;; End of TODO
+  "Variable to hold extra information for `which-func'.")
 
 
 (defun verilog-ext-which-func-find-instance ()

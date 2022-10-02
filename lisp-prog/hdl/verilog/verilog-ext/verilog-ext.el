@@ -3,9 +3,9 @@
 ;;; Code:
 
 (require 'verilog-utils)
-(require 'verilog-navigation) ; TODO: Clean
+(require 'verilog-navigation) ; DONE: Already reviewed docstrings
 (require 'verilog-which-func) ; TODO: Make it work again (token-based functions)
-(require 'verilog-hideshow)
+(require 'verilog-hideshow)   ; DONE: No docstrings to review
 (require 'verilog-beautify)
 (require 'verilog-imenu)
 (require 'verilog-templates)

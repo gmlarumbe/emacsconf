@@ -423,8 +423,7 @@ Does not include internal classes (such as m_uvm_*), nor enums, nor non-class ty
 (defun verilog-ext-font-lock-modport-fontify (limit)
   "Fontify interface modport declarations."
   (let (if-start if-end mp-start mp-end var-start var-end)
-    (when (and verilog-fontify-variables
-               (verilog-re-search-forward verilog-ext-font-lock-interface-modport-re limit t)
+    (when (and (verilog-re-search-forward verilog-ext-font-lock-interface-modport-re limit t)
                (verilog-in-parenthesis-p))
       (setq if-start (match-beginning 2))
       (setq if-end (match-end 2))

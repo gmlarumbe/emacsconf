@@ -29,31 +29,38 @@ Move backward ARG words."
       (backward-word arg))))
 
 
-;;;; Module related
+;;;; Module/instance
 (defun verilog-ext-find-module-instance-fwd (&optional limit)
-  "Search for a Verilog module/instance regexp.
+  "Search forwards for a Verilog module/instance.
 
-Since this regexp might collide with other Verilog constructs,
-it ignores the ones that contain Verilog keywords and continues until found.
+If executing interactively place cursor at the beginning of the module name and
+show module and instance names in the minibuffer.
 
-LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
+If executing programatically move to the end of the module and return point
+position.
+
+Updates `match-data' so that the function can be used in other contexts:
+- (match-string 0) = Whole module instantiation: from beg of module name to ;
+- (match-string 1) = Module name
+- (match-string 2) = Instance name
+
+Bound search to LIMIT in case it is non-nil."
   (interactive)
   (let ((case-fold-search verilog-case-fold)
         (identifier-re (concat "\\(" verilog-identifier-sym-re "\\)"))
         (module-end (make-marker))
-        found module-name instance-name module-pos
-        module-match-data instance-match-data
-        pos)
+        module-name module-pos module-match-data
+        instance-name instance-match-data
+        pos found)
     (save-excursion
       (save-match-data
         (when (called-interactively-p)
-          (forward-char)) ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
+          (forward-char)) ; Avoid getting stuck if executing interactively
         (while (and (not (eobp))
                     (when-t limit
                       (> limit (point)))
-                    (not (and (verilog-re-search-forward (concat "\\s-*" identifier-re) limit 'move) ; Initial blank + module name identifier
+                    (not (and (verilog-re-search-forward (concat "\\s-*" identifier-re) limit 'move) ; Module name
                               (not (verilog-parenthesis-depth)) ; Optimize search by avoiding looking for identifiers in parenthesized expressions
-                              (set-marker module-end (point))
                               (unless (member (match-string-no-properties 1) verilog-keywords)
                                 (setq module-name (match-string-no-properties 1))
                                 (setq module-pos (match-beginning 1))
@@ -66,7 +73,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
                                      (verilog-ext-forward-sexp)
                                      (= (preceding-char) ?\))
                                      (verilog-ext-forward-syntactic-ws)))
-                              (looking-at identifier-re) ; Instance name just afterwards
+                              (looking-at identifier-re) ; Instance name
                               (unless (member (match-string-no-properties 1) verilog-keywords)
                                 (setq instance-name (match-string-no-properties 1))
                                 (setq instance-match-data (match-data)))
@@ -81,6 +88,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
                               (= (preceding-char) ?\))
                               (verilog-ext-forward-syntactic-ws)
                               (= (following-char) ?\;)
+                              (set-marker module-end (1+ (point)))
                               (setq found t)
                               (if (called-interactively-p)
                                   (progn
@@ -92,43 +100,49 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
             (forward-line)))))
     (if found
         (progn
-          (set-match-data (list (nth 0 module-match-data)     ; Beg of whole expression for module-match-data
-                                module-end                    ; TODO: Which one to use?
-                                ;; (nth 3 instance-match-data)   ; End of whole expression for instance-match-data
-                                (nth 2 module-match-data)     ; (match-beginning 1)
-                                (nth 3 module-match-data)     ; (match-end 1)
-                                (nth 2 instance-match-data)   ; (match-beginning 2)
-                                (nth 3 instance-match-data))) ; (match-end 2)
+          (set-match-data (list (nth 0 module-match-data)
+                                module-end
+                                (nth 2 module-match-data)
+                                (nth 3 module-match-data)
+                                (nth 2 instance-match-data)
+                                (nth 3 instance-match-data)))
           (goto-char pos)
           (if (called-interactively-p)
               (message "%s : %s" module-name instance-name)
-            (point))) ; INFO: Need to return point for fontification
+            (point)))
       (when (called-interactively-p)
         (message "Could not find any instance forward")))))
 
 
 (defun verilog-ext-find-module-instance-bwd (&optional limit)
-  "Search backwards for a Verilog module/instance regexp.
+  "Search backwards for a Verilog module/instance.
 
-Since this regexp might collide with other Verilog constructs,
-it ignores the ones that contain Verilog keywords and continues until found.
+If executing interactively place cursor at the beginning of the module name and
+show module and instance names in the minibuffer.
 
-LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
+If executing programatically move to the beginning of the module and return
+point position.
+
+Updates `match-data' so that the function can be used in other contexts:
+- (match-string 0) = Whole module instantiation: from beg of module name to ;
+- (match-string 1) = Module name
+- (match-string 2) = Instance name
+
+Bound search to LIMIT in case it is non-nil."
   (interactive)
   (let ((case-fold-search verilog-case-fold)
         (identifier-re (concat "\\(" verilog-identifier-sym-re "\\)"))
         (module-end (make-marker))
-        found module-name instance-name module-pos
-        module-match-data instance-match-data
-        pos)
+        module-name module-pos module-match-data
+        instance-name instance-match-data
+        pos found)
     (save-excursion
       (save-match-data
         (while (and (not (bobp))
                     (when-t limit
                       (< limit (point)))
-                    (not (and (verilog-re-search-backward ";" limit 'move)
+                    (not (and (set-marker module-end (verilog-re-search-backward ";" limit 'move))
                               (not (verilog-parenthesis-depth))
-                              (set-marker module-end (point))
                               (verilog-ext-backward-syntactic-ws)
                               (= (preceding-char) ?\))
                               (verilog-ext-backward-sexp)
@@ -166,13 +180,12 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
             (beginning-of-line)))))
     (if found
         (progn
-          (set-match-data (list (nth 0 module-match-data)     ; Beg of whole expression for module-match-data
-                                module-end                    ; TODO: Which one to use?
-                                ;; (nth 3 instance-match-data)   ; End of whole expression for instance-match-data
-                                (nth 2 module-match-data)     ; (match-beginning 1)
-                                (nth 3 module-match-data)     ; (match-end 1)
-                                (nth 2 instance-match-data)   ; (match-beginning 2)
-                                (nth 3 instance-match-data))) ; (match-end 2)
+          (set-match-data (list (nth 0 module-match-data)
+                                module-end
+                                (nth 2 module-match-data)
+                                (nth 3 module-match-data)
+                                (nth 2 instance-match-data)
+                                (nth 3 instance-match-data)))
           (goto-char pos)
           (if (called-interactively-p)
               (message "%s : %s" module-name instance-name)
@@ -181,20 +194,15 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
         (message "Could not find any instance backwards")))))
 
 
-
 (defun verilog-ext-instance-at-point ()
-  "Return if point is inside a Verilog instance.
-Return list with TYPE and NAME."
+  "Return list with module and instance names if point is at an instance."
   (let ((point-cur (point))
-        point-instance-begin
-        point-instance-end
-        instance-type
-        instance-name)
+        point-instance-begin point-instance-end instance-type instance-name)
     (save-excursion
       (when (and (verilog-re-search-forward ";" nil t)
                  (setq point-instance-end (point))
                  (verilog-ext-forward-char)
-                 (verilog-ext-find-module-instance-bwd)) ; INFO: Important! Sets match data for this function
+                 (verilog-ext-find-module-instance-bwd)) ; Sets match data
         (setq instance-type (match-string-no-properties 1))
         (setq instance-name (match-string-no-properties 2))
         (setq point-instance-begin (point))
@@ -205,7 +213,8 @@ Return list with TYPE and NAME."
 
 
 (defun verilog-ext-jump-to-module-at-point (&optional ref)
-  "Same as `modi/verilog-jump-to-module-at-point' but using ggtags."
+  "Jump to definition of module at point.
+If REF is non-nil show references instead."
   (interactive)
   (let (module)
     (unless (executable-find "global")
@@ -214,27 +223,24 @@ Return list with TYPE and NAME."
       (error "Error: ggtags not configured as an xref backend.  Is ggtags-mode enabled?"))
     (unless ggtags-project-root
       (error "Error: `ggtags-project-root' not set.  Are GTAGS/GRTAGS/GPATH files created?"))
-    ;; Code
     (if (setq module (car (verilog-ext-instance-at-point)))
         (progn
           (if ref
               (xref-find-references module)
             (xref-find-definitions module))
-          module) ; Return module name for reporting
+          module) ; Report module name
       (user-error "Not inside a Verilog instance"))))
 
 
 (defun verilog-ext-jump-to-module-at-point-def ()
-  "Same as `modi/verilog-jump-to-module-at-point' but using ggtags."
+  "Jump to definition of module at point."
   (interactive)
   (verilog-ext-jump-to-module-at-point))
 
 (defun verilog-ext-jump-to-module-at-point-ref ()
-  "Same as `modi/verilog-jump-to-module-at-point' but using ggtags."
+  "Show references of module at point."
   (interactive)
   (verilog-ext-jump-to-module-at-point :ref))
-
-
 
 
 

@@ -448,6 +448,15 @@ Additionally add xref push marker to the stack."
 
 
 ;;; Utils
+;; With respect to `verilog-ext-point-inside-block-p':
+;;  - For generate thought to use `verilog-in-generate-region-p', however it didn't work as expected
+;;    - (see LarumbeNotes.org)
+;;
+;; To detect always/initial/final that do not have begin/end (only one sentence) use
+;; `verilog-end-of-statement'. This will detect either begin or ; but requires a bit
+;; more of code writing.
+
+
 ;;;; Misc
 ;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
 (defvar verilog-ext-open-dirs nil
@@ -1186,6 +1195,22 @@ Regex search bound to LIMIT."
 
 
 ;;; Completion
+;; TODO: Company improvements/ideas:
+;;  - Add a company-backend that fetches attributes/methods of class after typing name. and then completing:
+;;    - If thing before . is a class name:
+;;       - Use global to find where it's defined, parse the file (maybe with verilog shadow), and find attributes/methods
+;;       - Use them as completion candidates with some meta/annotation saying if they are attributes or methods (also seems useful for UVM classes)
+;;       - Also add some class builtin methods such as randomize()
+;;
+;;    - If thing before . is an interface:
+;;       - Do the same as for classes but parse its signals and return them as candidates
+;;       
+;;    - If thing before . is not a class name:
+;;       - It could be an array or queue: complete with their builtin methods and use meta/annotation
+;;       - 
+;; INFO: All of this is probably SUPER EASY with tree-sitter. The problem is learning how to use tree-sitter
+;;
+;;
 ;; TODO: Add some CAPF improvements?
 ;; `verilog-completion-at-point' is added to CAPF. It calls `verilog-completion' which in turns
 ;; completes depending on the context. This context is determined based on indentation. Since
@@ -1224,4 +1249,12 @@ Regex search bound to LIMIT."
 
 
 
+
+
+;;; Which-func
+;; TODO: Seems it's not used!
+(defun hdl-ext-which-func-current ()
+  ""
+  (gethash (get-buffer-window) which-func-table))
+;; End of TODO
 
