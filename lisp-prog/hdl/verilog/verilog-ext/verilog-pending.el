@@ -1204,10 +1204,10 @@ Regex search bound to LIMIT."
 ;;
 ;;    - If thing before . is an interface:
 ;;       - Do the same as for classes but parse its signals and return them as candidates
-;;       
+;;
 ;;    - If thing before . is not a class name:
 ;;       - It could be an array or queue: complete with their builtin methods and use meta/annotation
-;;       - 
+;;       -
 ;; INFO: All of this is probably SUPER EASY with tree-sitter. The problem is learning how to use tree-sitter
 ;;
 ;;
@@ -1246,15 +1246,97 @@ Regex search bound to LIMIT."
 ;;
 ;; TODO: Do a minor-mode that adds/removes the hooks?
 ;;  - (add-hook 'verilog-mode-hook #'verilog-ext-imenu-hook)
+;;
+;; TODO:
+;; - `verilog-ext-imenu-find-task-function-outside-class-bwd' and `verilog-ext-imenu-build-class-tree':
+;; - Do something so that it can also recognize static, virtual, protected tasks/functions
+;;   Instead of doing regexp search on task|function|class, do it on (verilog-ext-task-re|verilog-ext-function-re|verilog-ext-class-re)
+;;   Maybe review everywhere where this regexps are used, and change the capture groups so that there is a first capture group
+;;   ANd modify what to report in this imenu depending on that
 
 
 
 
 
 ;;; Which-func
+;; TODO: In `verilog-ext-block-at-point':
+;;  - Do something more efficient:
+;;  - Look for all the possible regexps
+
 ;; TODO: Seems it's not used!
 (defun hdl-ext-which-func-current ()
   ""
   (gethash (get-buffer-window) which-func-table))
 ;; End of TODO
 
+;; TODO: Don't seem to be necessary anymore
+
+;; (defun verilog-ext-which-func-find-instance ()
+;;   ""
+;;   (let (instance-point instance-type instance-name)
+;;     (save-excursion
+;;       (when (verilog-ext-instance-at-point)
+;;         (setq instance-point (point))
+;;         (setq instance-type (match-string-no-properties 1))
+;;         (setq instance-name (match-string-no-properties 2))))
+;;     (list instance-point instance-type instance-name)))
+
+
+;; (defun verilog-ext-which-func-find-token ()
+;;   ""
+;;   (let (token-point token-type token-name)
+;;     (save-excursion
+;;       (when (verilog-ext-find-token-bwd)
+;;         (setq token-point (point))
+;;         (setq token-type (match-string-no-properties 1))
+;;         ;; Similar to `verilog-ext-find-task-function-class-bwd'. TODO: Could be refactored?
+;;         (if (or (looking-at verilog-ext-function-re)
+;;                 (looking-at verilog-ext-task-re)
+;;                 (looking-at verilog-ext-class-re)
+;;                 (looking-at verilog-ext-top-re))
+;;             (setq token-name (match-string-no-properties 2))
+;;           (setq token-name (buffer-substring-no-properties (point) (point-at-eol))))))
+;;     (list token-point token-type token-name)))
+
+
+
+
+
+;; (defun verilog-ext-which-func-set-instance (instance-type instance-name)
+;;   ""
+;;   (setq verilog-ext-which-func-xtra instance-name)
+;;   instance-type)
+
+
+;; (defun verilog-ext-which-func-set-token (token-type token-name)
+;;   ""
+;;   (setq verilog-ext-which-func-xtra (verilog-ext-which-func-maybe-shorten-token token-type))
+;;   token-name)
+
+
+;; (defun verilog-ext-which-func-decide (instance-data token-data)
+;;   ""
+;;   (let ((instance-point (nth 0 instance-data))
+;;         (instance-type  (nth 1 instance-data))
+;;         (instance-name  (nth 2 instance-data))
+;;         (token-point (nth 0 token-data))
+;;         (token-type  (nth 1 token-data))
+;;         (token-name  (nth 2 token-data)))
+;;     (cond (;; Instance found
+;;            (and instance-point (not token-point))
+;;            (verilog-ext-which-func-set-instance instance-type instance-name))
+;;           ;; Token found
+;;           ((and (not instance-point) token-point)
+;;            (verilog-ext-which-func-set-token token-type token-name))
+;;           ;; Both found: select closest one
+;;           ((and instance-point token-point)
+;;            (if (> instance-point token-point) ; which-func searches backwards, closest is the one with highest point value
+;;                (verilog-ext-which-func-set-instance instance-type instance-name)
+;;              (verilog-ext-which-func-set-token token-type token-name))))))
+
+
+;; (defun verilog-ext-which-func-function ()
+;;   ""
+;;   (let ((instance-data (verilog-ext-which-func-find-instance))
+;;         (token-data    (verilog-ext-which-func-find-token)))
+;;     (verilog-ext-which-func-decide instance-data token-data)))

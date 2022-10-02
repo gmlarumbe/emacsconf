@@ -4,7 +4,7 @@
 
 (require 'verilog-utils)
 (require 'verilog-navigation) ; DONE: Already reviewed docstrings
-(require 'verilog-which-func) ; TODO: Make it work again (token-based functions)
+(require 'verilog-which-func)
 (require 'verilog-hideshow)   ; DONE: No docstrings to review
 (require 'verilog-beautify)
 (require 'verilog-imenu)

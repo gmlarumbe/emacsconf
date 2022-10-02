@@ -87,12 +87,13 @@
                   ((eq block 'final)     "\\<\\(final\\)\\>")
                   ((eq block 'generate)  "\\<\\(generate\\)\\>")
                   (t (error "Incorrect block argument"))))
-        temp-pos block-beg-point block-end-point block-name)
+        temp-pos block-beg-point block-end-point block-type block-name)
     (save-match-data
       (save-excursion
         ;; Else
         (cond ((member block '(function task class module interface package program))
                (and (verilog-re-search-backward re nil t)
+                    (setq block-type (match-string-no-properties 1))
                     (or (looking-at verilog-ext-function-re)
                         (looking-at verilog-ext-task-re)
                         (looking-at verilog-ext-class-re)
@@ -107,6 +108,7 @@
                     (setq block-end-point (point))))
               ((member block '(always initial final))
                (and (verilog-re-search-backward re nil t)
+                    (setq block-type (match-string-no-properties 1))
                     (verilog-ext-skip-identifier-forward)
                     (verilog-ext-forward-syntactic-ws)
                     (setq block-beg-point (point))
@@ -117,6 +119,7 @@
                     (setq block-end-point (point))))
               ((equal block 'generate)
                (and (verilog-re-search-backward re nil t)
+                    (setq block-type (match-string-no-properties 1))
                     (verilog-ext-skip-identifier-forward)
                     (save-excursion
                       (verilog-ext-forward-syntactic-ws)
@@ -130,13 +133,12 @@
         (if (and block-beg-point block-end-point
                  (>= pos block-beg-point)
                  (< pos block-end-point))
-            (cons block block-name)
+            (cons block-type block-name)
           nil)))))
 
 
 (defun verilog-ext-block-at-point ()
-  ""
-  ;; INFO: From inner to outer blocks
+  "Return current block and name at point."
   (or (verilog-ext-point-inside-block-p 'function)
       (verilog-ext-point-inside-block-p 'task)
       (verilog-ext-point-inside-block-p 'class)
@@ -162,7 +164,7 @@ Replace REGEXP with TO-STRING from START to END."
 
 
 (defun verilog-ext-replace-regexp-whole-buffer (regexp to-string)
-  "Replace REGEXP with TO-STRING on whole current-buffer."
+  "Replace REGEXP with TO-STRING on whole `current-buffer'"
   (verilog-ext-replace-regexp regexp to-string (point-min) nil))
 
 

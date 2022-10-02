@@ -28,8 +28,8 @@
         ("*Always blocks*"  ,verilog-ext-imenu-always-re 4)
         ("*Initial blocks*" ,verilog-ext-imenu-initial-re 3)
         ;; Search by function
-        ("*Task/Func*"      verilog-ext-imenu-find-task-function-outside-class-bwd 2)
-        ("*Instances*"      verilog-ext-find-module-instance-bwd 1)))  ;; Use capture group index 2 to get instance name
+        ("*Task/Func*" verilog-ext-imenu-find-task-function-outside-class-bwd 2)
+        ("*Instances*" verilog-ext-find-module-instance-bwd 1)))  ;; Use capture group index 2 to get instance name
 
 
 

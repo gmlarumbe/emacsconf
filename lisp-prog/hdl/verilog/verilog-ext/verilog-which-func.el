@@ -11,94 +11,34 @@
   "Variable to hold extra information for `which-func'.")
 
 
-(defun verilog-ext-which-func-find-instance ()
-  ""
-  (let (instance-point instance-type instance-name)
-    (save-excursion
-      (when (verilog-ext-instance-at-point)
-        (setq instance-point (point))
-        (setq instance-type (match-string-no-properties 1))
-        (setq instance-name (match-string-no-properties 2))))
-    (list instance-point instance-type instance-name)))
-
-
-(defun verilog-ext-which-func-find-token ()
-  ""
-  (let (token-point token-type token-name)
-    (save-excursion
-      (when (verilog-ext-find-token-bwd)
-        (setq token-point (point))
-        (setq token-type (match-string-no-properties 1))
-        ;; Similar to `verilog-ext-find-task-function-class-bwd'. TODO: Could be refactored?
-        (if (or (looking-at verilog-ext-function-re)
-                (looking-at verilog-ext-task-re)
-                (looking-at verilog-ext-class-re)
-                (looking-at verilog-ext-top-re))
-            (setq token-name (match-string-no-properties 2))
-          (setq token-name (buffer-substring-no-properties (point) (point-at-eol))))))
-    (list token-point token-type token-name)))
-
-
-
-(defun verilog-ext-which-func-maybe-shorten-token (token-type)
-  ""
-  (cond ((string= "module"      token-type) "mod")
-        ((string= "interface"   token-type) "itf")
-        ((string= "program"     token-type) "pgrm")
-        ((string= "package"     token-type) "pkg")
-        ((string= "class"       token-type) "cls")
-        ((string= "function"    token-type) "fun")
-        ((string= "task"        token-type) "task")
-        ;; The rest already show the whole line
-        (t "")))
-
-
-(defun verilog-ext-which-func-set-instance (instance-type instance-name)
-  ""
-  (setq verilog-ext-which-func-xtra instance-name)
-  instance-type)
-
-
-(defun verilog-ext-which-func-set-token (token-type token-name)
-  ""
-  (setq verilog-ext-which-func-xtra (verilog-ext-which-func-maybe-shorten-token token-type))
-  token-name)
-
-
-(defun verilog-ext-which-func-decide (instance-data token-data)
-  ""
-  (let ((instance-point (nth 0 instance-data))
-        (instance-type  (nth 1 instance-data))
-        (instance-name  (nth 2 instance-data))
-        (token-point (nth 0 token-data))
-        (token-type  (nth 1 token-data))
-        (token-name  (nth 2 token-data)))
-    (cond (;; Instance found
-           (and instance-point (not token-point))
-           (verilog-ext-which-func-set-instance instance-type instance-name))
-          ;; Token found
-          ((and (not instance-point) token-point)
-           (verilog-ext-which-func-set-token token-type token-name))
-          ;; Both found: select closest one
-          ((and instance-point token-point)
-           (if (> instance-point token-point) ; which-func searches backwards, closest is the one with highest point value
-               (verilog-ext-which-func-set-instance instance-type instance-name)
-             (verilog-ext-which-func-set-token token-type token-name))))))
-
-
+(defun verilog-ext-which-func-shorten-block (block-type)
+  "Try to shorten name of BLOCK-TYPE."
+  (cond ((string= "function"  block-type) "func")
+        ((string= "task"      block-type) "task")
+        ((string= "class"     block-type) "cls")
+        ((string= "module"    block-type) "mod")
+        ((string= "interface" block-type) "itf")
+        ((string= "package"   block-type) "pkg")
+        ((string= "program"   block-type) "pgm")
+        ((string= "generate"  block-type) "gen")
+        (t block-type)))
 
 (defun verilog-ext-which-func-function ()
-  ""
-  (let ((instance-data (verilog-ext-which-func-find-instance))
-        (token-data    (verilog-ext-which-func-find-token)))
-    (verilog-ext-which-func-decide instance-data token-data)))
-
+  "Function to retrieve `which-func' candidates."
+  (let (data)
+    (cond ((setq data (verilog-ext-instance-at-point))
+           (setq verilog-ext-which-func-xtra (cdr data))
+           (car data))
+          ((setq data (verilog-ext-block-at-point))
+           (setq verilog-ext-which-func-xtra (cdr data))
+           (verilog-ext-which-func-shorten-block (car data)))
+          (t
+           (setq verilog-ext-which-func-xtra nil)
+           ""))))
 
 (defun verilog-ext-which-func ()
-  (setq-local which-func-functions '(verilog-ext-which-func-function)))
-
-
-(defun verilog-ext-which-func-update-format ()
+  "Hook for `verilog-mode' to enable `which-func'."
+  (setq-local which-func-functions '(verilog-ext-which-func-function))
   (setq-local which-func-format
               `("["
                 (:propertize which-func-current
@@ -110,11 +50,16 @@
                  mouse-face mode-line-highlight)
                 "]")))
 
-;;;;; Setup
-;; TODO: Do a minor-mode that adds/removes the hooks?
-;; TODO: Enable when this thing of tokens gets fixed again
-;; (add-hook 'verilog-mode-hook #'verilog-ext-which-func)
-;; (add-hook 'verilog-mode-hook #'verilog-ext-which-func-update-format)
+;;;###autoload
+(define-minor-mode verilog-ext-which-func-mode
+  "Enhanced extensions for `which-func'."
+  :lighter ""
+  (if verilog-ext-which-func-mode
+      (progn
+        (add-hook 'verilog-mode-hook #'verilog-ext-which-func)
+        (message "Enabled verilog-ext-which-func-mode"))
+    (remove-hook 'verilog-mode-hook #'verilog-ext-which-func)
+    (message "Disabled verilog-ext-which-func-mode")))
 
 
 

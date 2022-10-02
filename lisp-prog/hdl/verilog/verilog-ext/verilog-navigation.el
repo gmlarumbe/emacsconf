@@ -200,12 +200,11 @@ Bound search to LIMIT in case it is non-nil."
         point-instance-begin point-instance-end instance-type instance-name)
     (save-excursion
       (when (and (verilog-re-search-forward ";" nil t)
-                 (setq point-instance-end (point))
-                 (verilog-ext-forward-char)
                  (verilog-ext-find-module-instance-bwd)) ; Sets match data
         (setq instance-type (match-string-no-properties 1))
         (setq instance-name (match-string-no-properties 2))
-        (setq point-instance-begin (point))
+        (setq point-instance-begin (match-beginning 0))
+        (setq point-instance-end   (match-end 0))
         (if (and (>= point-cur point-instance-begin)
                  (<= point-cur point-instance-end))
             (list instance-type instance-name)
