@@ -33,6 +33,9 @@
       (kill-buffer buf))))
 
 
+;; TODO: Seems still very slow to be used for syntax-higlighting by maintaining point position
+;; INFO: However, could be useful to extract some information faster of some files of the file/block
+;;  - e.g. completion candidates, class methods and attributes, packages...
 (defun verilog-ext-shadow-replace-comments-with-blanks ()
   "Remove comments from current buffer and replace them with blanks.
 Main purpose is to have a reformatted buffer without comments that has

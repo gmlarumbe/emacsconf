@@ -2,34 +2,35 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'verilog-mode)
 (require 'imenu)
+(require 'hideshow)
+(require 'verilog-utils)
 
 ;;;; Imenu-regexp
-;; Search by regexp: Used as regexps in `verilog-ext-imenu-generic-expression'
-(defvar verilog-ext-imenu-top-re        "^\\s-*\\(?1:connectmodule\\|m\\(?:odule\\|acromodule\\)\\|p\\(?:rimitive\\|rogram\\|ackage\\)\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
-(defvar verilog-ext-imenu-localparam-re "^\\s-*localparam\\(?1:\\s-+\\(logic\\|bit\\|int\\|integer\\)\\s-*\\(\\[.*\\]\\)?\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
-(defvar verilog-ext-imenu-define-re     "^\\s-*`define\\s-+\\([a-zA-Z0-9_.:]+\\)")
-(defvar verilog-ext-imenu-assign-re     "^\\s-*assign\\s-+\\([a-zA-Z0-9_.:]+\\)")
-(defvar verilog-ext-imenu-generate-re   "^\\s-*generate[ \t\n]*\\(?1:.*\\)")
-(defvar verilog-ext-imenu-always-re     "^\\s-*always\\(_ff\\|_comb\\|_latch\\)?\\s-*\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
-(defvar verilog-ext-imenu-initial-re    "^\\s-*initial\\s-+\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
+(defconst verilog-ext-imenu-top-re        "^\\s-*\\(?1:connectmodule\\|m\\(?:odule\\|acromodule\\)\\|p\\(?:rimitive\\|rogram\\|ackage\\)\\)\\(\\s-+automatic\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
+(defconst verilog-ext-imenu-localparam-re "^\\s-*localparam\\(?1:\\s-+\\(logic\\|bit\\|int\\|integer\\)\\s-*\\(\\[.*\\]\\)?\\)?\\s-+\\(?2:[a-zA-Z0-9_.:]+\\)")
+(defconst verilog-ext-imenu-define-re     "^\\s-*`define\\s-+\\([a-zA-Z0-9_.:]+\\)")
+(defconst verilog-ext-imenu-assign-re     "^\\s-*assign\\s-+\\([a-zA-Z0-9_.:]+\\)")
+(defconst verilog-ext-imenu-generate-re   "^\\s-*generate[ \t\n]*\\(?1:.*\\)")
+(defconst verilog-ext-imenu-always-re     "^\\s-*always\\(_ff\\|_comb\\|_latch\\)?\\s-*\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
+(defconst verilog-ext-imenu-initial-re    "^\\s-*initial\\s-+\\(.*\\)\\(begin\\)?[ |\n]*\\(.*\\)")
 
 
 ;;;; Variables
 (defvar verilog-ext-imenu-generic-expression
-      `((nil                ,verilog-ext-imenu-top-re 2)
+      `(;; Search by regexp
+        (nil                ,verilog-ext-imenu-top-re 2)
         ("*Localparams*"    ,verilog-ext-imenu-localparam-re 2)
         ("*Defines*"        ,verilog-ext-imenu-define-re 1)
         ("*Assigns*"        ,verilog-ext-imenu-assign-re 1)
         ("*Generates*"      ,verilog-ext-imenu-generate-re 1)
         ("*Always blocks*"  ,verilog-ext-imenu-always-re 4)
         ("*Initial blocks*" ,verilog-ext-imenu-initial-re 3)
+        ;; Search by function
         ("*Task/Func*"      verilog-ext-imenu-find-task-function-outside-class-bwd 2)
-        ("*Instances*"      verilog-ext-find-module-instance-bwd 1)))  ;; Use capture group index 2 if want to get instance name instead
+        ("*Instances*"      verilog-ext-find-module-instance-bwd 1)))  ;; Use capture group index 2 to get instance name
 
-
-;; TODO: Do something to catch class external functions/tasks in a different category and strip the class_identifier
-;; Something like parsing function class_identifier::identifier
 
 
 ;;;; Utility
@@ -40,7 +41,7 @@
     (save-excursion
       (while (and (not found)
                   (verilog-re-search-backward tf-re nil t))
-        (when (and (or (looking-at verilog-ext-task-re) ; TODO: Will start looking from the task/function part, without the static/pure/virtual/local/protected
+        (when (and (or (looking-at verilog-ext-task-re) ; INFO: Will start looking from the task/function part, without the static/pure/virtual/local/protected
                        (looking-at verilog-ext-function-re))
                    (not (verilog-ext-point-inside-block-p 'class)))
           (setq found t)
@@ -135,7 +136,7 @@ list obtained by using the imenu generic function."
 
 (defun verilog-ext-imenu-hook ()
   ""
-  (setq imenu-create-index-function #'verilog-ext-imenu-index)) ; TODO: Use setq-local instead?
+  (setq-local imenu-create-index-function #'verilog-ext-imenu-index))
 
 
 
@@ -167,9 +168,7 @@ If optional FIRST is used, then shows first block
 
 
 ;;;; Setup
-;; TODO: Do a minor-mode that adds/removes the hooks?
 (add-hook 'verilog-mode-hook #'verilog-ext-imenu-hook)
-
 
 
 ;;;; Provide

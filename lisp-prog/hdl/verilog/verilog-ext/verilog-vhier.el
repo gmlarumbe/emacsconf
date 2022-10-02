@@ -1,6 +1,15 @@
 ;;; verilog-vhier.el --- Verilog-Perl Hierarchy  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;
+;; TODO: In this order preferably:
+;;  - First try to make it work the `verilog-ext-vhier-current-file'
+;;  - Then try to make it work the more generic (don't do it by project, seems too complex)
+;;  - Try to avoid the preprocessing stuff and try to use the __FLAGS__ of verilog-mode
+;;  - Add a variable for additional arguments:
+;;    - e.g. to use a -f __FILE__ or -F __FILE__ (to add extra command arguments, like missing packages in specific order, etc.)
+;;
+;;
+;;
 ;; `vhier-outline-mode':
 ;; Navigate with `outline-minor-mode' through extracted Verilog-Perl hierarchy.
 ;;
@@ -10,24 +19,23 @@
 ;;; Code:
 
 ;; (require 'ggtags) ; Gives strange error
-(require 'outline)
-(require 'verilog-mode)
-(require 'verilog-utils)
+;; (require 'outline)
+;; (require 'verilog-mode)
+;; (require 'verilog-utils)
 
 ;;;; Hierarchy navigation
 (define-minor-mode vhier-outline-mode
   "Frontend for Verilog-Perl `vhier'.
-Rocessed output for `outline-minor-mode' with outshine visualization."
+Processed output for `outline-minor-mode' with outshine visualization."
   :lighter " vH"
   :keymap
-  '(;; Fetched from https://www.emacswiki.org/emacs/OutlineMinorMode
-    ;; SHOW/HIDE
-    ("a" . outline-show-all)          ; Show (expand) everything
-    ("i" . outline-show-children)     ; Show this heading's immediate child sub-headings
-    ("h" . outline-show-children)     ; Alias for `i' due to similarity with vim keys
-    ("l" . vhier-hide-sublevels)      ; Hide current-level sublevels
-    ("I" . outline-show-branches)     ; Show all sub-headings under this heading
-    (";" . outline-hide-other)        ; Hide other branches
+  '(;; SHOW/HIDE
+    ("a" . outline-show-all)      ; Show (expand) everything
+    ("i" . outline-show-children) ; Show this heading's immediate child sub-headings
+    ("h" . outline-show-children) ; Alias for `i' due to similarity with vim keys
+    ("l" . vhier-hide-sublevels)  ; Hide current-level sublevels
+    ("I" . outline-show-branches) ; Show all sub-headings under this heading
+    (";" . outline-hide-other)    ; Hide other branches
     ;; MOVE
     ("u" . vhier-up-heading)               ; Up
     ("n" . vhier-next-visible-heading)     ; Next
@@ -37,7 +45,7 @@ Rocessed output for `outline-minor-mode' with outshine visualization."
     ("f" . vhier-forward-same-level)       ; Forward - same level
     ("b" . vhier-backward-same-level)      ; Backward - same level
     ;; JUMP
-    ("o" . vhier-outline-jump-to-file)))   ; INFO: Added by Larumbe
+    ("o" . vhier-outline-jump-to-file)))   ; INFO: added by Larumbe
 
 
 ;; Still needs to be polished...
@@ -46,11 +54,11 @@ Rocessed output for `outline-minor-mode' with outshine visualization."
 (defun vhier-outline-jump-to-file ()
   "Jump to file at cursor on hierarchy.v file."
   (interactive)
-  (when (not vhier-outline-mode)
+  (unless vhier-outline-mode
     (error "Vhier mode not enabled on current buffer"))
-  (when (not (executable-find "global"))
+  (unless (executable-find "global")
     (error "Vhier mode requires global to work"))
-  (when (not (ggtags-find-project))
+  (unless (ggtags-find-project)
     (error "Associated GTAGS file not found.  Make sure hierarchy file is in the same folder as its matching GTAGS file"))
   (delete-other-windows)
   (split-window-right)
@@ -165,30 +173,6 @@ of `default-directory'."
         (kill-line 1)
         (insert cur-line)))))
 
-(defun verilog-ext-replace-regexp (regexp to-string start end)
-  "Wrapper function for programatic use of `replace-regexp'.
-Replace REGEXP with TO-STRING from START to END."
-  (save-excursion
-    (goto-char start)
-    (while (re-search-forward regexp end t)
-      (replace-match to-string))))
-
-
-(defun verilog-ext-replace-regexp-whole-buffer (regexp to-string)
-  "Replace REGEXP with TO-STRING on whole current-buffer."
-  (verilog-ext-replace-regexp regexp to-string (point-min) nil))
-
-(defun verilog-ext-replace-string (string to-string start end &optional fixedcase)
-  "Wrapper function for programatic use of `replace-string'.
-Replace STRING with TO-STRING from START to END.
-
-If optional arg FIXEDCASE is non-nil, do not alter the case of
-the replacement text (see `replace-match' for more info)."
-  (save-excursion
-    (goto-char start)
-    (while (search-forward string end t)
-      (replace-match to-string fixedcase))))
-
 
 (defun verilog-ext-sort-regexp-at-the-beginning-of-file (regexp)
   "Move lines containing REGEXP recursively at the beginning of the file.
@@ -210,7 +194,6 @@ For example, in SystemVerilog, packages might need to be included before other f
 
 ;;;;; Actual logic
 (defun verilog-ext-vhier-set-active-project ()
-
   "Retrieve Vhier project list and set variables accordingly."
   (let ((vhier-project)
         (files-list))

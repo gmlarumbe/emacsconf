@@ -1,8 +1,6 @@
 ;;; verilog-beautify.el --- Verilog Beautify  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;
-;; Beautify RTL instances
-;;
 ;;; Code:
 
 
@@ -79,14 +77,10 @@
 (defun verilog-ext-beautify-current-file ()
   "Beautify current buffer:
 - Indent whole buffer
-- Beautify every instantiated module
-- TODO: Remove blanks in port connections, align declarations/expressions"
+- Beautify every instantiated module"
   (interactive)
   (save-excursion
     (indent-region (point-min) (point-max))
-     ; TODO: Add back at some point?
-    ;; (verilog-ext-clean-port-blanks)
-    ;; TODO: Add something about alignment of declarations/expressions?
     (goto-char (point-min))
     (while (verilog-ext-find-module-instance-fwd)
       (verilog-ext-beautify-module-at-point))))

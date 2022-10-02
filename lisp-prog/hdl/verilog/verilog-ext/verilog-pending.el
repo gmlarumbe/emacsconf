@@ -1,3 +1,37 @@
+;;; Generic
+;; TODO:
+;;   - Review docstrings of every function
+;;   ...
+;;   - Clean verilog-utils
+;;     - find-module-instance and get-header seem deprecable, based on other functions
+;;     - Seems I prefer to use tokens instead of blocks/headers
+;;   - The block-end-comments-to-block-names review, convert it to a minor-mode maybe?
+;;   - What to do with the connect/disconnect/clean blanks ? Where to move? Editing is a nice place?
+;;   - Move the regexps of compilation-utils to verilog-compile?
+;;   - Overrides, maybe send Bug?
+;;   - Navigation: review all of these and check if they work fine with/without shadowing
+;;   - Imenu, check what can be reused and moved from/to other places (like navigation)
+;;   - Vhier: clean, refactor
+;;   - Remove larumbe/ functions and use generic ones (move to utils, use a variable that holds potential functions to do things)
+;;   - Flycheck: good shape, but clean
+;;   - Font-lock: reuse functions from the rest of the blocks
+;;   - Clean up templates/hydra (use columns) and test if the rest work
+;;   - Clean up code
+;;   - Clean up/review functions doc
+;;   - Check timestamp
+
+;; (require 'verilog-rx)
+;; (require 'verilog-shadow) ; INFO: Might be useful in the future for some semantic parsing stuff
+;; (require 'verilog-editing)
+;; (require 'verilog-compile) ; TODO: Rename to makefile? Add compilation regexps?
+;; (require 'verilog-vhier)
+;; (require 'verilog-flycheck)
+;; (require 'verilog-timestamp) ; TODO: Change the 'work' section to a different name
+;; (require 'verilog-compile) ; TODO: Add compilation regexp support for verilog here (as a derived compilation mode maybe?)
+;; (require 'verilog-lsp)
+;; TODO: Add these things for apheleia, tree-sitter, etc...
+
+
 ;;; rx
 (require 'rx)
 
@@ -111,6 +145,29 @@ See `verilog-ext-block-end-keywords' for more.")
 
 
 ;;; Navigation
+;; In `verilog-ext-find-module-instance-fwd':
+;;   TODO: Try to optimize it not to do the forward-line thing
+;;   TODO: Right now the `verilog-identifier-sym-re' catches things such as (Rst_n) and .Rst_n
+;;   It would be nice if it only recognized things that have an space before and after (a real symbol).
+;;   TODO: Could this be done modifying temporarily the syntax table? But that might be an issue for font-locking?
+;;
+;; In `verilog-ext-find-module-instance-bwd'
+;;  TODO: Do something for when point is inside a module, to jump to current module header instead of
+;;  to previous one. Ideas:
+;;    1. New one:
+;;    -  Use the `verilog-ext-instance-at-point'
+;;    2. Old one (possibly discard):
+;;    -  Check if in parenthesized expression (should return non-nil): (verilog-parenthesis-depth)
+;;    -  Go up until not in a parenthsized expression: (while (verilog-backward-up-list 1) ...)
+;;    -  Do same logic as with the rest of `verilog-ext-find-module-instance-bwd' from this point on
+;;       - Probably this could be grouped/refactored in another function
+;;
+;;  TODO: Add some check to make sure we are in a module/interface when looking for instances to avoid
+;;  considering some classes/parameterized objects as instances.
+;;
+
+
+
 ;; TODO: Use in conjunction with hook that modifies syntax entry for `
 ;; Currently inside `verilog-ext-hook' in verilog-utils
 (defun verilog-ext-electric-verilog-tab ()
@@ -179,6 +236,10 @@ See `verilog-ext-block-end-keywords' for more.")
   (verilog-ext-find-token nil))
 
 
+;;;; Jump to module
+;;  TODO: Do something in `verilog-ext-jump-to-module-at-point' to parameterize the use of gtags/xref
+
+
 
 ;;;; Modi
 ;; TODO: Seems that instance is already handled
@@ -186,6 +247,9 @@ See `verilog-ext-block-end-keywords' for more.")
 ;; TODO: Extend token-re to something more complex (like modi's) so that there are capture groups
 ;; TODO: And it can be easier
 ;; TODO: Take into account the rest of rx (like the ones used in imenu for task/func/class) etc
+
+;; TODO: This is required by some modi functions
+;; (require 'ag) ; Load `ag' package so `ag-arguments' get updated with --stats to jump to first match
 
 
 ;; TODO: Modi headers are more complex than just looking for a word
@@ -461,6 +525,11 @@ INFO: Limitations:
 
 
 ;;; Beautify
+;; TODO: In `verilog-ext-beautify-current-file':
+;;  - Remove blanks in port connections
+;;  - Align declarations/expressions: (similar to verilog-mode test0.el)
+;;  - Add this to docstring
+
 (defun verilog-ext-clean-port-blanks ()
   "Cleans blanks inside port connections of current buffer.
 
@@ -601,6 +670,9 @@ INFO: `iverilog' command syntax requires writing to an output file
 
 
 ;;; Templates
+;; TODO: `verilog-ext-templ-testbench-simple-from-file' fails if instantiates a DUT without parameters
+
+
 ;;;; UVM env
 ;; TODO: Convert this into a UVM env template
 ;; - Remove 'program' bullshit
@@ -1110,3 +1182,46 @@ Regex search bound to LIMIT."
    '(verilog-ext-font-lock-typedef-decl-fontify
      (0 'verilog-ext-font-lock-typedef-face)
      (1 'font-lock-doc-face)) ; TODO: Choose proper colors
+
+
+
+;;; Completion
+;; TODO: Add some CAPF improvements?
+;; `verilog-completion-at-point' is added to CAPF. It calls `verilog-completion' which in turns
+;; completes depending on the context. This context is determined based on indentation. Since
+;; indentation is changed, this could be the reason why it fails. Or maybe it works fine but I didn't use it properly.
+;; Study `verilog-completion'.
+;;
+;; `verilog-complete-word' and `verilog-show-completions' are fallbacks for Emacs versions lacking `completion-at-point'
+;;
+;; Get some idea for words in opened buffers? Like hippie? Is that a backend for company already?
+;;
+;; TODO: Add some CAPF that uses global to determine what current definition type is?
+;;  - E.g.:
+;;   - Use regular completion, except when after .
+;;      - if current definition is a class, get its attributes and methods in a list and prompt them as completion candidates, plus randomize() method etc
+;;      - if current definition is an array prompt for array methods
+;;      - if is an enum for enum methods, if is a queue for queue methods, etc... Some semantic analysis
+;;      - Could be done with tree-sitter?
+
+;;;; Hydra
+("TE"  (call-interactively #'verilog-ext-templ-testbench-env-from-file)        "TB from DUT file (full env)")
+
+
+
+;;; Imenu
+;; TODO: Do something to catch class external functions/tasks in a different category and strip the class_identifier
+;; Something like parsing function class_identifier::identifier
+;;   1 - Create the regexp of task::<name>
+;;   2 - Modify current regexp for tasks/functions that include : and is used somewhere else
+;;   3 - Add new entry in verilog-ext-imenu-generic-expression
+;;   4 - Modify verilog-ext-imenu-find-task-function-outside-class-bwd so that it also includes in the or the new regexp
+;;   5 - Adapt capture groups so that the prefix class_name:: is removed
+;;   6 - Maybe in the future do something to include it in an subgroup same as classes (a bit more complex)
+;;
+;; TODO: Do a minor-mode that adds/removes the hooks?
+;;  - (add-hook 'verilog-mode-hook #'verilog-ext-imenu-hook)
+
+
+
+

@@ -3,19 +3,20 @@
 ;;; Code:
 
 
+(require 'verilog-mode)
+
+
 (defconst verilog-ext-keywords-re
   (eval-when-compile
     (regexp-opt verilog-keywords 'symbols)))
-
 
 
 (defconst verilog-ext-top-instantiable-re
   (eval-when-compile
     (concat "\\<\\(?1:module\\|interface\\)\\>\\(\\s-+\\<automatic\\>\\)?\\s-+\\(?2:\\<" verilog-identifier-re "\\>\\)")))
 
-;; Search by function: Used for functions that will be passed as an argument of `verilog-ext-imenu-generic-expression'
-(defconst verilog-ext-task-re     "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*task\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)") ; Can't user `verilog-identifier-re' for external declared tasks
-(defconst verilog-ext-function-re "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*function\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?:\\w+\\s-+\\)?\\(?:\\(?:un\\)signed\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)") ; Can't user `verilog-identifier-re' for external declared functions
+(defconst verilog-ext-task-re     "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*task\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)") ; Can't use `verilog-identifier-re' for external declared tasks
+(defconst verilog-ext-function-re "\\(?1:\\(?:\\(?:static\\|pure\\|virtual\\|local\\|protected\\)\\s-+\\)*function\\)\\s-+\\(?:\\(?:static\\|automatic\\)\\s-+\\)?\\(?:\\w+\\s-+\\)?\\(?:\\(?:un\\)signed\\s-+\\)?\\(?2:[A-Za-z_][A-Za-z0-9_:]+\\)") ; Can't use `verilog-identifier-re' for external declared functions
 (defconst verilog-ext-class-re    (concat "\\(?1:\\(?:\\(?:virtual\\)\\s-+\\)?class\\)\\s-+\\(?2:" verilog-identifier-re "\\)"))
 (defconst verilog-ext-top-re      (concat "\\<\\(?1:package\\|program\\|module\\|interface\\)\\>\\(\\s-+\\<automatic\\>\\)?\\s-+\\(?2:\\<" verilog-identifier-re "\\>\\)"))
 

@@ -122,8 +122,9 @@ show \"top\" but also show extra information that it's a \"module\".")
 
 ;;;;; Setup
 ;; TODO: Do a minor-mode that adds/removes the hooks?
-(add-hook 'verilog-mode-hook #'verilog-ext-which-func)
-(add-hook 'verilog-mode-hook #'verilog-ext-which-func-update-format)
+;; TODO: Enable when this thing of tokens gets fixed again
+;; (add-hook 'verilog-mode-hook #'verilog-ext-which-func)
+;; (add-hook 'verilog-mode-hook #'verilog-ext-which-func-update-format)
 
 
 

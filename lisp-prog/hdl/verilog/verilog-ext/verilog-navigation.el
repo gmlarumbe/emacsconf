@@ -4,15 +4,11 @@
 
 
 (require 'verilog-mode)
+(require 'verilog-utils)
 (require 'ggtags)
-
-;; TODO: This is required by some modi functions
-(require 'ag) ; Load `ag' package so `ag-arguments' get updated with --stats to jump to first match
-
 
 
 ;;;; Syntax table override functions
-;; https://www.veripool.org/issues/724-Verilog-mode-How-to-make-word-navigation-commands-stop-at-underscores-
 (defun verilog-ext-forward-word (&optional arg)
   "Make verilog word navigation commands stop at underscores.
 Move forward ARG words."
@@ -33,13 +29,7 @@ Move backward ARG words."
       (backward-word arg))))
 
 
-
-
 ;;;; Module related
-;; TODO: Try to optimize it not to do the forward-line thing
-;; TODO: Right now the `verilog-identifier-sym-re' catches things such as (Rst_n) and .Rst_n
-;; It would be nice if it only recognized things that have an space before and after (a real symbol).
-;; TODO: Could this be done modifying temporarily the syntax table? But that might be an issue for font-locking?
 (defun verilog-ext-find-module-instance-fwd (&optional limit)
   "Search for a Verilog module/instance regexp.
 
@@ -48,7 +38,7 @@ it ignores the ones that contain Verilog keywords and continues until found.
 
 LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
   (interactive)
-  (let ((case-fold-search verilog-case-fold) ; TODO: What about case-fold?
+  (let ((case-fold-search verilog-case-fold)
         (identifier-re (concat "\\(" verilog-identifier-sym-re "\\)"))
         (module-end (make-marker))
         found module-name instance-name module-pos
@@ -56,8 +46,8 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
         pos)
     (save-excursion
       (save-match-data
-        (when (called-interactively-p) ; INFO: If applied to verilog-font-locking will break multiline font locking.
-          (forward-char))  ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
+        (when (called-interactively-p)
+          (forward-char)) ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
         (while (and (not (eobp))
                     (when-t limit
                       (> limit (point)))
@@ -103,7 +93,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
     (if found
         (progn
           (set-match-data (list (nth 0 module-match-data)     ; Beg of whole expression for module-match-data
-                                module-end
+                                module-end                    ; TODO: Which one to use?
                                 ;; (nth 3 instance-match-data)   ; End of whole expression for instance-match-data
                                 (nth 2 module-match-data)     ; (match-beginning 1)
                                 (nth 3 module-match-data)     ; (match-end 1)
@@ -117,16 +107,6 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
         (message "Could not find any instance forward")))))
 
 
-;; TODO: Do something for when point is inside a module, to jump to current module header instead of
-;; to previous one. Ideas:
-;;   -  Check if in parenthesized expression (should return non-nil): (verilog-parenthesis-depth)
-;;   -  Go up until not in a parenthsized expression: (while (verilog-backward-up-list 1) ...)
-;;   -  Do same logic as with the rest of `verilog-ext-find-module-instance-bwd' from this point on
-;;      - Probably this could be grouped/refactored in another function
-;;
-;; TODO: Add some check to make sure we are in a module/interface when looking for instances to avoid
-;; considering some classes/parameterized objects as instances.
-;;
 (defun verilog-ext-find-module-instance-bwd (&optional limit)
   "Search backwards for a Verilog module/instance regexp.
 
@@ -135,7 +115,7 @@ it ignores the ones that contain Verilog keywords and continues until found.
 
 LIMIT argument is included to allow the function to be used to fontify Verilog buffers."
   (interactive)
-  (let ((case-fold-search verilog-case-fold) ; TODO: What about case-fold
+  (let ((case-fold-search verilog-case-fold)
         (identifier-re (concat "\\(" verilog-identifier-sym-re "\\)"))
         (module-end (make-marker))
         found module-name instance-name module-pos
@@ -143,9 +123,6 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
         pos)
     (save-excursion
       (save-match-data
-        ;; TODO: Check if this was used before (it was but not sure if it's needed anymore)
-        ;; (when (called-interactively-p) ; INFO: If applied to verilog-font-locking will break multiline font locking.
-        ;;   (backward-char))  ; Needed to avoid getting stuck if point is at the beginning of the regexp while searching
         (while (and (not (bobp))
                     (when-t limit
                       (< limit (point)))
@@ -190,7 +167,7 @@ LIMIT argument is included to allow the function to be used to fontify Verilog b
     (if found
         (progn
           (set-match-data (list (nth 0 module-match-data)     ; Beg of whole expression for module-match-data
-                                module-end
+                                module-end                    ; TODO: Which one to use?
                                 ;; (nth 3 instance-match-data)   ; End of whole expression for instance-match-data
                                 (nth 2 module-match-data)     ; (match-beginning 1)
                                 (nth 3 module-match-data)     ; (match-end 1)
@@ -227,22 +204,24 @@ Return list with TYPE and NAME."
           nil)))))
 
 
-;; TODO: Requires having ggtags/global/xref configured
 (defun verilog-ext-jump-to-module-at-point (&optional ref)
   "Same as `modi/verilog-jump-to-module-at-point' but using ggtags."
   (interactive)
   (let (module)
-    (if (and (executable-find "global")
-             ggtags-project-root)
-             ;; (projectile-project-root))
-        (if (setq module (car (verilog-ext-instance-at-point)))
-            (progn
-              (if ref
-                  (xref-find-references module)
-                (xref-find-definitions module))
-              module) ; TODO: Return module name for reporting?
-          (user-error "Not inside a Verilog instance"))
-      (user-error "Couldn't find `global' or `ggtags-project-root'"))))
+    (unless (executable-find "global")
+      (error "Couldn't find executable `global' in PATH"))
+    (unless (member ggtags--xref-backend 'xref-backend-functions)
+      (error "Error: ggtags not configured as an xref backend.  Is ggtags-mode enabled?"))
+    (unless ggtags-project-root
+      (error "Error: `ggtags-project-root' not set.  Are GTAGS/GRTAGS/GPATH files created?"))
+    ;; Code
+    (if (setq module (car (verilog-ext-instance-at-point)))
+        (progn
+          (if ref
+              (xref-find-references module)
+            (xref-find-definitions module))
+          module) ; Return module name for reporting
+      (user-error "Not inside a Verilog instance"))))
 
 
 (defun verilog-ext-jump-to-module-at-point-def ()

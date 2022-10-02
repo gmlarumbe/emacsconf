@@ -456,7 +456,7 @@ including `font-lock-multiline' property."
 
 
 ;;;; Font-lock keywords
-(setq verilog-ext-font-lock-keywords
+(defvar verilog-ext-font-lock-keywords
   (list
    ;; Preprocessor macros and compiler directives
    (cons (concat "`" verilog-identifier-re) 'verilog-ext-font-lock-preprocessor-face) ; Place at the top to have precendence in `else or `include 'macros over keywords
@@ -472,7 +472,7 @@ including `font-lock-multiline' property."
    (cons (concat "\\<\\(" verilog-ext-font-lock-type-font-keywords "\\)\\>") 'font-lock-type-face)
    ))
 
-(setq verilog-ext-font-lock-keywords-1
+(defvar verilog-ext-font-lock-keywords-1
   (append
    verilog-ext-font-lock-keywords
    (list
@@ -492,7 +492,7 @@ including `font-lock-multiline' property."
     '(verilog-ext-font-lock-module-instance-fontify (2 'verilog-ext-font-lock-instance-face))
     )))
 
-(setq verilog-ext-font-lock-keywords-2
+(defvar verilog-ext-font-lock-keywords-2
   (append
    verilog-ext-font-lock-keywords-1
    (list
@@ -508,7 +508,7 @@ including `font-lock-multiline' property."
     '("##\\(?1:\\sw+\\|\\[[^]]+\\]\\)" 1 font-lock-type-face append)
     )))
 
-(setq verilog-ext-font-lock-keywords-3
+(defvar verilog-ext-font-lock-keywords-3
   (append
    verilog-ext-font-lock-keywords-2
    (list
@@ -531,7 +531,7 @@ including `font-lock-multiline' property."
     ;; *_translate off regions
     '(verilog-ext-font-lock-match-translate-off-fontify
       (0 'verilog-ext-font-lock-translate-off-face prepend)) ; 3rd parameter (prepend or t) overrides previous fontlocking
-   )))
+    )))
 
 
 ;;;; Config

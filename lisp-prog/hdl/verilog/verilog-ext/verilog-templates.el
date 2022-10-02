@@ -365,11 +365,11 @@ If ASYNC is non-nil create an asynchronous reset."
  ); */")
   "Template with connected ports and subscripts.")
 
-(defvar verilog-ext-templ-inst-auto--simple "\
+(defvar verilog-ext-templ-inst-auto-simple "\
 <module> <instance_name> (/*AUTOINST*/);
 ")
 
-(defvar verilog-ext-templ-inst-auto-autoparam "\
+(defvar verilog-ext-templ-inst-auto-params "\
 <module> # (/*AUTOINSTPARAM*/) <instance_name> (/*AUTOINST*/);
 ")
 
@@ -389,8 +389,8 @@ If ASYNC is non-nil create an asynchronous reset."
   (let (autoinst-list)
     (setq autoinst-list (completing-read "AUTOINST:" '("Simple" "With Parameters")))
     (pcase autoinst-list
-      ("Simple"          verilog-ext-templ-inst-auto--simple)
-      ("With Parameters" verilog-ext-templ-inst-auto-autoparam)
+      ("Simple"          verilog-ext-templ-inst-auto-simple)
+      ("With Parameters" verilog-ext-templ-inst-auto-params)
       (_                 (error "Error @ verilog-ext-templ-choose-autoinst: Unexpected string")))))
 
 
@@ -479,7 +479,7 @@ Use inst INST-TEMPLATE or prompt to choose one if is nil."
       (setq template (verilog-ext-templ-inst-auto--choose-template)))
     (unless inst-template
       (setq inst-template (verilog-ext-templ-inst-auto--choose-autoinst)))
-    (when (equal inst-template verilog-ext-templ-inst-auto-autoparam)
+    (when (equal inst-template verilog-ext-templ-inst-auto-params)
       (setq autoparam t))
     ;; Instantiate module/instance
     (insert template)
@@ -508,20 +508,28 @@ Use inst INST-TEMPLATE or prompt to choose one if is nil."
 
 
 (defun verilog-ext-templ-inst-auto-from-file-simple (file)
-  "Instantiate from FILE and prompt for template and parameters."
+  "Instantiate from FILE with simple template: connected ports and no parameters."
   (interactive "FSelect module from file:")
   (verilog-ext-templ-inst-auto-from-file file
                                          verilog-ext-templ-inst-auto-conn-ports
-                                         verilog-ext-templ-inst-auto--simple))
+                                         verilog-ext-templ-inst-auto-simple))
+
+
+(defun verilog-ext-templ-inst-auto-from-file-params (file)
+  "Instantiate from FILE with params template: connected ports with parameters."
+  (interactive "FSelect module from file:")
+  (verilog-ext-templ-inst-auto-from-file file
+                                         verilog-ext-templ-inst-auto-conn-ports
+                                         verilog-ext-templ-inst-auto-params))
 
 
 (defun verilog-ext-templ-inst-auto-from-file-tb-dut (file)
-  "Instantiate from FILE and prompt for template and parameters.
+  "Instantiate from FILE with params template: connected ports with subscripts with parameters.
 Required by tb instantiation to auto detect width of signals."
   (interactive "FSelect module from file:")
   (verilog-ext-templ-inst-auto-from-file file
                                          verilog-ext-templ-inst-auto-conn-ports-ss
-                                         verilog-ext-templ-inst-auto-autoparam))
+                                         verilog-ext-templ-inst-auto-params))
 
 
 (defun verilog-ext-templ-inst-auto-from-file-prompt (file)
