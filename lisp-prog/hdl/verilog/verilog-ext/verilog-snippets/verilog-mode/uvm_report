@@ -2,4 +2,4 @@
 # key: ur
 # --
 `uvm_${1:<warning|error|fatal>}(${2:get_name()}, ${3:$sformatf("${4:<Message string>: %s}", ${5:<arg>})})
-$0
+   $0
