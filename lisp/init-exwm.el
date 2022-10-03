@@ -56,6 +56,7 @@
     f4
     ?\C-, ; Ansi-term
     ?\C-.
+    (kbd "C-;") ; `switch-to-buffer'
     f9))  ; Other various functions
 
 
@@ -213,6 +214,7 @@
   (exwm-input-set-key (kbd "s-k") #'larumbe/exwm-launch-firefox)
   (exwm-input-set-key (kbd "s-;") #'async-shell-command)
   ;; Window/Frame movement/navigation
+  (exwm-input-set-key (kbd "C-;")   #'ivy-switch-buffer)
   (exwm-input-set-key (kbd "M-o")   #'other-window) ; Replaces enriched faces
   (exwm-input-set-key (kbd "M-O")   #'other-frame)  ; Replaces 'negative argument
   (exwm-input-set-key (kbd "C-}")   #'larumbe/shrink-window-horizontally)
