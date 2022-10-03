@@ -1,5 +1,19 @@
 ;;; init-term.el --- Terminals  -*- lexical-binding: t -*-
 ;;; Commentary:
+;;
+;; At some point these packages/links showed up while looking at ways to have a fully colorized terminal:
+;;
+;; - https://emacs.stackexchange.com/questions/24784/getting-more-than-8-colors-in-a-terminal-emulator-inside-emacs
+;;    - However, `less' and `bat' didn't seem to work even after 'export TERM=eterm-256color'
+;;
+;; - https://github.com/atomontage/xterm-color
+;;    - Propertize comint, eshell, compilation and other buffers
+;;
+;; - eterm-256color (use-package eterm-256color :hook (term-mode . eterm-256color-mode))
+;;    - However didn't seem to fix the mess with term/ansi-term own colors and the ones provided by the package
+;;
+;; The best solution was to use a fully-fledge emulator: vterm
+;;
 ;;; Code:
 
 (use-package term

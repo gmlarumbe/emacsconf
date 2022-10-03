@@ -75,18 +75,22 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 ;;;; HTML
 (use-package mhtml-mode
   :bind (:map mhtml-mode-map
-              ("C-M-u" . sgml-skip-tag-backward)
-              ("C-M-d" . sgml-skip-tag-forward))
+         ("C-M-u" . sgml-skip-tag-backward)
+         ("C-M-d" . sgml-skip-tag-forward))
+  :bind (:map html-mode-map
+         ("M-o" . nil)) ; For some reason it bound M-o to `facemenu-keymap'
   :config
   (setq sgml-basic-offset 4) ; Indentation of parent mode
 
   (use-package web-beautify
     ;; Requires 'js-beautify' binary installed from npm (nodejs)
     :bind (:map mhtml-mode-map
-                ("C-c b h" . web-beautify-html)
-                ("C-c b j" . web-beautify-js)
-                ("C-c b c" . web-beautify-css))))
+           ("C-c b h" . web-beautify-html)
+           ("C-c b j" . web-beautify-js)
+           ("C-c b c" . web-beautify-css))))
 
+
+(use-package web-mode)
 
 
 ;;;; MARKDOWN
@@ -226,6 +230,10 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
   :mode (("\\.e\\'"     . specman-mode)
          ("\\.ecom\\'"  . specman-mode)
          ("\\.erld\\'"  . specman-mode)))
+
+
+;;;; JINJA
+(use-package jinja2-mode)
 
 
 
