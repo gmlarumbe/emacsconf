@@ -22,6 +22,45 @@ Adapted from `sh-send-line-or-region-and-step' for SH Shell scripting."
     (goto-char end)))
 
 
+(defun larumbe/python-send-line-or-region-vterm ()
+  "Send the current line to a *vterm* that runs a Python Interpreter.
+Step to next line afterwards and if the region is active, send the region instead.
+Adapted from `sh-send-line-or-region-and-step' for SH Shell scripting.
+
+INFO: If indentation of a region needs to be bypassed, use this command
+along with `rectangle-mark-mode' with `C-x SPC'.
+
+Differs from `larumbe/python-send-line-or-region' in that the former makes use of
+`python-shell-send-string', which creates temps files and sends them to the inferior
+process.
+
+Sends data to *vterm* and when a region needs to be sent, instead of creating
+a temp file that is later deleted through Python interpreter, is instead parsed in a temp-buffer
+and newlines are erased.  That was the main issue when sending text, as a newline is interpreted as Enter."
+  (interactive)
+  (unless (get-buffer "*vterm*")
+    (error "Buffer *vterm* does not exist"))
+  (let (from to end string)
+    (if (use-region-p)
+        (setq from (region-beginning)
+              to (region-end)
+              end to)
+      (setq from (line-beginning-position)
+            to (line-end-position)
+            end (1+ to)))
+    ;; Prepare output to send to console to avoid errors
+    (setq string (buffer-substring-no-properties from to))
+    (with-temp-buffer
+      (insert string)
+      (flush-lines "^\\s-*$" (point-min) (point-max)) ; Remove newlines before sending to console
+      (delete-trailing-whitespace)
+      (setq string (buffer-string)))
+    ;; Send to console *vterm*
+    (comint-send-string "*vterm*" (concat string "\n"))
+    (goto-char end)
+    (message "Sent to *vterm*...")))
+
+
 (defun larumbe/python-send-line-or-region-ansi-term ()
   "Send the current line to an *ansi-term* that runs a Python Interpreter.
 Step to next line afterwards and if the region is active, send the region instead.
@@ -118,6 +157,7 @@ didn't work as expected either (only worked with a hook and not at Emacs startup
            ;; forward-sexp function
            'py-forward-block-or-clause
            nil) hs-special-modes-alist)))
+
 
 
 (defun larumbe/python-hs-hide-all (&optional hideall)

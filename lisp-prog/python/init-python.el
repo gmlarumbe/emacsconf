@@ -72,8 +72,6 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
 
 
 (use-package elpy
-  :straight (:repo "jorgenschaefer/elpy"
-             :fork (:repo "gmlarumbe/elpy"))
   :after python-mode
   :demand
   :hook ((elpy-mode . larumbe/elpy-hook))
