@@ -156,7 +156,7 @@
   "Wrapper function for programatic use of `replace-regexp'.
 Replace REGEXP with TO-STRING from START to END."
   (let* ((marker (make-marker))
-         (endpos (set-marker marker end)))
+         (endpos (when end (set-marker marker end))))
     (save-excursion
       (goto-char start)
       (while (re-search-forward regexp endpos t)
@@ -175,13 +175,37 @@ Replace STRING with TO-STRING from START to END.
 If optional arg FIXEDCASE is non-nil, do not alter the case of
 the replacement text (see `replace-match' for more info)."
   (let* ((marker (make-marker))
-         (endpos (set-marker marker end)))
+         (endpos (when end (set-marker marker end))))
     (save-excursion
       (goto-char start)
       (while (search-forward string endpos t)
         (replace-match to-string fixedcase)))))
 
 
+(defun verilog-ext-read-file-modules (file)
+  "Find modules in FILE.
+Return list with found modules or nil if not found."
+  (let (modules
+        (debug nil))
+    (with-temp-buffer
+      (when debug
+        (clone-indirect-buffer-other-window "*debug*" t))
+      (insert-file-contents file)
+      (verilog-mode) ; Needed to set the syntax table to avoid searching in comments
+      (while (verilog-re-search-forward verilog-ext-top-instantiable-re nil t)
+        (push (match-string-no-properties 2) modules)))
+    (delete-dups modules)))
+
+
+(defun verilog-ext-select-file-module (file)
+  "Select file module from FILE.
+If only one module was found return it as a string.
+If more than one module was found, select between available ones.
+Return nil if no module was found."
+  (let ((modules (verilog-ext-read-file-modules file)))
+    (if (cdr modules)
+        (completing-read "Select module: " modules)
+      (car modules))))
 
 
 (provide 'verilog-utils)

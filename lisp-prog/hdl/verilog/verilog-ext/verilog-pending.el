@@ -1542,4 +1542,199 @@ Actions for `verilog-ext-flycheck-linter'."
 
 
 
+;;; Vhier
+;; 2 options: outline/outshine
+;; Treemacs as a framework: https://github.com/Alexander-Miller/treemacs/blob/master/Extensions.org
 
+
+;; INFO: First preprocesses input files for `include' and `define' expansion.
+;; Then extracts hierarchy from that preprocessed file.
+(defvar verilog-ext-vhier-pp-outfile nil)
+(defvar verilog-ext-vhier-pp-args    nil)
+
+(defvar verilog-ext-vhier-vhier-filelist-name "vhier.files")
+(defvar verilog-ext-vhier-vhier-filelist-path nil)
+
+(defvar verilog-ext-vhier-vhier-outfile "hierarchy.v")
+
+(defvar verilog-ext-vhier-projects nil
+  "Projects list:
+Name of the project (+plus)
+1) Name of the top-module
+2) Input files for hierarchy elaboration
+3) Output hierarchy file path")
+(defvar verilog-ext-vhier-top-module  nil)
+(defvar verilog-ext-vhier-project-dir nil)
+(defvar verilog-ext-vhier-input-files nil)
+
+
+;;;;; Utility functions
+(defun verilog-ext-buffer-expand-filenames (&optional absolute exp-dir)
+  "Expands filenames paths present in `current-buffer' line by line.
+If ABSOLUTE is nil expand relative to `default-directory'.
+If ABSOLUTE is non-nil filenames will expand to their absolute paths.
+If EXP-DIR is non-nil, expand relative to this argument instead
+of `default-directory'."
+  (let ((cur-line)
+        (default-directory (if exp-dir
+                               exp-dir
+                             default-directory)))
+    (save-excursion
+      (goto-char (point-min))
+      (while (< (point) (point-max))
+        (delete-horizontal-space)
+        (if absolute
+            (setq cur-line (expand-file-name (thing-at-point 'line) default-directory))
+          (setq cur-line (file-relative-name (thing-at-point 'line) default-directory)))
+        (kill-line 1)
+        (insert cur-line)))))
+
+
+(defun verilog-ext-sort-regexp-at-the-beginning-of-file (regexp)
+  "Move lines containing REGEXP recursively at the beginning of the file.
+Done line by line, this might be useful when managing a list of files,
+one file at a line, and there is some need of sorting by regexp.
+For example, in SystemVerilog, packages might need to be included before other files."
+  (interactive)
+  (let ((sorted-files-p nil))
+    (goto-char (point-min))
+    (while (not sorted-files-p)
+      (save-excursion
+        (unless (search-forward-regexp regexp nil 1)
+          (setq sorted-files-p t))
+        (beginning-of-line)
+        (kill-line 1)) ; Kill trailing newline as well
+      (yank))))
+
+
+
+;;;;; Actual logic
+(defun verilog-ext-vhier-set-active-project ()
+  "Retrieve Vhier project list and set variables accordingly."
+  (let ((vhier-project)
+        (files-list))
+    ;; Get Project name
+    (setq vhier-project (completing-read "Select project: " (mapcar 'car verilog-ext-vhier-projects))) ;; Read previous variable and get list of first element of each assoc list
+    (setq files-list (cdr (assoc vhier-project verilog-ext-vhier-projects)))
+    ;; Set parameters accordingly
+    (setq verilog-ext-vhier-top-module  (nth 0 files-list))
+    (setq verilog-ext-vhier-input-files (nth 1 files-list))
+    (setq verilog-ext-vhier-project-dir (nth 2 files-list))
+    (setq verilog-ext-vhier-pp-outfile
+          (concat (verilog-ext-path-join verilog-ext-vhier-project-dir verilog-ext-vhier-top-module)
+                  "_pp.sv"))
+    (setq verilog-ext-vhier-pp-args (concat "-o " verilog-ext-vhier-pp-outfile))
+    (setq verilog-ext-vhier-vhier-filelist-path (verilog-ext-path-join verilog-ext-vhier-project-dir verilog-ext-vhier-vhier-filelist-name))))
+
+
+
+(defun verilog-ext-vhier-create-filelist (&optional sort-defs-pkg)
+  "Generate verilog-ext-vhier-vhier-filelist-name filelist.
+Generate from `verilog-ext-vhier-input-files'file (normally gtags.files).
+
+INFO: Assumes that files fetched from `verilog-ext-vhier-input-files' are
+relative paths.
+
+If optional arg SORT-DEFS-PKG is set then move every *_defs_pkg.sv file
+to the beginning."
+  (let ((exp-dir (file-name-directory verilog-ext-vhier-input-files))
+        (debug nil)) ; INFO: Debug `with-temp-buffer', set to non-nil to debug temp buffer contents.
+    (make-directory verilog-ext-vhier-project-dir t) ; Create vhier folder if it did not exist
+    (with-temp-buffer
+      (when debug
+        (clone-indirect-buffer-other-window "*debug*" t))
+      (insert-file-contents verilog-ext-vhier-input-files)
+      (verilog-ext-buffer-expand-filenames t exp-dir)
+      (verilog-ext-replace-regexp-whole-buffer "\\(.*/\\).*\.[s]?vh$" "-y \\1") ; Replace header `include' files with -y library flag
+      (when sort-defs-pkg
+        (verilog-ext-sort-regexp-at-the-beginning-of-file "_defs_pkg.sv"))
+      (write-file verilog-ext-vhier-vhier-filelist-path))))
+
+
+
+
+
+
+
+;;;###autoload
+(defun verilog-ext-vhier-extract-hierarchy ()
+  "Execute shell processes that preprocess hierarchy.
+Preprocess from `verilog-ext-vhier-vhier-filelist-name'
+and extract hierarchy from previous preprocessed file.
+
+INFO: Defined as interactive for the case when the command
+`verilog-ext-vhier-from-project'fails due to some reformatting needed on
+previously created `verilog-ext-vhier-vhier-filelist-name' via
+`verilog-ext-vhier-create-filelist'. e.g: some included file was not
+added via -yDIR but as a source file and cannot be found."
+  (interactive)
+  (let* ((shell-command-dont-erase-buffer t) ; Append output to buffer
+         (pp-cmd (concat "vppreproc "
+                         "-f " verilog-ext-vhier-vhier-filelist-path " "
+                         verilog-ext-vhier-pp-args))
+         (vhier-cmd (concat "cd " verilog-ext-vhier-project-dir " && "
+                            "vhier " (mapconcat #'identity verilog-ext-vhier-vhier-args " ") " --top-module " verilog-ext-vhier-top-module " "
+                            verilog-ext-vhier-pp-outfile))
+         (buf     verilog-ext-vhier-buffer-name)
+         (buf-err verilog-ext-vhier-shell-cmds-buffer-name)
+         (file-path (verilog-ext-path-join verilog-ext-vhier-project-dir verilog-ext-vhier-vhier-outfile))
+         (err-msg (format "returned with errors\nCheck %s buffer\nModify %s\nAnd finally run `verilog-ext-vhier-extract-hierarchy' instead of `verilog-ext-vhier-from-project' !"
+                          buf-err verilog-ext-vhier-vhier-filelist-path)))
+    ;; Preprocess and extract hierarchy (vppreproc && vhier)
+    (unless (= 0 (shell-command pp-cmd buf buf-err))
+      (pop-to-buffer buf-err)
+      (error (concat "vppreproc " err-msg)))
+    (unless (= 0 (shell-command vhier-cmd buf buf-err))
+      (pop-to-buffer buf-err)
+      (error (concat "vhier " err-msg)))
+    ;; Format buffer and write file
+    (verilog-ext-vhier-format-hierarchy-write-file file-path)))
+
+
+;;;###autoload
+(defun verilog-ext-vhier-from-project ()
+  "Extract hierarchy of top level module using Verilog-Perl backend."
+  (interactive)
+  (unless (executable-find "vhier")
+    (error "Executable vhier not found"))
+  (verilog-ext-vhier-set-active-project)
+  (verilog-ext-vhier-create-filelist)
+  (verilog-ext-vhier-extract-hierarchy))
+
+
+
+;; VHIER Comments
+;; TODO: In this order preferably:
+;;  - First try to make it work the `verilog-ext-vhier-current-file'
+;;  - Then try to make it work the more generic (don't do it by project, seems too complex)
+;;  - Try to avoid the preprocessing stuff and try to use the __FLAGS__ of verilog-mode
+;;  - Add a variable for additional arguments:
+;;    - e.g. to use a -f __FILE__ or -F __FILE__ (to add extra command arguments, like missing packages in specific order, etc.)
+;;
+;;
+;;
+;; `vhier-outline-mode':
+;; Navigate with `outline-minor-mode' through extracted Verilog-Perl hierarchy.
+;;
+;; `verilog-ext-vhier-current-file' and `verilog-ext-vhier-from-project':
+;; Extract verilog hierarchy of current open files or from project list.
+;;
+
+
+;; Arguments
+         ;; (pkg-files  (mapconcat #'identity (verilog-ext-update-project-pkg-list) " "))
+         ;; (include-dirs (concat "-y " (mapconcat #'identity verilog-library-directories " -y "))) ; Did not have an effect
+
+                      ;; include-dirs     " "
+                      ;; pkg-files        " "
+
+
+    ;; (verilog-read-defines) ; Not sure if needed...
+    ;; (verilog-read-includes)
+
+
+
+;; In `verilog-ext-vhier-format-hierarchy-write-file'
+      ;; (if verilog-ext-vhier-input-files
+      ;;     (insert (concat "// Hierarchy extracted from files included in: " verilog-ext-vhier-input-files "\n"))
+      ;;   (insert (concat "// Hierarchy extracted from `verilog-ext-open-dirs' variable\n")))

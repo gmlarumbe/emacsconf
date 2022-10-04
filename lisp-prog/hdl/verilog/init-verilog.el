@@ -94,6 +94,7 @@
   (verilog-ext-flycheck-setup)
   (verilog-ext-flycheck-set-linter 'verilog-verible)
 
+  (setq verilog-ext-vhier-output-dir (concat (verilog-ext-path-join (projectile-project-root) "vhier/")))
   )
 
 

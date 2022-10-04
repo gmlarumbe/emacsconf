@@ -437,23 +437,6 @@ Called from `verilog-ext-templ-inst-auto-from-file'."
       (kill-line 1))))
 
 
-(defun verilog-ext-templ-inst-auto--read-file-modules (file)
-  "Find modules in FILE.
-Return found one, or prompt for list of found ones if there is more than one."
-  (let (modules
-        (debug nil))
-    (with-temp-buffer
-      (when debug
-        (clone-indirect-buffer-other-window "*debug*" t))
-      (insert-file-contents file)
-      (verilog-mode) ; Needed to set the syntax table to avoid searching in comments
-      (while (verilog-re-search-forward verilog-ext-top-instantiable-re nil t)
-        (push (match-string-no-properties 2) modules)))
-    (delete-dups modules)
-    (if (cdr modules)
-        (completing-read "Module to instantiate: " modules)
-      (car modules))))
-
 
 (defun verilog-ext-templ-inst-auto-from-file (file &optional template inst-template)
   "Instantiate top module present in FILE.
@@ -462,7 +445,7 @@ If there is more than one module, prompt for a list of detected modules.
 Use auto TEMPLATE or prompt to choose one if is nil.
 Use inst INST-TEMPLATE or prompt to choose one if is nil."
   (interactive "FSelect module from file:\nP")
-  (let* ((module-name (verilog-ext-templ-inst-auto--read-file-modules file))
+  (let* ((module-name (verilog-ext-select-file-module file))
          (start-template (point))
          end-template end-instance instance-name start-instance autoparam)
     ;; Checks and env setup
@@ -545,7 +528,7 @@ Required by tb instantiation to auto detect width of signals."
   (interactive "FSelect DUT from file:\nFOutput file: ")
   (when (file-exists-p outfile)
     (error "File %s exists" outfile))
-  (let ((module-name (verilog-ext-templ-inst-auto--read-file-modules file))
+  (let ((module-name (verilog-ext-select-file-module file))
         beg end)
     (find-file outfile)
     (insert "\
