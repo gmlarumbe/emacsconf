@@ -251,6 +251,13 @@ See `verilog-ext-block-end-keywords' for more.")
 ;; TODO: This is required by some modi functions
 ;; (require 'ag) ; Load `ag' package so `ag-arguments' get updated with --stats to jump to first match
 
+;; TODO: This was added at some point to verilog-modi in the Citrix server
+;; (add-to-list 'ag-arguments "--stats" :append) ; Just ensure
+
+;; (if (and (executable-find "global")
+;;          (projectile-project-root))
+;;     ;; (projectile-project-root)
+
 
 ;; TODO: Modi headers are more complex than just looking for a word
 (defun verilog-ext-get-header (&optional fwd)
@@ -1340,3 +1347,199 @@ Regex search bound to LIMIT."
 ;;   (let ((instance-data (verilog-ext-which-func-find-instance))
 ;;         (token-data    (verilog-ext-which-func-find-token)))
 ;;     (verilog-ext-which-func-decide instance-data token-data)))
+
+
+;;; Flycheck
+;; TODO: Tried to use the javascript binding for the SV tree-sitter linter but got this error:
+;; Error: /lib64/libstdc++.so.6: version `GLIBCXX_3.4.20' not found (required by /home/egonlar/node_modules/svlint/node_modules/tree-sitter/build/Release/tree_sitter_runtime_binding.node)
+;; Check the Elisp binding and see how hward would it be to do the equivalent
+
+;; TODO: Still doesn't recognize verible at startup
+
+(defvar verilog-ext-flycheck-eldoc-toggle t)
+
+(defun verilog-ext-flycheck-eldoc-toggle ()
+  "Disable `eldoc-mode' when enabling `flycheck-mode'.
+Avoid minibuffer conflicts between ggtags use of eldoc and flycheck."
+  (interactive)
+  (if eldoc-mode
+      (progn
+        (eldoc-mode -1)
+        (flycheck-mode 1)
+        (message "Flycheck enabled"))
+    (eldoc-mode 1)
+    (flycheck-mode -1)
+    (message "Flycheck disabled")))
+
+
+;; (define-minor-mode verilog-ext-flycheck-mode-toggle-toggle
+;;   "Flycheck wrapper that coexists with `eldoc'."
+;;   :lighter ""
+;;   (when verilog-ext-flycheck-mode-toggle-toggle
+;;     (if eldoc-mode
+;;         (progn
+;;           (eldoc-mode -1)
+;;           (flycheck-mode 1)
+;;           (message "Flycheck enabled"))
+;;       (eldoc-mode 1)
+;;       (flycheck-mode -1)
+;;       (message "Flycheck disabled"))))
+
+
+
+;; (defun verilog-ext-flycheck-mode-toggle (&optional uarg)
+;;   "`flycheck-mode' Verilog wrapper function.
+;; If called with UARG, select among available linters.
+
+;; Disable function `eldoc-mode' if flycheck is enabled
+;; to avoid minibuffer collisions."
+;;   (interactive "P")
+;;   (let (enable)
+;;     (when buffer-read-only
+;;       (error "Flycheck does not work on read-only buffers!"))
+;;     (if uarg
+;;         (progn
+;;           (verilog-ext-flycheck-set-linter)
+;;           (setq enable t))
+;;       ;; Toggle flycheck mode
+;;       (unless flycheck-mode
+;;         (setq enable t))
+;;             (flycheck-mode -1)
+;;             (message "Flycheck disabled"))
+;;         (flycheck-mode 1)
+;;         (message "[%s] Flycheck enabled" verilog-ext-flycheck-linter)))
+;;     (when verilog-ext-flycheck-eldoc-toggle
+;;       (if flycheck-mode
+;;           (eldoc-mode -1)
+;;         (eldoc-mode 1)))
+;;     ;; (verilog-ext-update-project-pkg-list)
+;;     ;; (verilog-ext-flycheck--extra-actions-post)
+;;     )
+;; (flycheck-mode 1)
+;;           (message "[%s] Flycheck enabled" verilog-ext-flycheck-linter)
+
+
+
+;; (defun verilog-ext-flycheck-eldoc-toggle ()
+;;   "Disable `eldoc-mode' when enabling `flycheck-mode'.
+;; Avoid minibuffer conflicts between ggtags use of eldoc and flycheck."
+;;   (interactive)
+;;   (if eldoc-mode
+;;       (progn
+;;         (eldoc-mode -1)
+;;         (flycheck-mode 1)
+;;         (message "Flycheck enabled"))
+;;     (eldoc-mode 1)
+;;     (flycheck-mode -1)
+;;     (message "Flycheck disabled")))
+
+
+(defun verilog-ext-flycheck--extra-actions-post ()
+  "Extra actions to perform after enabling flycheck.
+Actions for `verilog-ext-flycheck-linter'."
+  (when (and (equal verilog-ext-flycheck-linter 'verilog-cadence-hal)
+             (equal flycheck-mode t))
+    (message "Cadence HAL linting...")))
+
+
+
+;; TODO: Use the output of `verilog-expand-command' for different linter commands:
+(verilog-expand-command "__FLAGS__")
+;; INFO: This requires setting `verilog-library-files' and `verilog-library-directories' and `verilog-library-extensions'
+;; accordingly. Probably this can be done after the pkg update and all of that
+
+;; TODO: Add some options on the linters to use a -f or -F option (this will be really useful)
+
+;; Add this option or equivalent to checkers command:
+;; (option-list "" verilog-ext-verilog-project-pkg-list concat)
+;; (option-list "" verilog-ext-verilog-project-pkg-list concat)
+
+;; TODO: Verilator error checking:
+;; INFO: Required to add a column for latests version of Verilator!
+;; TODO: Send a bug report/pull request at some point
+
+
+
+;; TODO: Add eventually to comments
+;; Notes about linters:
+;;
+;; - Verilator:
+;;    - Advantages:
+;;      - Very complete linter for RTL code
+;;      - Good SystemVerilog support for RTL constructs
+;;    - Drawbacks:
+;;      - Lacks support for SystemVerilog simulation constructs
+;;      - Does not support ignoring missing modules (https://github.com/verilator/verilator/issues/2835)
+;;      - Cannot lint unpreprocessed code (`defines/`includes/UVM macros)
+;;
+;; - Iverilog
+;;    - Advantages:
+;;      - Supports ignoring missing modules
+;;    - Drawbacks:
+;;      - Very small amount of support for SystemVerilog
+;;
+;; - Verible
+;;    - Advantages:
+;;      - Allows linting of single files
+;;      - Allows linting of unpreprocessed code
+;;      - Best option to find syntax errors on single complex testbench files
+;;    - Drawbacks:
+;;      - Lacks support for SystemVerilog simulation constructs
+;;
+;; - Svlint
+;;    - Advantages:
+;;      - It seems it uses slang under the hood (very good SV support)
+;;    - Drawbacks:
+;;      - Not many linting rules available, not very complete
+;;      - Doesn't allow linting of unpreprocessed code (errors with defines/includes)
+;;
+;; - Cadence HAL
+;;    - Advantages:
+;;      - Complete support for RTL
+;;      - Huge amount of linting rules for code quality
+;;    - Drawbacks:
+;;      - Not free
+;;
+;; - Slang
+;;    - Advantages:
+;;      - Full support of SV/UVM
+;;    - Disadvantages:
+;;      - Doesn't support linting of unpreprocessed code/single files
+;;
+;;
+
+
+
+;; INFO: Notes about slang:
+;; "--lint-only";; TODO: elaborates but does not expect a top-module
+;; "--ignore-unknown-modules" ; TODO: Ignore not found modules but still do type checking
+;; "--parse-only" ; TODO: Don't do type checking, just check syntax errors, but still checks macros (so it's a bit of a mess for large TB projects)
+
+;; Add the -f or something for UVM library support:
+(defvar verilog-ext-flycheck-slang-uvm-path "/home/egonlar/auxfiles/slang/UVM-1.1d-mod/src")
+
+  ;; :command ("slang"
+  ;;           "/home/egonlar/auxfiles/slang/UVM-1.1d-mod/src/uvm_pkg.sv"
+  ;;           "+incdir+/home/egonlar/auxfiles/slang/UVM-1.1d-mod/src"
+  ;;           "--lint-only"
+  ;;           "--ignore-unknown-modules"
+
+;; For error patterns:
+   ;; (warning (file-name) ":" line ":" column ": warning: " (message))) ; TODO: Check if this is valid
+
+
+;; For svlint error pattenrs:
+;;    ;; (error   line-start "Error:" (message)) ; No file-name / line to parse
+
+;; INFO: About svling
+;; A bit rudimentary, with not many rules but enough to check for parsing errors.
+;; Could be useful for small RTL self-contained blocks (i.e, almost never).
+
+;; However, fails dramatically if defines are not found.
+;;
+;; INFO: Some of its failures didn't have a file line/number and that makes it impossible
+;; for flycheck to test them properly
+
+
+
+

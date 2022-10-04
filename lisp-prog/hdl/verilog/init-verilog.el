@@ -14,6 +14,7 @@
          ([delete]  . delete-forward-char)
          ("C-%"     . hide/show-comments-toggle)
          (";"       . nil) ; Unmap automatically indent lines after ;
+         ("C-;"     . nil) ; Leave space for faster buffer switching
          ;; TODO: Remove these when proper PR sets them as default?
          ("C-M-a"   . verilog-beg-of-defun)
          ("C-M-e"   . verilog-end-of-defun)
@@ -60,6 +61,8 @@
 ;; TODO: Checking
 (use-package verilog-ext
   :straight nil
+  :after verilog-mode
+  :demand
   :bind (:map verilog-mode-map
          ("M-f"      . verilog-ext-forward-word)
          ("M-b"      . verilog-ext-backward-word)
@@ -77,9 +80,21 @@
          ("C-c i"    . verilog-ext-module-at-point-indent)
          ("C-c b"    . verilog-ext-module-at-point-beautify)
 
+         ("C-c C-f"  . verilog-ext-flycheck-mode-toggle)
+
+         ("C-c C-t"  . verilog-ext-hydra-verilog/body)
          )
   :config
-  (message "Setting up verilog-ext"))
+  (message "Setting up verilog-ext")
+
+  (verilog-ext-which-func-mode)
+
+  (setq verilog-ext-flycheck-eldoc-toggle t)
+  (setq verilog-ext-flycheck-verible-rules '("-line-length"))
+  (verilog-ext-flycheck-setup)
+  (verilog-ext-flycheck-set-linter 'verilog-verible)
+
+  )
 
 
 
@@ -109,7 +124,7 @@
 ;;          ("C-c t"    . verilog-ext-time-stamp-work-new-entry)
 ;;          ("C-c C-t"  . hydra-verilog/body)
 ;;          ("C-c C-p"  . verilog-ext-preprocess)
-;;          ("C-c C-f"  . verilog-ext-flycheck-mode)
+;;          ("C-c C-f"  . verilog-ext-flycheck-mode-toggle)
 ;;          ("<f9>"     . verilog-ext-vhier-current-file))
 ;;   ;; :config
 ;;   ;; Dependencies
