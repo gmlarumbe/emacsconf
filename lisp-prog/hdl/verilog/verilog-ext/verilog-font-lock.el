@@ -475,6 +475,10 @@ including `font-lock-multiline' property."
   (append
    verilog-ext-font-lock-keywords
    (list
+    ;; Function/task extern definitions: Must be placed before module/function definitions to override font-locking
+    (list "\\(?1:\\<function\\>\\|\\<task\\>\\)\\s-+\\(?2:\\automatic\\s-+\\)?\\(?3:\\(?4:\\sw+\\)\\s-+\\)?\\(?5:\\sw+\\)\\s-*::\\s-*\\(?6:\\sw+\\)"
+          '(5 verilog-ext-font-lock-dot-name-face)
+          '(6 font-lock-function-name-face)) ; Match 4 is return type (might be void), Match 5 is class name, Match 6 is func/task name
     ;; Module definitions
     (list "\\<\\(?1:\\(macro\\|connect\\)?module\\|primitive\\|class\\|program\\|interface\\|package\\|task\\)\\>\\s-*\\(automatic\\s-+\\)?\\(?3:\\sw+\\)\\s-*\\(?4:#?\\)"
           '(1 font-lock-keyword-face)
