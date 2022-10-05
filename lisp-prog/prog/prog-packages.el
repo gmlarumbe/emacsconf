@@ -34,6 +34,9 @@
   ;; Created manually but not being used so far
   (add-to-list 'tree-sitter-major-mode-language-alist (cons 'verilog-mode 'verilog)))
 (use-package tree-sitter-langs)
+(use-package tree-sitter-fold
+  :straight (:host github :repo "junyi-hou/tree-sitter-fold"))
+(use-package tree-sitter-indent)
 
 
 (use-package realgud)
