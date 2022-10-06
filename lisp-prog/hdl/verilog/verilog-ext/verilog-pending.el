@@ -24,8 +24,6 @@
 ;; (require 'verilog-shadow) ; INFO: Might be useful in the future for some semantic parsing stuff
 ;; (require 'verilog-editing)
 ;; (require 'verilog-compile) ; TODO: Rename to makefile? Add compilation regexps?
-;; (require 'verilog-vhier)
-;; (require 'verilog-flycheck)
 ;; (require 'verilog-timestamp) ; TODO: Change the 'work' section to a different name
 ;; (require 'verilog-compile) ; TODO: Add compilation regexp support for verilog here (as a derived compilation mode maybe?)
 ;; (require 'verilog-lsp)

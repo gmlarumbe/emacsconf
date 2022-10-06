@@ -82,7 +82,7 @@
 
          ("C-c C-f"  . verilog-ext-flycheck-mode-toggle)
 
-         ("C-c C-t"  . verilog-ext-hydra-verilog/body)
+         ("C-c C-t"  . verilog-ext-hydra/body)
          )
   :config
   (message "Setting up verilog-ext")
