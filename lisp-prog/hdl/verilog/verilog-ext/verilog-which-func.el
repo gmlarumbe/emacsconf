@@ -7,12 +7,12 @@
 (require 'verilog-navigation)
 
 
-(defvar-local verilog-ext-which-func-xtra nil
+(defvar-local verilog-ext-which-func-extra nil
   "Variable to hold extra information for `which-func'.")
 
 
 (defun verilog-ext-which-func-shorten-block (block-type)
-  "Try to shorten name of BLOCK-TYPE."
+  "Return shortened name of BLOCK-TYPE, if possible."
   (cond ((string= "function"  block-type) "func")
         ((string= "task"      block-type) "task")
         ((string= "class"     block-type) "cls")
@@ -24,16 +24,16 @@
         (t block-type)))
 
 (defun verilog-ext-which-func-function ()
-  "Function to retrieve `which-func' candidates."
+  "Retrieve `which-func' candidates."
   (let (data)
     (cond ((setq data (verilog-ext-instance-at-point))
-           (setq verilog-ext-which-func-xtra (cdr data))
+           (setq verilog-ext-which-func-extra (cdr data))
            (car data))
           ((setq data (verilog-ext-block-at-point))
-           (setq verilog-ext-which-func-xtra (cdr data))
+           (setq verilog-ext-which-func-extra (cdr data))
            (verilog-ext-which-func-shorten-block (car data)))
           (t
-           (setq verilog-ext-which-func-xtra nil)
+           (setq verilog-ext-which-func-extra nil)
            ""))))
 
 (defun verilog-ext-which-func ()
@@ -45,14 +45,14 @@
                  face (which-func :weight bold)
                  mouse-face mode-line-highlight)
                 ":"
-                (:propertize verilog-ext-which-func-xtra
+                (:propertize verilog-ext-which-func-extra
                  face which-func
                  mouse-face mode-line-highlight)
                 "]")))
 
 ;;;###autoload
 (define-minor-mode verilog-ext-which-func-mode
-  "Enhanced extensions for `which-func'."
+  "Enhanced extensions for `which-func' in Verilog."
   :lighter ""
   (if verilog-ext-which-func-mode
       (progn

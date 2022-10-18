@@ -2,18 +2,17 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'verilog-utils)
-(require 'verilog-navigation) ; DONE: Already reviewed docstrings
-(require 'verilog-which-func)
-(require 'verilog-hideshow)   ; DONE: No docstrings to review
-(require 'verilog-beautify)
-(require 'verilog-imenu)
+(require 'verilog-utils) ; DONE: Docstrings + byte compile + linting
+(require 'verilog-navigation) ; DONE: Docstrings + byte compile + linting
+(require 'verilog-which-func) ; DONE: Already reviewed docstrings and byte-compile
+(require 'verilog-hideshow)  ; DONE: Docstrings + byte compile + linting
+(require 'verilog-beautify)  ; DONE: Docstrings + byte compile + linting
+(require 'verilog-imenu)     ; DONE: Docstrings + byte compile + linting
 (require 'verilog-templates)
 (require 'verilog-font-lock)
 (require 'verilog-completion)
-
-(require 'verilog-vhier) ; TODO: Do on a place where vhier works
-(require 'verilog-flycheck) ; TODO: Do on a place where flycheck works
+(require 'verilog-vhier)
+(require 'verilog-flycheck)
 
 
 (provide 'verilog-ext)

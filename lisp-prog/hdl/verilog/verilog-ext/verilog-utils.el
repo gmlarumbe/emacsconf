@@ -10,7 +10,6 @@
   (eval-when-compile
     (regexp-opt verilog-keywords 'symbols)))
 
-
 (defconst verilog-ext-top-instantiable-re
   (eval-when-compile
     (concat "\\<\\(?1:module\\|interface\\)\\>\\(\\s-+\\<automatic\\>\\)?\\s-+\\(?2:\\<" verilog-identifier-re "\\>\\)")))
@@ -23,54 +22,107 @@
 
 ;;;; Utility
 (defun verilog-ext-forward-syntactic-ws ()
+  "Wrap `verilog-forward-syntactic-ws' and return point."
   (verilog-forward-syntactic-ws)
   (point))
 
 (defun verilog-ext-backward-syntactic-ws ()
+  "Wrap `verilog-backward-syntactic-ws' and return point."
   (verilog-backward-syntactic-ws)
   (point))
 
 (defun verilog-ext-forward-char ()
+  "Wrap `forward-char' and return point."
   (forward-char)
   (point))
 
 (defun verilog-ext-backward-char ()
+  "Wrap `backward-char' and return point."
   (backward-char)
   (point))
 
 (defun verilog-ext-forward-sexp ()
+  "Wrap `verilog-forward-sexp', ignore errors and return point."
   (ignore-errors
     (verilog-forward-sexp)
     (point)))
 
 (defun verilog-ext-backward-sexp ()
+  "Wrap `verilog-backward-sexp' ignore errors and return point."
   (ignore-errors
     (verilog-backward-sexp)
     (point)))
 
 (defun verilog-ext-skip-identifier-backwards ()
-  ""
+  "Return non-nil if point skipped backwards verilog identifier chars."
   (< (skip-chars-backward "a-zA-Z0-9_") 0))
 
 (defun verilog-ext-skip-identifier-forward ()
-  ""
+  "Return non-nil if point skipped forward verilog identifier chars."
   (> (skip-chars-forward "a-zA-Z0-9_") 0))
 
 (defmacro when-t (cond &rest body)
-  "Same as `when' from subr.el but returning t if COND is nil."
+  "Same function `when' from subr.el but returning t if COND is nil."
   (declare (indent 1) (debug t))
   (list 'if cond (cons 'progn body) t))
-
-
-
 
 (defun verilog-ext-path-join (arg1 arg2)
   "Join path of ARG1 and ARG2."
   (if (and arg1 arg2)
       (concat (file-name-as-directory arg1) arg2)
-    (error "Cannot join path with nil arguments.")
+    (error "Cannot join path with nil arguments")
     nil))
 
+(defun verilog-ext-replace-regexp (regexp to-string start end)
+  "Wrapper function for programatic use of `replace-regexp'.
+Replace REGEXP with TO-STRING from START to END."
+  (let* ((marker (make-marker))
+         (endpos (when end (set-marker marker end))))
+    (save-excursion
+      (goto-char start)
+      (while (re-search-forward regexp endpos t)
+        (replace-match to-string)))))
+
+(defun verilog-ext-replace-regexp-whole-buffer (regexp to-string)
+  "Replace REGEXP with TO-STRING on whole `current-buffer'."
+  (verilog-ext-replace-regexp regexp to-string (point-min) nil))
+
+(defun verilog-ext-replace-string (string to-string start end &optional fixedcase)
+  "Wrapper function for programatic use of `replace-string'.
+Replace STRING with TO-STRING from START to END.
+
+If optional arg FIXEDCASE is non-nil, do not alter the case of
+the replacement text (see `replace-match' for more info)."
+  (let* ((marker (make-marker))
+         (endpos (when end (set-marker marker end))))
+    (save-excursion
+      (goto-char start)
+      (while (search-forward string endpos t)
+        (replace-match to-string fixedcase)))))
+
+(defun verilog-ext-read-file-modules (file)
+  "Find modules in FILE.
+Return list with found modules or nil if not found."
+  (let (modules
+        (debug nil))
+    (with-temp-buffer
+      (when debug
+        (clone-indirect-buffer-other-window "*debug*" t))
+      (insert-file-contents file)
+      (verilog-mode) ; Needed to set the syntax table to avoid searching in comments
+      (while (verilog-re-search-forward verilog-ext-top-instantiable-re nil t)
+        (push (match-string-no-properties 2) modules)))
+    (delete-dups modules)))
+
+(defun verilog-ext-select-file-module (file)
+  "Select file module from FILE.
+If only one module was found return it as a string.
+If more than one module was found, select between available ones.
+Return nil if no module was found."
+  (let ((modules (verilog-ext-read-file-modules file)))
+    (if (cdr modules)
+        (completing-read "Select module: " modules)
+      (car modules))))
 
 (defun verilog-ext-point-inside-block-p (block)
   "Return block name if cursor is inside specified BLOCK type."
@@ -90,7 +142,6 @@
         temp-pos block-beg-point block-end-point block-type block-name)
     (save-match-data
       (save-excursion
-        ;; Else
         (cond ((member block '(function task class module interface package program))
                (and (verilog-re-search-backward re nil t)
                     (setq block-type (match-string-no-properties 1))
@@ -136,7 +187,6 @@
             (cons block-type block-name)
           nil)))))
 
-
 (defun verilog-ext-block-at-point ()
   "Return current block and name at point."
   (or (verilog-ext-point-inside-block-p 'function)
@@ -150,62 +200,6 @@
       (verilog-ext-point-inside-block-p 'module)
       (verilog-ext-point-inside-block-p 'interface)
       (verilog-ext-point-inside-block-p 'program)))
-
-
-(defun verilog-ext-replace-regexp (regexp to-string start end)
-  "Wrapper function for programatic use of `replace-regexp'.
-Replace REGEXP with TO-STRING from START to END."
-  (let* ((marker (make-marker))
-         (endpos (when end (set-marker marker end))))
-    (save-excursion
-      (goto-char start)
-      (while (re-search-forward regexp endpos t)
-        (replace-match to-string)))))
-
-
-(defun verilog-ext-replace-regexp-whole-buffer (regexp to-string)
-  "Replace REGEXP with TO-STRING on whole `current-buffer'"
-  (verilog-ext-replace-regexp regexp to-string (point-min) nil))
-
-
-(defun verilog-ext-replace-string (string to-string start end &optional fixedcase)
-  "Wrapper function for programatic use of `replace-string'.
-Replace STRING with TO-STRING from START to END.
-
-If optional arg FIXEDCASE is non-nil, do not alter the case of
-the replacement text (see `replace-match' for more info)."
-  (let* ((marker (make-marker))
-         (endpos (when end (set-marker marker end))))
-    (save-excursion
-      (goto-char start)
-      (while (search-forward string endpos t)
-        (replace-match to-string fixedcase)))))
-
-
-(defun verilog-ext-read-file-modules (file)
-  "Find modules in FILE.
-Return list with found modules or nil if not found."
-  (let (modules
-        (debug nil))
-    (with-temp-buffer
-      (when debug
-        (clone-indirect-buffer-other-window "*debug*" t))
-      (insert-file-contents file)
-      (verilog-mode) ; Needed to set the syntax table to avoid searching in comments
-      (while (verilog-re-search-forward verilog-ext-top-instantiable-re nil t)
-        (push (match-string-no-properties 2) modules)))
-    (delete-dups modules)))
-
-
-(defun verilog-ext-select-file-module (file)
-  "Select file module from FILE.
-If only one module was found return it as a string.
-If more than one module was found, select between available ones.
-Return nil if no module was found."
-  (let ((modules (verilog-ext-read-file-modules file)))
-    (if (cdr modules)
-        (completing-read "Select module: " modules)
-      (car modules))))
 
 
 (provide 'verilog-utils)

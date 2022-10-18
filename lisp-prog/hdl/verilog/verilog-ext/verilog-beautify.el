@@ -4,9 +4,13 @@
 ;;; Code:
 
 
+(require 'verilog-mode)
+(require 'verilog-navigation)
+
+
 ;;;; Code beautifying
 (defun verilog-ext-module-at-point--align (thing)
-  "Align THING of current module (ports/parameters)."
+  "Align THING of current module at point (ports/parameters)."
   (let ((case-fold-search nil)
         (re "\\(\\s-*\\)(")
         (current-ids (verilog-ext-instance-at-point))
@@ -31,18 +35,15 @@
         (message "Parameters of %s aligned..." current-module)
       (message "Ports of %s aligned..." current-module))))
 
-
 (defun verilog-ext-module-at-point-align-ports ()
-  "Align parenthesis ports of current module."
+  "Align ports of current module."
   (interactive)
   (verilog-ext-module-at-point--align 'ports))
-
 
 (defun verilog-ext-module-at-point-align-params ()
   "Align parameters of current module."
   (interactive)
   (verilog-ext-module-at-point--align 'parameters))
-
 
 (defun verilog-ext-module-at-point-indent ()
   "Indent current module."
@@ -63,16 +64,16 @@
     (indent-region beg end)
     (message "Indented %s" current-module)))
 
-
 (defun verilog-ext-module-at-point-beautify ()
-  "Beautify current module: indent, align ports and parameters."
+  "Beautify current module:
+- Indent
+- Align ports
+- Align parameters"
   (interactive)
   (save-excursion
     (verilog-ext-module-at-point-indent)
     (verilog-ext-module-at-point-align-ports)
     (verilog-ext-module-at-point-align-params)))
-
-
 
 (defun verilog-ext-beautify-current-file ()
   "Beautify current buffer:
@@ -83,16 +84,14 @@
     (indent-region (point-min) (point-max))
     (goto-char (point-min))
     (while (verilog-ext-find-module-instance-fwd)
-      (verilog-ext-beautify-module-at-point))))
-
+      (verilog-ext-module-at-point-beautify))))
 
 (defun verilog-ext-beautify-files (files)
   "Beautify Verilog FILES.
-
-FILES is a list of strings containing the files paths."
+FILES is a list of strings containing the filepaths."
   (dolist (file files)
     (unless (file-exists-p file)
-      (error "File %s does not exist! Aborting..." file)))
+      (error "File %s does not exist! Aborting!" file)))
   (dolist (file files)
     (with-temp-file file
       (verilog-mode)
@@ -102,12 +101,11 @@ FILES is a list of strings containing the files paths."
       (delete-trailing-whitespace (point-min) (point-max))
       (write-file file))))
 
-
 (defun verilog-ext-beautify-files-current-dir ()
-  "Beautify Verilog files on current dired directory."
+  "Beautify Verilog files on current Dired directory."
   (interactive)
   (unless (string= major-mode "dired-mode")
-    (error "Must be used in dired!"))
+    (error "Must be used in Dired!"))
   (let ((files (directory-files-recursively default-directory "\\.[s]?v[h]?$")))
     (verilog-ext-beautify-files files)))
 

@@ -1258,8 +1258,150 @@ Regex search bound to LIMIT."
 ;;   Instead of doing regexp search on task|function|class, do it on (verilog-ext-task-re|verilog-ext-function-re|verilog-ext-class-re)
 ;;   Maybe review everywhere where this regexps are used, and change the capture groups so that there is a first capture group
 ;;   ANd modify what to report in this imenu depending on that
+(defun verilog-ext-imenu--format-class-item-label (type name)
+  "Return Imenu label for single node using TYPE and NAME."
+  (let ((short-type (pcase type
+                      ("task"             "[T]:  ")
+                      ("static task"      "[ST]: ")
+                      ("virtual task"     "[VT]: ")
+                      ("function"         "[F]:  ")
+                      ("static function"  "[SF]: ")
+                      ("virtual function" "[VF]: ")
+                      ("class"            "")
+                      ("virtual class"    "(virtual) ")
+                      (_          type))))
+    (format "%s%s" short-type name)))
 
 
+(defun verilog-ext-imenu--build-class-tree (&optional tree)
+  "Build the imenu class alist TREE recursively.
+Finds recursively tasks and functions inside classes."
+  (save-restriction
+    (narrow-to-region (point-min) (point))
+    (let* ((pos (progn
+                  (verilog-re-search-backward verilog-ext-class-re nil 'move)
+                  (verilog-forward-sexp)
+                  ;; TODO: Trying to make it static/pure/virtual etc
+                  (verilog-re-search-backward "\\<\\(function\\|task\\|class\\)\\>" nil t)
+                  ;; (verilog-re-search-backward "\\(\\(\\<\\(static\\|pure\\|virtual\\|local\\|protected\\)\\>\\s-+\\)?\\<\\(function\\|task\\|class\\)\\>\\)" nil t)))
+                  (verilog-re-search-backward "\\<\\(static\\|pure\\|virtual\\|local\\|protected\\)\\>\\s-+" (line-beginning-position) t) ; Somehow worked a bit
+                  (point)
+                  ))
+           (type (when (and pos
+                            (or (looking-at verilog-ext-task-re)
+                                (looking-at verilog-ext-function-re)
+                                (looking-at verilog-ext-class-re)))
+                   (match-string-no-properties 1)))
+           (name (match-string-no-properties 2))
+           (label (when name
+                    (verilog-ext-imenu--format-class-item-label type name))))
+      (cond (
+             ;; (not pos)
+             (bobp) ; TODO: However, caused problems when wrongly detected a typedef class at the beginning of the file (exceeded recursive nesting)
+             nil)
+            ((looking-at verilog-ext-class-re)
+             (verilog-ext-imenu--class-put-parent type name pos tree))
+            ((or (looking-at verilog-ext-task-re)
+                 (looking-at verilog-ext-function-re))
+             (verilog-ext-imenu--build-class-tree (cons (cons label pos) tree)))
+            (t ; Build subtrees recursively
+             (verilog-ext-imenu--build-class-tree (cons (verilog-ext-imenu--build-class-tree (list (cons label pos))) tree)))))))
+
+
+;; About nesting classes:
+;; The original definition held a jump-label lexical variable, fetched from python-mode imenu build function
+;; However, the add argument was not used.
+;; INFO: Implement this recursive thing at some point?
+(defun verilog-ext-imenu--class-put-parent (type name pos tree &optional add)
+  "Create parent tag with TYPE and NAME.
+If optional arg ADD is non-nil, add the parent with TYPE, NAME and POS to TREE."
+  (let* ((label (funcall #'verilog-ext-imenu--format-class-item-label type name))
+         (jump-label label))
+    (if (not tree)
+        (cons label pos)
+      (if add
+          (cons label (cons (cons jump-label pos) tree))
+        (cons label tree)))))
+
+
+(defun verilog-ext-imenu--build-class-tree (&optional tree)
+  "Build the imenu alist TREE recursively.
+Coded to work with verification files with CLASSES and METHODS.
+Adapted from `python-mode' imenu build-tree function."
+  (save-restriction
+    (narrow-to-region (point-min) (point))
+    (let* ((pos (progn
+                  (verilog-re-search-backward verilog-ext-class-re nil t)
+                  (verilog-forward-sexp)
+                  (verilog-re-search-backward "\\<\\(function\\|task\\|class\\)\\>" nil t)))
+           type
+           (name (when (and pos
+                            (or (looking-at verilog-ext-task-re)
+                                (looking-at verilog-ext-function-re)
+                                (looking-at verilog-ext-class-re)))
+                   (setq type (match-string-no-properties 1))
+                   (match-string-no-properties 2)))
+           (label (when name
+                    (funcall #'verilog-ext-imenu--format-class-item-label type name))))
+      (cond ((not pos)
+             nil)
+            ((looking-at verilog-ext-class-re)
+             ;; TODO: Do something here, instead of nil do some recursive magic
+             (verilog-ext-imenu--class-put-parent type name pos tree nil)) ; Do not want class imenu redundancy (tags+entries)
+            ;; End of TODO
+            (t
+             (verilog-ext-imenu--build-class-tree
+              (if (or (looking-at verilog-ext-task-re)
+                      (looking-at verilog-ext-function-re))
+                  (cons (cons label pos) tree)
+                (cons
+                 (verilog-ext-imenu--build-class-tree
+                  (list (cons label pos)))
+                 tree))))))))
+
+
+;; TODO: Use fonts for Imenu to differentiate between functions/tasks
+;; INFO: Tested and worked!
+(defun verilog-ext-imenu--format-class-item-label (type name)
+  "Return Imenu label for single node using TYPE and NAME."
+  (let ((props (pcase type
+                 ("task"     'italic)
+                 ("function" 'bold)
+                 ("class"    nil)
+                 (_          nil))))
+    (format "%s" (propertize name 'face prop))))
+
+;; INFO: Different imenu implementations override faces:
+;;  - e.g. ivy-imenu will ignore faces
+;;  - imenu-list will only be affected by bold/italic, but not by foreground
+;;  - So probably the best option is use a tag at the beginning as it was first
+(defun verilog-ext-imenu--format-class-item-label (type name)
+  "Return Imenu label for single node using TYPE and NAME."
+  (let ((props (pcase type
+                 ("task"     '(:foreground "red"))
+                 ("function" '(:foreground "blue" :weight bold))
+                 ("class"    nil)
+                 (_          nil))))
+    (format "%s" (propertize name 'font-lock-face props))))
+
+
+
+;; About `verilog-ext-imenu-classes-index':
+;; INFO: Tasks/functions outside classes are obtained with a custom function search
+;; in the generic imenu-generic-function stage.
+;; INFO: Detection of nested classes is unsupported and leads to bad detection of
+;; class tasks/functions."
+
+
+;; TODO: Errors parsing /home/gonz/Programming/doc/SystemVerilog/UVM/UVM_src/1800.2-2020-1.1/src/base/uvm_phase.svh
+;; And UVM code in general...
+;; In `verilog-ext-imenu--build-class-tree'
+;;
+;; (type (when (and pos
+;;                  (or (looking-at verilog-ext-task-re)
+;;                      (looking-at verilog-ext-function-re)
+;;
+;; Maybe using `verilog-beg-of-statement' to detect the virtual/static/local/protected could be a good option
 
 
 

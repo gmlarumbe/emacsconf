@@ -5,6 +5,7 @@
 
 (require 'verilog-mode)
 (require 'verilog-utils)
+(require 'xref)
 (require 'ggtags)
 
 
@@ -17,7 +18,6 @@ Move forward ARG words."
     (modify-syntax-entry ?_ "_" table)
     (with-syntax-table table
       (forward-word arg))))
-
 
 (defun verilog-ext-backward-word (&optional arg)
   "Make verilog word navigation commands stop at underscores.
@@ -44,7 +44,7 @@ Updates `match-data' so that the function can be used in other contexts:
 - (match-string 1) = Module name
 - (match-string 2) = Instance name
 
-Bound search to LIMIT in case it is non-nil."
+Bound search to LIMIT in case optional argument is non-nil."
   (interactive)
   (let ((case-fold-search verilog-case-fold)
         (identifier-re (concat "\\(" verilog-identifier-sym-re "\\)"))
@@ -54,7 +54,7 @@ Bound search to LIMIT in case it is non-nil."
         pos found)
     (save-excursion
       (save-match-data
-        (when (called-interactively-p)
+        (when (called-interactively-p 'interactive)
           (forward-char)) ; Avoid getting stuck if executing interactively
         (while (and (not (eobp))
                     (when-t limit
@@ -90,7 +90,7 @@ Bound search to LIMIT in case it is non-nil."
                               (= (following-char) ?\;)
                               (set-marker module-end (1+ (point)))
                               (setq found t)
-                              (if (called-interactively-p)
+                              (if (called-interactively-p 'interactive)
                                   (progn
                                     (setq pos module-pos)
                                     (message "%s : %s" module-name instance-name))
@@ -107,12 +107,11 @@ Bound search to LIMIT in case it is non-nil."
                                 (nth 2 instance-match-data)
                                 (nth 3 instance-match-data)))
           (goto-char pos)
-          (if (called-interactively-p)
+          (if (called-interactively-p 'interactive)
               (message "%s : %s" module-name instance-name)
             (point)))
-      (when (called-interactively-p)
+      (when (called-interactively-p 'interactive)
         (message "Could not find any instance forward")))))
-
 
 (defun verilog-ext-find-module-instance-bwd (&optional limit)
   "Search backwards for a Verilog module/instance.
@@ -172,7 +171,7 @@ Bound search to LIMIT in case it is non-nil."
                                 (setq module-pos (match-beginning 1))
                                 (setq module-match-data (match-data)))
                               (setq found t)
-                              (if (called-interactively-p)
+                              (if (called-interactively-p 'interactive)
                                   (setq pos module-pos)
                                 (setq pos (point))))))
           (if (verilog-parenthesis-depth)
@@ -187,12 +186,11 @@ Bound search to LIMIT in case it is non-nil."
                                 (nth 2 instance-match-data)
                                 (nth 3 instance-match-data)))
           (goto-char pos)
-          (if (called-interactively-p)
+          (if (called-interactively-p 'interactive)
               (message "%s : %s" module-name instance-name)
             (point)))
-      (when (called-interactively-p)
+      (when (called-interactively-p 'interactive)
         (message "Could not find any instance backwards")))))
-
 
 (defun verilog-ext-instance-at-point ()
   "Return list with module and instance names if point is at an instance."
@@ -210,7 +208,6 @@ Bound search to LIMIT in case it is non-nil."
             (list instance-type instance-name)
           nil)))))
 
-
 (defun verilog-ext-jump-to-module-at-point (&optional ref)
   "Jump to definition of module at point.
 If REF is non-nil show references instead."
@@ -218,7 +215,7 @@ If REF is non-nil show references instead."
   (let (module)
     (unless (executable-find "global")
       (error "Couldn't find executable `global' in PATH"))
-    (unless (member ggtags--xref-backend 'xref-backend-functions)
+    (unless (member 'ggtags--xref-backend xref-backend-functions)
       (error "Error: ggtags not configured as an xref backend.  Is ggtags-mode enabled?"))
     (unless ggtags-project-root
       (error "Error: `ggtags-project-root' not set.  Are GTAGS/GRTAGS/GPATH files created?"))
@@ -229,7 +226,6 @@ If REF is non-nil show references instead."
             (xref-find-definitions module))
           module) ; Report module name
       (user-error "Not inside a Verilog instance"))))
-
 
 (defun verilog-ext-jump-to-module-at-point-def ()
   "Jump to definition of module at point."
