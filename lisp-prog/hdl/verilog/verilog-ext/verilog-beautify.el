@@ -20,6 +20,11 @@
 
 ;;; Commentary:
 ;;
+;; Beautify functionality: indent, align parameters and ports
+;;  - Interactively for module at point
+;;  - Interactively for current buffer
+;;  - In batch for files of current directory
+;;
 ;;; Code:
 
 

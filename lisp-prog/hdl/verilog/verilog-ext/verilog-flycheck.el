@@ -19,6 +19,15 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;
+;; Add support for the following linters in `flycheck':
+;;  - verilator (overrides default parameters)
+;;  - iverilog
+;;  - verible
+;;  - slang
+;;  - svlint
+;;  - Cadence HAL
+;;
 ;;; Code:
 
 (require 'flycheck)

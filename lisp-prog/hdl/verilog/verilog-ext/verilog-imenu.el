@@ -19,6 +19,11 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;
+;; Improved `imenu' functionality for Verilog:
+;;  - Show instances of current module
+;;  - Show classes and their methods
+;;
 ;;; Code:
 
 (require 'imenu)

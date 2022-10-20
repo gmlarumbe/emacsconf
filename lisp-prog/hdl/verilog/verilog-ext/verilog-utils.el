@@ -19,6 +19,9 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;
+;; Utility functions called from different features.
+;;
 ;;; Code:
 
 

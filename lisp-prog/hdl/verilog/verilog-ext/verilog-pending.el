@@ -1,7 +1,5 @@
 ;;; Generic
 ;; TODO:
-;;   - Review docstrings of every function
-;;   ...
 ;;   - Clean verilog-utils
 ;;     - find-module-instance and get-header seem deprecable, based on other functions
 ;;     - Seems I prefer to use tokens instead of blocks/headers

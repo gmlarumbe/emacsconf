@@ -22,6 +22,20 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
+;; Extensions for Verilog Mode:
+;;  - Improve syntax highlighting
+;;  - Hierarchy extraction and visualization via Verilog-Perl `vhier'
+;;  - Support for many linters in `flycheck'
+;;  - Improve `imenu': detect instances and support methods inside classes
+;;  - Navigate through instances in a module
+;;  - Jump to definition/reference of module at point via `ggtags' and `xref'
+;;  - Beautify modules: indent and align parameters and ports (interactively and in batch)
+;;  - Extended collection of custom and `yasnippet' templates insertion via `hydra'
+;;  - Add `which-func' support
+;;  - Improve `hideshow' support
+;;  - Setup `company' to complete with verilog keywords
+
 ;;; Code:
 
 (require 'verilog-utils)
@@ -31,8 +45,8 @@
 (require 'verilog-beautify)
 (require 'verilog-imenu)
 (require 'verilog-templates)
-(require 'verilog-font-lock)
 (require 'verilog-completion)
+(require 'verilog-font-lock)
 (require 'verilog-vhier)
 (require 'verilog-flycheck)
 

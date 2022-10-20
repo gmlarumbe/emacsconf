@@ -19,6 +19,12 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;
+;; Navigation functions:
+;;  - Find instances forward/backwards
+;;  - Jump to definition/reference of module at point (requires gtags/xref)
+;;  - Override syntax table to move forward/backwards until reaching an underscore
+;;
 ;;; Code:
 
 

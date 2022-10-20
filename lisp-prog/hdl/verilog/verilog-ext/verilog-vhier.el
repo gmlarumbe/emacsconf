@@ -19,6 +19,12 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+;;
+;; - Extract hierarchy of current file with `verilog-ext-vhier-current-file'
+;; - Visualize and navigate it with `vhier-outshine-mode'
+;;
+;; Requires `outshine' and `ggtags'.
+;;
 ;;; Code:
 
 (require 'ggtags)

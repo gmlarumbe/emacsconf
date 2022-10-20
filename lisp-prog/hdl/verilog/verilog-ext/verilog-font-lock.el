@@ -20,7 +20,9 @@
 
 ;;; Commentary:
 ;;
-;; INFO: Multiline Font Locking has reliability limitations in Emacs.
+;; Improved syntax highlighting based on `font-lock' keywords overriding.
+;;
+;; Multiline Font Locking has reliability limitations in Emacs.
 ;;  - https://www.gnu.org/software/emacs/manual/html_node/elisp/Multiline-Font-Lock.html
 ;;  - https://www.gnu.org/software/emacs/manual/html_node/elisp/Font-Lock-Multiline.html
 ;;
@@ -31,9 +33,8 @@
 ;;   For longer sections it is necessary to create font lock custom functions and gets
 ;;   more complicated.
 ;;
-;; INFO: Search based fontification:
+;; Search based fontification:
 ;; - https://www.gnu.org/software/emacs/manual/html_node/elisp/Search_002dbased-Fontification.html
-;;     Look for 'function' section.
 ;;
 ;;; Code:
 
