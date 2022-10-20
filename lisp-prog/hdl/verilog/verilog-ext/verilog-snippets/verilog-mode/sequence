@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# key: seq
-# --
-
-sequence ${1:s};
-    ${2:@(posedge clk) a ##1 b};
-endsequence$0

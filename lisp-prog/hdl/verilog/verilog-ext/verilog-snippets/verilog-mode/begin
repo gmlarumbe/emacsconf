@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# key: beg
-# --
-
-begin
-   $0
-end

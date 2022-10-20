@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# key: ac
-# --
-
-always_comb begin
-   $0
-end

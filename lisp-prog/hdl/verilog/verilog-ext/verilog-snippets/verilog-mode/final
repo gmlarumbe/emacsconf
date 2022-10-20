@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# key: fl
-# --
-
-final begin
-   $0
-end
