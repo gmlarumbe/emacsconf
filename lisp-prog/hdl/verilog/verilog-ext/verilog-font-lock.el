@@ -19,6 +19,10 @@
 ;;; Code:
 
 
+(require 'verilog-mode)
+(require 'verilog-navigation)
+
+
 ;;;; Faces
 (defvar verilog-ext-font-lock-grouping-keywords-face 'verilog-ext-font-lock-grouping-keywords-face)
 (defface verilog-ext-font-lock-grouping-keywords-face
@@ -60,7 +64,6 @@
 (defface verilog-ext-font-lock-port-connection-face
   '((t (:foreground "bisque2")))
   "Face for port connections of instances.
-
 .portA (signalA),
 .portB (signalB)
 );
@@ -70,7 +73,8 @@
 (defvar verilog-ext-font-lock-dot-name-face 'verilog-ext-font-lock-dot-name-face)
 (defface verilog-ext-font-lock-dot-name-face
   '((t (:foreground "gray70")))
-  "Face for dot-name regexps (interface signals, classes attributes/methods and hierarchical refs).
+  "Face for dot-name regexps:
+- Interface signals, classes attributes/methods and hierarchical refs.
 
 axi_if.Ready <= 1'b1;
 obj.method();
@@ -86,7 +90,7 @@ obj.method();
 (defvar verilog-ext-font-lock-width-num-face 'verilog-ext-font-lock-width-num-face)
 (defface verilog-ext-font-lock-width-num-face
   '((t (:foreground "chartreuse2")))
-  "Face for the bit width number expressions:
+  "Face for the bit width number expressions.
 {1}'b1,
 {4}'hF,
 {3}'o7,
@@ -96,7 +100,7 @@ obj.method();
 (defvar verilog-ext-font-lock-width-type-face 'verilog-ext-font-lock-width-type-face)
 (defface verilog-ext-font-lock-width-type-face
   '((t (:foreground "sea green" :weight bold)))
-  "Face for the bit width type expressions:
+  "Face for the bit width type expressions.
 1'{b}1,
 4'{h}F,
 3'{o}7,
@@ -270,6 +274,9 @@ obj.method();
   (verilog-regexp-words
    '("begin" "end" "this")))
 
+;; Obtained via grep -R of classes starting with uvm_* and some processing.
+;; Does not include internal classes (such as m_uvm_*), nor enums, nor non-class
+;; typedefs such as vector derived.
 (defconst verilog-ext-font-lock-uvm-classes
   (verilog-regexp-words
    '("uvm_agent" "uvm_algorithmic_comparator" "uvm_analysis_export"
@@ -375,9 +382,7 @@ obj.method();
      "uvm_transport_export" "uvm_transport_imp" "uvm_transport_port"
      "uvm_tree_printer" "uvm_typed_callbacks" "uvm_typeid" "uvm_typeid_base"
      "uvm_utils" "uvm_void" "uvm_vreg" "uvm_vreg_cbs" "uvm_vreg_field"
-     "uvm_vreg_field_cbs"))
-"grep -R of classes starting with uvm_* and some processing.
-Does not include internal classes (such as m_uvm_*), nor enums, nor non-class typedefs such as vector derived.")
+     "uvm_vreg_field_cbs")))
 
 (defconst verilog-ext-font-lock-pragma-keywords
   (verilog-regexp-words
@@ -385,6 +390,9 @@ Does not include internal classes (such as m_uvm_*), nor enums, nor non-class ty
      ;; Recognized by Vivado (check Xilinx attribute 'translate_off/translate_on'):
      "synthesis" "synopsys" "pragma")))
 
+;;   Xilinx attributes extracted from UG901:
+;; - https://www.xilinx.com/support/documentation/sw_manuals/xilinx2017_3/ug901-vivado-synthesis.pdf
+;; - Chapter 2 (some of them are also supported at XDC).
 (defconst verilog-ext-font-lock-xilinx-attributes
   (verilog-regexp-words
    '("async_reg" "black_box" "cascade_height" "clock_buffer_type"
@@ -400,14 +408,13 @@ Does not include internal classes (such as m_uvm_*), nor enums, nor non-class ty
      "FSM_SAFE_STATE" "FULL_CASE" "GATED_CLOCK" "IOB" "IO_BUFFER_TYPE" "KEEP"
      "KEEP_HIERARCHY" "MARK_DEBUG" "MAX_FANOUT" "PARALLEL_CASE" "RAM_DECOMP"
      "RAM_STYLE" "RETIMING_BACKWARD" "RETIMING_FORWARD" "ROM_STYLE"
-     "SHREG_EXTRACT" "SRL_STYLE" "TRANSLATE_OFF" "TRANSLATE_ON" "USE_DSP"))
-  "https://www.xilinx.com/support/documentation/sw_manuals/xilinx2017_3/ug901-vivado-synthesis.pdf
-- Chapter 2 (some of them are also supported at XDC).")
+     "SHREG_EXTRACT" "SRL_STYLE" "TRANSLATE_OFF" "TRANSLATE_ON" "USE_DSP")))
 
 
 ;;;; Functions
 (defun verilog-ext-font-lock-module-instance-fontify (limit)
-  "Search based fontification function of Verilog modules/instances."
+  "Search based fontification function of Verilog modules/instances.
+Bound search by LIMIT."
   (let (start-line end-line)
     (when (verilog-ext-find-module-instance-fwd limit)
       (setq start-line (save-excursion
@@ -421,7 +428,8 @@ Does not include internal classes (such as m_uvm_*), nor enums, nor non-class ty
       (point))))
 
 (defun verilog-ext-font-lock-modport-fontify (limit)
-  "Fontify interface modport declarations."
+  "Fontify interface modport declarations.
+Bound search by LIMIT."
   (let (if-start if-end mp-start mp-end var-start var-end)
     (when (and (verilog-re-search-forward verilog-ext-font-lock-interface-modport-re limit t)
                (verilog-in-parenthesis-p))
@@ -440,8 +448,8 @@ Does not include internal classes (such as m_uvm_*), nor enums, nor non-class ty
   "Match a translate-off block, setting `match-data' and returning t, else nil.
 Bound search by LIMIT.
 
-Copied from `verilog-match-translate-off' but
-including `font-lock-multiline' property."
+Similar to `verilog-match-translate-off' but including
+`font-lock-multiline' property."
   (when (< (point) limit)
     (let ((start (or (verilog-within-translate-off)
                      (verilog-start-translate-off limit)))
@@ -457,9 +465,9 @@ including `font-lock-multiline' property."
 ;;;; Font-lock keywords
 (defvar verilog-ext-font-lock-keywords
   (list
-   ;; Preprocessor macros and compiler directives
-   (cons (concat "`" verilog-identifier-re) 'verilog-ext-font-lock-preprocessor-face) ; Place at the top to have precendence in `else or `include 'macros over keywords
-   ;; UVM relevant constructs
+   ;; Preprocessor macros and compiler directives (place at the top to preserve precendence in `else or `include macros over keywords)
+   (cons (concat "`" verilog-identifier-re) 'verilog-ext-font-lock-preprocessor-face)
+   ;; UVM constructs
    (cons (concat "\\(" verilog-ext-font-lock-uvm-classes "\\)") 'verilog-ext-font-lock-uvm-classes-face)
    ;; Grouping keywords
    (cons (concat "\\<\\(" verilog-ext-font-lock-grouping-plus-this-keywords "\\)\\>") 'verilog-ext-font-lock-grouping-keywords-face)

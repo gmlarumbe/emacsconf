@@ -16,15 +16,13 @@
 (defvar verilog-ext-snippets-dir nil
   "Snippets directory: ./verilog-snippets/verilog-mode")
 
-
 (defun verilog-ext-insert-yasnippet (snippet)
   "Insert SNIPPET programatically."
   (insert snippet)
   (yas-expand))
 
-
 (defun verilog-ext-add-snippets ()
-  "Add snippets and reload yasnippet to make them available."
+  "Add snippets and reload Yasnippet to make them available."
   (add-to-list 'yas-snippet-dirs verilog-ext-snippets-dir)
   (yas-reload-all))
 
@@ -103,9 +101,9 @@
   ("B"   (verilog-ext-templ-block-comment)               "Block comment")
   ("hd"  (call-interactively #'verilog-ext-templ-header) "Header")
 
-  ;;;;;;;;;;;;
-  ;; Others ;;
-  ;;;;;;;;;;;;
+  ;;;;;;;;;;
+  ;; Exit ;;
+  ;;;;;;;;;;
   ("q"   nil nil :color blue)
   ("C-g" nil nil :color blue))
 
@@ -114,3 +112,7 @@
 (provide 'verilog-completion)
 
 ;;; verilog-completion.el ends here
+
+;; Local Variables:
+;; byte-compile-warnings: (not docstrings)
+;; End:

@@ -20,7 +20,7 @@
 Avoids collisions in the minibufer between eldoc (ggtags) and flycheck.")
 
 
-
+;;; Linters
 ;;;; Verilator
 (defvar verilog-ext-flycheck-verilator-include-path nil)
 
@@ -156,7 +156,6 @@ See URL `https://github.com/dalance/svlint'"
     (error "Flycheck HAL not configured yet"))
   (find-file verilog-ext-flycheck-hal-log-path))
 
-
 (defun verilog-ext-flycheck-hal-directory-fn (_checker)
   "Return directory where hal is executed.
 xcelium.d (INCA_libs) and lint logs will be saved at this path."
@@ -166,12 +165,12 @@ xcelium.d (INCA_libs) and lint logs will be saved at this path."
 (defun verilog-ext-flycheck-hal-script-create ()
   "Create HAL wrapper script.
 
-This is needed because the output of HAL is written to a logfile and
+This is needed since the output of HAL is written to a logfile and
 flycheck parses stdout (didn't find the way to redirect xrun output to stdout).
 
-Plus, the :command keyword of `flycheck-define-command-checker' assumes each
-of the strings are arguments, so if something such as \"&&\" \"cat\" is used to
-try to output the log, it would throw a xrun fatal error since
+Plus, the :command key arg of `flycheck-define-command-checker' assumes each
+of the strings are arguments. If something such as \"&&\" \"cat\" is used to
+try to display the logfile in stdout , it would throw an xrun fatal error as
 \"&&\" would not be recognized as a file."
   (let* ((log-path (verilog-ext-path-join verilog-ext-flycheck-hal-directory verilog-ext-flycheck-hal-log-name))
          (script-path (verilog-ext-path-join verilog-ext-flycheck-hal-directory verilog-ext-flycheck-hal-script-name))
@@ -187,7 +186,6 @@ cat " log-path "
         (insert script-code)
         (write-file script-path)
         (set-file-modes script-path #o755)))))
-
 
 (defun verilog-ext-flycheck-setup-hal ()
   "Setup Cadence HAL linter.
@@ -253,14 +251,12 @@ be undefined when defining the checker."
     (flycheck-select-checker linter))
   (message "Linter set to: %s " linter))
 
-
 (defun verilog-ext-flycheck-setup ()
   "Add available linters from `verilog-ext-flycheck-linters' and set default one."
   (interactive)
   (dolist (checker verilog-ext-flycheck-linters)
     (add-to-list 'flycheck-checkers checker))
   (verilog-ext-flycheck-set-linter verilog-ext-flycheck-linter))
-
 
 ;;;###autoload
 (defun verilog-ext-flycheck-mode-toggle (&optional uarg)

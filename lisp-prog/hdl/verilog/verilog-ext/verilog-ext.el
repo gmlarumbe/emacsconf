@@ -2,12 +2,12 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'verilog-utils) ; DONE: Docstrings + byte compile + linting
-(require 'verilog-navigation) ; DONE: Docstrings + byte compile + linting
-(require 'verilog-which-func) ; DONE: Already reviewed docstrings and byte-compile
-(require 'verilog-hideshow)  ; DONE: Docstrings + byte compile + linting
-(require 'verilog-beautify)  ; DONE: Docstrings + byte compile + linting
-(require 'verilog-imenu)     ; DONE: Docstrings + byte compile + linting
+(require 'verilog-utils)
+(require 'verilog-navigation)
+(require 'verilog-which-func)
+(require 'verilog-hideshow)
+(require 'verilog-beautify)
+(require 'verilog-imenu)
 (require 'verilog-templates)
 (require 'verilog-font-lock)
 (require 'verilog-completion)

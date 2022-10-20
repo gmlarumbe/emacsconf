@@ -4,10 +4,11 @@
 ;;; Code:
 
 (require 'verilog-mode)
+(require 'verilog-utils)
+(require 'verilog-beautify)
 
 (defvar verilog-ext-templ-resetn "Rst_n")
 (defvar verilog-ext-templ-clock "Clk")
-
 
 (defmacro with-verilog-template (&rest body)
   "Execute BODY, indent region and place point at proper place."
@@ -23,7 +24,7 @@
      (electric-verilog-tab)))
 
 
-;;;; Begin/end block
+;;;; Basic templates
 (defun verilog-ext-templ-begin-end ()
   "Insert begin/end block."
   (interactive)
@@ -34,15 +35,12 @@
     (newline)
     (insert "end")))
 
-
-;;;; Comments
 (defun verilog-ext-templ-block-comment (&optional comment)
   "Create a comment block.
 
   ///////////////////
-  // Block comment //
-  ///////////////////
-"
+  // Block COMMENT //
+  ///////////////////"
   (interactive)
   (let* ((block-comment-char ?\/)
          (block-comment (or comment (read-string "Name: ")))
@@ -59,8 +57,6 @@
       (insert-char block-comment-char (+ block-comment-width 6) nil)
       (newline))))
 
-
-;;;; Case
 (defun verilog-ext-templ-case (&optional expr cases)
   "Case template.
 
@@ -84,9 +80,6 @@ cases to iterate over."
           (insert (concat "end\n\n"))))
       (insert "endcase\n"))))
 
-
-
-;; ;;;; Enum, Typedef, Struct
 (defun verilog-ext-templ--compute-vector-width ()
   "Prompt for vector width and return expression:
 - If a constant identifier is provided return [CONSTANT-1:0].
@@ -107,9 +100,9 @@ cases to iterate over."
           "") ; Width equals 1
       (concat "[" width-str "-1:0]")))) ; Width constant
 
-
 (defun verilog-ext-templ-enum-typedef (&optional typedef logic name)
   "Insert enum template.
+
 If TYPEDEF is non-nil, declare a typedef enum type.
 If LOGIC is non-nil, declare it as logic type.
 If NAME is non-nil, set it as the user type.
@@ -147,11 +140,12 @@ Return a list of the enum labels."
           (insert (read-string "Enum Name: ") ";"))))
     (reverse enum-labels)))
 
-
 (defun verilog-ext-templ-struct-typedef (&optional typedef union)
   "Insert struct template.
+
 If TYPEDEF is non-nil, declare a typedef struct type.
 If UNION is non-nil, declare a union instead of a struct.
+
 Read/add elements of struct until an empty string is entered."
   (let ((width "")
         struct-item type)
@@ -181,10 +175,8 @@ Read/add elements of struct until an empty string is entered."
       (verilog-forward-syntactic-ws)
       (verilog-pretty-declarations))))
 
-
-;;;; Task
 (defun verilog-ext-templ--task-add-port (direction signal)
-  "Add SIGNAL to task template.
+  "Add SIGNAL with DIRECTION to task template.
 DIRECTION should be either 'input or 'output."
   (let ((type (read-string "Type: " "logic"))
         width)
@@ -193,7 +185,6 @@ DIRECTION should be either 'input or 'output."
         (setq width (concat (verilog-ext-templ--compute-vector-width) " "))
       (setq width "")) ; Disable width field if not a vector
     (insert (symbol-name direction) " " type " " width signal ",\n")))
-
 
 (defun verilog-ext-templ-task ()
   "Insert a task definition."
@@ -217,9 +208,6 @@ DIRECTION should be either 'input or 'output."
       (verilog-forward-syntactic-ws)
       (verilog-pretty-declarations))))
 
-
-
-;;;; Signal definition
 (defun verilog-ext-templ-def-logic ()
   "Insert a definition of signal under point at the beginning of current module."
   (interactive "*")
@@ -241,8 +229,6 @@ DIRECTION should be either 'input or 'output."
              (insert str)
              (message (concat "[Line " (format "%s" (line-number-at-pos)) "]: " str)))))))
 
-
-;;;; FSM
 (defun verilog-ext-templ-fsm (&optional async)
   "Insert a state machine custom definition with two always blocks.
 One for next state and output logic and one for the state registers.
@@ -276,8 +262,6 @@ If ASYNC is non-nil create an asynchronous reset."
       (verilog-ext-templ-case state-var enum-labels)
       (insert "end\n"))))
 
-
-;;;; Headers
 (defun verilog-ext-templ-header ()
   "Insert a standard Verilog file header."
   (interactive)
@@ -335,7 +319,6 @@ If ASYNC is non-nil create an asynchronous reset."
       (insert (read-string "Description: ")))))
 
 
-
 ;;;; Instances
 (defvar verilog-ext-templ-inst-auto-header "// Beginning of Verilog AUTO_TEMPLATE")
 (defvar verilog-ext-templ-inst-auto-footer "// End of Verilog AUTO_TEMPLATE")
@@ -375,7 +358,8 @@ If ASYNC is non-nil create an asynchronous reset."
 
 
 (defun verilog-ext-templ-inst-auto--choose-template ()
-  "Choose current // AUTO_TEMPLATE for instantiation."
+  "Choose current // AUTO_TEMPLATE for instantiation.
+Syntactic sugar for `verilog-ext-templ-inst-auto-from-file'."
   (let (templates-list)
     (setq templates-list (completing-read "AUTO_TEMPLATE: " '("Connected Ports" "Disconnected Ports" "Connected Ports with subscripts")))
     (pcase templates-list
@@ -385,7 +369,8 @@ If ASYNC is non-nil create an asynchronous reset."
       (_                                 (error "Error @ verilog-ext-templ-choose-template: Unexpected string")))))
 
 (defun verilog-ext-templ-inst-auto--choose-autoinst ()
-  "Choose current /*AUTOINST*/ (and /*AUTOPARAMINST*/) for instantiation."
+  "Choose current /*AUTOINST*/ (and /*AUTOPARAMINST*/) for instantiation.
+Syntactic sugar for `verilog-ext-templ-inst-auto-from-file'."
   (let (autoinst-list)
     (setq autoinst-list (completing-read "AUTOINST:" '("Simple" "With Parameters")))
     (pcase autoinst-list
@@ -393,10 +378,9 @@ If ASYNC is non-nil create an asynchronous reset."
       ("With Parameters" verilog-ext-templ-inst-auto-params)
       (_                 (error "Error @ verilog-ext-templ-choose-autoinst: Unexpected string")))))
 
-
 (defun verilog-ext-templ-inst-auto--autoinst-processing ()
-  "Syntactic sugar.
-Called from `verilog-ext-templ-inst-auto-from-file'."
+  "Process AUTOINST generated code after auto expansion.
+Syntactic sugar for `verilog-ext-templ-inst-auto-from-file'."
   (let (beg end)
     (save-excursion ;; Remove comments
       (setq beg (point))
@@ -414,10 +398,9 @@ Called from `verilog-ext-templ-inst-auto-from-file'."
       (setq end (re-search-forward ");")) ; Last /*AUTOINST*/ comment by AUTO_TEMPLATE
       (verilog-ext-replace-string "/*AUTOINST*/" "" beg end))))
 
-
 (defun verilog-ext-templ-inst-auto--autoparam-processing ()
-  "Syntactic sugar.
-Called from `verilog-ext-templ-inst-auto-from-file'."
+  "Process AUTOPARAM/AUTOINSTPARAM generated code after auto expansion.
+Syntactic sugar for `verilog-ext-templ-inst-auto-from-file'."
   (let (beg end)
     (save-excursion
       (setq beg (point))
@@ -436,14 +419,13 @@ Called from `verilog-ext-templ-inst-auto-from-file'."
       (beginning-of-line)
       (kill-line 1))))
 
-
-
 (defun verilog-ext-templ-inst-auto-from-file (file &optional template inst-template)
   "Instantiate top module present in FILE.
+
 If there is more than one module, prompt for a list of detected modules.
 
-Use auto TEMPLATE or prompt to choose one if is nil.
-Use inst INST-TEMPLATE or prompt to choose one if is nil."
+Use auto TEMPLATE or prompt to choose one if nil.
+Use inst INST-TEMPLATE or prompt to choose one if nil."
   (interactive "FSelect module from file:\nP")
   (let* ((module-name (verilog-ext-select-file-module file))
          (start-template (point))
@@ -489,14 +471,12 @@ Use inst INST-TEMPLATE or prompt to choose one if is nil."
     (search-forward instance-name)
     (verilog-ext-module-at-point-beautify)))
 
-
 (defun verilog-ext-templ-inst-auto-from-file-simple (file)
   "Instantiate from FILE with simple template: connected ports and no parameters."
   (interactive "FSelect module from file:")
   (verilog-ext-templ-inst-auto-from-file file
                                          verilog-ext-templ-inst-auto-conn-ports
                                          verilog-ext-templ-inst-auto-simple))
-
 
 (defun verilog-ext-templ-inst-auto-from-file-params (file)
   "Instantiate from FILE with params template: connected ports with parameters."
@@ -505,21 +485,19 @@ Use inst INST-TEMPLATE or prompt to choose one if is nil."
                                          verilog-ext-templ-inst-auto-conn-ports
                                          verilog-ext-templ-inst-auto-params))
 
-
 (defun verilog-ext-templ-inst-auto-from-file-tb-dut (file)
-  "Instantiate from FILE with params template: connected ports with subscripts with parameters.
-Required by tb instantiation to auto detect width of signals."
+  "Instantiate from FILE with params template:
+- Connected ports with subscripts with parameters.
+- Required by TB template instantiation to auto detect width of signals."
   (interactive "FSelect module from file:")
   (verilog-ext-templ-inst-auto-from-file file
                                          verilog-ext-templ-inst-auto-conn-ports-ss
                                          verilog-ext-templ-inst-auto-params))
 
-
 (defun verilog-ext-templ-inst-auto-from-file-prompt (file)
   "Instantiate from FILE and prompt for template and parameters."
   (interactive "FSelect module from file:")
   (verilog-ext-templ-inst-auto-from-file file))
-
 
 
 ;;;; Testbenches
@@ -591,7 +569,7 @@ module tb_<module_name> () ;
 
 endmodule // tb_<module_name>
 ")
-    ;; Replace template parameteres, instantiate DUT and create header
+    ;; Replace template parameters, instantiate DUT and create header
     (verilog-ext-replace-string "<module_name>" module-name (point-min) (point-max))
     (verilog-ext-replace-string "<clock>" verilog-ext-templ-clock (point-min) (point-max))
     (verilog-ext-replace-string "<resetn>" verilog-ext-templ-resetn (point-min) (point-max))
