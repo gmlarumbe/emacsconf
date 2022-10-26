@@ -1,5 +1,27 @@
 ;;; vhdl-flycheck.el --- VHDL Flycheck  -*- lexical-binding: t -*-
+
+;; Copyright (C) 2022 Gonzalo Larumbe
+
+;; Author: Gonzalo Larumbe <gonzalomlarumbe@gmail.com>
+;; URL: https://github.com/gmlarumbe/verilog-ext
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 ;;; Commentary:
+;;
+;; Flycheck extensions
+;;
 ;;; Code:
 
 
@@ -48,9 +70,9 @@ See URL `https://github.com/ghdl/ghdl'."
 
 
 
-(defun larumbe/vhdl-flycheck-ghdl-hook ()
+(defun vhdl-ext-flycheck-ghdl-hook ()
   "Set GHDL flycheck options."
-  (setq flycheck-ghdl-include-path (larumbe/vhdl-list-directories-of-open-buffers))
+  (setq flycheck-ghdl-include-path (vhdl-ext-list-directories-of-open-buffers))
   (setq flycheck-ghdl-language-standard "08")
   (setq flycheck-ghdl-work-lib vhdl-default-library) ; "xil_defaultlib"
   (setq flycheck-ghdl-workdir (concat (projectile-project-root) "library/" vhdl-default-library)) ; Used @ axi_if_converter
