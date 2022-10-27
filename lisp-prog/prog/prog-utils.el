@@ -80,18 +80,23 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
           ((string= major-mode "verilog-mode")
            (if def
                (larumbe/prog-mode-definitions-default def)
-             ;; TODO: Context based jump if no thing-at-point:
-             ;;  - If inside a module (RTL) and in an instance (create function to make sure of that): (verilog-ext-jump-to-module-at-point)
-             ;;  - If inside a class: Prompt for class name
-             ;; (setq def (verilog-ext-jump-to-module-at-point))
-             (call-interactively #'xref-find-definitions)
-             (larumbe/prog-mode-report-backend def)))
+             ;; Context based jump if no thing-at-point:
+             (cond (;; Inside a module instance
+                    (and (verilog-ext-point-inside-block-p 'module)
+                         (verilog-ext-instance-at-point))
+                    (setq def (match-string-no-properties 1))
+                    (xref-find-definitions def)
+                    (larumbe/prog-mode-report-backend def))
+                   ;; Default fallback
+                   (t
+                    (call-interactively #'xref-find-definitions)))))
           ;;   - Python: elpy
           ((string= major-mode "python-mode")
            (if def
-               (xref-find-definitions (elpy-xref--identifier-at-point))
-             (call-interactively #'xref-find-definitions))
-           (larumbe/prog-mode-report-backend def))
+               (progn
+                 (xref-find-definitions (elpy-xref--identifier-at-point))
+                 (larumbe/prog-mode-report-backend def))
+             (call-interactively #'xref-find-definitions)))
           ;; Default to use xref
           (t
            (if def
@@ -114,18 +119,23 @@ and will be applied to only files of current `major-mode' if existing in `larumb
            (string= major-mode "verilog-mode")
            (if ref
                (larumbe/prog-mode-references-default ref)
-             ;; TODO: Context based jump if no thing-at-point:
-             ;;  - If inside a module (RTL) and in an instance (create function to make sure of that): (verilog-ext-jump-to-module-at-point)
-             ;;  - If inside a class: Prompt for class name
-             ;; (setq ref (verilog-ext-jump-to-module-at-point :ref))
-             (call-interactively #'xref-find-references)
-             (larumbe/prog-mode-report-backend ref :ref)))
+             ;; Context based jump if no thing-at-point:
+             (cond (;; Inside a module instance
+                    (and (verilog-ext-point-inside-block-p 'module)
+                         (verilog-ext-instance-at-point))
+                    (setq ref (match-string-no-properties 1))
+                    (xref-find-references ref)
+                    (larumbe/prog-mode-report-backend ref :ref))
+                   ;; Default fallback
+                   (t
+                    (call-interactively #'xref-find-references)))))
           (;; Python
            (string= major-mode "python-mode")
            (if ref
-               (xref-find-references (elpy-xref--identifier-at-point))
-             (call-interactively #'xref-find-references))
-           (larumbe/prog-mode-report-backend ref :ref))
+               (progn
+                 (xref-find-references (elpy-xref--identifier-at-point))
+                 (larumbe/prog-mode-report-backend ref :ref))
+             (call-interactively #'xref-find-references)))
           ;; Default
           (t (if ref
                  (larumbe/prog-mode-references-default ref)
