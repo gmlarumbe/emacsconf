@@ -36,7 +36,10 @@
 (defvar larumbe/completion-framework 'ivy) ; 'ivy or 'helm are allowed values (helm will coexist with `ivy-switch-buffer')
 
 (defvar larumbe/emacs-conf-repos-core '("~/.elisp" "~/.elisp_private"))
-(defvar larumbe/emacs-conf-repos-packages '("~/.emacs.d/straight/repos/my-elisp-packages" "~/.emacs.d/straight/repos/my-elisp-packages-priv"))
+(defvar larumbe/emacs-conf-repos-packages '("~/.emacs.d/straight/repos/my-elisp-packages"
+                                            "~/.emacs.d/straight/repos/my-elisp-packages-priv"
+                                            "~/.emacs.d/straight/repos/verilog-ext"
+                                            "~/.emacs.d/straight/repos/vhdl-ext"))
 (defvar larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos-core larumbe/emacs-conf-repos-packages))
 (defvar larumbe/emacs-conf-straight-forked
   '("~/.emacs.d/straight/repos/org-jira"           ; Keep forked: changes for non-Atlassian accounts
