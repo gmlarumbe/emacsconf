@@ -48,7 +48,7 @@
   (setq verilog-auto-indent-on-newline          t) ; Self-explaining
   (setq verilog-auto-lineup                   nil) ; other options are 'declarations or 'all
   (setq verilog-auto-newline                  nil)
-  (setq verilog-auto-endcomments                t)
+  (setq verilog-auto-endcomments              nil)
   (setq verilog-auto-wire-comment             nil)
   (setq verilog-minimum-comment-distance        1) ; INFO: (default 10) Only applies to AUTOs, called in `verilog-set-auto-endcomments'
   ;; Alignment
@@ -67,6 +67,7 @@
   :bind (:map verilog-mode-map
          ("M-f"     . verilog-ext-forward-word)
          ("M-b"     . verilog-ext-backward-word)
+         ("TAB"     . verilog-ext-electric-verilog-tab)
          ("C-M-d"   . verilog-ext-find-module-instance-fwd)
          ("C-M-u"   . verilog-ext-find-module-instance-bwd-2)
          ("C-M-."   . verilog-ext-jump-to-module-at-point-def)

@@ -153,18 +153,6 @@ See `verilog-ext-block-end-keywords' for more.")
 
 
 
-;; TODO: Use in conjunction with hook that modifies syntax entry for `
-;; Currently inside `verilog-ext-hook' in verilog-utils
-(defun verilog-ext-electric-verilog-tab ()
-  "Wrapper of the homonym verilog function to avoid indentation issues with compiler directives after setting custom hooks."
-  (interactive)
-  (let ((table (make-syntax-table verilog-mode-syntax-table)))
-    (modify-syntax-entry ?` "w" table)
-    (with-syntax-table table
-      (electric-verilog-tab))))
-;; End of TODO:
-
-
 ;; TODO: Rename this token thing with something else as this is used inside verilog-mode
 ;;;; Token/Class-related
 (defvar verilog-ext-token-re
@@ -515,8 +503,6 @@ INFO: Limitations:
   ;;  2) Flycheck active linter
   (setq verilog-ext-flycheck-verilator-include-path verilog-ext-open-dirs)
   (flycheck-select-checker verilog-ext-flycheck-active-linter)
-  ;;  3) Syntax entry (check `verilog-ext-electric-verilog-tab' in pending) TODO
-  (modify-syntax-entry ?` ".") ; Avoid including preprocessor tags while isearching. Requires `verilog-ext-electric-verilog-tab' to get back standard table to avoid indentation issues with compiler directives.
   ;;  4) Timestamp (TODO)
   (verilog-ext-time-stamp-update)
   ;;  5) Completion (TODO)
