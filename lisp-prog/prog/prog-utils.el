@@ -90,6 +90,18 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
                    ;; Default fallback
                    (t
                     (call-interactively #'xref-find-definitions)))))
+          ((string= major-mode "vhdl-mode")
+           (if def
+               (larumbe/prog-mode-definitions-default def)
+             ;; Context based jump if no thing-at-point:
+             (cond (;; Inside an entity instance
+                    (vhdl-ext-instance-at-point)
+                    (setq def (match-string-no-properties 6))
+                    (xref-find-definitions def)
+                    (larumbe/prog-mode-report-backend def))
+                   ;; Default fallback
+                   (t
+                    (call-interactively #'xref-find-definitions)))))
           ;;   - Python: elpy
           ((string= major-mode "python-mode")
            (if def
@@ -124,6 +136,19 @@ and will be applied to only files of current `major-mode' if existing in `larumb
                     (and (verilog-ext-point-inside-block-p 'module)
                          (verilog-ext-instance-at-point))
                     (setq ref (match-string-no-properties 1))
+                    (xref-find-references ref)
+                    (larumbe/prog-mode-report-backend ref :ref))
+                   ;; Default fallback
+                   (t
+                    (call-interactively #'xref-find-references)))))
+          ;; VHDL
+          ((string= major-mode "vhdl-mode")
+           (if ref
+               (larumbe/prog-mode-references-default ref)
+             ;; Context based jump if no thing-at-point:
+             (cond (;; Inside an entity instance
+                    (vhdl-ext-instance-at-point)
+                    (setq ref (match-string-no-properties 6))
                     (xref-find-references ref)
                     (larumbe/prog-mode-report-backend ref :ref))
                    ;; Default fallback
