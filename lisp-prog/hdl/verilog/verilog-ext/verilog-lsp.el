@@ -48,7 +48,7 @@
 
 ;;;; Select default
 (defun verilog-ext-lsp-set-default-server ()
-  "Select svlangserver by default by disabling others without chaning priorities."
+  "Select svlangserver by default by disabling others without changing priorities."
   (interactive)
   ;; Assumes native support for lsp-verilog and lsp-svlangserver, and that verible-ls is installed
   (add-to-list 'lsp-disabled-clients 'verible-ls)

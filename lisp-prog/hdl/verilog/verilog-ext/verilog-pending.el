@@ -605,8 +605,6 @@ Ask for ports to be connected until no port is found at current line."
     (verilog-ext-toggle-connect-port t)))
 
 
-
-
 (defun verilog-ext-block-end-comments-to-block-names ()
   "Convert valid block-end comments to ': BLOCK_NAME'.
 
@@ -1851,3 +1849,34 @@ added via -yDIR but as a source file and cannot be found."
       ;; (if verilog-ext-vhier-input-files
       ;;     (insert (concat "// Hierarchy extracted from files included in: " verilog-ext-vhier-input-files "\n"))
       ;;   (insert (concat "// Hierarchy extracted from `verilog-ext-open-dirs' variable\n")))
+
+
+
+;;; Init-verilog
+;;          ("C-M-."    . verilog-ext-find-parent-module)
+;;          ("C-M-n"    . verilog-ext-find-token-fwd)
+;;          ("C-M-p"    . verilog-ext-find-token-bwd)
+;;          ("C-c c"    . verilog-ext-toggle-connect-port)
+;;          ("C-c C-c"  . verilog-ext-connect-ports-recursively)
+;;          ("C-c t"    . verilog-ext-time-stamp-work-new-entry)
+;;          ("C-c C-p"  . verilog-ext-preprocess)
+
+
+
+;; (use-package verilog-ext
+;;   :straight nil
+;;   :after verilog-mode
+;;   :demand
+;;   :commands (verilog-ext-flycheck-select-linter)
+;;   :hook ((verilog-mode . verilog-ext-hook))
+;;   :bind (:map verilog-mode-map
+;;   ;; :config
+;;   ;; Dependencies
+;;   ;; (require 'xah-lee-functions)
+;;   ;; (require 'ag)
+;;   ;; Bind chords
+;;   ;; (bind-chord "\\\\" #'verilog-ext-jump-to-module-def-at-point verilog-mode-map)
+;;   ;; (bind-chord "\|\|" #'verilog-ext-find-parent-module verilog-mode-map)
+;;   ;; (key-chord-mode 1)
+;;   )
+
