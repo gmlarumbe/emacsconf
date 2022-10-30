@@ -65,21 +65,26 @@
   :after verilog-mode
   :demand
   :bind (:map verilog-mode-map
-         ("M-f"     . verilog-ext-forward-word)
-         ("M-b"     . verilog-ext-backward-word)
-         ("TAB"     . verilog-ext-electric-verilog-tab)
-         ("C-M-d"   . verilog-ext-find-module-instance-fwd)
-         ("C-M-u"   . verilog-ext-find-module-instance-bwd-2)
-         ("C-M-."   . verilog-ext-jump-to-module-at-point-def)
-         ("C-M-/"   . verilog-ext-jump-to-module-at-point-ref)
-         ("M-i"     . verilog-ext-imenu-list)
-         ("C-c a"   . verilog-ext-module-at-point-align-ports)
-         ("C-c l"   . verilog-ext-module-at-point-align-params)
-         ("C-c i"   . verilog-ext-module-at-point-indent)
-         ("C-c b"   . verilog-ext-module-at-point-beautify)
-         ("C-c C-f" . verilog-ext-flycheck-mode-toggle)
-         ("C-c C-t" . verilog-ext-hydra/body)
-         ("<f9>"    . verilog-ext-vhier-current-file))
+         ;;TODO: Only during development
+         ("C-c C-l"       . verilog-ext-tree-sitter-hl-mode-enable)
+         ;; End of TODO
+         ("TAB"           . verilog-ext-electric-verilog-tab)
+         ("M-d"           . verilog-ext-kill-word)
+         ("C-<backspace>" . verilog-ext-backward-kill-word)
+         ("M-f"           . verilog-ext-forward-word)
+         ("M-b"           . verilog-ext-backward-word)
+         ("C-M-d"         . verilog-ext-find-module-instance-fwd)
+         ("C-M-u"         . verilog-ext-find-module-instance-bwd-2)
+         ("C-M-."         . verilog-ext-jump-to-module-at-point-def)
+         ("C-M-/"         . verilog-ext-jump-to-module-at-point-ref)
+         ("M-i"           . verilog-ext-imenu-list)
+         ("C-c a"         . verilog-ext-module-at-point-align-ports)
+         ("C-c l"         . verilog-ext-module-at-point-align-params)
+         ("C-c i"         . verilog-ext-module-at-point-indent)
+         ("C-c b"         . verilog-ext-module-at-point-beautify)
+         ("C-c C-f"       . verilog-ext-flycheck-mode-toggle)
+         ("C-c C-t"       . verilog-ext-hydra/body)
+         ("<f9>"          . verilog-ext-vhier-current-file))
   :config
   (message "Setting up verilog-ext")
   (verilog-ext-which-func-mode)
@@ -87,7 +92,6 @@
   (setq verilog-ext-flycheck-verible-rules '("-line-length"))
   (verilog-ext-flycheck-setup)
   (verilog-ext-flycheck-set-linter 'verilog-verible)
-  (setq verilog-ext-vhier-output-dir (concat (verilog-ext-path-join (projectile-project-root) "vhier/"))))
 
 
 

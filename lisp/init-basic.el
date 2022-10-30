@@ -23,6 +23,7 @@
 (setq disabled-command-function 'ignore)       ; Enable all commands
 (setq initial-major-mode 'fundamental-mode)    ; Avoid start *scratch* in `lisp-interaction-mode' and enabling default `prog-mode-hook.
 (setq completions-detailed t)                  ; New in Emacs 28
+(setq tab-width 4)                             ; TAB width (buffer local)
 
 ;; Save some screen real estate
 (menu-bar-mode -1)
