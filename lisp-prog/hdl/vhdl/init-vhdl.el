@@ -4,8 +4,7 @@
 
 
 (use-package vhdl-mode
-  :straight (:host github :repo "emacs-mirror/emacs"
-             :fork (:repo "gmlarumbe/emacs" :branch "vhdl-projects")
+  :straight (:host github :repo "emacs-mirror/emacs" ; INFO: Remove when using Emacs 29.1
              :files ("lisp/progmodes/vhdl-mode.el"))
   :bind (:map vhdl-mode-map
          ("C-M-a" . vhdl-beginning-of-defun)
