@@ -91,7 +91,7 @@
   (setq verilog-ext-flycheck-eldoc-toggle t)
   (setq verilog-ext-flycheck-verible-rules '("-line-length"))
   (verilog-ext-flycheck-setup)
-  (verilog-ext-flycheck-set-linter 'verilog-verible)
+  (verilog-ext-flycheck-set-linter 'verilog-verible))
 
 
 
