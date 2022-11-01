@@ -50,22 +50,26 @@
     ;; Search wrappers
     (defun larumbe/search-forward (&optional uarg)
       "Use isearch for dired-mode and swiper for the rest.
-Use isearch if uarg is provided (e.g. large files where swiper could be a bit slow)."
+Use `swiper-isearch' not showing lines for compilation buffers or if uarg is
+provided (e.g. large files where showing lines with `swiper' could be a bit
+slow)."
       (interactive "P")
       (cond ((string= major-mode "dired-mode")
              (call-interactively #'isearch-forward))
-            (uarg
+            ((or uarg (string= major-mode "compilation-mode"))
              (call-interactively #'swiper-isearch))
             (t
              (call-interactively #'swiper))))
 
     (defun larumbe/search-backward (&optional uarg)
       "Use isearch for dired-mode and swiper for the rest.
-Use isearch if uarg is provided (e.g. large files where swiper could be a bit slow)."
+Use `swiper-isearch' not showing lines for compilation buffers or if uarg is
+provided (e.g. large files where showing lines with `swiper' could be a bit
+slow)."
       (interactive "P")
       (cond ((string= major-mode "dired-mode")
              (call-interactively #'isearch-forward))
-            (uarg
+            ((or uarg (string= major-mode "compilation-mode"))
              (call-interactively #'swiper-isearch))
             (t
              (call-interactively #'swiper-backward))))
