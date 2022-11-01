@@ -91,7 +91,9 @@
   (setq verilog-ext-flycheck-eldoc-toggle t)
   (setq verilog-ext-flycheck-verible-rules '("-line-length"))
   (verilog-ext-flycheck-setup)
-  (verilog-ext-flycheck-set-linter 'verilog-verible))
+  (verilog-ext-flycheck-set-linter 'verilog-verible)
+  (setq verilog-ext-snippets-dir "~/.emacs.d/straight/repos/verilog-ext/verilog-snippets")
+  (verilog-ext-add-snippets))
 
 
 
