@@ -307,42 +307,6 @@ task, `define."
 
 
 
-;; TODO: How to handle `modi/verilog-identifier-pcre'?
-(defun verilog-ext-find-parent-module ()
-  "Same as `modi/verilog-find-parent-module'.
-Additionally add xref push marker to the stack."
-  (interactive)
-  (let ((verilog-module-re (concat "^[[:blank:]]*" ;Elisp regexp
-                                   "\\(?:module\\)[[:blank:]]+" ;Shy group
-                                   "\\(?1:"
-                                   modi/verilog-identifier-re ;Elisp regexp here!
-                                   "\\)\\b"))
-        module-name
-        module-instance-pcre)
-    (save-excursion
-      (re-search-backward verilog-module-re)
-      (setq module-name (match-string 1))
-      (setq module-instance-pcre ;PCRE regex
-            (concat "^\\s*"
-                    module-name
-                    "\\s+"
-                    "(#\\s*\\((\\n|.)*?\\))*" ;optional hardware parameters
-                                        ;'(\n|.)*?' does non-greedy multi-line grep
-                    "(\\n|.)*?" ;optional newline/space before instance name
-                    "([^.])*?" ;do not match ".PARAM (PARAM_VAL)," if any
-                    "\\K"       ;don't highlight anything till this point
-                    modi/verilog-identifier-pcre ;instance name
-                    "(?=[^a-zA-Z0-9_]*\\()")) ;optional space/newline after instance name
-                                        ;and before opening parenthesis `('
-                                        ;don't highlight anything in (?=..)
-      (let* ((ag-arguments ag-arguments)) ;Save the global value of `ag-arguments'
-        ;; Search only through verilog type files.
-        ;; See "ag --list-file-types".
-        (add-to-list 'ag-arguments "--verilog" :append)
-        (xref-push-marker-stack) ; INFO: Added by Larumbe
-        (ag-regexp module-instance-pcre (projectile-project-root))))))
-
-
 ;;;; Defun find
 ;; TODO: These were fetched from verilog-mode, but many things changed
 ;; Probably can be used with info from tree-sitter
