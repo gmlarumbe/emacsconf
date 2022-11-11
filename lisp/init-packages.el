@@ -237,7 +237,8 @@ the vertical drag is done."
   :config
   (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-mode.el") untabify-trailing-disable-on-files)
   (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-test.el") untabify-trailing-disable-on-files)
-  (push (concat user-emacs-directory "straight/repos/cperl-mode/cperl-mode.el") untabify-trailing-disable-on-files))
+  (push (concat user-emacs-directory "straight/repos/cperl-mode/cperl-mode.el") untabify-trailing-disable-on-files)
+  (push (concat user-emacs-directory "straight/repos/verilog-ext/snippets/makefile-mode/verilog-template") untabify-trailing-disable-on-files))
 
 
 (use-package align
