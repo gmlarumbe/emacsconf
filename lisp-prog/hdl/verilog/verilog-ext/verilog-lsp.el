@@ -62,4 +62,7 @@
 
 (provide 'verilog-lsp)
 
+;; TODO: Add configuration of eglot, that should be in some place in prog-packages or like that...
+
+
 ;;; verilog-lsp.el ends here

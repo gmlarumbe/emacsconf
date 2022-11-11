@@ -153,6 +153,8 @@ See `verilog-ext-block-end-keywords' for more.")
 
 
 
+
+
 ;; TODO: Rename this token thing with something else as this is used inside verilog-mode
 ;;;; Token/Class-related
 (defvar verilog-ext-token-re
@@ -209,9 +211,61 @@ See `verilog-ext-block-end-keywords' for more.")
   (verilog-ext-find-token nil))
 
 
-;;;; Jump to module
-;;  TODO: Do something in `verilog-ext-jump-to-module-at-point' to parameterize the use of gtags/xref
 
+;; TODO: Was quite complicated to make this work properly, or at least how I intended to
+(defun verilog-ext-defun-same-level-next ()
+  "Move forward to the same defun-level."
+  (interactive)
+  (let* ((data (verilog-ext-block-at-point))
+         (block-type (alist-get 'type data))
+         (start (point))
+         temp-data end-pos)
+    (cond (;; Functions/tasks
+           (or (equal block-type "function")
+               (equal block-type "task"))
+           (when (setq temp-data (verilog-ext-point-inside-block-p 'class))
+             (setq end-pos (alist-get 'end-point temp-data))) ; Methods inside classes
+           (verilog-ext-find-function-task-fwd end-pos))
+          (;; Classes inside package
+           (equal block-type "class")
+           (verilog-ext-find-class-fwd))
+          (;; Package (top)
+           (or (equal block-type "module")
+               (equal block-type "interface")
+               (equal block-type "program")
+               (equal block-type "package"))
+           (verilog-re-search-forward verilog-ext-top-re nil t))
+          (t
+           (verilog-re-search-forward verilog-defun-tf-re-beg nil t)))))
+
+(defun verilog-ext-defun-same-level-prev ()
+  ""
+  (interactive)
+  ;; TODO: Do it analogously to 'prev' function
+  )
+
+
+(defun verilog-ext-nav-down-dwim ()
+  ""
+  (interactive)
+  (cond ((verilog-ext-scan-buffer-modules)
+         (call-interactively #'verilog-ext-find-module-instance-fwd))
+        ((or (verilog-ext-point-inside-block-p 'class)
+             (verilog-ext-point-inside-block-p 'package))
+         (call-interactively #'verilog-ext-defun-level-down))
+        (t
+         (verilog-ext-down-list))))
+
+(defun verilog-ext-nav-up-dwim ()
+  ""
+  (interactive)
+  (cond ((verilog-ext-scan-buffer-modules)
+         (call-interactively #'verilog-ext-find-module-instance-bwd-2))
+        ((or (verilog-ext-point-inside-block-p 'class)
+             (verilog-ext-point-inside-block-p 'package))
+         (call-interactively #'verilog-ext-defun-level-up))
+        (t
+         (verilog-ext-backward-up-list))))
 
 
 ;;;; Modi
@@ -307,90 +361,6 @@ task, `define."
 
 
 
-;;;; Defun find
-;; TODO: These were fetched from verilog-mode, but many things changed
-;; Probably can be used with info from tree-sitter
-(defun verilog-defun-level-up (&optional arg)
-  "Move up one defun-level."
-  (interactive)
-  ;; Order of conditions is relevant here
-  (cond ((or (verilog-in-function-p)
-             (verilog-in-task-p))
-         (verilog-re-search-backward (concat "\\<\\(function\\|task\\)\\>") nil 'move))
-        ((verilog-in-class-p)
-         (verilog-re-search-backward "\\<class\\>" nil 'move))
-        ((verilog-in-package-p)
-         (verilog-re-search-backward "\\<package\\>" nil 'move))
-        ((or (verilog-in-module-p)
-             (verilog-in-program-p)
-             (verilog-in-interface-p))
-         (verilog-re-search-backward (concat "\\<\\(module\\|program\\|interface\\)\\>") nil 'move))
-        (t
-         nil)))
-
-(defun verilog-defun-level-down (&optional arg)
-  "Move down one defun-level."
-  (interactive)
-  (let (limit)
-    ;; Order of conditions is relevant here
-    (cond ((or (verilog-in-function-p :x)
-               (verilog-in-task-p :x))
-           nil)
-          ((verilog-in-class-p :x)
-           (setq limit (verilog-re-search-forward-try (concat "\\<endclass\\>") nil 'move :only-pos))
-           (verilog-re-search-forward-try (concat "\\<\\(function\\|task\\)\\>") limit 'move))
-          ((verilog-in-package-p :x)
-           (setq limit (verilog-re-search-forward-try (concat "\\<endpackage\\>") nil 'move :only-pos))
-           (verilog-re-search-forward-try "\\<class\\>" limit 'move))
-          ((or (verilog-in-module-p :x)
-               (verilog-in-program-p :x)
-               (verilog-in-interface-p :x))
-           (setq limit (verilog-re-search-forward-try (concat "\\<end\\(package\\|module\\|interface\\)\\>") nil 'move :only-pos))
-           (verilog-re-search-forward-try (concat "\\<\\(function\\|task\\)\\>") limit 'move))
-          (t
-           nil))))
-
-(defun verilog-defun-same-level-next ()
-  ""
-  (interactive)
-  (let (limit)
-    ;; Order of conditions is relevant here
-    (cond (;; Functions/task inside task/module/package/interface/program
-           (or (verilog-in-function-p :x)
-               (verilog-in-task-p :x))
-           (when (looking-at (concat "\\<\\(function\\|task\\)\\>"))
-             (forward-word))
-           (setq limit (verilog-re-search-forward-try (concat "\\<end\\(class\\|package\\|module\\|interface\\|program\\)\\>") nil 'move :only-pos))
-           (verilog-re-search-forward-try (concat "\\<\\(function\\|task\\)\\>") limit 'move)) ; TODO: Add static, protected, etc.. tags
-          (;; Classes inside package
-           (verilog-in-class-p :x)
-           (when (looking-at (concat "\\<class\\>"))
-             (forward-word))
-           (setq limit (verilog-re-search-forward-try (concat "\\<endpackage\\>") nil 'move :only-pos))
-           (verilog-re-search-forward-try "\\<class\\>" limit 'move))
-          (;; Package (top)
-           (verilog-in-package-p :x)
-           (when (looking-at (concat "\\<package\\>"))
-             (forward-word))
-           (verilog-re-search-forward-try "\\<package\\>" nil 'move))
-          (;; Module/program/interface
-           (or (verilog-in-module-p :x)
-               (verilog-in-program-p :x)
-               (verilog-in-interface-p :x))
-           (when (looking-at (concat "\\<\\(module\\|program\\|interface\\)\\>"))
-             (forward-word))
-           (verilog-re-search-forward-try (concat "\\<\\(module\\|program\\|interface\\)\\>") nil 'move))
-          (t
-           nil))))
-
-(defun verilog-defun-same-level-prev ()
-  ""
-  (interactive)
-  ;; TODO: Do it analogously to 'prev' function
-  )
-
-
-
 ;;; Utils
 ;; With respect to `verilog-ext-point-inside-block-p':
 ;;  - For generate thought to use `verilog-in-generate-region-p', however it didn't work as expected
@@ -476,32 +446,6 @@ INFO: Limitations:
 
 
 ;;; Beautify
-;; TODO: In `verilog-ext-beautify-current-file':
-;;  - Remove blanks in port connections
-;;  - Align declarations/expressions: (similar to verilog-mode test0.el)
-;;  - Add this to docstring
-
-(defun verilog-ext-clean-port-blanks ()
-  "Cleans blanks inside port connections of current buffer.
-
-Capture Groups:
-- Group 1: Beginning of line blanks
-- Group 2: Port name (after dot connection)
-- Group 3: Blanks after identifier
-- Group 4: Blanks after beginning of port connection '('
-- Group 5: Name of connection
-- Group 6: Blanks after end of port connection ')'
-"
-  (interactive)
-  (let ((old-re "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)(\\(?4:[ ]*\\)\\(?5:[^ ]+\\)\\(?6:[ ]*\\))")
-        (new-re "\\1.\\2\\3\(\\5\)"))
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward old-re nil :noerror)
-        (replace-match new-re)))
-    (message "Removed blanks from current buffer port connections.")))
-
-
 ;; TODO Add a function (C-c C-M-i) that aligns declarations of current paragraph
 ;; TODO Add a function (C-c C-M-o) that aligns expressions of current paragraph
 ;; TODO: Problem: paragraphs might not always be blocks of decl/expressions if there are no blank lines in between
@@ -525,50 +469,6 @@ Capture Groups:
 
 
 ;;; Editing
-;;;; Port connect/disconnect/blank cleaning
-(defun verilog-ext-toggle-connect-port (force-connect)
-  "Toggle connect/disconnect port at current line.
-
-If regexp detects that port is connected then disconnect it
-and viceversa.
-
-If called with universal arg, FORCE-CONNECT parameter will force connection
-of current port, no matter if it is connected/disconnected"
-  (interactive "P")
-  (let* ((case-fold-search verilog-case-fold)
-         (port-regex "\\(?1:^\\s-*\\)\\.\\(?2:[a-zA-Z0-9_-]+\\)\\(?3:[[:blank:]]*\\)")
-         (conn-regex "\\(?4:(\\(?5:.*\\))\\)?")
-         (line-regex (concat port-regex conn-regex))
-         port conn sig
-         (start (point)))
-    ;; Find '.port (conn)' verilog regexp
-    (beginning-of-line)
-    (if (re-search-forward line-regex (point-at-eol) t)
-        (progn
-          (setq port (match-string-no-properties 2))
-          (setq conn (match-string-no-properties 5))
-          (if (or (string-equal conn "") force-connect) ; If it is disconnected or connection is forced via parameter...
-              (progn ; Connect
-                (setq sig (read-string (concat "Connect [" port "] to: ") port))
-                (replace-match (concat "\\1.\\2\\3\(" sig "\)") t))
-            (progn ; Else disconnect
-              (replace-match (concat "\\1.\\2\\3\(" nil "\)") t)))
-          (goto-char start)
-          (forward-line))
-      (progn ; No port found
-        (goto-char start)
-        (message "No port detected at current line")))))
-
-
-(defun verilog-ext-connect-ports-recursively ()
-  "Connect ports of current instance recursively.
-
-Ask for ports to be connected until no port is found at current line."
-  (interactive)
-  (while (not (equal (verilog-ext-toggle-connect-port t) "No port detected at current line"))
-    (verilog-ext-toggle-connect-port t)))
-
-
 (defun verilog-ext-block-end-comments-to-block-names ()
   "Convert valid block-end comments to ': BLOCK_NAME'.
 
@@ -594,26 +494,6 @@ Examples: endmodule // module_name             → endmodule : module_name
         (message "Enabled gtags-update-async-minor-mode [current buffer]"))
     (remove-hook 'verilog-mode-hook (lambda () (add-hook 'before-save-hook #'verilog-ext-block-end-comments-to-block-names nil :local)))
     (message "Disabled gtags-update-async-minor-mode [current buffer]")))
-
-
-
-
-;;; Compile
-;;;;; Preprocessor
-(defun verilog-ext-preprocess ()
-  "Allow choosing between programs with a wrapper of `verilog-preprocess'.
-All the libraries/incdirs are computed internally at `verilog-mode' via
-`verilog-expand'.
-INFO: `iverilog' command syntax requires writing to an output file
-(defaults to a.out)."
-  (interactive)
-  (let (iver-out-file)
-    (pcase (completing-read "Select tool: " '("verilator" "vppreproc" "iverilog"))
-      ("verilator" (setq verilog-preprocessor "verilator -E __FLAGS__ __FILE__"))
-      ("vppreproc" (setq verilog-preprocessor "vppreproc __FLAGS__ __FILE__"))
-      ("iverilog"  (progn (setq iver-out-file (read-string "Output filename: " (concat (file-name-sans-extension (file-name-nondirectory (buffer-file-name))) "_pp.sv")))
-                          (setq verilog-preprocessor (concat "iverilog -E -o" iver-out-file " __FILE__ __FLAGS__")))))
-    (verilog-preprocess)))
 
 
 
@@ -1098,40 +978,6 @@ Regex search bound to LIMIT."
    ;; ;; End of TODO
 
 
-;;;; Typedef
-(defvar verilog-ext-font-lock-typedef-face 'verilog-ext-font-lock-typedef-face)
-(defface verilog-ext-font-lock-typedef-face
-  '((t (:foreground "light blue")))
-  "Face for user defined types."
-  :group 'verilog-ext-font-lock-faces)
-
-(defun verilog-ext-font-lock-typedef-decl-fontify (limit)
-  "Fontify typedef declarations."
-  (let* ((decl-typedef-re (verilog-get-declaration-typedef-re))
-         start end found var-start var-end)
-    (when (and verilog-fontify-variables
-               (verilog-align-typedef-enabled-p))
-      (while (and (not found)
-                  (verilog-re-search-forward decl-typedef-re limit t))
-        (when (save-excursion
-                (beginning-of-line)
-                (looking-at decl-typedef-re))
-          (setq found t)))
-      (when found
-        (setq start (match-beginning 5))
-        (setq end (match-end 5))
-        (setq var-start (car (bounds-of-thing-at-point 'symbol)))
-        (setq var-end (cdr (bounds-of-thing-at-point 'symbol)))
-        (set-match-data (list start end var-start var-end))
-        (point)))))
-
-
-   ;; ;; TODO
-   ;; Fontify user types declarations
-   '(verilog-ext-font-lock-typedef-decl-fontify
-     (0 'verilog-ext-font-lock-typedef-face)
-     (1 'font-lock-doc-face)) ; TODO: Choose proper colors
-
 
 
 ;;; Completion
@@ -1337,6 +1183,50 @@ Adapted from `python-mode' imenu build-tree function."
 ;;                      (looking-at verilog-ext-function-re)
 ;;
 ;; Maybe using `verilog-beg-of-statement' to detect the virtual/static/local/protected could be a good option
+
+
+;; TODO: Do something that adds to a top "External Task/Func if no method, and to method name if there is such"
+;; (defun verilog-ext-imenu-methods-index ()
+;;   ""
+;;   (save-excursion
+;;     (goto-char (point-max))
+;;     (let (entry index extern)
+;;       ;; (while (verilog-ext-imenu-find-tf-outside-class-bwd)
+;;       (while (verilog-ext-find-function-task-bwd)
+;;         (setq entry (match-string-no-properties 1))
+;;         (setq extern (match-string-no-properties 2))
+;;         (if extern
+;;             (push (cons entry (point)) index)
+;;             (progn ; Method
+;;               (push (cons entry (point)) index)
+;;               )
+;;           ;; Else, External task/function
+
+;;           )                             ;
+;;         )
+;;       (when index
+;;         (list (cons "Methods" index))))))
+;; End of TODO
+
+
+(defun verilog-ext-imenu-index ()
+  "Index builder function for Verilog Imenu.
+Makes use of `verilog-ext-imenu-generic-expression' for everything but classes
+and methods.  These are collected with `verilog-ext-imenu-classes-index'."
+  (append (verilog-ext-imenu-classes-index)
+          ;; (verilog-ext-imenu-methods-index) ; TODO
+          (imenu--generic-function verilog-ext-imenu-generic-expression)))
+
+
+
+
+;; INFO: Seems deprecable, was at an attempt of developing something in find function/task
+;; (defun verilog-ext-find-module-instance-imenu ()
+;;   "Wrap `verilog-ext-find-module-instance-bwd' for use in imenu.
+;; Previous function will only work if point is inside a module/interface for performance reasons.
+;; Imenu will always start at the end of the buffer."
+;;   (verilog-ext-find-module-instance-bwd nil :ignore-ctxt))
+
 
 
 
@@ -1618,9 +1508,10 @@ Actions for `verilog-ext-flycheck-linter'."
 
 
 ;;; Vhier
-;; 2 options: outline/outshine
-;; Treemacs as a framework: https://github.com/Alexander-Miller/treemacs/blob/master/Extensions.org
-
+;; 3 options:
+;;  - outline/outshine (currently used)
+;;  - Treemacs as a framework: https://github.com/Alexander-Miller/treemacs/blob/master/Extensions.org
+;;  - hierarchy.el (bundled with Emacs 28.1): https://github.com/DamienCassou/hierarchy
 
 ;; INFO: First preprocesses input files for `include' and `define' expansion.
 ;; Then extracts hierarchy from that preprocessed file.
@@ -1843,4 +1734,18 @@ added via -yDIR but as a source file and cannot be found."
 ;;   ;; (bind-chord "\|\|" #'verilog-ext-find-parent-module verilog-mode-map)
 ;;   ;; (key-chord-mode 1)
 ;;   )
+
+;;; Compilation
+;; For `verilog-ext-makefile-compile' use the custom compile regexp:
+; TODO: What to do with this? Something like: if (featurep 'compilation-ext (compilation-ext whatever?))
+(larumbe/compile cmd nil "verilog-make")
+;; ))
+
+
+;; INFO: Discarding the following `verilog-set-compile-command' variables:
+;; - `verilog-linter:' replaced by FlyCheck with opened buffers as additional arguments, plus custom project parsing functions
+;; - `verilog-simulator': replaced by XSim and ncsim sim project funcions
+;; - `verilog-compiler': replaced by Vivado elaboration/synthesis project functions
+;; - `verilog-preprocessor': `verilog-ext-preprocess' wrapper of verilog-mode internal function' does the trick
+;; - `verilog-coverage' still not implemented as there are not many free alternatives...
 
