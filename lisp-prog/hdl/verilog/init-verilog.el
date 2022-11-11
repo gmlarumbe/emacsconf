@@ -16,8 +16,8 @@
          (";"       . nil) ; Unmap automatically indent lines after ;
          ("C-;"     . nil) ; Leave space for faster buffer switching
          ;; TODO: Remove these when proper PR sets them as default?
-         ("C-M-a"   . verilog-beg-of-defun)
-         ("C-M-e"   . verilog-end-of-defun)
+         ;; ("C-M-a"   . verilog-beg-of-defun)
+         ;; ("C-M-e"   . verilog-end-of-defun)
          ("C-M-h"   . verilog-mark-defun)
          ;; End of TODO
          ("C-c C-o" . verilog-pretty-expr) ; C-c C-i same as C-c TAB that executes `verilog-pretty-declarations'
@@ -50,11 +50,11 @@
   (setq verilog-auto-newline                  nil)
   (setq verilog-auto-endcomments              nil)
   (setq verilog-auto-wire-comment             nil)
-  (setq verilog-minimum-comment-distance        1) ; INFO: (default 10) Only applies to AUTOs, called in `verilog-set-auto-endcomments'
+  (setq verilog-minimum-comment-distance        1) ; (default 10) Only applies to AUTOs, called in `verilog-set-auto-endcomments'
   ;; Alignment
   (setq verilog-align-assign-expr t)
   (setq verilog-align-typedef-words nil) ; INFO: Set on specific machines
-  (setq verilog-align-typedef-regexp (concat "\\<" verilog-identifier-re "_t\\>")) ; INFO: Set on specific machines
+  (setq verilog-align-typedef-regexp (concat "\\<" verilog-identifier-re "_\\(t\\|e\\|s\\|if\\|vif\\)\\>")) ; INFO: Set on specific machines
   ;; Mode config
   (remove-hook 'compilation-mode-hook 'verilog-error-regexp-add-emacs) ; `verilog-mode' automatically adds useless compilation regexp alists
   (advice-add 'electric-verilog-terminate-line :before-until #'larumbe/newline-advice)) ; Quit *xref* buffer with C-m/RET
@@ -73,8 +73,34 @@
          ("C-<backspace>" . verilog-ext-backward-kill-word)
          ("M-f"           . verilog-ext-forward-word)
          ("M-b"           . verilog-ext-backward-word)
-         ("C-M-d"         . verilog-ext-find-module-instance-fwd)
-         ("C-M-u"         . verilog-ext-find-module-instance-bwd-2)
+         ;; TODO: Do some dwim wrapper depending on RTL/verification
+         ;; ("C-M-d"         . verilog-ext-find-module-instance-fwd)
+         ;; ("C-M-u"         . verilog-ext-find-module-instance-bwd-2)
+
+         ;; ("C-M-d"         . verilog-ext-defun-level-down)
+         ;; ("C-M-u"         . verilog-ext-defun-level-up)
+         ;; ("C-M-p"         . verilog-ext-defun-same-level-prev)
+         ;; ("C-M-n"         . verilog-ext-defun-same-level-next)
+
+         ;; ("C-M-d"         . verilog-ext-nav-down-dwim)
+         ;; ("C-M-u"         . verilog-ext-nav-up-dwim)
+
+         ("C-M-d"         . verilog-ext-defun-level-down)
+         ("C-M-u"         . verilog-ext-defun-level-up)
+
+         ("C-M-a"   . verilog-ext-find-function-task-bwd)
+         ("C-M-e"   . verilog-ext-find-function-task-fwd)
+
+         ("C-M-p"   . verilog-ext-defun-same-level-prev)
+         ("C-M-n"   . verilog-ext-defun-same-level-next)
+
+         ("C-c c"         . verilog-ext-toggle-connect-port)
+         ("C-c C-c"         . verilog-ext-connect-ports-recursively)
+         ("C-M-x"         . verilog-ext-indent-block-at-point)
+
+         ("C-c C-p"         . verilog-ext-preprocess)
+
+         ;; End of TODO
          ("C-M-."         . verilog-ext-jump-to-parent-module)
          ("M-i"           . verilog-ext-imenu-list)
          ("C-c a"         . verilog-ext-module-at-point-align-ports)
@@ -91,7 +117,7 @@
   (setq verilog-ext-flycheck-verible-rules '("-line-length"))
   (verilog-ext-flycheck-setup)
   (verilog-ext-flycheck-set-linter 'verilog-verible)
-  (setq verilog-ext-snippets-dir "~/.emacs.d/straight/repos/verilog-ext/verilog-snippets")
+  (setq verilog-ext-snippets-dir "~/.emacs.d/straight/repos/verilog-ext/snippets")
   (verilog-ext-add-snippets))
 
 
