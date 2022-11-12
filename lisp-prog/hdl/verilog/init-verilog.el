@@ -15,11 +15,9 @@
          ("C-%"     . hide/show-comments-toggle)
          (";"       . nil) ; Unmap automatically indent lines after ;
          ("C-;"     . nil) ; Leave space for faster buffer switching
-         ;; TODO: Remove these when proper PR sets them as default?
-         ;; ("C-M-a"   . verilog-beg-of-defun)
-         ;; ("C-M-e"   . verilog-end-of-defun)
          ("C-M-h"   . verilog-mark-defun)
-         ;; End of TODO
+         ("C-M-p"   . backward-paragraph)
+         ("C-M-n"   . forward-paragraph)
          ("C-c C-o" . verilog-pretty-expr) ; C-c C-i same as C-c TAB that executes `verilog-pretty-declarations'
          ("C-c C-b" . nil)                 ; Unmap `verilog-submit-bug-report', leave space for something else
          ("C-c C-d" . nil)                 ; Unmap `verilog-goto-defun' until it's fixed, leave space for some verilog-ext function
@@ -54,7 +52,7 @@
   ;; Alignment
   (setq verilog-align-assign-expr t)
   (setq verilog-align-typedef-words nil) ; INFO: Set on specific machines
-  (setq verilog-align-typedef-regexp (concat "\\<" verilog-identifier-re "_\\(t\\|e\\|s\\|if\\|vif\\)\\>")) ; INFO: Set on specific machines
+  (setq verilog-align-typedef-regexp (concat "\\<" verilog-identifier-re "_\\(t\\|e\\|s\\|if\\|vif\\|seq\\)\\>")) ; INFO: Set on specific machines
   ;; Mode config
   (remove-hook 'compilation-mode-hook 'verilog-error-regexp-add-emacs) ; `verilog-mode' automatically adds useless compilation regexp alists
   (advice-add 'electric-verilog-terminate-line :before-until #'larumbe/newline-advice)) ; Quit *xref* buffer with C-m/RET
@@ -70,43 +68,29 @@
          ;; End of TODO
          ("TAB"           . verilog-ext-electric-verilog-tab)
          ("M-d"           . verilog-ext-kill-word)
-         ("C-<backspace>" . verilog-ext-backward-kill-word)
          ("M-f"           . verilog-ext-forward-word)
          ("M-b"           . verilog-ext-backward-word)
-         ;; TODO: Do some dwim wrapper depending on RTL/verification
-         ;; ("C-M-d"         . verilog-ext-find-module-instance-fwd)
-         ;; ("C-M-u"         . verilog-ext-find-module-instance-bwd-2)
+         ("C-<backspace>" . verilog-ext-backward-kill-word)
 
-         ;; ("C-M-d"         . verilog-ext-defun-level-down)
-         ;; ("C-M-u"         . verilog-ext-defun-level-up)
-         ;; ("C-M-p"         . verilog-ext-defun-same-level-prev)
-         ;; ("C-M-n"         . verilog-ext-defun-same-level-next)
+         ("C-M-i"         . verilog-ext-indent-block-at-point)
 
-         ;; ("C-M-d"         . verilog-ext-nav-down-dwim)
-         ;; ("C-M-u"         . verilog-ext-nav-up-dwim)
-
-         ("C-M-d"         . verilog-ext-defun-level-down)
-         ("C-M-u"         . verilog-ext-defun-level-up)
-
-         ("C-M-a"   . verilog-ext-find-function-task-bwd)
-         ("C-M-e"   . verilog-ext-find-function-task-fwd)
-
-         ("C-M-p"   . verilog-ext-defun-same-level-prev)
-         ("C-M-n"   . verilog-ext-defun-same-level-next)
+         ("C-M-a"         . verilog-ext-nav-beg-of-defun-dwim)
+         ("C-M-e"         . verilog-ext-nav-end-of-defun-dwim)
+         ("C-M-d"         . verilog-ext-nav-down-dwim)
+         ("C-M-u"         . verilog-ext-nav-up-dwim)
+         ("C-M-."         . verilog-ext-jump-to-parent-module)
 
          ("C-c c"         . verilog-ext-toggle-connect-port)
-         ("C-c C-c"         . verilog-ext-connect-ports-recursively)
-         ("C-M-x"         . verilog-ext-indent-block-at-point)
+         ("C-c C-c"       . verilog-ext-connect-ports-recursively)
+         ("C-c C-c"       . verilog-ext-toggle-connect-port)
 
-         ("C-c C-p"         . verilog-ext-preprocess)
-
-         ;; End of TODO
-         ("C-M-."         . verilog-ext-jump-to-parent-module)
-         ("M-i"           . verilog-ext-imenu-list)
          ("C-c a"         . verilog-ext-module-at-point-align-ports)
          ("C-c l"         . verilog-ext-module-at-point-align-params)
          ("C-c i"         . verilog-ext-module-at-point-indent)
          ("C-c b"         . verilog-ext-module-at-point-beautify)
+
+         ("M-i"           . verilog-ext-imenu-list)
+         ("C-c C-p"       . verilog-ext-preprocess)
          ("C-c C-f"       . verilog-ext-flycheck-mode-toggle)
          ("C-c C-t"       . verilog-ext-hydra/body)
          ("<f9>"          . verilog-ext-vhier-current-file))
@@ -120,6 +104,22 @@
   (setq verilog-ext-snippets-dir "~/.emacs.d/straight/repos/verilog-ext/snippets")
   (verilog-ext-add-snippets))
 
+
+;; TODO: Should be a dynamic function? Depending on current project? Probably... yes!
+;; (setq verilog-ext-vhier-output-dir (concat (verilog-ext-path-join (projectile-project-root) "vhier/")))
+
+(defun verilog-ext-tree-sitter-hl-mode-enable ()
+  ""
+  (interactive)
+  (verilog-mode)
+  (tree-sitter-hl-mode 1)
+  (message "Reenabling tree-sitter..."))
+
+;; Some queries that actually worked great in verilog-tree-sitter
+;; (program_instantiation (program_identifier) @comment)
+;; (hierarchical_instance (name_of_instance) @include)
+;; (named_port_connection (port_identifier) @include)
+;; (named_parameter_assignment (parameter_identifier) @include)
 
 
 

@@ -136,79 +136,8 @@ See `verilog-ext-block-end-keywords' for more.")
 ;;   It would be nice if it only recognized things that have an space before and after (a real symbol).
 ;;   TODO: Could this be done modifying temporarily the syntax table? But that might be an issue for font-locking?
 ;;
-;; In `verilog-ext-find-module-instance-bwd'
-;;  TODO: Do something for when point is inside a module, to jump to current module header instead of
-;;  to previous one. Ideas:
-;;    1. New one:
-;;    -  Use the `verilog-ext-instance-at-point'
-;;    2. Old one (possibly discard):
-;;    -  Check if in parenthesized expression (should return non-nil): (verilog-parenthesis-depth)
-;;    -  Go up until not in a parenthsized expression: (while (verilog-backward-up-list 1) ...)
-;;    -  Do same logic as with the rest of `verilog-ext-find-module-instance-bwd' from this point on
-;;       - Probably this could be grouped/refactored in another function
-;;
-;;  TODO: Add some check to make sure we are in a module/interface when looking for instances to avoid
-;;  considering some classes/parameterized objects as instances.
-;;
-
-
-
-
-
-;; TODO: Rename this token thing with something else as this is used inside verilog-mode
-;;;; Token/Class-related
-(defvar verilog-ext-token-re
-  (regexp-opt
-   '("module"
-     "interface"
-     "program"
-     "package"
-     "class"
-     "function"
-     "task"
-     "initial"
-     "always"
-     "always_ff"
-     "always_comb"
-     "generate"
-     "property"
-     "sequence"
-     "`define")
-   'symbols))
-
-(defun verilog-ext-find-token (&optional fwd)
-  "Search forward for a Verilog token regexp."
-  (let ((token-re verilog-ext-token-re)
-        (case-fold-search verilog-case-fold) ; TODO: What about case fold
-        (found nil)
-        (pos))
-    (save-excursion
-      (when fwd
-        (forward-char)) ; Needed to avoid getting stuck
-      (while (and (not found)
-                  (if fwd
-                      (re-search-forward token-re nil t)
-                    (re-search-backward token-re nil t)))
-        (unless (or (equal (face-at-point) 'font-lock-comment-face)
-                    (equal (face-at-point) 'font-lock-string-face))
-          (setq found t)
-          (if (called-interactively-p)
-              (setq pos (match-beginning 1))
-            (setq pos (point))))))
-    (when found
-      (goto-char pos))))
-
-
-(defun verilog-ext-find-token-fwd ()
-  "Search forward for a Verilog token regexp."
-  (interactive)
-  (verilog-ext-find-token t))
-
-
-(defun verilog-ext-find-token-bwd ()
-  "Search backwards for a Verilog token regexp."
-  (interactive)
-  (verilog-ext-find-token nil))
+;; INFO: It seems it works fine, with the small optimization of the parenthesis search and byte/native compilation.
+;; Probably the next step is jump into tree-sitter, instead of spend more time optimizing this shit.
 
 
 
@@ -450,18 +379,46 @@ INFO: Limitations:
 ;; TODO Add a function (C-c C-M-o) that aligns expressions of current paragraph
 ;; TODO: Problem: paragraphs might not always be blocks of decl/expressions if there are no blank lines in between
 
-;; (defun verilog-ext-align-decl-current-block ()
-;;   ""
-;;   (interactive)
-;;   ()
-;;   ()
-;;   )
+;; INFO: These didn't work because only work if point is at a declaration or at a expression
+;; Or in the case of a region, if the beginning or the point (don't remember)
+;; So these are not useful at all!
+(defun verilog-ext-pretty-declarations-block-at-point ()
+  "Align declarations of current block at point."
+  (interactive)
+  (save-mark-and-excursion
+    (let ((data (verilog-ext-block-at-point))
+          block name)
+      (unless data
+        (user-error "Not inside a block"))
+      (setq block (car data))
+      (setq name (nth 1 data))
+      (goto-char (nth 3 data))
+      (end-of-line)
+      (push-mark)
+      (goto-char (nth 2 data))
+      (beginning-of-line)
+      (setq mark-active t)
+      (verilog-pretty-declarations)
+      (message "Aligned declarations of %s : %s" block name))))
 
-;; (defun verilog-ext-align-expr-current-block ()
-;;   ""
-;;   (interactive)
-
-;;   )
+(defun verilog-ext-pretty-expr-block-at-point ()
+  "Align expressions of current block at point."
+  (interactive)
+  (save-mark-and-excursion
+    (let ((data (verilog-ext-block-at-point))
+          block name)
+      (unless data
+        (user-error "Not inside a block"))
+      (setq block (car data))
+      (setq name (nth 1 data))
+      (goto-char (nth 3 data))
+      (end-of-line)
+      (push-mark)
+      (goto-char (nth 2 data))
+      (beginning-of-line)
+      (setq mark-active t)
+      (verilog-pretty-expr)
+      (message "Aligned expressions of %s : %s" block name))))
 
 ;; TODO: Create function to gather typedefs of a directory and subdirectory?
 ;;  - Useful for typedef alignment
@@ -907,79 +864,6 @@ Regex search bound to LIMIT."
 
 
 
-;;;; Enum/Structs issue
-;; INFO: Most likely issue has to do with `font-lock-multiline' stuff.
-;; Instead of using an anchor, maybe the best thing is to use the multiline property
-;; Same as with modules/instances, instead of using anchors
-
-(defvar verilog-ext-font-lock-struct-face 'verilog-ext-font-lock-struct-face)
-(defface verilog-ext-font-lock-struct-face
-  '((t (:foreground "light blue")))
-  "Face for struct variables."
-  :group 'verilog-ext-font-lock-faces)
-
-(defvar verilog-ext-font-lock-enum-face 'verilog-ext-font-lock-enum-face)
-(defface verilog-ext-font-lock-enum-face
-  '((t (:foreground "light blue")))
-  "Face for enum variables."
-  :group 'verilog-ext-font-lock-faces)
-
-
-;; TODO:
-;; - [-] font lock checks @ autoinst_bug373
-;;   - Branch: font-lock
-;;   - [ ] There seemed to be a big issue with enum/struct multi fontifying
-;;     - [ ] Everytime there was a change in the text buffer, the font-lock was lost
-;;     - [ ] `font-lock-fontify-buffer' or `region' would fix it, but it has to be executed at some type of hook every time the file is saved or modified?
-
-(defun verilog-ext-font-lock-enum-fontify-anchor (limit)
-  "Fontify enum declaration anchor."
-  (when (and verilog-fontify-variables
-             (verilog-re-search-forward verilog-typedef-enum-re limit t)
-             (progn (verilog-forward-syntactic-ws)
-                    (looking-at "{"))
-             (progn (ignore-errors (forward-sexp))
-                    (backward-char)
-                    (looking-at "}")))
-    (forward-char)
-    (point)))
-
-(defun verilog-ext-font-lock-struct-fontify-anchor (limit)
-  "Fontify struct declarations."
-  (when (and verilog-fontify-variables
-             (verilog-re-search-forward verilog-ext-font-lock-typedef-struct-re limit t)
-             (verilog-re-search-forward "{" limit t)
-             (progn (backward-char)
-                    (ignore-errors (forward-sexp))
-                    (backward-char)
-                    (looking-at "}")))
-    (forward-char)
-    (point)))
-;; End of TODO:
-
-
-;; TODO: Put this inside `verilog-ext-font-lock-keywords-3'
-   ;; Fontify (typedef) enum vars
-   (list
-    'verilog-ext-font-lock-enum-fontify-anchor
-    (list
-     verilog-identifier-sym-re
-     '(verilog-pos-at-end-of-statement)
-     nil
-     '(0 'font-lock-builtin-face))) ; TODO: Choose proper colors
-   ;; Fontify (typedef) struct vars
-   (list
-    'verilog-ext-font-lock-struct-fontify-anchor
-    (list
-     verilog-identifier-sym-re
-     nil
-     nil
-     '(0 'font-lock-builtin-face))) ; TODO: Choose proper colors
-   ;; ;; End of TODO
-
-
-
-
 ;;; Completion
 ;; TODO: Company improvements/ideas:
 ;;  - Add a company-backend that fetches attributes/methods of class after typing name. and then completing:
@@ -1021,73 +905,9 @@ Regex search bound to LIMIT."
 
 
 ;;; Imenu
-;; TODO: Do something to catch class external functions/tasks in a different category and strip the class_identifier
-;; Something like parsing function class_identifier::identifier
-;;   1 - Create the regexp of task::<name>
-;;   2 - Modify current regexp for tasks/functions that include : and is used somewhere else
-;;   3 - Add new entry in verilog-ext-imenu-generic-expression
-;;   4 - Modify verilog-ext-imenu-find-task-function-outside-class-bwd so that it also includes in the or the new regexp
-;;   5 - Adapt capture groups so that the prefix class_name:: is removed
-;;   6 - Maybe in the future do something to include it in an subgroup same as classes (a bit more complex)
-;;
 ;; TODO: Do a minor-mode that adds/removes the hooks?
 ;;  - (add-hook 'verilog-mode-hook #'verilog-ext-imenu-hook)
 ;;
-;; TODO:
-;; - `verilog-ext-imenu-find-task-function-outside-class-bwd' and `verilog-ext-imenu-build-class-tree':
-;; - Do something so that it can also recognize static, virtual, protected tasks/functions
-;;   Instead of doing regexp search on task|function|class, do it on (verilog-ext-task-re|verilog-ext-function-re|verilog-ext-class-re)
-;;   Maybe review everywhere where this regexps are used, and change the capture groups so that there is a first capture group
-;;   ANd modify what to report in this imenu depending on that
-(defun verilog-ext-imenu--format-class-item-label (type name)
-  "Return Imenu label for single node using TYPE and NAME."
-  (let ((short-type (pcase type
-                      ("task"             "[T]:  ")
-                      ("static task"      "[ST]: ")
-                      ("virtual task"     "[VT]: ")
-                      ("function"         "[F]:  ")
-                      ("static function"  "[SF]: ")
-                      ("virtual function" "[VF]: ")
-                      ("class"            "")
-                      ("virtual class"    "(virtual) ")
-                      (_          type))))
-    (format "%s%s" short-type name)))
-
-
-(defun verilog-ext-imenu--build-class-tree (&optional tree)
-  "Build the imenu class alist TREE recursively.
-Finds recursively tasks and functions inside classes."
-  (save-restriction
-    (narrow-to-region (point-min) (point))
-    (let* ((pos (progn
-                  (verilog-re-search-backward verilog-ext-class-re nil 'move)
-                  (verilog-forward-sexp)
-                  ;; TODO: Trying to make it static/pure/virtual etc
-                  (verilog-re-search-backward "\\<\\(function\\|task\\|class\\)\\>" nil t)
-                  ;; (verilog-re-search-backward "\\(\\(\\<\\(static\\|pure\\|virtual\\|local\\|protected\\)\\>\\s-+\\)?\\<\\(function\\|task\\|class\\)\\>\\)" nil t)))
-                  (verilog-re-search-backward "\\<\\(static\\|pure\\|virtual\\|local\\|protected\\)\\>\\s-+" (line-beginning-position) t) ; Somehow worked a bit
-                  (point)
-                  ))
-           (type (when (and pos
-                            (or (looking-at verilog-ext-task-re)
-                                (looking-at verilog-ext-function-re)
-                                (looking-at verilog-ext-class-re)))
-                   (match-string-no-properties 1)))
-           (name (match-string-no-properties 2))
-           (label (when name
-                    (verilog-ext-imenu--format-class-item-label type name))))
-      (cond (
-             ;; (not pos)
-             (bobp) ; TODO: However, caused problems when wrongly detected a typedef class at the beginning of the file (exceeded recursive nesting)
-             nil)
-            ((looking-at verilog-ext-class-re)
-             (verilog-ext-imenu--class-put-parent type name pos tree))
-            ((or (looking-at verilog-ext-task-re)
-                 (looking-at verilog-ext-function-re))
-             (verilog-ext-imenu--build-class-tree (cons (cons label pos) tree)))
-            (t ; Build subtrees recursively
-             (verilog-ext-imenu--build-class-tree (cons (verilog-ext-imenu--build-class-tree (list (cons label pos))) tree)))))))
-
 
 ;; About nesting classes:
 ;; The original definition held a jump-label lexical variable, fetched from python-mode imenu build function
@@ -1103,7 +923,6 @@ If optional arg ADD is non-nil, add the parent with TYPE, NAME and POS to TREE."
       (if add
           (cons label (cons (cons jump-label pos) tree))
         (cons label tree)))))
-
 
 (defun verilog-ext-imenu--build-class-tree (&optional tree)
   "Build the imenu alist TREE recursively.
@@ -1140,7 +959,6 @@ Adapted from `python-mode' imenu build-tree function."
                   (list (cons label pos)))
                  tree))))))))
 
-
 ;; TODO: Use fonts for Imenu to differentiate between functions/tasks
 ;; INFO: Tested and worked!
 (defun verilog-ext-imenu--format-class-item-label (type name)
@@ -1153,8 +971,8 @@ Adapted from `python-mode' imenu build-tree function."
     (format "%s" (propertize name 'face prop))))
 
 ;; INFO: Different imenu implementations override faces:
-;;  - e.g. ivy-imenu will ignore faces
-;;  - imenu-list will only be affected by bold/italic, but not by foreground
+;;  - e.g. ivy-imenu somehow ignores faces? It worked once, but other times it didn't...
+;;  - imenu-list will only be affected by bold/italic, but not by foreground (overrides faces)
 ;;  - So probably the best option is use a tag at the beginning as it was first
 (defun verilog-ext-imenu--format-class-item-label (type name)
   "Return Imenu label for single node using TYPE and NAME."
@@ -1174,66 +992,11 @@ Adapted from `python-mode' imenu build-tree function."
 ;; class tasks/functions."
 
 
-;; TODO: Errors parsing /home/gonz/Programming/doc/SystemVerilog/UVM/UVM_src/1800.2-2020-1.1/src/base/uvm_phase.svh
-;; And UVM code in general...
-;; In `verilog-ext-imenu--build-class-tree'
-;;
-;; (type (when (and pos
-;;                  (or (looking-at verilog-ext-task-re)
-;;                      (looking-at verilog-ext-function-re)
-;;
-;; Maybe using `verilog-beg-of-statement' to detect the virtual/static/local/protected could be a good option
-
-
-;; TODO: Do something that adds to a top "External Task/Func if no method, and to method name if there is such"
-;; (defun verilog-ext-imenu-methods-index ()
-;;   ""
-;;   (save-excursion
-;;     (goto-char (point-max))
-;;     (let (entry index extern)
-;;       ;; (while (verilog-ext-imenu-find-tf-outside-class-bwd)
-;;       (while (verilog-ext-find-function-task-bwd)
-;;         (setq entry (match-string-no-properties 1))
-;;         (setq extern (match-string-no-properties 2))
-;;         (if extern
-;;             (push (cons entry (point)) index)
-;;             (progn ; Method
-;;               (push (cons entry (point)) index)
-;;               )
-;;           ;; Else, External task/function
-
-;;           )                             ;
-;;         )
-;;       (when index
-;;         (list (cons "Methods" index))))))
-;; End of TODO
-
-
-(defun verilog-ext-imenu-index ()
-  "Index builder function for Verilog Imenu.
-Makes use of `verilog-ext-imenu-generic-expression' for everything but classes
-and methods.  These are collected with `verilog-ext-imenu-classes-index'."
-  (append (verilog-ext-imenu-classes-index)
-          ;; (verilog-ext-imenu-methods-index) ; TODO
-          (imenu--generic-function verilog-ext-imenu-generic-expression)))
-
-
-
-
-;; INFO: Seems deprecable, was at an attempt of developing something in find function/task
-;; (defun verilog-ext-find-module-instance-imenu ()
-;;   "Wrap `verilog-ext-find-module-instance-bwd' for use in imenu.
-;; Previous function will only work if point is inside a module/interface for performance reasons.
-;; Imenu will always start at the end of the buffer."
-;;   (verilog-ext-find-module-instance-bwd nil :ignore-ctxt))
-
-
-
 
 ;;; Which-func
 ;; TODO: In `verilog-ext-block-at-point':
 ;;  - Do something more efficient:
-;;  - Look for all the possible regexps
+;;  - Look for all the possible regexps ??
 
 ;; TODO: Seems it's not used!
 (defun hdl-ext-which-func-current ()
@@ -1749,3 +1512,18 @@ added via -yDIR but as a source file and cannot be found."
 ;; - `verilog-preprocessor': `verilog-ext-preprocess' wrapper of verilog-mode internal function' does the trick
 ;; - `verilog-coverage' still not implemented as there are not many free alternatives...
 
+;;; Tree-sitter
+(defface tree-sitter-hl-face:error
+  '((default :inherit tree-sitter-hl-face:string :underline "red"))
+  ""
+  :group 'tree-sitter-hl-faces)
+
+(defface tree-sitter-hl-face:verilog-instance
+  '((default :inherit verilog-ext-font-lock-instance-face))
+  ""
+  :group 'tree-sitter-hl-faces)
+
+(defface tree-sitter-hl-face:verilog-module
+  '((default :inherit verilog-ext-font-lock-module-face))
+  ""
+  :group 'tree-sitter-hl-faces)
