@@ -37,6 +37,9 @@
 (use-package tree-sitter-fold
   :straight (:host github :repo "junyi-hou/tree-sitter-fold"))
 (use-package tree-sitter-indent)
+(use-package ts-fold
+  :straight (:host github :repo "emacs-tree-sitter/ts-fold"))
+;; https://blog.meain.io/2022/more-treesitter-emacs/
 
 
 (use-package realgud)

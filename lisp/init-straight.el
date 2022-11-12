@@ -81,7 +81,12 @@
     (interactive)
     (unless straight-base-dir
       (error "Variable `straight-base-dir' not set!"))
-    (larumbe/git-check-dirty-repos (larumbe/straight-packages) "*straight-dirty*")))
+    (larumbe/git-check-dirty-repos (larumbe/straight-packages) "*straight-dirty*"))
+
+  (defun larumbe/straight-check-forked-repos ()
+    "Show straight forked repos/files in *straight-forked* buffer."
+    (interactive)
+    (larumbe/git-check-forked-repos (larumbe/straight-packages))))
 
 
 (provide 'init-straight)

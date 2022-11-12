@@ -40,22 +40,23 @@
 (defvar larumbe/emacs-conf-repos-packages '("~/.emacs.d/straight/repos/my-elisp-packages"
                                             "~/.emacs.d/straight/repos/my-elisp-packages-priv"
                                             "~/.emacs.d/straight/repos/verilog-ext"
-                                            "~/.emacs.d/straight/repos/vhdl-ext"))
+                                            "~/.emacs.d/straight/repos/vhdl-ext"
+                                            "~/.emacs.d/straight/repos/tree-sitter-langs"
+                                            ))
 (defvar larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos-core larumbe/emacs-conf-repos-packages))
 (defvar larumbe/emacs-conf-straight-forked
   '("~/.emacs.d/straight/repos/org-jira"           ; Keep forked: changes for non-Atlassian accounts
     "~/.emacs.d/straight/repos/yasnippet-snippets" ; Keep forked: get updates with --rebase
     "~/.emacs.d/straight/repos/jenkins.el"         ; Keep forked: deferred additions with some larumbe/
     "~/.emacs.d/straight/repos/magit-gerrit"       ; Keep forked: still untested
-    "~/.emacs.d/straight/repos/kmodi"              ; Try to not depend on modi/instance regexps to avoid commenting code and all of that (rebased local commits pushed on fork/larumbe)
     "~/.emacs.d/straight/repos/arch-packer"        ; Maybe with some refactoring, updates after 5 years, no PR in this project. Wait until I get arch in new computer
     "~/.emacs.d/straight/repos/helm-navi"          ; PR pending review
     "~/.emacs.d/straight/repos/emacs"              ; TODO: Ticket to python-mode (larumbe/python-fix-hs-special-modes-alist) / vhdl-mode hierarchy error fixed in Emacs 29
     "~/.emacs.d/straight/repos/verilog-mode"       ; Development as a maintainer
-  ;; TODO: Add PR to apheleia?
-  ;; TODO: Add PR to tree-sitter-langs?
-  ;; TODO: Add PR to aweshell?
-  ;; TODO: Add PR to eglot
+    ;; TODO: Add PR to apheleia?
+    ;; TODO: Add PR to tree-sitter-langs?
+    ;; TODO: Add PR to aweshell?
+    ;; TODO: Add PR to eglot
     )
   "Obtained through evaluation of: `(larumbe/git-check-forked-repos (larumbe/straight-packages))'")
 
