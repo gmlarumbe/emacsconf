@@ -121,6 +121,14 @@ However, uninstrumentation is done by evaluating the whole buffer."
     (call-interactively #'edebug-defun)))
 
 
+(defun larumbe/elisp-indent-defun ()
+  "Indent current defun."
+  (interactive)
+  (save-excursion
+    (mark-defun)
+    (indent-region (region-beginning) (region-end))))
+
+
 
 ;;;; Steve Purcell
 (defun sanityinc/headerise-elisp ()
