@@ -8,7 +8,7 @@
   :commands (larumbe/elisp-xref-set-dirs)
   :bind (:map emacs-lisp-mode-map
          ("C-c C-l"  . larumbe/load-file-current-buffer)
-         ("C-c C-b"  . larumbe/byte-compile-current-buffer)
+         ("C-c C-b"  . larumbe/byte-compile-current-buffer-or-dir)
          ("C-c C-f"  . larumbe/flycheck-eldoc-mode)
          ("C-c C-t"  . hydra-elisp/body)
          ("C-c C-e"  . larumbe/edebug-defun)

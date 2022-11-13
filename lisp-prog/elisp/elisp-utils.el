@@ -12,9 +12,12 @@
     (error "Cannot load non-Elisp files")))
 
 
-(defun larumbe/byte-compile-current-buffer ()
-  "Byte-compile file of current visited buffer."
-  (interactive)
+(defun larumbe/byte-compile-current-buffer-or-dir (&optional dir)
+  "Byte-compile file of current visited buffer.
+If prefix-arg is provided, recompile current DIR."
+  (interactive "P")
+  (if current-prefix-arg
+      (byte-recompile-directory default-directory 0 :force))
   (byte-compile-file buffer-file-name))
 
 
