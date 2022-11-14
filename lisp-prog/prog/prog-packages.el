@@ -167,7 +167,7 @@ Same as `hs-toggle-hiding', but do not exec: (posn-set-point (event-end e))"
   :bind (:map diff-mode-map
               ("M-o" . other-window)) ; Remove `M-o' binding (Overrides 'diff-goto-source, which is defined by `o' as well)
   :hook ((diff-mode . (lambda () (setq truncate-lines t)))
-         (diff-mode . linum-mode)))
+         (diff-mode . display-line-numbers-mode)))
 
 (use-package ediff
   :config

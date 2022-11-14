@@ -32,7 +32,7 @@
   (setq compilation-scroll-output 'first-error)
 
   (defun larumbe/compilation-hook ()
-    ;; Do not enable linum-mode since it slows down large compilation buffers
+    ;; Do not enable line numbers since it slows down large compilation buffers
     (setq truncate-lines t)
     ;; Split compilation vertically: https://stackoverflow.com/questions/966191/how-can-i-get-the-compilation-buffer-on-the-bottom-rather-than-on-the-right-in-em/
     (setq-local split-width-threshold nil))
