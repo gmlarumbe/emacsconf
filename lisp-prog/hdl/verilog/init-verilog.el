@@ -16,8 +16,6 @@
          (";"       . nil) ; Unmap automatically indent lines after ;
          ("C-;"     . nil) ; Leave space for faster buffer switching
          ("C-M-h"   . verilog-mark-defun)
-         ("C-M-p"   . backward-paragraph)
-         ("C-M-n"   . forward-paragraph)
          ("C-c C-o" . verilog-pretty-expr) ; C-c C-i same as C-c TAB that executes `verilog-pretty-declarations'
          ("C-c C-b" . nil)                 ; Unmap `verilog-submit-bug-report', leave space for something else
          ("C-c C-d" . nil)                 ; Unmap `verilog-goto-defun' until it's fixed, leave space for some verilog-ext function
@@ -78,6 +76,9 @@
          ("C-M-e"         . verilog-ext-nav-end-of-defun-dwim)
          ("C-M-d"         . verilog-ext-nav-down-dwim)
          ("C-M-u"         . verilog-ext-nav-up-dwim)
+         ("C-M-p"         . verilog-ext-nav-prev-dwim)
+         ("C-M-n"         . verilog-ext-nav-next-dwim)
+
          ("C-M-."         . verilog-ext-jump-to-parent-module)
 
          ("C-c c"         . verilog-ext-toggle-connect-port)
@@ -96,7 +97,7 @@
          ("<f9>"          . verilog-ext-vhier-current-file))
   :config
   (message "Setting up verilog-ext")
-  (verilog-ext-which-func-mode)
+  ;; (verilog-ext-which-func-mode) ; TODO: Poor performance, forces getting the imenu index to work while it shouldn't be necessary
   (setq verilog-ext-flycheck-eldoc-toggle t)
   (setq verilog-ext-flycheck-verible-rules '("-line-length"))
   (verilog-ext-flycheck-setup)

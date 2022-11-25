@@ -1527,3 +1527,8 @@ added via -yDIR but as a source file and cannot be found."
   '((default :inherit verilog-ext-font-lock-module-face))
   ""
   :group 'tree-sitter-hl-faces)
+
+
+;; (verilog-ext-profile-file "/vobs/fpga/cobra/src/paam_if_ext_ic/tb/src/paam_if_ext_ic_tb_top.sv")
+;; (verilog-ext-profile-file "/vobs/fpga/cobra/src/paam_if_ext_ic/tb/lib/env/sv/paam_if_ext_ic_ptd_engine_ref_model.svh")
+;; (verilog-ext-profile-imenu)
