@@ -80,7 +80,7 @@ If prefix arg is provided, force creation of a new ansi-term."
   :bind (:map vterm-copy-mode-map
          ("C-c C-t" . nil)
          ("C-c C-k" . vterm-copy-mode-done))
-  :bind (("C-," . vterm))
+  :bind (("C-M-/" . vterm)) ; Unmap `dabbrev-completion'
   :init
   (setq vterm-keymap-exceptions '("C-c" "C-x" "C-u" "C-h" "C-l" "M-x" "M-O" "M-o" "C-y" "M-y")) ; Exclude C-g
   (setq vterm-shell "zsh"))
@@ -89,7 +89,7 @@ If prefix arg is provided, force creation of a new ansi-term."
 
 (use-package aweshell
   :straight (:host github :repo "manateelazycat/aweshell")
-  :bind (("C-." . larumbe/aweshell-dwim))
+  :bind (("C-x C-M-/" . larumbe/aweshell-dwim))
   :bind (:map eshell-mode-map
          ("C-d" . larumbe/aweshell-delchar-or-eof))
   :init
