@@ -17,11 +17,12 @@
     (push 'cperl-mode cperl-program-alist)
     (dolist (arg cperl-program)
       (add-to-list 'cperl-program-alist arg :append))
-    (add-to-list 'eglot-server-programs cperl-program-alist))
-  ;; Verilog verible (still in alpha version)
-  (add-to-list 'eglot-server-programs '(verilog-mode "verible-verilog-ls")))
+    (add-to-list 'eglot-server-programs cperl-program-alist)))
 
-(use-package lsp-mode)
+(use-package lsp-mode
+  :init
+  (setq lsp-keymap-prefix "C-x l"))
+(use-package lsp-ui)
 (use-package lsp-ivy)
 
 ;; INFO: Requires libtree-sitter.so
@@ -43,13 +44,7 @@
 
 
 (use-package realgud)
-(use-package apheleia ; TODO: Do a PR to submit formatter: https://github.com/radian-software/apheleia section "Adding a formatter"
-  :diminish
-  :config
-  (add-to-list 'apheleia-formatters '(verible . ("verible-verilog-format"
-                                                 "--indentation_spaces" (number-to-string verilog-indent-level)
-                                                 "-")))
-  (add-to-list 'apheleia-mode-alist '(verilog-mode . verible)))
+(use-package apheleia :diminish)
 
 (use-package fic-mode
   :commands (larumbe/clean-fic-keywords-dir
