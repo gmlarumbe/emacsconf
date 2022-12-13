@@ -46,7 +46,7 @@
          ("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          ("M-."   . nil))               ; Will be overriden by `larumbe/prog-mode-definitions'
-  :bind (("C-x l" . larumbe/org-show-todos-agenda))
+  :bind (("C-x ," . larumbe/org-show-todos-agenda))
   :hook ((org-mode           . larumbe/org-mode-hook)
          (org-insert-heading . larumbe/org-insert-current-header))
   :config
