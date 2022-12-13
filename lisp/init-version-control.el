@@ -42,8 +42,8 @@ some day some change on a key is needed, make them be in sync."
     ;; `magit-gerrit'
     (when (locate-library "magit-gerrit")
       (define-key magit-status-mode-map magit-gerrit-popup-prefix #'magit-gerrit-popup)
-      (transient-append-suffix 'magit-dispatch "Q"
-        `(magit-gerrit-popup
+      (transient-append-suffix 'magit-dispatch "Q" ; INFO: For some reason, it requires to be run twice to show in the magit-dispatch menu
+        `(magit-gerrit-popup                       ; Tried with a separate variable but didn't work either.
           :key ,magit-gerrit-popup-prefix
           :description "Magit-Gerrit")))
     ;; `gerrit'
@@ -76,9 +76,9 @@ some day some change on a key is needed, make them be in sync."
   (setq magit-diff-refine-hunk t) ; Show word-granularity differences within diff hunks
   (setq magit-diff-highlight-hunk-body nil) ; Disable background gray highlighting of current hunk
   ;; INFO: Adding the same hook many times to the same function does not result in being executed more than once
-  (advice-add 'gerrit-dashboard        :before #'(lambda () (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)))
-  (advice-add 'gerrit-download         :before #'(lambda () (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)))
-  (advice-add 'gerrit-upload-transient :before #'(lambda () (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)))
+  (advice-add 'gerrit-dashboard        :before #'(lambda ()         (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)))
+  (advice-add 'gerrit-download         :before #'(lambda (changenr) (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)))
+  (advice-add 'gerrit-upload-transient :before #'(lambda ()         (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)))
   (larumbe/magit-customize-dispatch))
 
 
@@ -107,6 +107,24 @@ some day some change on a key is needed, make them be in sync."
 
 
 ;;;;; Gerrit
+(use-package egerrit
+  :straight (:host sourcehut
+             :repo "niklaseklund/egerrit")
+  :commands egerrit-dashboard
+  :config
+  ;; INFO: Removed the -is:wip and -is:ignored things from default value
+  (setq egerrit-changes-queries
+        `(("Gerrit Dashboard" . (("Has draft comments" . ("has:draft"))
+                                 ("Your turn"          . ("attention:self"))
+                                 ("Work in progress"   . ("is:open owner:self"))
+                                 ("Outgoing reviews"   . ("is:open owner:self"))
+                                 ("Incoming reviews"   . ("is:open -owner:self (reviewer:self OR assignee:self)"))
+                                 ("CCed on"            . ("is:open cc:self"))
+                                 ("Recently closed"    . ("is:closed -is:ignored (OR owner:self) (owner:self OR reviewer:self OR assignee:self OR cc:self)" 20))))
+          ("URL" . egerrit-query-from-url)
+          ("Custom" . egerrit-custom-query))))
+
+
 ;; https://github.com/emacsorphanage/magit-gerrit/issues/59
 ;; Original magit-gerrit was not maintained anymore and transfered to Emacsorphanage
 ;; after Tarsius looked at many different forks.
@@ -116,7 +134,8 @@ some day some change on a key is needed, make them be in sync."
              :fork (:repo "gmlarumbe/magit-gerrit"))
   :commands (magit-gerrit-popup)
   :init
-  (setq magit-gerrit-popup-prefix "R"))
+  (setq magit-gerrit-popup-prefix "R")
+  (setq magit-gerrit-push-to "for"))
 
 
 
@@ -126,7 +145,7 @@ some day some change on a key is needed, make them be in sync."
              gerrit-magit-insert-status
              larumbe/gerrit-magit-insert-status)
   :config
-  ;; INFO: Removed the -is:wip  and -is:ignored things from suggested config at https://github.com/thisch/gerrit.el
+  ;; INFO: Removed the -is:wip and -is:ignored things from suggested config at https://github.com/thisch/gerrit.el
   (setq gerrit-dashboard-query-alist
         '(("Assigned to me"   . "assignee:self (owner:self OR assignee:self) is:open")
           ("Outgoing reviews" . "is:open owner:self")
