@@ -31,6 +31,8 @@ before loading them, acting as autoloads.
 
 Some of the code is copied directly from the packages themselves. In case
 some day some change on a key is needed, make them be in sync."
+    ;; TODO: These additions might not be used frequently and cause magit to be very slow when pressing h or ?
+    ;; TODO: Do some profiling
     ;; `magit-lfs'
     (when (locate-library "magit-lfs")
       ;; Fetched from `magit-lfs' code to emulate an autoload
