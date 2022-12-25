@@ -1,111 +1,27 @@
-;;; Generic
-;; TODO:
-;;   - Clean verilog-utils
-;;     - find-module-instance and get-header seem deprecable, based on other functions
-;;     - Seems I prefer to use tokens instead of blocks/headers
-;;   - The block-end-comments-to-block-names review, convert it to a minor-mode maybe?
-;;   - What to do with the connect/disconnect/clean blanks ? Where to move? Editing is a nice place?
-;;   - Move the regexps of compilation-utils to verilog-compile?
+;;; Priority
 
-;; (require 'verilog-rx)
-;; (require 'verilog-shadow) ; INFO: Might be useful in the future for some semantic parsing stuff
-;; (require 'verilog-editing)
-;; (require 'verilog-compile) ; TODO: Rename to makefile? Add compilation regexps?
-;; (require 'verilog-timestamp) ; TODO: Change the 'work' section to a different name
-;; (require 'verilog-compile) ; TODO: Add compilation regexp support for verilog here (as a derived compilation mode maybe?)
-;; (require 'verilog-lsp)
-;; TODO: Add these things for apheleia, tree-sitter, etc...
+;; TODO: Do the templates stuff
+;; TODO: Do the vhier stuff
+;; TODO: Add demo and README.md
 
 
-;;; rx
-(require 'rx)
-
-(defmacro rx-verilog (&rest body-forms)
-  `(rx-let ((newline-or-space+ (+ (or blank "\n")))
-            (newline-or-space* (* (or blank "\n")))
-            (keyword* (* (+ (char "a-z")) (+ blank)))
-            (verilog-comments* (* (* blank) "//" (* nonl))) ; TODO: Review if this one is necessary
-            (verilog-param-port-list (group "(" (opt (+ (not ";"))) ")"))
-            (verilog-almost-anything-inside-port (group (opt (1+ (not (any ";./"))))))
-            (verilog-array-content (group (* "[" (+ nonl) "]")))
-            (verilog-identifier (group symbol-start
-                                       (or (group (any letter "_") (* (any letter digit "_$"))) ; Simple identifier
-                                           (group "\\" (+ letter)))                              ; Escaped identifier
-                                       symbol-end)))
-     ,@body-forms))
+;;; Opened Buffers status
 
 
-(defvar verilog-ext-module-instance-re
-  (rx-verilog
-   (rx bol (* blank)                                     ; Initial optional blanks
-       (group-n 1 verilog-identifier) newline-or-space*  ; Identifier
-       (* "#" newline-or-space* verilog-param-port-list verilog-almost-anything-inside-port) ; Optional parameters
-       ;; verilog-comments*                                 ; TODO: Review if this one is necessary
-                                        ; Parameter contents
-       (group-n 2 verilog-identifier)                    ; Instance name
-       (* blank) verilog-array-content newline-or-space* ; SystemVerilog sometimes instantiates array of modules with brackets after instance name
-       "("                                               ; Parenthesis before ports and connections
-       )))
-
-;; TODO: Modi, to find header (probably can be removed later)
-(defvar verilog-ext-header-words-re
-  (regexp-opt
-   '("case"
-     "class"
-     "clocking"
-     "`define"
-     "function"
-     "group"
-     "interface"
-     "module"
-     "program"
-     "primitive"
-     "package"
-     "property"
-     "sequence"
-     "specify"
-     "table"
-     "task")
-   'symbols))
+;;;; Hooks
 
 
-;; TODO: Maybe use it along with tokens to get capture groups and make these re functions more generic?
-(defvar verilog-ext-header-re
-  (rx-verilog
-   (rx bol (* blank) keyword* ; Optional virtual, local, protected
-       (group-n 1 (regex verilog-ext-header-words-re))
-       (+ blank) keyword* ;Optional void, static, automatic, ..
-       ;; Allow parsing extern methods like class::task
-       (group-n 2 (* verilog-identifier "::") verilog-identifier)
-       word-boundary)))
+(defun verilog-ext-save-buffer-hook ()
+  "Verilog hook to run when saving a buffer."
+  ;; (verilog-ext-typedef-var-decl-update)
+  )
+
+(add-hook 'after-save-hook #'verilog-ext-save-buffer-hook nil :local)
 
 
 
-(defvar verilog-ext-block-end-keywords '("end"
-                                          "join" "join_any" "join_none"
-                                          "endchecker"
-                                          "endclass"
-                                          "endclocking"
-                                          "endconfig"
-                                          "endfunction"
-                                          "endgroup"
-                                          "endinterface"
-                                          "endmodule"
-                                          "endpackage"
-                                          "endprimitive"
-                                          "endprogram"
-                                          "endproperty"
-                                          "endsequence"
-                                          "endtask")
-  "Verilog/SystemVerilog block end keywords.
-IEEE 1800-2012 SystemVerilog Section 9.3.4 Block names.")
 
-(defvar verilog-ext-block-end-keywords-re
-  (regexp-opt verilog-ext-block-end-keywords 'symbols)
-  "Regexp to match the Verilog/SystemVerilog block end keywords.
-See `verilog-ext-block-end-keywords' for more.")
-
-
+;;; Editing
 (defvar verilog-ext-end-keywords-complete-re
   (rx-verilog
    (rx bol
@@ -115,344 +31,16 @@ See `verilog-ext-block-end-keywords' for more.")
        (group-n 2 verilog-identifier)
        (* blank) eol)))
 
-;; (defvar verilog-ext-block-end-keywords-complete-re
-;;   (concat "^"
-;;           "\\(?1:[[:blank:]]*"
-;;           verilog-ext-block-end-keywords-re
-;;           "\\)"
-;;           "[[:blank:]]*//[[:blank:]]*"
-;;           "\\(\\(block:\\|"
-;;           modi/verilog-identifier-re "[[:blank:]]*::\\)[[:blank:]]*\\)*"
-;;           "\\(?2:" modi/verilog-identifier-re "\\)"
-;;           "[[:blank:]]*$"))
-
-
-
-
-;;; Navigation
-;; In `verilog-ext-find-module-instance-fwd':
-;;   TODO: Try to optimize it not to do the forward-line thing
-;;   TODO: Right now the `verilog-identifier-sym-re' catches things such as (Rst_n) and .Rst_n
-;;   It would be nice if it only recognized things that have an space before and after (a real symbol).
-;;   TODO: Could this be done modifying temporarily the syntax table? But that might be an issue for font-locking?
-;;
-;; INFO: It seems it works fine, with the small optimization of the parenthesis search and byte/native compilation.
-;; Probably the next step is jump into tree-sitter, instead of spend more time optimizing this shit.
-
-
-
-;; TODO: Was quite complicated to make this work properly, or at least how I intended to
-(defun verilog-ext-defun-same-level-next ()
-  "Move forward to the same defun-level."
-  (interactive)
-  (let* ((data (verilog-ext-block-at-point))
-         (block-type (alist-get 'type data))
-         (start (point))
-         temp-data end-pos)
-    (cond (;; Functions/tasks
-           (or (equal block-type "function")
-               (equal block-type "task"))
-           (when (setq temp-data (verilog-ext-point-inside-block-p 'class))
-             (setq end-pos (alist-get 'end-point temp-data))) ; Methods inside classes
-           (verilog-ext-find-function-task-fwd end-pos))
-          (;; Classes inside package
-           (equal block-type "class")
-           (verilog-ext-find-class-fwd))
-          (;; Package (top)
-           (or (equal block-type "module")
-               (equal block-type "interface")
-               (equal block-type "program")
-               (equal block-type "package"))
-           (verilog-re-search-forward verilog-ext-top-re nil t))
-          (t
-           (verilog-re-search-forward verilog-defun-tf-re-beg nil t)))))
-
-(defun verilog-ext-defun-same-level-prev ()
-  ""
-  (interactive)
-  ;; TODO: Do it analogously to 'prev' function
-  )
-
-
-(defun verilog-ext-nav-down-dwim ()
-  ""
-  (interactive)
-  (cond ((verilog-ext-scan-buffer-modules)
-         (call-interactively #'verilog-ext-find-module-instance-fwd))
-        ((or (verilog-ext-point-inside-block-p 'class)
-             (verilog-ext-point-inside-block-p 'package))
-         (call-interactively #'verilog-ext-defun-level-down))
-        (t
-         (verilog-ext-down-list))))
-
-(defun verilog-ext-nav-up-dwim ()
-  ""
-  (interactive)
-  (cond ((verilog-ext-scan-buffer-modules)
-         (call-interactively #'verilog-ext-find-module-instance-bwd-2))
-        ((or (verilog-ext-point-inside-block-p 'class)
-             (verilog-ext-point-inside-block-p 'package))
-         (call-interactively #'verilog-ext-defun-level-up))
-        (t
-         (verilog-ext-backward-up-list))))
-
-
-;;;; Modi
-;; TODO: Seems that instance is already handled
-;; TODO: What modi calls header would be what I call token
-;; TODO: Extend token-re to something more complex (like modi's) so that there are capture groups
-;; TODO: And it can be easier
-;; TODO: Take into account the rest of rx (like the ones used in imenu for task/func/class) etc
-
-;; TODO: This is required by some modi functions
-;; (require 'ag) ; Load `ag' package so `ag-arguments' get updated with --stats to jump to first match
-
-;; TODO: This was added at some point to verilog-modi in the Citrix server
-;; (add-to-list 'ag-arguments "--stats" :append) ; Just ensure
-
-;; (if (and (executable-find "global")
-;;          (projectile-project-root))
-;;     ;; (projectile-project-root)
-
-
-;; TODO: Modi headers are more complex than just looking for a word
-(defun verilog-ext-get-header (&optional fwd)
-  "Function to return the name of the block (module, class, package,
-function, task, `define) under which the point is currently present.
-
-If FWD is non-nil, do the block header search in forward direction;
-otherwise in backward direction.
-
-This function updates the local variable `verilog-ext-which-func-xtra'.
-
-For example, if the point is as below (indicated by that rectangle), \"top\"
-is returned and `verilog-ext-which-func-xtra' is updated to \"mod\" (short
-for \"module\").
-
-   module top ();
-   ▯
-   endmodule "
-  (let (block-type block-name return-val) ;return-val will be nil by default
-    (setq-local verilog-ext-which-func-xtra nil) ;Reset
-    (save-excursion
-      (when (if fwd
-                (re-search-forward verilog-ext-header-re nil :noerror)
-              (re-search-backward verilog-ext-header-re nil :noerror))
-        ;; Ensure that text in line or block comments is not incorrectly
-        ;; parsed as a Verilog block header
-        (when (not (equal (face-at-point) 'font-lock-comment-face))
-          ;; (message "---- 1 ---- %s" (match-string 1))
-          ;; (message "---- 2 ---- %s" (match-string 2))
-          ;; (message "---- 3 ---- %s" (match-string 3))
-          ;; (message "---- 4 ---- %s" (match-string 4))
-          (setq block-type (match-string 1))
-          (setq block-name (match-string 2))
-
-          (when (and (stringp block-name)
-                     (not (string-match verilog-ext-keywords-re
-                                        block-name)))
-            (setq-local verilog-ext-which-func-xtra
-                        (cond
-                         ((string= "class"     block-type) "class")
-                         ((string= "clocking"  block-type) "clk")
-                         ((string= "`define"   block-type) "macro")
-                         ((string= "group"     block-type) "group")
-                         ((string= "module"    block-type) "mod")
-                         ((string= "interface" block-type) "if")
-                         ((string= "package"   block-type) "pkg")
-                         ((string= "sequence"  block-type) "seq")
-                         (t (substring block-type 0 4)))) ;First 4 chars
-            (setq return-val block-name)))))
-    (when (featurep 'which-func)
-      ;; (modi/verilog-update-which-func-format)
-      )
-    return-val))
-
-
-;; TODO: Modi headers are more complex than just looking for a word
-(defun verilog-ext-jump-to-header-dwim (fwd)
-  "Jump to a module instantiation header above the current point. If
-a module instantiation is not found, jump to a block header if available.
-
-If FWD is non-nil, do that module instrantiation/header search in forward
-direction; otherwise in backward direction.
-
-Few examples of what is considered as a block: module, class, package, function,
-task, `define."
-  (interactive "P")
-  (if (verilog-ext-find-module-instance fwd)
-      (if fwd
-          (re-search-forward verilog-ext-module-instance-re nil :noerror)
-        (re-search-backward verilog-ext-module-instance-re nil :noerror))
-    (if fwd
-        (re-search-forward verilog-ext-header-re nil :noerror)
-      (re-search-backward verilog-ext-header-re nil :noerror))))
-
-
-
-;;; Utils
-;; With respect to `verilog-ext-point-inside-block-p':
-;;  - For generate thought to use `verilog-in-generate-region-p', however it didn't work as expected
-;;    - (see LarumbeNotes.org)
-;;
-;; To detect always/initial/final that do not have begin/end (only one sentence) use
-;; `verilog-end-of-statement'. This will detect either begin or ; but requires a bit
-;; more of code writing.
-
-
-;;;; Misc
-;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
-(defvar verilog-ext-open-dirs nil
-  "List with directories of current opened `verilog-mode' buffers.
-Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
-(defvar verilog-ext-open-pkgs nil
-  "List of currently opened SystemVerilog packages.")
-(defvar verilog-ext-open-pkgs-projectile nil
-  "List of current open packages at projectile project.")
-
-
-(defun verilog-ext-dirs-and-pkgs-of-open-buffers ()
-  "Return a list of directories from current verilog opened files.
-It also updates currently opened SystemVerilog packages.
-
-Used for flycheck and vhier packages."
-  (let ((verilog-opened-dirs)
-        (verilog-opened-pkgs)
-        (pkg-regexp "^\\s-*\\(?1:package\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)"))
-    (dolist ($buf (buffer-list (current-buffer)))
-      (with-current-buffer $buf
-        (when (string-equal major-mode "verilog-mode")
-          (unless (member default-directory verilog-opened-dirs)
-            (push default-directory verilog-opened-dirs))
-          (save-excursion
-            (goto-char (point-min))
-            (when (re-search-forward pkg-regexp nil t)
-              (unless (member (buffer-file-name) verilog-opened-pkgs)
-                (push (buffer-file-name) verilog-opened-pkgs)))))))
-    `(,verilog-opened-dirs ,verilog-opened-pkgs)))  ; Return list of dirs and packages
-
-
-(defun verilog-ext-update-project-pkg-list ()
-  "Update currently open packages on `verilog-ext-open-pkgs-projectile'.
-
-Only packages within current projectile project are added.
-To be used with vhier/flycheck.
-
-INFO: Limitations:
- - Packages included as sources might not be in the proper order.
- - Some sorting method could be used in the future:
-   - Extracting them from buffer file but in the order they have been
-     opened and reverse sorting, for example..."
-  (setq verilog-ext-open-pkgs-projectile nil) ; Reset list
-  (mapc
-   (lambda (pkg)
-     (when (string-prefix-p (projectile-project-root) pkg)
-       (unless (member pkg verilog-ext-open-pkgs-projectile)
-         (push pkg verilog-ext-open-pkgs-projectile))))
-   verilog-ext-open-pkgs)
-  ;; Return pkg-list
-  verilog-ext-open-pkgs-projectile)
-
-
-
-;;;; Hooks
-(defun verilog-ext-hook ()
-  "Verilog hook."
-  ;; TODO: Separate into various hooks:
-  ;;  1) Open dirs/pkgs: (TODO: Could be rewritten as opened files with .sv and opened files with .svh?)
-  (setq verilog-ext-open-dirs (nth 0 (verilog-ext-dirs-and-pkgs-of-open-buffers)))
-  (setq verilog-ext-open-pkgs (nth 1 (verilog-ext-dirs-and-pkgs-of-open-buffers)))
-  (setq verilog-library-directories verilog-ext-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
-  ;;  2) Flycheck active linter
-  (setq verilog-ext-flycheck-verilator-include-path verilog-ext-open-dirs)
-  (flycheck-select-checker verilog-ext-flycheck-active-linter)
-  ;;  4) Timestamp (TODO)
-  (verilog-ext-time-stamp-update)
-  ;;  5) Completion (TODO)
-  (setq-local yas-indent-line 'fixed))
-
-
-
-
-;;; Beautify
-;; TODO Add a function (C-c C-M-i) that aligns declarations of current paragraph
-;; TODO Add a function (C-c C-M-o) that aligns expressions of current paragraph
-;; TODO: Problem: paragraphs might not always be blocks of decl/expressions if there are no blank lines in between
-
-;; INFO: These didn't work because only work if point is at a declaration or at a expression
-;; Or in the case of a region, if the beginning or the point (don't remember)
-;; So these are not useful at all!
-(defun verilog-ext-pretty-declarations-block-at-point ()
-  "Align declarations of current block at point."
-  (interactive)
-  (save-mark-and-excursion
-    (let ((data (verilog-ext-block-at-point))
-          block name)
-      (unless data
-        (user-error "Not inside a block"))
-      (setq block (car data))
-      (setq name (nth 1 data))
-      (goto-char (nth 3 data))
-      (end-of-line)
-      (push-mark)
-      (goto-char (nth 2 data))
-      (beginning-of-line)
-      (setq mark-active t)
-      (verilog-pretty-declarations)
-      (message "Aligned declarations of %s : %s" block name))))
-
-(defun verilog-ext-pretty-expr-block-at-point ()
-  "Align expressions of current block at point."
-  (interactive)
-  (save-mark-and-excursion
-    (let ((data (verilog-ext-block-at-point))
-          block name)
-      (unless data
-        (user-error "Not inside a block"))
-      (setq block (car data))
-      (setq name (nth 1 data))
-      (goto-char (nth 3 data))
-      (end-of-line)
-      (push-mark)
-      (goto-char (nth 2 data))
-      (beginning-of-line)
-      (setq mark-active t)
-      (verilog-pretty-expr)
-      (message "Aligned expressions of %s : %s" block name))))
-
-;; TODO: Create function to gather typedefs of a directory and subdirectory?
-;;  - Useful for typedef alignment
-
-
-
-;;; Editing
-(defun verilog-ext-block-end-comments-to-block-names ()
-  "Convert valid block-end comments to ': BLOCK_NAME'.
-
-Examples: endmodule // module_name             → endmodule : module_name
-          endfunction // some comment          → endfunction // some comment
-          endfunction // class_name::func_name → endfunction : func_name
-          end // block: block_name             → end : block_name "
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward verilog-ext-end-keywords-complete-re nil :noerror)
-      ;; Make sure that the matched string after "//" is not a verilog keyword.
-      (when (not (string-match-p verilog-ext-keywords-re (match-string 2)))
-        (replace-match "\\1 : \\2")))))
-
-
-(define-minor-mode verilog-ext-block-end-comments-to-block-names-mode
-  ""
-  :global nil
-  (if verilog-ext-block-end-comments-to-block-names-mode
-      (progn
-        (add-hook 'verilog-mode-hook (lambda () (add-hook 'before-save-hook #'verilog-ext-block-end-comments-to-block-names nil :local)))
-        (message "Enabled gtags-update-async-minor-mode [current buffer]"))
-    (remove-hook 'verilog-mode-hook (lambda () (add-hook 'before-save-hook #'verilog-ext-block-end-comments-to-block-names nil :local)))
-    (message "Disabled gtags-update-async-minor-mode [current buffer]")))
-
-
+(defconst verilog-ext-block-end-keywords-complete-re
+  (concat "^"
+          "\\(?1:[[:blank:]]*"
+          verilog-ext-block-end-keywords-re
+          "\\)"
+          "[[:blank:]]*//[[:blank:]]*"
+          "\\(\\(block:\\|"
+          modi/verilog-identifier-re "[[:blank:]]*::\\)[[:blank:]]*\\)*"
+          "\\(?2:" modi/verilog-identifier-re "\\)"
+          "[[:blank:]]*$"))
 
 
 ;;; Templates
@@ -644,8 +232,443 @@ Environment files will be created at specified DIR (clocks, program, defs_pkg, c
     (verilog-ext-templ-testbench-env--top         top-file dut-file clocks-file)))
 
 
+
+
+;;;; Misc
+;; https://emacs.stackexchange.com/questions/16874/list-all-buffers-with-specific-mode (3rd answer)
+(defvar verilog-ext-open-dirs nil
+  "List with directories of current opened `verilog-mode' buffers.
+Used for verilog AUTO libraries, flycheck and Verilog-Perl hierarchy.")
+(defvar verilog-ext-open-pkgs nil
+  "List of currently opened SystemVerilog packages.")
+(defvar verilog-ext-open-pkgs-projectile nil
+  "List of current open packages at projectile project.")
+
+
+(defun verilog-ext-dirs-and-pkgs-of-open-buffers ()
+  "Return a list of directories from current verilog opened files.
+It also updates currently opened SystemVerilog packages.
+
+Used for flycheck and vhier packages."
+  (let ((verilog-opened-dirs)
+        (verilog-opened-pkgs)
+        (pkg-regexp "^\\s-*\\(?1:package\\)\\s-+\\(?2:[A-Za-z_][A-Za-z0-9_]+\\)"))
+    (dolist ($buf (buffer-list (current-buffer)))
+      (with-current-buffer $buf
+        (when (string-equal major-mode "verilog-mode")
+          (unless (member default-directory verilog-opened-dirs)
+            (push default-directory verilog-opened-dirs))
+          (save-excursion
+            (goto-char (point-min))
+            (when (re-search-forward pkg-regexp nil t)
+              (unless (member (buffer-file-name) verilog-opened-pkgs)
+                (push (buffer-file-name) verilog-opened-pkgs)))))))
+    `(,verilog-opened-dirs ,verilog-opened-pkgs)))  ; Return list of dirs and packages
+
+
+(defun verilog-ext-update-project-pkg-list ()
+  "Update currently open packages on `verilog-ext-open-pkgs-projectile'.
+
+Only packages within current projectile project are added.
+To be used with vhier/flycheck.
+
+INFO: Limitations:
+ - Packages included as sources might not be in the proper order.
+ - Some sorting method could be used in the future:
+   - Extracting them from buffer file but in the order they have been
+     opened and reverse sorting, for example..."
+  (setq verilog-ext-open-pkgs-projectile nil) ; Reset list
+  (mapc
+   (lambda (pkg)
+     (when (string-prefix-p (projectile-project-root) pkg)
+       (unless (member pkg verilog-ext-open-pkgs-projectile)
+         (push pkg verilog-ext-open-pkgs-projectile))))
+   verilog-ext-open-pkgs)
+  ;; Return pkg-list
+  verilog-ext-open-pkgs-projectile)
+
+
+
+;;;; Hooks
+(defun verilog-ext-hook ()
+  "Verilog hook."
+  ;; TODO: Separate into various hooks:
+  ;;  1) Open dirs/pkgs: (TODO: Could be rewritten as opened files with .sv and opened files with .svh?)
+  (setq verilog-ext-open-dirs (nth 0 (verilog-ext-dirs-and-pkgs-of-open-buffers)))
+  (setq verilog-ext-open-pkgs (nth 1 (verilog-ext-dirs-and-pkgs-of-open-buffers)))
+  (setq verilog-library-directories verilog-ext-open-dirs) ; Verilog *AUTO* folders (could use `verilog-library-files' for files)
+  ;;  2) Flycheck active linter
+  (setq verilog-ext-flycheck-verilator-include-path verilog-ext-open-dirs)
+  (flycheck-select-checker verilog-ext-flycheck-active-linter)
+  ;;  4) Timestamp (TODO)
+  (verilog-ext-time-stamp-update)
+  ;;  5) Completion (TODO)
+  (setq-local yas-indent-line 'fixed))
+
+
+
+
+
+
+;;; Generic
+;; TODO:
+;;   - Clean verilog-utils
+;;     - find-module-instance and get-header seem deprecable, based on other functions
+;;     - Seems I prefer to use tokens instead of blocks/headers
+;;   - The block-end-comments-to-block-names review, convert it to a minor-mode maybe?
+;;   - What to do with the connect/disconnect/clean blanks ? Where to move? Editing is a nice place?
+;;   - Move the regexps of compilation-utils to verilog-compile?
+
+;; (require 'verilog-rx)
+;; (require 'verilog-shadow) ; INFO: Might be useful in the future for some semantic parsing stuff
+;; (require 'verilog-editing)
+;; (require 'verilog-compile) ; TODO: Rename to makefile? Add compilation regexps?
+;; (require 'verilog-timestamp) ; TODO: Change the 'work' section to a different name
+;; (require 'verilog-compile) ; TODO: Add compilation regexp support for verilog here (as a derived compilation mode maybe?)
+;; (require 'verilog-lsp)
+;; TODO: Add these things for apheleia, tree-sitter, etc...
+
+
+;;; rx
+(require 'rx)
+
+(defmacro rx-verilog (&rest body-forms)
+  `(rx-let ((newline-or-space+ (+ (or blank "\n")))
+            (newline-or-space* (* (or blank "\n")))
+            (keyword* (* (+ (char "a-z")) (+ blank)))
+            (verilog-comments* (* (* blank) "//" (* nonl))) ; TODO: Review if this one is necessary
+            (verilog-param-port-list (group "(" (opt (+ (not ";"))) ")"))
+            (verilog-almost-anything-inside-port (group (opt (1+ (not (any ";./"))))))
+            (verilog-array-content (group (* "[" (+ nonl) "]")))
+            (verilog-identifier (group symbol-start
+                                       (or (group (any letter "_") (* (any letter digit "_$"))) ; Simple identifier
+                                           (group "\\" (+ letter)))                              ; Escaped identifier
+                                       symbol-end)))
+     ,@body-forms))
+
+
+(defvar verilog-ext-module-instance-re
+  (rx-verilog
+   (rx bol (* blank)                                     ; Initial optional blanks
+       (group-n 1 verilog-identifier) newline-or-space*  ; Identifier
+       (* "#" newline-or-space* verilog-param-port-list verilog-almost-anything-inside-port) ; Optional parameters
+       ;; verilog-comments*                                 ; TODO: Review if this one is necessary
+                                        ; Parameter contents
+       (group-n 2 verilog-identifier)                    ; Instance name
+       (* blank) verilog-array-content newline-or-space* ; SystemVerilog sometimes instantiates array of modules with brackets after instance name
+       "("                                               ; Parenthesis before ports and connections
+       )))
+
+;; TODO: Modi, to find header (probably can be removed later)
+(defvar verilog-ext-header-words-re
+  (regexp-opt
+   '("case"
+     "class"
+     "clocking"
+     "`define"
+     "function"
+     "group"
+     "interface"
+     "module"
+     "program"
+     "primitive"
+     "package"
+     "property"
+     "sequence"
+     "specify"
+     "table"
+     "task")
+   'symbols))
+
+
+;; TODO: Maybe use it along with tokens to get capture groups and make these re functions more generic?
+(defvar verilog-ext-header-re
+  (rx-verilog
+   (rx bol (* blank) keyword* ; Optional virtual, local, protected
+       (group-n 1 (regex verilog-ext-header-words-re))
+       (+ blank) keyword* ;Optional void, static, automatic, ..
+       ;; Allow parsing extern methods like class::task
+       (group-n 2 (* verilog-identifier "::") verilog-identifier)
+       word-boundary)))
+
+
+
+;;; Navigation
+;; In `verilog-ext-find-module-instance-fwd':
+;;   TODO: Try to optimize it not to do the forward-line thing
+;;   TODO: Right now the `verilog-identifier-sym-re' catches things such as (Rst_n) and .Rst_n
+;;   It would be nice if it only recognized things that have an space before and after (a real symbol).
+;;   TODO: Could this be done modifying temporarily the syntax table? But that might be an issue for font-locking?
+;;
+;; INFO: It seems it works fine, with the small optimization of the parenthesis search and byte/native compilation.
+;; Probably the next step is jump into tree-sitter, instead of spend more time optimizing this shit.
+
+
+
+;; TODO: Was quite complicated to make this work properly, or at least how I intended to
+(defun verilog-ext-defun-same-level-next ()
+  "Move forward to the same defun-level."
+  (interactive)
+  (let* ((data (verilog-ext-block-at-point))
+         (block-type (alist-get 'type data))
+         (start (point))
+         temp-data end-pos)
+    (cond (;; Functions/tasks
+           (or (equal block-type "function")
+               (equal block-type "task"))
+           (when (setq temp-data (verilog-ext-point-inside-block-p 'class))
+             (setq end-pos (alist-get 'end-point temp-data))) ; Methods inside classes
+           (verilog-ext-find-function-task-fwd end-pos))
+          (;; Classes inside package
+           (equal block-type "class")
+           (verilog-ext-find-class-fwd))
+          (;; Package (top)
+           (or (equal block-type "module")
+               (equal block-type "interface")
+               (equal block-type "program")
+               (equal block-type "package"))
+           (verilog-re-search-forward verilog-ext-top-re nil t))
+          (t
+           (verilog-re-search-forward verilog-defun-tf-re-beg nil t)))))
+
+(defun verilog-ext-defun-same-level-prev ()
+  ""
+  (interactive)
+  ;; TODO: Do it analogously to 'prev' function
+  )
+
+
+(defun verilog-ext-nav-down-dwim ()
+  ""
+  (interactive)
+  (cond ((verilog-ext-scan-buffer-modules)
+         (call-interactively #'verilog-ext-find-module-instance-fwd))
+        ((or (verilog-ext-point-inside-block-p 'class)
+             (verilog-ext-point-inside-block-p 'package))
+         (call-interactively #'verilog-ext-defun-level-down))
+        (t
+         (verilog-ext-down-list))))
+
+(defun verilog-ext-nav-up-dwim ()
+  ""
+  (interactive)
+  (cond ((verilog-ext-scan-buffer-modules)
+         (call-interactively #'verilog-ext-find-module-instance-bwd-2))
+        ((or (verilog-ext-point-inside-block-p 'class)
+             (verilog-ext-point-inside-block-p 'package))
+         (call-interactively #'verilog-ext-defun-level-up))
+        (t
+         (verilog-ext-backward-up-list))))
+
+
+;;;; Modi
+;; TODO: Seems that instance is already handled
+;; TODO: What modi calls header would be what I call token
+;; TODO: Extend token-re to something more complex (like modi's) so that there are capture groups
+;; TODO: And it can be easier
+;; TODO: Take into account the rest of rx (like the ones used in imenu for task/func/class) etc
+
+;; TODO: This is required by some modi functions
+;; (require 'ag) ; Load `ag' package so `ag-arguments' get updated with --stats to jump to first match
+
+;; TODO: This was added at some point to verilog-modi in the Citrix server
+;; (add-to-list 'ag-arguments "--stats" :append) ; Just ensure
+
+;; (if (and (executable-find "global")
+;;          (projectile-project-root))
+;;     ;; (projectile-project-root)
+
+
+;; TODO: Modi headers are more complex than just looking for a word
+(defun verilog-ext-get-header (&optional fwd)
+  "Function to return the name of the block (module, class, package,
+function, task, `define) under which the point is currently present.
+
+If FWD is non-nil, do the block header search in forward direction;
+otherwise in backward direction.
+
+This function updates the local variable `verilog-ext-which-func-xtra'.
+
+For example, if the point is as below (indicated by that rectangle), \"top\"
+is returned and `verilog-ext-which-func-xtra' is updated to \"mod\" (short
+for \"module\").
+
+   module top ();
+   ▯
+   endmodule "
+  (let (block-type block-name return-val) ;return-val will be nil by default
+    (setq-local verilog-ext-which-func-xtra nil) ;Reset
+    (save-excursion
+      (when (if fwd
+                (re-search-forward verilog-ext-header-re nil :noerror)
+              (re-search-backward verilog-ext-header-re nil :noerror))
+        ;; Ensure that text in line or block comments is not incorrectly
+        ;; parsed as a Verilog block header
+        (when (not (equal (face-at-point) 'font-lock-comment-face))
+          ;; (message "---- 1 ---- %s" (match-string 1))
+          ;; (message "---- 2 ---- %s" (match-string 2))
+          ;; (message "---- 3 ---- %s" (match-string 3))
+          ;; (message "---- 4 ---- %s" (match-string 4))
+          (setq block-type (match-string 1))
+          (setq block-name (match-string 2))
+
+          (when (and (stringp block-name)
+                     (not (string-match verilog-ext-keywords-re
+                                        block-name)))
+            (setq-local verilog-ext-which-func-xtra
+                        (cond
+                         ((string= "class"     block-type) "class")
+                         ((string= "clocking"  block-type) "clk")
+                         ((string= "`define"   block-type) "macro")
+                         ((string= "group"     block-type) "group")
+                         ((string= "module"    block-type) "mod")
+                         ((string= "interface" block-type) "if")
+                         ((string= "package"   block-type) "pkg")
+                         ((string= "sequence"  block-type) "seq")
+                         (t (substring block-type 0 4)))) ;First 4 chars
+            (setq return-val block-name)))))
+    (when (featurep 'which-func)
+      ;; (modi/verilog-update-which-func-format)
+      )
+    return-val))
+
+
+;; TODO: Modi headers are more complex than just looking for a word
+(defun verilog-ext-jump-to-header-dwim (fwd)
+  "Jump to a module instantiation header above the current point. If
+a module instantiation is not found, jump to a block header if available.
+
+If FWD is non-nil, do that module instrantiation/header search in forward
+direction; otherwise in backward direction.
+
+Few examples of what is considered as a block: module, class, package, function,
+task, `define."
+  (interactive "P")
+  (if (verilog-ext-find-module-instance fwd)
+      (if fwd
+          (re-search-forward verilog-ext-module-instance-re nil :noerror)
+        (re-search-backward verilog-ext-module-instance-re nil :noerror))
+    (if fwd
+        (re-search-forward verilog-ext-header-re nil :noerror)
+      (re-search-backward verilog-ext-header-re nil :noerror))))
+
+
+
+;;; Utils
+;; With respect to `verilog-ext-point-inside-block-p':
+;;  - For generate thought to use `verilog-in-generate-region-p', however it didn't work as expected
+;;    - (see LarumbeNotes.org)
+;;
+;; To detect always/initial/final that do not have begin/end (only one sentence) use
+;; `verilog-end-of-statement'. This will detect either begin or ; but requires a bit
+;; more of code writing.
+
+
+
+
+
+;;; Beautify
+;; TODO Add a function (C-c C-M-i) that aligns declarations of current paragraph
+;; TODO Add a function (C-c C-M-o) that aligns expressions of current paragraph
+;; TODO: Problem: paragraphs might not always be blocks of decl/expressions if there are no blank lines in between
+
+;; INFO: These didn't work because only work if point is at a declaration or at a expression
+;; Or in the case of a region, if the beginning or the point (don't remember)
+;; So these are not useful at all!
+(defun verilog-ext-pretty-declarations-block-at-point ()
+  "Align declarations of current block at point."
+  (interactive)
+  (save-mark-and-excursion
+    (let ((data (verilog-ext-block-at-point))
+          block name)
+      (unless data
+        (user-error "Not inside a block"))
+      (setq block (car data))
+      (setq name (nth 1 data))
+      (goto-char (nth 3 data))
+      (end-of-line)
+      (push-mark)
+      (goto-char (nth 2 data))
+      (beginning-of-line)
+      (setq mark-active t)
+      (verilog-pretty-declarations)
+      (message "Aligned declarations of %s : %s" block name))))
+
+(defun verilog-ext-pretty-expr-block-at-point ()
+  "Align expressions of current block at point."
+  (interactive)
+  (save-mark-and-excursion
+    (let ((data (verilog-ext-block-at-point))
+          block name)
+      (unless data
+        (user-error "Not inside a block"))
+      (setq block (car data))
+      (setq name (nth 1 data))
+      (goto-char (nth 3 data))
+      (end-of-line)
+      (push-mark)
+      (goto-char (nth 2 data))
+      (beginning-of-line)
+      (setq mark-active t)
+      (verilog-pretty-expr)
+      (message "Aligned expressions of %s : %s" block name))))
+
+;; TODO: Create function to gather typedefs of a directory and subdirectory?
+;;  - Useful for typedef alignment
+
+
+
+
 ;;; Font-lock
 ;;;; Variables
+(defconst verilog-ext-font-lock-range-optional-re "\\s-*\\(\\[[^]]*\\]\\s-*\\)*")
+;; Think I don't need it anymore...?
+;; There is `verilog-ext-range-optional-re' in `verilog-typedef'
+
+;; Obtained with:
+;; (dolist (word (cl-set-difference verilog-keywords verilog-type-keywords :test #'equal))
+;;   (insert "\"" word "\" "))
+;;   TODO: Can be removed?
+(defconst verilog-ext-font-lock-keywords-no-types
+  '("`__FILE__" "`__LINE" "`begin_keywords" "`celldefine" "`default_nettype"
+    "`define" "`else" "`elsif" "`end_keywords" "`endcelldefine" "`endif"
+    "`ifdef" "`ifndef" "`include" "`line" "`nounconnected_drive" "`pragma"
+    "`resetall" "`timescale" "`unconnected_drive" "`undef" "`undefineall"
+    "`case" "`default" "`endfor" "`endprotect" "`endswitch" "`endwhile" "`for"
+    "`format" "`if" "`let" "`protect" "`switch" "`timescale" "`time_scale"
+    "`while" "after" "alias" "always" "always_comb" "always_ff" "always_latch"
+    "assert" "assign" "assume" "automatic" "before" "begin" "bind" "bins"
+    "binsof" "bit" "break" "byte" "case" "casex" "casez" "cell" "chandle"
+    "class" "clocking" "config" "const" "constraint" "context" "continue"
+    "cover" "covergroup" "coverpoint" "cross" "deassign" "default" "design"
+    "disable" "dist" "do" "edge" "else" "end" "endcase" "endclass" "endclocking"
+    "endconfig" "endfunction" "endgenerate" "endgroup" "endinterface"
+    "endmodule" "endpackage" "endprimitive" "endprogram" "endproperty"
+    "endspecify" "endsequence" "endtable" "endtask" "enum" "event" "expect"
+    "export" "extends" "extern" "final" "first_match" "for" "force" "foreach"
+    "forever" "fork" "forkjoin" "function" "generate" "genvar" "highz0" "highz1"
+    "if" "iff" "ifnone" "ignore_bins" "illegal_bins" "import" "incdir" "include"
+    "initial" "inside" "instance" "int" "interface" "intersect" "join"
+    "join_any" "join_none" "large" "liblist" "library" "local" "longint"
+    "macromodule" "matches" "medium" "modport" "module" "negedge" "new"
+    "noshowcancelled" "null" "package" "packed" "posedge" "primitive" "priority"
+    "program" "property" "protected" "pulsestyle_onevent" "pulsestyle_ondetect"
+    "pure" "rand" "randc" "randcase" "randsequence" "ref" "release" "repeat"
+    "return" "scalared" "sequence" "shortint" "shortreal" "showcancelled"
+    "signed" "small" "solve" "specify" "specparam" "static" "string" "strong0"
+    "strong1" "struct" "super" "supply0" "supply1" "table" "tagged" "task"
+    "this" "throughout" "timeprecision" "timeunit" "type" "typedef" "union"
+    "unique" "unsigned" "use" "uwire" "var" "vectored" "virtual" "void" "wait"
+    "wait_order" "weak0" "weak1" "while" "wildcard" "with" "within" "accept_on"
+    "checker" "endchecker" "eventually" "global" "implies" "let" "nexttime"
+    "reject_on" "restrict" "s_always" "s_eventually" "s_nexttime" "s_until"
+    "s_until_with" "strong" "sync_accept_on" "sync_reject_on" "unique0" "until"
+    "until_with" "untyped" "weak" "implements" "interconnect" "nettype" "soft"))
+(defconst verilog-ext-font-lock-keywords-no-types-re
+  (verilog-regexp-words verilog-ext-font-lock-keywords-no-types))
+
+
+
 (defvar verilog-ext-font-lock-variable-type-face 'verilog-ext-font-lock-variable-type-face)
 (defface verilog-ext-font-lock-variable-type-face
   '((t (:foreground "powder blue")))
@@ -797,6 +820,38 @@ Regex search bound to LIMIT."
       (setq end (match-end 3))
       (set-match-data (list start end))
       (point))))
+
+
+;;;;; Another neat attempt
+
+(defun verilog-ext-font-lock-typedef-var-decl-fontify (regex limit)
+  "Fontify user types variables declarations.
+Search for REGEX that matches declaration bound by LIMIT."
+  (let (found pos type)
+    (save-excursion
+      (while (and (not found)
+                  (verilog-re-search-forward regex limit t))
+        (setq type (match-string-no-properties 1))
+        (unless (member type verilog-keywords)
+          (setq found t)
+          (setq pos (point)))))
+    (when found
+      (add-to-list 'verilog-align-typedef-words type) ; Allow being able to be aligned
+      (goto-char pos))))
+
+(defun verilog-ext-font-lock-typedef-var-single-decl-fontify (limit)
+  "Fontify user types single variables declarations."
+  (verilog-ext-font-lock-typedef-var-decl-fontify verilog-ext-typedef-var-decl-single-re limit))
+
+(defun verilog-ext-font-lock-typedef-var-multiple-decl-fontify (limit)
+  "Fontify user types single variables declarations."
+  (verilog-ext-font-lock-typedef-var-decl-fontify verilog-ext-typedef-var-decl-multiple-re limit))
+
+    ;; User type variable declarations
+    '(verilog-ext-font-lock-typedef-var-single-decl-fontify
+      (1 'font-lock-type-face))
+    '(verilog-ext-font-lock-typedef-var-multiple-decl-fontify
+      (1 'font-lock-type-face))
 
 
 ;;;; Custom constructs
@@ -1101,7 +1156,7 @@ Avoid minibuffer conflicts between ggtags use of eldoc and flycheck."
 
 
 ;; (define-minor-mode verilog-ext-flycheck-mode-toggle-toggle
-;;   "Flycheck wrapper that coexists with `eldoc'."
+n;;   "Flycheck wrapper that coexists with `eldoc'."
 ;;   :lighter ""
 ;;   (when verilog-ext-flycheck-mode-toggle-toggle
 ;;     (if eldoc-mode
@@ -1532,3 +1587,133 @@ added via -yDIR but as a source file and cannot be found."
 ;; (verilog-ext-profile-file "/vobs/fpga/cobra/src/paam_if_ext_ic/tb/src/paam_if_ext_ic_tb_top.sv")
 ;; (verilog-ext-profile-file "/vobs/fpga/cobra/src/paam_if_ext_ic/tb/lib/env/sv/paam_if_ext_ic_ptd_engine_ref_model.svh")
 ;; (verilog-ext-profile-imenu)
+
+
+;;; Lsp
+;; INFO: To make it work, just add the following at the end of the file so that verible gets added:
+;; (verilog-ext-lsp-configure)
+;; (verilog-ext-lsp-set-default-server)
+;;
+;; And execute M-x lsp RET on a verilog-mode buffer (or add it as a hook)
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Language servers:
+;; - Supported by `lsp-mode' without additional config:
+;;   - hdl_checker: https://github.com/suoto/hdl_checker
+;;   - svlangserver: https://github.com/imc-trading/svlangserver
+;;
+;; - With some additional config:
+;;   - verible: https://github.com/chipsalliance/verible/tree/master/verilog/tools/ls
+;;   - svls (svlint based): https://github.com/dalance/svls
+;;   - veridian: https://github.com/vivekmalneedi/veridian
+;;
+;; Summary:
+;;   - All of them somehow seem a bit simple at least with Emacs integration
+;;   (might need a bit of research)
+;;
+;; Some of these might be using slang (SystemVerilog Language Features), which seems a C++ library:
+;; - https://github.com/MikePopoloski/slang
+;;
+;;
+;; INFO: Problems encountered:
+;; 'verible-ls gave this error continuosly:
+;; Error running timer `lsp--on-idle': (wrong-type-argument number-or-marker-p nil)
+;;   - Some error probably relatd to `lsp-headerline--check-breadcrumb' due to 'verible-ls
+;;     being still in progress
+
+
+;; Tried to do it with `eglot-alternatives', but it seems better to set only one language server instead of all of them
+(defun verilog-ext-eglot-set-server ()
+  "Configure Verilog for `eglot'.
+Override any previous configuration for `verilog-mode'."
+  (interactive)
+  (setq eglot-server-programs (assq-delete-all 'verilog-mode eglot-server-programs))
+  (push (cons 'verilog-mode (eglot-alternatives verilog-ext-lsp-server-binaries))
+        eglot-server-programs))
+
+(alist-get 'verilog-mode eglot-server-programs)
+
+
+
+;;; Apheleia
+; TODO: Do a PR to submit formatter: https://github.com/radian-software/apheleia section "Adding a formatter"
+
+
+
+;;; Time-stamp (HP)
+;; INFO: Implemented as a minor-mode that's working
+;; The only thing that is really worth the effort taking a look in here, is the
+;; function `verilog-ext-time-stamp-work-new-entry', but in reality is not that important though.
+;; Could be useful if default header does not include a "Last Modified" field by default.
+;; In reality since VCS track modifications of a file, the only thing that really makes sense is
+;; to know when it was last modified, not the whole history of modifications.
+
+(defvar verilog-ext-time-stamp-profiles '("work" "personal"))
+(defvar verilog-ext-time-stamp-active-profile "work") ; Defaults to work
+
+(defun verilog-ext-time-stamp-set-profile ()
+  "Set active profile for verilog timestamp: work or personal."
+  (interactive)
+  (let ((profile (completing-read "Set timestamp profile: " verilog-ext-time-stamp-profiles)))
+    (setq verilog-ext-time-stamp-active-profile profile)))
+
+
+(defun verilog-ext-time-stamp-update ()
+  "Update `time-stamp' variables depending on current active profile."
+  (if (string= verilog-ext-time-stamp-active-profile "work")
+      (verilog-ext-time-stamp-work-update) ; Work
+    (verilog-ext-time-stamp-pers-update))) ; Personal
+
+
+;;;;; Work
+(defvar verilog-ext-time-stamp-work-boundary-re "\\(?1:[ ]?\\)\\* ------------------------------------------------------------------------------")
+(defvar verilog-ext-time-stamp-work-created-re  "\\(?1:^* \\)\\(?2:[a-z]+\\)\\(?3:[ ]+\\)\\(?4:[^ ]+\\)\\(?5:[ ]+\\)\\(?6:Created\\)")
+(defvar verilog-ext-time-stamp-work-modified-re "\\(?1:^* \\)\\(?2:[a-z]+\\)\\(?3:[ ]+\\)\\(?4:[^ ]+\\)\\(?5:[ ]+\\)\\(?6:Modified\\)")
+
+(defvar verilog-ext-time-stamp-work-start  (concat "* " user-login-name "  "))
+(defvar verilog-ext-time-stamp-work-format "%Y/%m/%d")
+(defvar verilog-ext-time-stamp-work-end    "   Modified")
+
+
+(defun verilog-ext-time-stamp-work-buffer-end-pos ()
+  "Return position of point at the end of the buffer timestamp.
+Return nil if no timestamp structure was found."
+  (save-excursion
+    (goto-char (point-min))
+    (re-search-forward verilog-ext-time-stamp-work-boundary-re nil t)
+    (re-search-forward verilog-ext-time-stamp-work-created-re nil t)
+    (re-search-forward verilog-ext-time-stamp-work-boundary-re nil t)))
+
+
+(defun verilog-ext-time-stamp-work-new-entry ()
+  "Create new time-stamp entry at header."
+  (interactive)
+  (let (initial-blank
+        pos)
+    (save-excursion
+      (setq pos (verilog-ext-time-stamp-work-buffer-end-pos))
+      (if pos
+          (progn
+            (goto-char pos)
+            (verilog-ext-time-stamp-work-buffer-end-pos)
+            (setq initial-blank (match-string-no-properties 1))
+            (beginning-of-line)
+            (open-line 1)
+            (insert (concat initial-blank verilog-ext-time-stamp-work-start))
+            (insert (format-time-string verilog-ext-time-stamp-work-format))
+            (insert verilog-ext-time-stamp-work-end))
+        (message "Could not find proper time-stamp structure!")))))
+
+
+(defun verilog-ext-time-stamp-work-update ()
+  "Update the 'Modified' entry `time-stamp.'"
+  (save-excursion
+    (goto-char (point-min))
+    (when (verilog-ext-time-stamp-work-buffer-end-pos) ; Activate time-stamp if structure is present
+      (setq-local time-stamp-start  verilog-ext-time-stamp-work-start)
+      (setq-local time-stamp-format verilog-ext-time-stamp-work-format)
+      (setq-local time-stamp-end    verilog-ext-time-stamp-work-end))))
+
+
+

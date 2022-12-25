@@ -49,8 +49,8 @@
   (setq verilog-minimum-comment-distance        1) ; (default 10) Only applies to AUTOs, called in `verilog-set-auto-endcomments'
   ;; Alignment
   (setq verilog-align-assign-expr t)
-  (setq verilog-align-typedef-words nil) ; INFO: Set on specific machines
-  (setq verilog-align-typedef-regexp (concat "\\<" verilog-identifier-re "_\\(t\\|e\\|s\\|if\\|vif\\|seq\\)\\>")) ; INFO: Set on specific machines
+  (setq verilog-align-typedef-words nil) ; Rely on `verilog-ext' to automatically update it
+  (setq verilog-align-typedef-regexp (concat "\\<" verilog-identifier-re "_\\(t\\|if\\|vif\\)\\>")) ; INFO: Set on specific machines
   ;; Mode config
   (remove-hook 'compilation-mode-hook 'verilog-error-regexp-add-emacs) ; `verilog-mode' automatically adds useless compilation regexp alists
   (advice-add 'electric-verilog-terminate-line :before-until #'larumbe/newline-advice)) ; Quit *xref* buffer with C-m/RET
