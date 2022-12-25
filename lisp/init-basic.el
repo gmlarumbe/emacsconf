@@ -34,7 +34,7 @@
 
 ;; Conf tweaking variables
 (defvar larumbe/gitignore-global-file (concat (getenv "HOME") "/.gitignore_global")) ; Variable used by `helm-rg', `counsel-rg' and `init-projectile'.
-(defvar larumbe/completion-framework 'ivy) ; 'ivy or 'helm are allowed values (helm will coexist with `ivy-switch-buffer')
+(defvar larumbe/completion-framework 'vertico) ; 'ivy or 'helm are allowed values (helm will coexist with `ivy-switch-buffer')
 
 (defvar larumbe/emacs-conf-repos-core '("~/.elisp" "~/.elisp_private"))
 (defvar larumbe/emacs-conf-repos-packages '("~/.emacs.d/straight/repos/my-elisp-packages"

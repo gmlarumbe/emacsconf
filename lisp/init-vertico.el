@@ -17,11 +17,15 @@
   :demand
   :config
   (setq completion-styles '(orderless basic)
-        completion-category-overrides '((file (styles basic partial-completion)))))
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles basic partial-completion))))
+  ;; (add-to-list 'orderless-matching-styles 'char-fold-to-regexp)
+  )
 
-(use-package prescient
-  :after vertico
-  :demand)
+;; INFO: Last time I looked for it didn't appear on recommended packages of vertico/orderless
+;; (use-package prescient
+;;   :after vertico
+;;   :demand)
 
 (use-package marginalia
   :after vertico
@@ -38,7 +42,7 @@
          ("M-g r"   . consult-ripgrep)
          ("M-I"     . consult-imenu)
          ("C-x c /" . larumbe/consult-find)
-         ("C-x c p" . counsel-list-processes)
+         ;; ("C-x c p" . counsel-list-processes)
          ("C-#"     . consult-outline)
          )
   :config
@@ -48,12 +52,34 @@
   (use-package consult-company
     :bind (("<C-return>" . consult-company))) ; Replaces `minibuffer' function `completion-at-point'
 
+  ;; TODO: Issue with symbol/case detection in consult symbol at point:
+  ;; https://github.com/minad/consult/issues/469
+  ;;  - Recommendation for support of regexps in `consult-line' is to use orderless
+  ;;  - It works well for everything if setting a symbol except if it's the last word of a line:
+  ;;    e.g: Running M-x `consult-line' and looking for \_<consult\_> will find everything except for:
+  ;;     (use-package consult
+  ;;  - However, adding a dot (hidden character?) after consult will only detect this previous line:
+  ;;     - \_<consult.\_>
+  ;;  - I read something about hidden characters added by `consult-buffer' in following issue:
+  ;;    - https://github.com/minad/consult/issues/365
+  ;;    In the wiki there is a section covering this:
+  ;;      - https://github.com/minad/consult/wiki
+  ;;    Orderless style dispatchers (Ensure that the $ regexp works with consult-buffer)
+  ;;      Unfortunately $ does not work out of the box with consult-buffer and consult-line since
+  ;;      these commands add disambiguation suffixes to the candidate strings. The problem can be
+  ;;      fixed by adjusting the filter regular expressions accordingly.
+  ;;      See this reddit post for more context.
+  ;;   There was a post afterwards about a sophisticated way of using orderless. Too much effort I guess...
+  ;;   Get back to ivy! I think I gave it a try...
   (defun larumbe/consult-symbol-at-point ()
     ""
     (interactive)
-    (let* ((case-fold-search nil)
+    (let* (
+           (case-fold-search nil)
+           (orderless-smart-case nil)   ; INFO: This is the one that has (or should) have an effect
            (sym-atp (thing-at-point 'symbol :noprops))
-           (initial-input (concat "\\_<" sym-atp "\\_>")))
+           (initial-input (concat "\\_<" sym-atp "\\_>"))
+           )
        (consult-line initial-input)))
 
   ;; https://github.com/minad/consult/wiki#find-files-using-fd
