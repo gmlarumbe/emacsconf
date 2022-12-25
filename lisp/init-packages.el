@@ -707,7 +707,6 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
          ("C-z"             . larumbe/pop-to-previous-mark)           ; Unmaps suspending frame
          ("C-x C-/"         . larumbe/pwd-to-kill-ring)
          ("C-x C-,"         . larumbe/revert-buffer-maybe-no-confirm)
-         ("C-M-<backspace>" . larumbe/kill-sexp-backwards)
          ("C-x C-h"         . larumbe/scratch-toggle)))
 
 (use-package larumbe-macros

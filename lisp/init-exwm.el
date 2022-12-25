@@ -215,6 +215,7 @@
   (exwm-input-set-key (kbd "s-;") #'async-shell-command)
   ;; Window/Frame movement/navigation
   (exwm-input-set-key (kbd "C-;")   #'ivy-switch-buffer)
+  (exwm-input-set-key (kbd "C-M-<backspace>") #'backward-kill-sexp)
   (exwm-input-set-key (kbd "M-o")   #'other-window) ; Replaces enriched faces
   (exwm-input-set-key (kbd "M-O")   #'other-frame)  ; Replaces 'negative argument
   (exwm-input-set-key (kbd "C-}")   #'larumbe/shrink-window-horizontally)

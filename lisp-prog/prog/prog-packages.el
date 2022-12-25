@@ -200,6 +200,8 @@ Same as `hs-toggle-hiding', but do not exec: (posn-set-point (event-end e))"
 
 ;; INFO: `delta' binary requires libc >= 2.28 and may not be usable on old machines
 (use-package diff-ansi
+  :straight (:host codeberg
+             :repo "ideasman42/emacs-diff-ansi")
   :commands (diff-ansi-mode diff-ansi-buffer)
   :config
   ;; TODO: Setup depending on machine (delta with diff-so-fancy setting might be a better option)
