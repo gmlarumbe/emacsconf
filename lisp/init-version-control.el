@@ -228,6 +228,8 @@ some day some change on a key is needed, make them be in sync."
 
 ;; Fast browsing of Git historic versions of a file.
 (use-package git-timemachine
+  :straight (:host codeberg
+             :repo "pidu/git-timemachine")
   :hook ((git-timemachine-mode . display-line-numbers-mode))
   :config
   (add-hook 'git-timemachine-mode-hook #'(lambda () (setq truncate-lines t))))
