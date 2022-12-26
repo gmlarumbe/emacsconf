@@ -61,48 +61,39 @@
   :after verilog-mode
   :demand
   :bind (:map verilog-mode-map
-         ;;TODO: Only during development
-         ("C-c C-l"       . verilog-ext-tree-sitter-hl-mode-enable)
-         ;; End of TODO
+         ;; Default keys override
          ("TAB"           . verilog-ext-electric-verilog-tab)
          ("M-d"           . verilog-ext-kill-word)
          ("M-f"           . verilog-ext-forward-word)
          ("M-b"           . verilog-ext-backward-word)
          ("C-<backspace>" . verilog-ext-backward-kill-word)
-
+         ;; Features
+         ("M-i"           . verilog-ext-imenu-list)
+         ("C-c C-p"       . verilog-ext-preprocess)
+         ("C-c C-f"       . verilog-ext-flycheck-mode-toggle)
+         ("C-c C-t"       . verilog-ext-hydra/body)
+         ("C-c C-v"       . verilog-ext-vhier-current-file)
+         ;; Code beautifying
          ("C-M-i"         . verilog-ext-indent-block-at-point)
-
+         ("C-c b"         . verilog-ext-module-at-point-beautify)
+         ;; Dwim navigation
          ("C-M-a"         . verilog-ext-nav-beg-of-defun-dwim)
          ("C-M-e"         . verilog-ext-nav-end-of-defun-dwim)
          ("C-M-d"         . verilog-ext-nav-down-dwim)
          ("C-M-u"         . verilog-ext-nav-up-dwim)
          ("C-M-p"         . verilog-ext-nav-prev-dwim)
          ("C-M-n"         . verilog-ext-nav-next-dwim)
-
+         ;; Module navigation
          ("C-M-."         . verilog-ext-jump-to-parent-module)
-
+         ;; Port connections
          ("C-c c"         . verilog-ext-toggle-connect-port)
-         ("C-c C-c"       . verilog-ext-connect-ports-recursively)
-         ("C-c C-c"       . verilog-ext-toggle-connect-port)
-
-         ("C-c a"         . verilog-ext-module-at-point-align-ports)
-         ("C-c l"         . verilog-ext-module-at-point-align-params)
-         ("C-c i"         . verilog-ext-module-at-point-indent)
-         ("C-c b"         . verilog-ext-module-at-point-beautify)
-
-         ("M-i"           . verilog-ext-imenu-list)
-         ("C-c C-p"       . verilog-ext-preprocess)
-         ("C-c C-f"       . verilog-ext-flycheck-mode-toggle)
-         ("C-c C-t"       . verilog-ext-hydra/body)
-         ("<f9>"          . verilog-ext-vhier-current-file))
-  :config
-  (message "Setting up verilog-ext")
-  ;; (verilog-ext-which-func-mode) ; TODO: Poor performance, forces getting the imenu index to work while it shouldn't be necessary
+         ("C-c C-c"       . verilog-ext-connect-ports-recursively))
+  :init
+  (setq verilog-ext-snippets-dir "~/.emacs.d/straight/repos/verilog-ext/snippets")
   (setq verilog-ext-flycheck-eldoc-toggle t)
   (setq verilog-ext-flycheck-verible-rules '("-line-length"))
-  (verilog-ext-flycheck-setup)
+  :config
   (verilog-ext-flycheck-set-linter 'verilog-verible)
-  (setq verilog-ext-snippets-dir "~/.emacs.d/straight/repos/verilog-ext/snippets")
   (verilog-ext-add-snippets))
 
 

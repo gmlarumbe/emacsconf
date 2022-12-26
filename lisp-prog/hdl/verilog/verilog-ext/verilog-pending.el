@@ -1717,3 +1717,42 @@ Return nil if no timestamp structure was found."
 
 
 
+
+
+;;; README.md
+
+## Why not inside `verilog-mode` ? ##
+
+One of the reasons is that `verilog-ext` overrides some functionality of `verilog-mode` (e.g. syntax highlighting).
+Since not every user of `verilog-mode` would accept some of these changes, `verilog-ext` offers modularity with respect to which functionality to use.
+
+Another reason is that `verilog-ext` only supports GNU Emacs (tested in 28.1) in contrast to `verilog-mode` which also aims to be compatible with XEmacs.
+Backwards compatibility with XEmacs would prevent development from using new neat features such as `lsp` or `tree-sitter`.
+
+On the other hand, since the development of `verilog-ext` happens on GitHub, it is not restricted by the FSF contributor agreement and everyone can easily contribute to the project.
+Eventually, maintainers of `verilog-mode` could agree on including some `verilog-ext` functionality inside `verilog-mode` for newer Emacs releases.
+
+
+# WIP/TODO #
+
+## Doc website ##
+
+Use a .org file as an input for GitHub README and HTML doc website.
+
+## Tree-sitter ##
+
+There is some work done with `tree-sitter`. Since Emacs 29 includes it as part of the core, many of the functionalities
+here could be replaced and optimized by using `tree-sitter` instead of regexp based search.
+
+## Completion ##
+
+A good `completion-at-point` function would include symbols indexing for a project (e.g. same as `ggtags`). This could
+be used by a function of `completion-at-point-functions` to determine contextually what type of completion is needed.
+
+
+## Hierarchy display ##
+
+Right now hierarchy is shown via `outline-minor-mode` and `outshine`. Other alternatives such as builtin `hierarchy`
+or `treemacs` could offer better results.
+
+
