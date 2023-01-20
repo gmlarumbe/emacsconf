@@ -60,9 +60,14 @@
   :straight (:host github :repo "gmlarumbe/verilog-ext")
   :after verilog-mode
   :demand
+  :mode (("\\.v\\'"   . verilog-ts-mode)
+         ("\\.sv\\'"  . verilog-ts-mode)
+         ("\\.vh\\'"  . verilog-ts-mode)
+         ("\\.svh\\'" . verilog-ts-mode))
   :bind (:map verilog-mode-map
          ;; Default keys override
          ("TAB"           . verilog-ext-electric-verilog-tab)
+         ("TAB"           . nil)        ; For ts mode
          ("M-d"           . verilog-ext-kill-word)
          ("M-f"           . verilog-ext-forward-word)
          ("M-b"           . verilog-ext-backward-word)
@@ -87,14 +92,63 @@
          ("C-M-."         . verilog-ext-jump-to-parent-module)
          ;; Port connections
          ("C-c c"         . verilog-ext-toggle-connect-port)
-         ("C-c C-c"       . verilog-ext-connect-ports-recursively))
+         ("C-c C-c"       . verilog-ext-connect-ports-recursively)
+
+         ;; Others
+         ("C-M-f" . verilog-ts-mode-forward-sexp)
+         ("C-M-b" . verilog-ts-mode-backward-sexp)
+         )
+  :init
+  :bind (:map verilog-ts-mode-map
+         ;; Default keys override
+         ("TAB"           . indent-for-tab-command) ; Default value
+         ;; TODO: Fix syntax table and remove those at some point
+         ("M-d"           . verilog-ext-kill-word)
+         ("M-f"           . verilog-ext-forward-word)
+         ("M-b"           . verilog-ext-backward-word)
+         ("C-<backspace>" . verilog-ext-backward-kill-word)
+         ;; Features
+         ("M-i"           . verilog-ext-imenu-list) ; TODO: Use built-in imenu with ts
+         ("C-c C-p"       . verilog-ext-preprocess)
+         ("C-c C-f"       . verilog-ext-flycheck-mode-toggle)
+         ("C-c C-t"       . verilog-ext-hydra/body)
+         ("C-c C-v"       . verilog-ext-vhier-current-file)
+         ;; Code beautifying
+         ("C-M-i"         . verilog-ext-indent-block-at-point) ; TODO: Using ts
+         ("C-c b"         . verilog-ext-module-at-point-beautify) ; TODO: Using ts
+         ;; Dwim navigation
+         ;; TODO: All of them using ts
+         ("C-M-a"         . verilog-ext-nav-beg-of-defun-dwim)
+         ("C-M-e"         . verilog-ext-nav-end-of-defun-dwim)
+         ("C-M-d"         . verilog-ext-nav-down-dwim)
+         ("C-M-u"         . verilog-ext-nav-up-dwim)
+         ("C-M-p"         . verilog-ext-nav-prev-dwim)
+         ("C-M-n"         . verilog-ext-nav-next-dwim)
+         ;; Module navigation
+         ;; TODO: Maybe using ts?
+         ("C-M-."         . verilog-ext-jump-to-parent-module)
+         ;; Port connections
+         ("C-c c"         . verilog-ext-toggle-connect-port)
+         ("C-c C-c"       . verilog-ext-connect-ports-recursively)
+         ;; TODO: Also using ts
+         ;; Others
+         ("C-M-f" . verilog-ts-mode-forward-sexp)
+         ("C-M-b" . verilog-ts-mode-backward-sexp)
+         )
   :init
   (setq verilog-ext-snippets-dir "~/.emacs.d/straight/repos/verilog-ext/snippets")
   (setq verilog-ext-flycheck-eldoc-toggle t)
   (setq verilog-ext-flycheck-verible-rules '("-line-length"))
   :config
   (verilog-ext-flycheck-set-linter 'verilog-verible)
-  (verilog-ext-add-snippets))
+  (verilog-ext-add-snippets)
+
+  ;; TODO: Debugging
+  (setq treesit--indent-verbose t)
+  )
+
+
+
 
 
 ;; TODO: Should be a dynamic function? Depending on current project? Probably... yes!
