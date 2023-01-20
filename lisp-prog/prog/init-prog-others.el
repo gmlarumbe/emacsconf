@@ -235,7 +235,9 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 
 
 ;;;; JINJA
-(use-package jinja2-mode)
+(use-package jinja2-mode
+  :hook ((jinja2-mode . larumbe/prog-mode-keys)
+         (jinja2-mode . larumbe/prog-mode-hook))) ; Since it is not a child of prog-mode, requires common configuration settings
 
 
 

@@ -25,6 +25,7 @@
   (setq projectile-enable-caching t) ; Enable caching, otherwise `projectile-find-file' is really slow for large projects.
 
   (add-to-list 'projectile-globally-ignored-directories "*.repo") ; https://github.com/bbatsov/projectile/issues/1250
+  (add-to-list 'projectile-globally-ignored-directories "*@@$")   ; Ignore ClearCase versions
 
   (setq projectile-indexing-method 'hybrid) ; `alien' is the fastest indexing method (default), but ignores .projectile ignores
   ;; INFO: hybrid works fine for most of the cases allowing for ignoring of specific dirs.

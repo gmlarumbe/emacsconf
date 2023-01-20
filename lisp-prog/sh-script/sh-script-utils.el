@@ -60,7 +60,9 @@
 
 (defun larumbe/sh-mode-hook ()
   "Custom shell script hook."
-  (modify-syntax-entry ?+ "."))
+  (modify-syntax-entry ?+ ".")
+  (modify-syntax-entry ?: ".")
+  (modify-syntax-entry ?- "."))
 
 
 (provide 'sh-script-utils)
