@@ -77,7 +77,8 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
            (call-interactively #'org-open-at-point))
           ;; If not pointing to a file choose between different navigation functions
           ;;   - Verilog: try to jump to module at point if not over a tag
-          ((string= major-mode "verilog-mode")
+          ((or (string= major-mode "verilog-mode")
+               (string= major-mode "verilog-ts-mode"))
            (if def
                (larumbe/prog-mode-definitions-default def)
              ;; Context based jump if no thing-at-point:
@@ -128,7 +129,8 @@ and will be applied to only files of current `major-mode' if existing in `larumb
   (interactive)
   (let ((ref (thing-at-point 'symbol)))
     (cond (;; Verilog
-           (string= major-mode "verilog-mode")
+           (or (string= major-mode "verilog-mode")
+               (string= major-mode "verilog-ts-mode"))
            (if ref
                (larumbe/prog-mode-references-default ref)
              ;; Context based jump if no thing-at-point:
