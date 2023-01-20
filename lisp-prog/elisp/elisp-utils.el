@@ -108,7 +108,9 @@ Meant to be used as a hook to override default functionality of the whole `load-
                   lisp-interaction-mode-hook
                   ielm-mode-hook
                   eval-expression-minibuffer-setup-hook))
-    (add-hook hook #'eldoc-mode)))
+    (add-hook hook #'eldoc-mode))
+  ;; Treesit makes extensive use of @ for identifiers
+  (modify-syntax-entry ?@ "."))
 
 
 
