@@ -56,10 +56,10 @@ slow)."
       (interactive "P")
       (cond ((string= major-mode "dired-mode")
              (call-interactively #'isearch-forward))
-            ((or uarg (string= major-mode "compilation-mode"))
-             (call-interactively #'swiper-isearch))
+            (uarg
+             (call-interactively #'swiper))
             (t
-             (call-interactively #'swiper))))
+             (call-interactively #'swiper-isearch))))
 
     (defun larumbe/search-backward (&optional uarg)
       "Use isearch for dired-mode and swiper for the rest.
@@ -68,18 +68,21 @@ provided (e.g. large files where showing lines with `swiper' could be a bit
 slow)."
       (interactive "P")
       (cond ((string= major-mode "dired-mode")
-             (call-interactively #'isearch-forward))
-            ((or uarg (string= major-mode "compilation-mode"))
-             (call-interactively #'swiper-isearch))
+             (call-interactively #'isearch-backward))
+            (uarg
+             (call-interactively #'swiper-backward))
             (t
-             (call-interactively #'swiper-backward))))
+             (call-interactively #'swiper-isearch))))
 
-    (defun larumbe/symbol-at-point ()
-      "Use isearch for dired-mode and swiper for the rest."
-      (interactive)
-      (if (string= major-mode "dired-mode")
-          (call-interactively #'isearch-forward-symbol-at-point)
-        (call-interactively #'swiper-symbol-at-point)))
+    (defun larumbe/symbol-at-point (&optional uarg)
+      "Use isearch for dired-mode, swiper-isearch (no-line info) if UARG and swiper for the rest."
+      (interactive "P")
+      (cond ((string= major-mode "dired-mode")
+             (call-interactively #'isearch-forward-symbol-at-point))
+            (uarg
+             (call-interactively #'swiper-symbol-at-point))
+            (t
+             (call-interactively #'swiper-isearch-symbol-at-point))))
 
     ;; https://github.com/abo-abo/swiper/issues/1068
     ;; INFO: abo-abo's answer was fine but didn't take into account ignoring
@@ -105,6 +108,12 @@ slow)."
              (initial-input (concat "\\_<" sym-atp "\\_>")))
         (swiper initial-input)))
 
+    (defun swiper-isearch-symbol-at-point ()
+      (interactive)
+      (let* ((ivy-case-fold-search-default nil)
+             (sym-atp (thing-at-point 'symbol :noprops))
+             (initial-input (concat "\\_<" sym-atp "\\_>")))
+        (swiper-isearch initial-input)))
 
     (defun larumbe/swiper-C-s (&optional arg)
       "Move cursor vertically down ARG candidates.
