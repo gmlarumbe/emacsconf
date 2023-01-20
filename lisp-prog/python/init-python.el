@@ -80,7 +80,6 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
          ("C-c C-e" . nil) ; Unbind `elpy-multiedit-python-symbol-at-point', seems a useful command but better to rely on multiple cursors/ivy occurr and wgrep
          ("C-c C-f" . nil) ; Unbind `elpy-find-file', save space for `larumbe/python-flycheck-mode
          ("C-c C-n" . nil) ; Unbind `elpy-flymake-next-error', save space for `align-regexp'
-         ("C-c C-p" . nil) ; Unbind `elpy-flymake-previous-error', save space for `larumbe/python-send-line-or-region', do research on
          ("C-c C-o" . nil) ; Unbind `elpy-occur-definitions', `imenu-list' already shows defs and classes
          ("C-c C-s" . nil) ; Unbind `elpy-rgrep-symbol', save space for `larumbe/yas-insert-snippet-dwim'
          ("C-c C-t" . nil) ; Unbind `elpy-test': runs "python3 -m unittest discover", but I have nothing implemented
@@ -104,6 +103,7 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
          ("M-*"       . nil) ; Unbind `xref-pop-marker-stack'
          ("M-TAB"     . nil) ; Unbind `elpy-company-backend'
 
+         ("C-c C-p" . larumbe/elpy-shell-send-dwim) ; Unbind `elpy-flymake-previous-error', save space for `larumbe/python-send-line-or-region', do research on
          ("C-c C-l" . elpy-shell-send-statement-and-step)
          ("C-c C-b" . elpy-format-code)
          ("C-c ."   . elpy-goto-assignment)
@@ -123,6 +123,13 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
   ;; Elpy automatically adds with highest precedence the `elpy-company-backend'.
   (setq elpy-eldoc-show-current-function nil) ; Already have `which-func'
   (elpy-enable)
+
+  (defun larumbe/elpy-shell-send-dwim ()
+    "Send region if active, otherwise send statement and step."
+    (interactive)
+    (if (region-active-p)
+        (elpy-shell-send-region-or-buffer)
+      (elpy-shell-send-statement-and-step)))
 
   (defun larumbe/elpy-hook ()
     "Elpy hook."
