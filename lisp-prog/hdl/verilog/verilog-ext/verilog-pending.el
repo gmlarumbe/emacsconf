@@ -1756,3 +1756,134 @@ Right now hierarchy is shown via `outline-minor-mode` and `outshine`. Other alte
 or `treemacs` could offer better results.
 
 
+
+;;; Tree-sitter
+;; TODO:
+;;   1 - Check how to highlight ERROR
+;;   2 - How to defines macro multiline:
+;;     - /home/gonz/Programming/tree-sitter-verilog/grammar.js:170
+;;     - optseq('(', $.list_of_actual_arguments, ')')
+;;     - Add somehow the \ + \n until there is a newline without \
+;;   Seems they are already defined, but it's hard to higlight the text on them
+
+;; Indentation rules
+
+;; Default?
+;; (verilog-ts--default-indent parent-bol 4)
+
+;; TODO: Couldn't make it work: /vobs/fpga/cobra/src/paam_if_ext_ic/tb/tc/paam_if_ext_ic_ssw_default_tc.svh
+;; ((or (parent-is "(")
+;;      (parent-is "{"))
+;;  grand-parent 0)
+
+;; TODO: `include compiler directives still don't work inside packages as items?
+;; /home/gonz/Programming/FPGA/ucontroller/uvm_tb/uart_agent/uart_agent_pkg.sv
+
+
+;; Major-mode
+
+;; For treesiter-rules
+
+;; :feature 'error
+;; :language 'verilog
+;; '(
+;;   ;; TODO: Don't really work... Maybe is a thing of treesit Emacs core?
+;;   ((ERROR) @font-lock-type-face)
+;;   (ERROR
+;;    (simple-identifier) @font-lock-type-face)
+
+;;   ;; ;;
+;;   )
+
+
+
+;; Method qualifiers (virtual/local/protected/pure)
+;; (class_method
+;;  (method_qualifier) @function.builtin)
+
+
+;; Some Neovim queries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; User typedefs
+
+
+;; (package_scope
+;;  (package_identifier
+;;   (simple_identifier) @constant))
+
+;; (parameter_port_list
+;;  "#" @constructor)
+
+;; (modport_identifier
+;;  (modport_identifier
+;;   (simple_identifier) @field))
+
+;; (net_port_type1
+;;  (simple_identifier) @type)
+
+
+;; (text_macro_identifier
+;;  (simple_identifier) @constant)
+
+;; (module_declaration
+;;  (module_header
+;;   (simple_identifier) @constructor))
+
+
+;; (parameter_identifier
+;;  (simple_identifier) @parameter)
+
+
+;; (interface_port_declaration
+;;  (interface_identifier
+;;   (simple_identifier) @type))
+
+
+
+;; (function_subroutine_call
+;;  (subroutine_call
+;;   (tf_call
+;;    (simple_identifier) @function)))
+
+;; (function_subroutine_call
+;;  (subroutine_call
+;;   (system_tf_call
+;;    (system_tf_identifier) @function.builtin)))
+
+
+;; ;;TODO: fixme
+;; ;(assignment_pattern_expression
+;;  ;(assignment_pattern
+;;   ;(parameter_identifier) @field))
+
+;; (type_declaration
+;;   (data_type ["packed"] @label))
+
+
+
+;; (struct_union_member
+;;  (list_of_variable_decl_assignments
+;;   (variable_decl_assignment
+;;    (simple_identifier) @field)))
+
+;; (member_identifier
+;;  (simple_identifier) @field)
+
+;; (struct_union_member
+;;  (data_type_or_void
+;;   (data_type
+;;    (simple_identifier) @type)))
+
+
+;; TODO: Tests here
+;; (simple_identifier
+;;  (.match? @constant "after")) @constant
+
+
+;; ;; Error
+;; ;; TODO: Not sure if it's a good idea to highlight this
+;; ;; , since not all code is supported:
+;; ;;  - e.g.: macros inside ports show as an ERROR
+;; ;;  - external function declarations also show as ERROR
+;; ;; (ERROR) @error
