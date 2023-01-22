@@ -93,20 +93,16 @@
          ;; Port connections
          ("C-c c"         . verilog-ext-toggle-connect-port)
          ("C-c C-c"       . verilog-ext-connect-ports-recursively)
-
-         ;; Others
-         ("C-M-f" . verilog-ts-mode-forward-sexp)
-         ("C-M-b" . verilog-ts-mode-backward-sexp)
          )
   :init
   :bind (:map verilog-ts-mode-map
          ;; Default keys override
-         ("TAB"           . indent-for-tab-command) ; Default value
+         ("TAB"           . nil)
          ;; TODO: Fix syntax table and remove those at some point
-         ("M-d"           . verilog-ext-kill-word)
-         ("M-f"           . verilog-ext-forward-word)
-         ("M-b"           . verilog-ext-backward-word)
-         ("C-<backspace>" . verilog-ext-backward-kill-word)
+         ("M-d"           . nil)
+         ("M-f"           . nil)
+         ("M-b"           . nil)
+         ("C-<backspace>" . nil)
          ;; Features
          ("M-i"           . verilog-ext-imenu-list) ; TODO: Use built-in imenu with ts
          ("C-c C-p"       . verilog-ext-preprocess)

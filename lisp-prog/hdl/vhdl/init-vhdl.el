@@ -52,6 +52,7 @@
   :straight (:host github :repo "gmlarumbe/vhdl-ext")
   :after vhdl-mode
   :demand
+  :mode (("\\.vhd\\'" . vhdl-ts-mode))
   :bind (:map vhdl-mode-map
          ("C-M-d"   . vhdl-ext-find-entity-instance-fwd)
          ("C-M-u"   . vhdl-ext-find-entity-instance-bwd)
