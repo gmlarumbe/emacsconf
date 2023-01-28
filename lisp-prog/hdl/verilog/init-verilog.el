@@ -128,8 +128,8 @@
          ("C-c C-c"       . verilog-ext-connect-ports-recursively)
          ;; TODO: Also using ts
          ;; Others
-         ("C-M-f" . verilog-ts-mode-forward-sexp)
-         ("C-M-b" . verilog-ts-mode-backward-sexp)
+         ("C-M-f" . verilog-ts-forward-sexp)
+         ("C-M-b" . verilog-ts-backward-sexp)
          )
   :init
   (setq verilog-ext-snippets-dir "~/.emacs.d/straight/repos/verilog-ext/snippets")
