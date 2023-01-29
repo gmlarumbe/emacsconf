@@ -77,30 +77,6 @@ This will normally happen after calling `vhdl-ext-find-parent-module'"
 
 
 ;;;; Navigation
-;; TODO: Rewrite `vhdl-ext-find-parent-entity' so that it resembles that one of verilog-ext
-(defun vhdl-ext-find-parent-entity ()
-  "Find the places where the current VHDL entity is instantiated in the project.
-Fetched from `modi/verilog-find-parent-entity'"
-  (interactive)
-  (let ((entity-name)
-        (entity-instance-pcre)
-        (regexp)
-        (ag-arguments ag-arguments)) ; Save the global value of `ag-arguments'
-    ;; Get entity name
-    (save-excursion
-      (re-search-backward vhdl-ext-entity-re))
-    (setq entity-name (match-string-no-properties 2))
-    ;; Reformat regexp to PCRE:
-    ;; INFO: Regexp fetched from `vhdl-ext-instance-re', replaced "\\s-" with "[ ]", and dismissing \n to allow for easy elisp to pcre conversion
-    ;; Otherwise it was getting a real hell since `rxt-elisp-to-pcre' does not seem to support newlines conversion.
-    (setq regexp (concat "^[ ]*\\([a-zA-Z_][a-zA-Z0-9_-]*\\)[ ]*:[ ]*"
-                         "\\(\\(component[ ]+\\|configuration[ ]+\\|\\(entity[ ]+\\([a-zA-Z_][a-zA-Z0-9_-]*\\).\\)\\)\\)?"
-                         "\\(" entity-name "\\)[ ]*"))
-    (setq entity-instance-pcre (rxt-elisp-to-pcre regexp))
-    (setq ag-arguments (append ag-arguments '("--vhdl")))
-    (xref-push-marker-stack)
-    (ag-regexp entity-instance-pcre (projectile-project-root))))
-
 
 
 ;;;; Which func

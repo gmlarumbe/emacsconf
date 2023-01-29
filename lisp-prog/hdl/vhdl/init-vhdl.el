@@ -4,8 +4,7 @@
 
 
 (use-package vhdl-mode
-  :straight (:host github :repo "emacs-mirror/emacs" ; INFO: Remove when using Emacs 29.1
-             :files ("lisp/progmodes/vhdl-mode.el"))
+  :straight nil
   :bind (:map vhdl-mode-map
          ("C-M-a" . vhdl-beginning-of-defun)
          ("C-M-e" . vhdl-end-of-defun)
@@ -56,9 +55,8 @@
   :bind (:map vhdl-mode-map
          ("C-M-d"   . vhdl-ext-find-entity-instance-fwd)
          ("C-M-u"   . vhdl-ext-find-entity-instance-bwd)
-         ("C-c C-t" . vhdl-ext-hydra/body)
-         )
-  :hook ((vhdl-mode . vhdl-ext-flycheck-ghdl-hook))
+         ("C-M-."   . vhdl-ext-jump-to-parent-module)
+         ("C-c C-t" . vhdl-ext-hydra/body))
   :config
   (message "Initializating vhdl-ext")
   ;; Flycheck
