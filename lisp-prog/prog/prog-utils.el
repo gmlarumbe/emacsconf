@@ -75,6 +75,13 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
           ;;   - Org: `org-open-at-point'
           ((string= major-mode "org-mode")
            (call-interactively #'org-open-at-point))
+          ;; `lsp' works a bit different than the rest. Eglot works fine with this custom approach
+          (lsp-mode
+           (if def
+               (progn
+                 (lsp-find-definition)
+                 (larumbe/prog-mode-report-backend def nil 'lsp))
+             (call-interactively #'xref-find-definitions)))
           ;; If not pointing to a file choose between different navigation functions
           ;;   - Verilog: try to jump to module at point if not over a tag
           ((or (string= major-mode "verilog-mode")
@@ -91,7 +98,8 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
                    ;; Default fallback
                    (t
                     (call-interactively #'xref-find-definitions)))))
-          ((string= major-mode "vhdl-mode")
+          ((or (string= major-mode "vhdl-mode")
+               (string= major-mode "vhdl-ts-mode"))
            (if def
                (larumbe/prog-mode-definitions-default def)
              ;; Context based jump if no thing-at-point:
@@ -128,8 +136,15 @@ This ripgrep will be executed at `projectile-project-root' or `default-directory
 and will be applied to only files of current `major-mode' if existing in `larumbe/ripgrep-types'."
   (interactive)
   (let ((ref (thing-at-point 'symbol)))
-    (cond (;; Verilog
-           (or (string= major-mode "verilog-mode")
+    (cond (;; `lsp' works a bit different than the rest. Eglot works fine with this custom approach
+           lsp-mode
+           (if ref
+               (progn
+                 (lsp-find-references)
+                 (larumbe/prog-mode-report-backend ref :ref 'lsp))
+             (call-interactively #'xref-find-references)))
+          ;; Verilog
+          ((or (string= major-mode "verilog-mode")
                (string= major-mode "verilog-ts-mode"))
            (if ref
                (larumbe/prog-mode-references-default ref)
@@ -144,7 +159,8 @@ and will be applied to only files of current `major-mode' if existing in `larumb
                    (t
                     (call-interactively #'xref-find-references)))))
           ;; VHDL
-          ((string= major-mode "vhdl-mode")
+          ((or (string= major-mode "vhdl-mode")
+               (string= major-mode "vhdl-ts-mode"))
            (if ref
                (larumbe/prog-mode-references-default ref)
              ;; Context based jump if no thing-at-point:
