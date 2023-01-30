@@ -218,6 +218,7 @@ and will be applied to only files of current `major-mode' if existing in `larumb
   (yas-minor-mode            1)
   (hs-minor-mode             1)
   (wide-column-mode          1)
+  (lsp-ui-sideline-mode      1) ; Flycheck/company frontend enhancements without enabling lsp mode
   (setq truncate-lines       t)
   (setq fill-column         80)
   (setq-local company-backends larumbe/company-backends-common)

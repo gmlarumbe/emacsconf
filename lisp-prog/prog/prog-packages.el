@@ -21,8 +21,10 @@
 
 (use-package lsp-mode
   :init
-  (setq lsp-keymap-prefix "C-x l"))
-(use-package lsp-ui)
+  (setq lsp-keymap-prefix "C-x l")
+  (setq lsp-headerline-breadcrumb-enable nil))
+(use-package lsp-ui
+  :commands (lsp-ui-sideline-mode)) ; Flycheck side-line even without lsp enabled
 (use-package lsp-ivy)
 
 ;; INFO: Requires libtree-sitter.so
