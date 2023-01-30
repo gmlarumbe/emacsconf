@@ -1635,6 +1635,29 @@ Override any previous configuration for `verilog-mode'."
 (alist-get 'verilog-mode eglot-server-programs)
 
 
+;; Some info for the README
+;;   - hdl_checker: doesn't seem to support definitions/references or completion. More 'compilation oriented for both VHDL/SystemVerilog
+;;     - eglot & lsp: similar results on both, very limited
+;;     -  requires .hdl_checker.config file
+;;
+;;   - svlangserver: Flycheck works, can extract hierarchy
+;;     - lsp: good builtin support, built index with lsp command and then navigate only definitions (not references)
+;;     - eglot: limited support. Requires somehow adding the command to index code to be able to navigate sources (couldn't make it work)
+;;        - Check `eglot-execute-command'
+;;        - eglot requires adding some stuff to make it work properly (navigation and completion)
+;;
+;;   - verible: linting, code formatting and imenu. Hovering gave errors... No navigation find def/ref implemented
+;;
+;;   - svls: only offers svlint based linting
+;;     - requires .svls.toml
+;;
+;;   - veridian: makes use of verible tools for linting/formatting (similar to verible-ls). Requires veridian.yml file
+;;     - hovering, imenu (very weird), (claims it find references but couldn't make it work), syntax/linter doesn't work well with verible-verilog syntax, and completion
+;;
+;;   - Summary: svlangserver/veridian are prety good because of navigation/linting capabilities,
+;;
+
+
 
 ;;; Apheleia
 ; TODO: Do a PR to submit formatter: https://github.com/radian-software/apheleia section "Adding a formatter"

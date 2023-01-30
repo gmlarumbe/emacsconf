@@ -101,3 +101,10 @@ This will normally happen after calling `vhdl-ext-find-parent-module'"
         (setq end-pos (line-end-position))
         (indent-region start-pos end-pos)
         (message "Indented %s : %s" block name)))))
+
+
+;;; Lsp
+;; vhdl-tool: not-free didn't try
+;; ghdl-ls: didn't try, seems it only offers linting, same as GHDL flycheck builtin
+;; hdl_checker: only compilation?
+;; rust_hdl: A nice one, navigation with defs/refs plus linting and hover
