@@ -57,6 +57,12 @@
          ("C-M-u"   . vhdl-ext-find-entity-instance-bwd)
          ("C-M-."   . vhdl-ext-jump-to-parent-entity)
          ("C-c C-t" . vhdl-ext-hydra/body))
+  :bind (:map vhdl-ts-mode-map
+         ("TAB"     . nil)
+         ("C-M-d"   . vhdl-ext-find-entity-instance-fwd)
+         ("C-M-u"   . vhdl-ext-find-entity-instance-bwd)
+         ("C-M-."   . vhdl-ext-jump-to-parent-entity)
+         ("C-c C-t" . vhdl-ext-hydra/body))
   :config
   (message "Initializating vhdl-ext")
   ;; Flycheck

@@ -67,7 +67,7 @@
   :bind (:map verilog-mode-map
          ;; Default keys override
          ("TAB"           . verilog-ext-electric-verilog-tab)
-         ("TAB"           . nil)        ; For ts mode
+         ;; ("TAB"           . nil)        ; For ts mode
          ("M-d"           . verilog-ext-kill-word)
          ("M-f"           . verilog-ext-forward-word)
          ("M-b"           . verilog-ext-backward-word)

@@ -1,13 +1,7 @@
 ;;; Priority
 
-;; TODO: Do the templates stuff
-;; TODO: Do the vhier stuff
-;; TODO: Add demo and README.md
-
 
 ;;; Opened Buffers status
-
-
 ;;;; Hooks
 
 

@@ -108,3 +108,12 @@ This will normally happen after calling `vhdl-ext-find-parent-module'"
 ;; ghdl-ls: didn't try, seems it only offers linting, same as GHDL flycheck builtin
 ;; hdl_checker: only compilation?
 ;; rust_hdl: A nice one, navigation with defs/refs plus linting and hover
+
+
+;;; Hierarchy with GHDL
+;; Check page 11/11: http://www.dossmatik.de/ghdl/ghdl_unisim_eng.pdf
+;; Compile
+ghdl -c src/core_fsm/rtl/core_fsm.vhd src/core_fsm/tb/tb_core_fsm.vhd
+;; Run without 'running and display tree (similar to vhier)
+;; See how to process it and show it with hierarchy
+ghdl -r tb_core_fsm --no-run --disp-tree=inst
