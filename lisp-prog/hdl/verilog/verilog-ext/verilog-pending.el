@@ -954,6 +954,24 @@ Search for REGEX that matches declaration bound by LIMIT."
 
 
 ;;; Imenu
+(defun verilog-ext-imenu-list-hide-all (&optional first)
+  "Hide all the blocks at `imenu-list' buffer.
+If optional arg FIRST is non-nil show first Imenu block
+which by default corresponds to *instances*.
+INFO: It is meant to be run after `verilog-ext-imenu-list', however
+it could cause sluggish behaviour as it's not every efficient."
+  (if (string-equal major-mode "imenu-list-major-mode")
+      (progn
+        (goto-char (point-min))
+        (while (< (point) (point-max))
+          (hs-hide-block)
+          (line-move-visual 1))
+        (goto-char (point-min))
+        (when first
+          (hs-show-block)))
+    (message "Not in imenu-list mode !!")))
+
+
 ;; TODO: Do a minor-mode that adds/removes the hooks?
 ;;  - (add-hook 'verilog-mode-hook #'verilog-ext-imenu-hook)
 ;;
