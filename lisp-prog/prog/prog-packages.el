@@ -143,6 +143,10 @@ Same as `hs-toggle-hiding', but do not exec: (posn-set-point (event-end e))"
   ;; Seems it shows full error if multiline
   (setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list))
 
+;; INFO: At some point tried with `flycheck-pos-tip' and `flycheck-popup-tip' to show messages
+;; right in front of the cursor. However none of the tooltips seemed to work properly and the
+;; result obtained with `lsp-ui-sideline-mode' was far better and less obtrusive.
+
 
 (use-package flyspell
   :straight nil

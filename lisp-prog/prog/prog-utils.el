@@ -76,7 +76,7 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
           ((string= major-mode "org-mode")
            (call-interactively #'org-open-at-point))
           ;; `lsp' works a bit different than the rest. Eglot works fine with this custom approach
-          (lsp-mode
+          ((bound-and-true-p lsp-mode)
            (if def
                (progn
                  (lsp-find-definition)
@@ -137,7 +137,7 @@ and will be applied to only files of current `major-mode' if existing in `larumb
   (interactive)
   (let ((ref (thing-at-point 'symbol)))
     (cond (;; `lsp' works a bit different than the rest. Eglot works fine with this custom approach
-           lsp-mode
+           (bound-and-true-p lsp-mode)
            (if ref
                (progn
                  (lsp-find-references)

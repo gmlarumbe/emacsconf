@@ -334,7 +334,10 @@ Lisp function does not specify a special indentation."
 ;; Only enabled if package has comments with: "Version" "Package-Version" "Package-Requires"
 ;; i.e: `package-lint-looks-like-a-package-p' is t for `current-buffer'
 (use-package flycheck-package
-  :after package-lint)
+  :after package-lint
+  :demand
+  :config
+  (flycheck-package-setup))
 
 
 ;;;; Misc
