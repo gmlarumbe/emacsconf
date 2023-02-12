@@ -6,7 +6,6 @@
   :straight nil
   :hook ((sh-mode . larumbe/sh-mode-hook)
          (sh-mode . eglot-ensure))
-  :commands (larumbe/sh-send-line-or-region-and-step-vterm)
   :bind (:map sh-mode-map
          ("C-c C-c" . sh-show-shell)
          ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-vterm)
@@ -17,7 +16,6 @@
   :config
   (require 'sh-script-utils)
   (require 'sh-script-templates))
-
 
 (use-package company-shell
   :after sh-script

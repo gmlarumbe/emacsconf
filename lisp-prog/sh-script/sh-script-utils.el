@@ -33,16 +33,6 @@
   (larumbe/sh-send-line-or-region-and-step "*vterm*"))
 
 
-(defun larumbe/sh-send-string-vterm (string)
-  "Send STRING to *vterm* process."
-  (interactive)
-  (let* ((buf "*vterm*")
-         (proc (get-buffer-process buf)))
-    (unless (get-buffer buf)
-      (error "Buffer %s does not exist" buffer))
-    (process-send-string proc string)))
-
-
 (defun larumbe/sh-man-thing-at-point ()
   "Find man entry for thing-at-point."
   (interactive)

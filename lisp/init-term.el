@@ -83,8 +83,16 @@ If prefix arg is provided, force creation of a new ansi-term."
   :bind (("C-M-/" . vterm)) ; Unmap `dabbrev-completion'
   :init
   (setq vterm-keymap-exceptions '("C-c" "C-x" "C-u" "C-h" "C-l" "M-x" "M-O" "M-o" "C-y" "M-y")) ; Exclude C-g
-  (setq vterm-shell "zsh"))
+  (setq vterm-shell "zsh")
 
+  (defun larumbe/sh-send-string-vterm (string)
+    "Send STRING to *vterm* process."
+    (interactive)
+    (let* ((buf "*vterm*")
+           (proc (get-buffer-process buf)))
+      (unless (get-buffer buf)
+        (error "Buffer %s does not exist" buffer))
+      (process-send-string proc string))))
 
 
 (use-package aweshell
