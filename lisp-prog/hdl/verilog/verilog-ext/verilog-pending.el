@@ -1751,6 +1751,40 @@ Return nil if no timestamp structure was found."
       (setq-local time-stamp-end    verilog-ext-time-stamp-work-end))))
 
 
+;;; Inside procedural
+(defun verilog-ext-inside-procedural ()
+  "Return cons cell with start/end pos if point is inside a procedural block.
+If point is inside a begin-end block inside a procedural, return begin-end
+positions."
+  (save-match-data
+    (save-excursion
+      (let* ((block-data (verilog-ext-block-at-point))
+             (block-type (alist-get 'type block-data))
+             (beg-end-data (verilog-ext-point-inside-block-p 'begin-end)))
+        (cond (beg-end-data ; If on a begin-end block outside a generate, it will always be procedural
+               (unless (string= block-type "generate") ; Relies on `verilog-ext-block-at-point' having higher precedence ...
+                 (cons (alist-get 'beg-point beg-end-data) (alist-get 'end-point beg-end-data)))) ; ... for always than for generate
+              ;; If outside a begin-end, look for
+              ((or (string= block-type "function")
+                   (string= block-type "task")
+                   (string= block-type "class")
+                   (string= block-type "package")
+                   (string= block-type "initial")
+                   (string= block-type "final")
+                   (string= block-type "program"))
+               (cons (alist-get 'beg-point block-data) (alist-get 'end-point block-data)))
+              ;; Default, not in a procedural block
+              (t
+               nil))))))
+
+(defun verilog-ext-find-module-instance--legal-p ()
+  "Return non-nil if it point position would be legal for an instantiation.
+DANGER: Still very inefficient, removed funcall in
+`verilog-ext-find-module-instance-fwd'."
+  (and (not (verilog-parenthesis-depth))
+       (not (verilog-ext-inside-procedural))))
+
+
 
 
 
