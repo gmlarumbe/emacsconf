@@ -52,22 +52,11 @@
   :after vhdl-mode
   :demand
   :mode (("\\.vhd\\'" . vhdl-ts-mode))
-  :bind (:map vhdl-mode-map
-         ("C-M-d"   . vhdl-ext-find-entity-instance-fwd)
-         ("C-M-u"   . vhdl-ext-find-entity-instance-bwd)
-         ("C-M-."   . vhdl-ext-jump-to-parent-entity)
-         ("C-c C-t" . vhdl-ext-hydra/body))
-  :bind (:map vhdl-ts-mode-map
-         ("TAB"     . nil)
-         ("C-M-d"   . vhdl-ext-find-entity-instance-fwd)
-         ("C-M-u"   . vhdl-ext-find-entity-instance-bwd)
-         ("C-M-."   . vhdl-ext-jump-to-parent-entity)
-         ("C-c C-t" . vhdl-ext-hydra/body))
+  :hook ((vhdl-mode . vhdl-ext-mode))
   :config
-  (message "Initializating vhdl-ext")
-  ;; Flycheck
   (setq flycheck-ghdl-ieee-library "synopsys") ; Xilinx primitives
-  (setq flycheck-ghdl-workdir (concat (projectile-project-root) "library/" vhdl-default-library)))
+  (setq flycheck-ghdl-workdir (concat (projectile-project-root) "library/" vhdl-default-library))
+  (vhdl-ext-mode-setup))
 
 
 (provide 'init-vhdl)

@@ -74,6 +74,9 @@
 ;;   (setq native-comp-deferred-compilation t)) ; Defer compilation of .elc loaded modules until they are used
 
 
+(setq treesit--indent-verbose t)
+(setq-default treesit-font-lock-level 4)
+
 
 
 (provide 'init-basic)

@@ -60,109 +60,17 @@
   :straight (:host github :repo "gmlarumbe/verilog-ext")
   :after verilog-mode
   :demand
+  :hook (verilog-mode . verilog-ext-mode)
   :mode (("\\.v\\'"   . verilog-ts-mode)
          ("\\.sv\\'"  . verilog-ts-mode)
          ("\\.vh\\'"  . verilog-ts-mode)
          ("\\.svh\\'" . verilog-ts-mode))
-  :bind (:map verilog-mode-map
-         ;; Default keys override
-         ("TAB"           . verilog-ext-electric-verilog-tab)
-         ;; ("TAB"           . nil)        ; For ts mode
-         ("M-d"           . verilog-ext-kill-word)
-         ("M-f"           . verilog-ext-forward-word)
-         ("M-b"           . verilog-ext-backward-word)
-         ("C-<backspace>" . verilog-ext-backward-kill-word)
-         ;; Features
-         ("M-i"           . verilog-ext-imenu-list)
-         ("C-c C-p"       . verilog-ext-preprocess)
-         ("C-c C-f"       . verilog-ext-flycheck-mode-toggle)
-         ("C-c C-t"       . verilog-ext-hydra/body)
-         ("C-c C-v"       . verilog-ext-vhier-current-file)
-         ;; Code beautifying
-         ("C-M-i"         . verilog-ext-indent-block-at-point)
-         ("C-c b"         . verilog-ext-module-at-point-beautify)
-         ;; Dwim navigation
-         ("C-M-a"         . verilog-ext-nav-beg-of-defun-dwim)
-         ("C-M-e"         . verilog-ext-nav-end-of-defun-dwim)
-         ("C-M-d"         . verilog-ext-nav-down-dwim)
-         ("C-M-u"         . verilog-ext-nav-up-dwim)
-         ("C-M-p"         . verilog-ext-nav-prev-dwim)
-         ("C-M-n"         . verilog-ext-nav-next-dwim)
-         ;; Module navigation
-         ("C-M-."         . verilog-ext-jump-to-parent-module)
-         ;; Port connections
-         ("C-c c"         . verilog-ext-toggle-connect-port)
-         ("C-c C-c"       . verilog-ext-connect-ports-recursively)
-         )
-  :init
-  :bind (:map verilog-ts-mode-map
-         ;; Default keys override
-         ("TAB"           . nil)
-         ;; TODO: Fix syntax table and remove those at some point
-         ("M-d"           . nil)
-         ("M-f"           . nil)
-         ("M-b"           . nil)
-         ("C-<backspace>" . nil)
-         ;; Features
-         ("M-i"           . verilog-ext-imenu-list) ; TODO: Use built-in imenu with ts
-         ("C-c C-p"       . verilog-ext-preprocess)
-         ("C-c C-f"       . verilog-ext-flycheck-mode-toggle)
-         ("C-c C-t"       . verilog-ext-hydra/body)
-         ("C-c C-v"       . verilog-ext-vhier-current-file)
-         ;; Code beautifying
-         ("C-M-i"         . verilog-ext-indent-block-at-point) ; TODO: Using ts
-         ("C-c b"         . verilog-ext-module-at-point-beautify) ; TODO: Using ts
-         ;; Dwim navigation
-         ;; TODO: All of them using ts
-         ("C-M-a"         . verilog-ext-nav-beg-of-defun-dwim)
-         ("C-M-e"         . verilog-ext-nav-end-of-defun-dwim)
-         ("C-M-d"         . verilog-ext-nav-down-dwim)
-         ("C-M-u"         . verilog-ext-nav-up-dwim)
-         ("C-M-p"         . verilog-ext-nav-prev-dwim)
-         ("C-M-n"         . verilog-ext-nav-next-dwim)
-         ;; Module navigation
-         ;; TODO: Maybe using ts?
-         ("C-M-."         . verilog-ext-jump-to-parent-module)
-         ;; Port connections
-         ("C-c c"         . verilog-ext-toggle-connect-port)
-         ("C-c C-c"       . verilog-ext-connect-ports-recursively)
-         ;; TODO: Also using ts
-         ;; Others
-         ("C-M-f" . verilog-ts-forward-sexp)
-         ("C-M-b" . verilog-ts-backward-sexp)
-         )
   :init
   (setq verilog-ext-snippets-dir "~/.emacs.d/straight/repos/verilog-ext/snippets")
-  (setq verilog-ext-flycheck-eldoc-toggle t)
   (setq verilog-ext-flycheck-verible-rules '("-line-length"))
   :config
   (verilog-ext-flycheck-set-linter 'verilog-verible)
-  (verilog-ext-add-snippets)
-
-  ;; TODO: Debugging
-  (setq treesit--indent-verbose t)
-  )
-
-
-
-
-
-;; TODO: Should be a dynamic function? Depending on current project? Probably... yes!
-;; (setq verilog-ext-vhier-output-dir (concat (verilog-ext-path-join (projectile-project-root) "vhier/")))
-
-(defun verilog-ext-tree-sitter-hl-mode-enable ()
-  ""
-  (interactive)
-  (verilog-mode)
-  (tree-sitter-hl-mode 1)
-  (message "Reenabling tree-sitter..."))
-
-;; Some queries that actually worked great in verilog-tree-sitter
-;; (program_instantiation (program_identifier) @comment)
-;; (hierarchical_instance (name_of_instance) @include)
-;; (named_port_connection (port_identifier) @include)
-;; (named_parameter_assignment (parameter_identifier) @include)
-
+  (verilog-ext-mode-setup))
 
 
 (provide 'init-verilog)
