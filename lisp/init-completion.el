@@ -111,14 +111,6 @@
   (advice-add 'company-other-backend :after #'larumbe/company-backend-report))
 
 
-(use-package company-tabnine
-  :after company
-  :config
-  (unless (executable-find (company-tabnine--executable-path))
-    (company-tabnine-install-binary)) ; INFO: Check `company-tabnine-install-static-binary' if there are glibc conflicts
-  (company-tabnine-start-process))
-
-
 ;;;; Yasnippet
 (use-package yasnippet
   :commands (yas-reload-all
