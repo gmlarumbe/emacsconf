@@ -23,7 +23,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Set up Emacs
-        uses: purcell/setup-emacs@v3.0
+        uses: purcell/setup-emacs@master
         with:
           version: 28.1
 
