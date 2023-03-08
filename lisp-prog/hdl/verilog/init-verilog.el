@@ -57,18 +57,17 @@
 
 
 (use-package verilog-ext
-  :straight (:host github :repo "gmlarumbe/verilog-ext")
+  :straight (:host github :repo "gmlarumbe/verilog-ext"
+             :files ("verilog-ext.el" "verilog-ts-mode.el" "snippets"))
   :after verilog-mode
   :demand
-  :hook (verilog-mode . verilog-ext-mode)
+  :hook ((verilog-mode . verilog-ext-mode))
   :mode (("\\.v\\'"   . verilog-ts-mode)
          ("\\.sv\\'"  . verilog-ts-mode)
          ("\\.vh\\'"  . verilog-ts-mode)
          ("\\.svh\\'" . verilog-ts-mode))
-  :init
-  (setq verilog-ext-snippets-dir "~/.emacs.d/straight/repos/verilog-ext/snippets")
-  (setq verilog-ext-flycheck-verible-rules '("-line-length"))
   :config
+  (setq verilog-ext-flycheck-verible-rules '("-line-length"))
   (verilog-ext-flycheck-set-linter 'verilog-verible)
   (verilog-ext-mode-setup))
 
