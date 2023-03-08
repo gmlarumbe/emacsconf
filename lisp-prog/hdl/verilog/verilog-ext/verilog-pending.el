@@ -1956,3 +1956,49 @@ or `treemacs` could offer better results.
 ;; ;;  - e.g.: macros inside ports show as an ERROR
 ;; ;;  - external function declarations also show as ERROR
 ;; ;; (ERROR) @error
+
+
+
+;;; README.md
+### Requirements ###
+
+#### Verilog-mode ####
+
+Latest `verilog-mode` version is required since `verilog-ext` relies on much of its functionality to work correctly.
+Using [straight](https://github.com/radian-software/straight.el) and [use-package](https://github.com/jwiegley/use-package):
+```emacs-lisp
+(straight-use-package 'use-package)
+(use-package verilog-mode
+  :straight (:repo "veripool/verilog-mode"))
+```
+For other installation methods refer to [verilog-mode](https://github.com/veripool/verilog-mode) installation options.
+
+#### Binaries and Emacs Lisp packages ####
+
+`verilog-ext` makes use of several binaries as backend engines to support IDE-like functionality. In addition, some third party Emacs Lisp packages serve as frontends for those binaries.
+
+List of required binaries:
+- Definitions and references navigation: `global`, `gtags`, `universal-ctags`, `python`, `pygments`
+- Jump to parent module: `ag`, `ripgrep`
+- Hierarchy extraction: `vhier`
+- Linting: `verilator`, `iverilog`, `verible-verilog-lint`, `slang`, `svlint`, `xrun`/`hal`
+- LSP: `hdl_checker`, `svlangserver`, `verible-verilog-ls`, `svls`, `veridian`
+
+### tree-sitter ###
+Requires Emacs 29, installation of `tree-sitter` and Verilog grammar.
+
+To install `tree-sitter` there are different options:
+
+* Via [npm](https://www.npmjs.com/package/tree-sitter)
+* Manually:
+```shell
+$ git clone https://github.com/tree-sitter/tree-sitter.git
+$ cd tree-sitter
+$ make && sudo make install
+```
+
+Installation of grammar can be automated through the script:
+```shell
+$ .github/scripts/install-ts-grammar.sh
+```
+That will install `libtree-sitter-verilog.so` at `$HOME/.emacs.d/tree-sitter`.
