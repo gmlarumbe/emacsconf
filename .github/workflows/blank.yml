@@ -19,13 +19,20 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        emacs_version:
+          - 28.2
+          - release-snapshot
+          - snapshot
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Set up Emacs
         uses: purcell/setup-emacs@master
         with:
-          version: 28.1
+          version: ${{ matrix.emacs_version }}
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
@@ -35,5 +42,5 @@ jobs:
       # Runs a single command using the runners shell
       - name: Check startup
         run: |
-          ./.elisp/scripts/config.sh
-          ./.elisp/scripts/test-startup.sh
+          $GITHUB_WORKSPACE/.elisp/scripts/config.sh
+          $GITHUB_WORKSPACE/.elisp/scripts/test-startup.sh
