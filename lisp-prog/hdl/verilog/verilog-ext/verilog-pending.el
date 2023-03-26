@@ -2002,3 +2002,190 @@ Installation of grammar can be automated through the script:
 $ .github/scripts/install-ts-grammar.sh
 ```
 That will install `libtree-sitter-verilog.so` at `$HOME/.emacs.d/tree-sitter`.
+
+
+
+;;; Workspace
+;; TODO: There might be classes also inside modules and packages, frequently in packages!
+;; In those cases, autocompletion should not include attributes and functions inside those clases! Just the class name!
+;; Maybe filtering with (verilog-ext-in-block 'class)?
+
+;; TODO: What about typedef or typedef enum/struct definitions? Check the below section for typedef!
+;;       Check verilog-ext-font-lock-enum-fontify, verilog-ext-font-lock-struct-fontify
+
+;; TODO: Use `verilog-ext-find-struct' and `verilog-ext-find-enum' for typedef gathering:?
+;;       Wrong! It seems it's already used somehow...? Or directly with regexps?
+
+;; Attempt to write typedefs to cache file
+(defun verilog-ext-typedef-workspace-update ()
+  "Update typedef list of current workspace."
+  (interactive)
+  (let ((cache-file (verilog-ext-path-join user-emacs-directory "verilog-ext/cache_typedef.el")))
+    (verilog-ext-typedef-batch-update (verilog-ext-workspace-files))
+    ;; (make-directory (file-name-directory cache-file :parents))
+    ;; (with-temp-file cache-file
+    ;;   (insert "(setq verilog-ext-align-typedef-words " verilog-ext-align-typedef-words ")\n")
+    ;;   (insert "(setq verilog-ext-align-typedef-words-re " verilog-ext-align-typedef-words-re ")\n")
+    ;;   (insert "(setq verilog-align-typedef-regexp " verilog-align-typedef-regexp ")\n"))
+    ))
+
+(defun verilog-ext-capf-annotation-function (cand)
+  ""
+  (let ((type (get-text-property 0 :type cand)))
+    (pcase type
+      ("function" "<f>")
+      ("task"     "<t>")
+      ;; TODO: Didn't work at all
+      ;; ("function" (propertize "<f>" 'face 'bold-italic))
+      ;; ("task"     (propertize "<t>" 'face 'bold-italic))
+      (_ type))))
+
+(defun verilog-ext-capf-create-table-async ()
+  "Create tags table asynchronously."
+  ;; INFO: Still sets a different value of `verilog-ext-dot-completion-capf-table'
+  ;;       if variables are set after lambda (result) than before!
+  ;;       Actually if set before these are not set at all!!
+  (let* ((parent-load-path load-path))
+    (async-start
+     (lambda ()
+       (let (data)
+         (setq load-path parent-load-path)
+         (require 'verilog-ext)
+         (setq data (verilog-ext-capf-get-completions))
+         ;; TODO: This is not useful since populates variables in the child Emacs process
+         ;; (setq verilog-ext-capf-table (car data))
+         ;; (setq verilog-ext-dot-completion-capf-table (cdr data))
+         ))
+    (lambda (result)
+      ;; INFO: Variables must be set here, since it's the result back sent to the Emacs parent process
+      (message "Finished collection tags!")
+      (setq verilog-ext-capf-table (car result))
+      (setq verilog-ext-dot-completion-capf-table (cdr result))
+      ))))
+
+
+;;; Completion
+;; TODO: Create different variables besides completions: e.g. class-completions, top-completions, for dot completion
+;;       Check if current completion is inside some block (e.g. class or module/interface/program) also for class attributes and hierarchical references
+;;       If that's the case, store in dot completion with some property?
+;;       Check later in the `verilog-ext-capf' that if point is after . then previous symbol needs to be checked,
+;;       There could be some alist, that had elements whose car is the class/module name, and whose cdr are the possible completions
+;;       Then, query with assoc for the class/module name before the . and return all possible completions, handled in `verilog-ext-capf'
+
+;; ;; TODO: Also make sure we are not in parenthesis, e.g: test (verilog-re-search-forward (verilog-get-declaration-re) nil :no-error) in /home/gonz/Programming/FPGA/ucontroller/uvm_tb/ahb_agent/ahb_agent.svh
+;; ;; TODO: Check what the typedef functions are doing
+;; ;; TODO: At some point all of this could be done asynchronously in the workspace or something similar
+
+
+
+
+;; Fix TODOs
+(defun verilog-ext-workspace-get-tags ()
+  "Get tags of current workspace."
+  (let* ((files (verilog-ext-workspace-files))
+         (num-files (length files))
+         (num-files-processed 0)
+         tags tags-subitems data progress)
+    (dolist (file files)
+      (setq verilog-ext-workspace-tags-current-file file)
+      (with-temp-buffer
+        (setq progress (/ (* num-files-processed 100) num-files))
+        (message "(%0d%%) [Completions collection] Processing %s" progress file)
+        (insert-file-contents file)
+        (verilog-mode)
+        ;; TODO: Possible unit space declarations and externally defined methods
+        ;;       Adds some processing overhead. Try to figure out how to optimize this
+        (setq tags (append tags
+                           (verilog-ext-get-declarations)
+                           (verilog-ext-get-function-tasks)
+                           (verilog-ext-get-instances)))
+        (when (setq data (verilog-ext-get-current-buffer-top-blocks-items))
+          (push data tags-subitems)
+          (push (car data) tags)  ; TODO: Shouldn't be a mapcar #'car ?
+          (setq tags (append tags (cdr data))))  ; TODO: Shouldn't be a mapcar #'(cdr (car ))  ?
+        (when (setq data (verilog-ext-get-current-buffer-classes-items))
+          (push data tags-subitems)
+          (push (car data) tags) ; TODO: Shouldn't be a mapcar #'car ?
+          (setq tags (append tags (cdr data)))) ; TODO: Shouldn't be a mapcar #'(cdr (car ))  ?
+        (when (setq data (verilog-ext-get-current-buffer-structs-items))
+          (push data tags-subitems)
+          (push (car data) tags)  ; TODO: Shouldn't be a mapcar #'car ?
+          (setq tags (append tags (cdr data))))   ; TODO: Shouldn't be a mapcar #'(cdr (car)) ?
+        (setq num-files-processed (1+ num-files-processed))))
+    ;; Delete duplicates and return value
+    (delete-dups tags)
+    (delete-dups tags-subitems)
+    (cons tags tags-subitems)))
+
+
+(defun verilog-ext-xref--find-symbol (symbol)
+  ""
+  ;; TODO: For the time being it's only fetching one
+  (let* ((table-symbol (car (member symbol verilog-ext-workspace-tags-table)))
+         file line column desc)
+    (when table-symbol
+      (setq file (get-text-property 0 :file table-symbol))
+      (setq line (get-text-property 0 :line table-symbol))
+      (setq column (get-text-property 0 :column table-symbol))
+      (setq desc (get-text-property 0 :type table-symbol))
+      ;; TODO: It's a list because there could be multiple occurrences, each an element
+      (list (xref-make desc (xref-make-file-location file line column))))))
+
+
+;; TODO: Implement proper function
+(cl-defmethod xref-backend-definitions ((_backend (eql verilog-ext-xref)) symbol)
+  (verilog-ext-xref--find-symbol symbol))
+
+;; TODO: Set proper function
+(cl-defmethod xref-backend-references ((_backend (eql verilog-ext-xref)) symbol)
+  (verilog-ext-xref--find-symbol symbol))
+
+(cl-defmethod xref-backend-apropos ((_backend (eql verilog-ext-xref)) symbol)
+  (verilog-ext-xref--find-symbol symbol))
+
+
+;; For `verilog-ext-capf':
+;; Refactor function and make it cleaner
+
+    ;; Completion
+    (list start end completions
+          :annotation-function #'verilog-ext-capf-annotation-function
+          :company-docsig #'identity
+          ;; :company-doc-buffer (lambda (cand) (company-doc-buffer (format "asdf %s" cand)))
+          )))
+
+;; What about the `company-doc-buffer' property?
+
+;; TODO: IMPORTANT!
+;; It would be better if instead of using text properties I would use a property list
+;; in the cdr of the tag. Like '("test" . (:type "class" :file "/home/gonz/file.sv" :pos 10 etc...))
+
+
+;; TODO: Implement multiple definitions with one-line comma sepparation for tags (maybe on verilog-mode, or on the declaration fetching all comma separated values until verilog-pos-at-end-of-statement?)
+;; TODO: For typedefs, see how to keep the value set by people (e.g. (concat sym_identifier_re* _t)) plus the one fetched by the typedef functionality
+;; TODO: Make it work asynchronously
+;; TODO: Add some tests for workspace/tags
+;; TODO: Refactor and try to make it more readable optimal
+;; TODO: Make the jump-to-parent module depend on this? Maybe add a :parent property from the super-block thing that is looked-at, and if other backends are used use they other function
+;; TODO: Improve dot completion detecting if in a queue/array/enum to show its builtin methods
+;; TODO: Improve completion if ` detected (directives candidates)
+;; TODO: Add completions for system tasks: https://verificationacademy.com/forums/systemverilog/complete-list-system-functions-or-system-tasks-descriptions
+;; TODO: How to save these data in some temporary file that can be source afterwards?
+;; TODO: How to do something rudimentary to calculate only tags/references in files that have changed? With hashes as metadata to these files?
+
+
+;; First condition of `verilog-ext-workspace-get-tags':
+        ;; TODO: Possible unit space declarations and externally defined methods
+;;       Adds some processing overhead. Try to figure out how to optimize this
+
+;; TODO: Check that `verilog-ext-workspace-get-tags-async' works fine:
+
+
+;;; Xref
+;; In `verilog-ext-xref--find-symbol'
+;;         ;; (setq column (plist-get loc :column)) ; INFO: Do not consider column them for the time being
+
+
+;; (cl-defmethod xref-backend-apropos ((_backend (eql verilog-ext-xref)) symbol)
+;;   (verilog-ext-xref--find-symbol symbol))
+

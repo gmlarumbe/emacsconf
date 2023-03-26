@@ -213,6 +213,12 @@
   (exwm-input-set-key (kbd "s-j") #'larumbe/exwm-launch)
   (exwm-input-set-key (kbd "s-k") #'larumbe/exwm-launch-firefox)
   (exwm-input-set-key (kbd "s-;") #'async-shell-command)
+  (exwm-input-set-key (kbd "s-o") #'treesit-explore-mode)
+  (exwm-input-set-key (kbd "s-i") #'verilog-ts-mode)
+  (exwm-input-set-key (kbd "s-I") #'verilog-mode)
+  (exwm-input-set-key (kbd "s-u") #'vhdl-ts-mode)
+  (exwm-input-set-key (kbd "s-h") #'verilog-ext-hierarchy-current-module)
+  (exwm-input-set-key (kbd "C-M-<tab>") #'completion-at-point)
   ;; Window/Frame movement/navigation
   (exwm-input-set-key (kbd "C-;")   #'ivy-switch-buffer)
   (exwm-input-set-key (kbd "C-M-<backspace>") #'backward-kill-sexp)

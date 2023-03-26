@@ -29,6 +29,10 @@
 ;;; Code:
 
 ;;;; Straight bootstrap
+;; INFO: Added after newer Emacs 29.0.60 version (https://github.com/radian-software/straight.el/issues/1059)
+;; TODO: Remove once this has been merged into master/main
+(setq straight-repository-branch "develop")
+
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))

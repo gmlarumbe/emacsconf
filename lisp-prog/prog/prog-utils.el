@@ -14,7 +14,7 @@
   "Show in the minibuffer what is current used backend."
   (let (formatted-backend formatted-tag)
     (unless backend
-      (setq backend (xref-find-backend)))
+      (setq backend (xref-find-backend))) ; TODO: Danger, if run after finding definitions will report the active backend of the destinatino file!
     ;; Add some coloring
     (setq formatted-backend (propertize (symbol-name backend) 'face '(:foreground "goldenrod" :weight bold)))
     (setq formatted-tag (propertize tag 'face '(:foreground "green")))
@@ -35,7 +35,7 @@
       (setq skip t))
     (unless skip
       (xref-find-definitions def)
-      (larumbe/prog-mode-report-backend def))))
+      (larumbe/prog-mode-report-backend def nil backend-xref))))
 
 
 (defun larumbe/prog-mode-references-default (ref)
@@ -49,7 +49,7 @@
           (larumbe/ripgrep-xref ref))
       ;; Find references with corresponding backend
       (xref-find-references ref)
-      (larumbe/prog-mode-report-backend ref :ref))))
+      (larumbe/prog-mode-report-backend ref :ref backend-xref))))
 
 
 (defun larumbe/prog-mode-definitions ()
@@ -90,7 +90,7 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
                (larumbe/prog-mode-definitions-default def)
              ;; Context based jump if no thing-at-point:
              (cond (;; Inside a module instance
-                    (and (verilog-ext-point-inside-block-p 'module)
+                    (and (verilog-ext-point-inside-block 'module)
                          (verilog-ext-instance-at-point))
                     (setq def (match-string-no-properties 1))
                     (xref-find-definitions def)
@@ -150,7 +150,7 @@ and will be applied to only files of current `major-mode' if existing in `larumb
                (larumbe/prog-mode-references-default ref)
              ;; Context based jump if no thing-at-point:
              (cond (;; Inside a module instance
-                    (and (verilog-ext-point-inside-block-p 'module)
+                    (and (verilog-ext-point-inside-block 'module)
                          (verilog-ext-instance-at-point))
                     (setq ref (match-string-no-properties 1))
                     (xref-find-references ref)

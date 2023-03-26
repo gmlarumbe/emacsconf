@@ -670,6 +670,8 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
   (setq counsel-describe-variable-function #'helpful-variable))
 
 
+(use-package hierarchy)
+
 
 ;;;; Libraries
 (use-package dash)

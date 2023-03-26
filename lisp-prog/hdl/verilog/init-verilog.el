@@ -58,7 +58,7 @@
 
 (use-package verilog-ext
   :straight (:host github :repo "gmlarumbe/verilog-ext"
-             :files ("verilog-ext.el" "verilog-ts-mode.el" "snippets"))
+             :files ("*.el" "snippets"))
   :after verilog-mode
   :demand
   :hook ((verilog-mode . verilog-ext-mode))
@@ -69,7 +69,14 @@
   :config
   (setq verilog-ext-flycheck-verible-rules '("-line-length"))
   (verilog-ext-flycheck-set-linter 'verilog-verible)
-  (verilog-ext-mode-setup))
+  (verilog-ext-mode-setup)
+
+  ;; TODO: Some extra setup while developing
+  (setq verilog-ext-workspace-ignore-dirs '("/home/gonz/Programming/FPGA/ucontroller/vivado"))
+  (setq verilog-ext-workspace-ignore-files '("/home/gonz/Programming/FPGA/ucontroller/src/uart/tb/fifo_generator_0_sim_netlist.v"))
+  (add-hook 'verilog-mode-hook (lambda ()
+                                 (setq-local xref-backend-functions '(verilog-ext-xref-backend t))
+                                 (setq-local company-backends '(company-capf)))))
 
 
 (provide 'init-verilog)
