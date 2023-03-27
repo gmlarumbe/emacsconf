@@ -23,7 +23,7 @@
 (setq disabled-command-function 'ignore)       ; Enable all commands
 (setq initial-major-mode 'fundamental-mode)    ; Avoid start *scratch* in `lisp-interaction-mode' and enabling default `prog-mode-hook.
 (setq completions-detailed t)                  ; New in Emacs 28
-(setq tab-width 4)                             ; TAB width (buffer local)
+(setq tab-width 4)                             ; TAB width (buffer local). TODO: Does it have any effect?
 
 ;; Save some screen real estate
 (menu-bar-mode -1)
@@ -87,7 +87,50 @@
 ;; (package-initialize)
 
 
+;; TODO: Temporary defuns, move to their respective place
+(defun larumbe/tree-sitter-parse-current-buffer ()
+  ""
+  (interactive)
+  (let ((cmd "cd /path/to/tree-sitter-verilog && tree-sitter parse larumbe/"))
+    (setq cmd (concat cmd (file-name-nondirectory buffer-file-name)))
+    (compile cmd)))
 
+(defun larumbe/tree-sitter-parse-clean ()
+  ""
+  (interactive)
+  (larumbe/replace-regexp-whole-buffer "\[[0-9]+, [0-9]+\] - \[[0-9]+, [0-9]+\]" "")
+  (query-replace-regexp "\\(?1:\\s-+\\)\\(?2:[\)]+\\)" "\\2"))
+
+(defun larumbe/lsp-toggle ()
+  ""
+  (interactive)
+  (if lsp-mode
+      (lsp-disconnect)
+    (lsp)))
+
+(defun larumbe/eglot-toggle ()
+  ""
+  (interactive)
+  (if eglot--managed-mode
+      (call-interactively #'eglot-shutdown)
+    (call-interactively #'eglot)))
+
+(defun larumbe/lsp-verilog-set ()
+  ""
+  (interactive)
+  (let ((server-id (intern (completing-read "Server-id: " verilog-ext-lsp-server-ids nil t))))
+    (verilog-ext-eglot-set-server server-id)
+    (verilog-ext-lsp-set-server server-id)))
+
+(defun larumbe/lsp-vhdl-set ()
+  ""
+  (interactive)
+  (let ((server-id (intern (completing-read "Server-id: " vhdl-ext-lsp-server-ids nil t))))
+    (vhdl-ext-eglot-set-server server-id)
+    (vhdl-ext-lsp-set-server server-id)))
+
+
+>>>>>>> Stashed changes
 
 (provide 'init-basic)
 
