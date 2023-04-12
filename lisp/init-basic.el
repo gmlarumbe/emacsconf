@@ -130,8 +130,6 @@
     (vhdl-ext-lsp-set-server server-id)))
 
 
->>>>>>> Stashed changes
-
 (provide 'init-basic)
 
 ;;; init-basic.el ends here
