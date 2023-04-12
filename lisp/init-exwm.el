@@ -300,7 +300,7 @@ If universal argument or second argument BUFFER is non-nil,
 show stdout in BUFFER and pop to this window (for debug mainly)."
   (interactive)
   (unless program
-    (setq program (read-shell-command "$ ")))
+    (setq program (string-trim-right (read-shell-command "$ "))))
   (unless (executable-find program)
     (error "Could not find '%s' in $PATH!!" program))
   (when current-prefix-arg
