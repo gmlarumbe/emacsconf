@@ -182,6 +182,56 @@
        ;; Selection/highlight
        ([?\C-a] . ?\C-a))
       ))
+
+    ("ModelSim" .
+     (("Vsim")
+      nil
+      (;; Save
+       ([?\M-s] . ?\C-s)
+       ;; Selection/highlight
+       ([?\M-a] . ?\C-a)
+       ;; Grouping
+       ([?\M-g] . ?\C-g)
+       ;; Send waves
+       ([?\M-e] . ?\C-w)
+       )
+      ))
+
+    ;; INFO: Waves in ModelSim require the 'no-common-keybindings 4th argument in the alist.
+    ;; This is because the movement keybindings (C-f, C-b, C-M-f, etc...) were bound to a tcl
+    ;; command inside ModelSim. This TCL command was something like:
+    ;;  .vcop Action scrollleft %X %Y
+    ;; Assigning a simulation key made the %X %Y args be 0 0. These are the mouse coordinates,
+    ;; and if 0 0 the tcl command would have no effect at all. Therefore, it was needed to map
+    ;; these inside ModelSim to their respective keys and avoid mapping to simulation keys.
+    ;; The rest that do not use the .vcop with coordinates commands can be mapped to simulation
+    ;; keys without problem (e.g. C-v M-v etc)
+    ("ModelSim-waves" .
+     (("WindowObj")
+      nil
+      (;; Keep original values
+       ([?\C-g] . escape)
+       ([?\C-m] . return)
+       ([?\C-j] . return)
+       ([?\M-v] . prior)
+       ([?\C-v] . next)
+       ([?\C-d] . delete)
+       ([?\C-k] . (S-end delete))
+       ;; cut/paste.
+       ([?\C-w] . ?\C-x)
+       ([?\M-w] . ?\C-c)
+       ([?\C-y] . ?\C-v)
+       ;; Search (rebound to M-f inside Modelsim, since C-f was rebound in waves to <right> key)
+       ([?\C-s] . ?\M-f)
+       ;; Save
+       ([?\M-s] . ?\C-s)
+       ;; Selection/highlight
+       ([?\M-a] . ?\C-a)
+       ;; Grouping
+       ([?\M-g] . ?\C-g)
+       )
+      'no-common-keybidings
+      ))
     ))
 
 
@@ -263,20 +313,20 @@ Prefix keys add to the prefix keys `exwm-input-prefix-keys',
 set previously through pushes.
 
 These keys are meant to be set everytime an EXWM buffer is created."
-  (let ((class-names-list)
-        (simulation-keys)
-        (prefix-keys)
-        (programs-params (mapcar #'cdr larumbe/exwm-programs)))
+  (let ((programs-params (mapcar #'cdr larumbe/exwm-programs))
+        class-names-list simulation-keys prefix-keys no-common-keybindings)
     (catch 'sim-keys-set ; If keys are set for a buffer, break the dolist loop
       (dolist (params programs-params)
-        (setq class-names-list (nth 0 params))
-        (setq prefix-keys      (nth 1 params))
-        (setq simulation-keys  (nth 2 params))
+        (setq class-names-list      (nth 0 params))
+        (setq prefix-keys           (nth 1 params))
+        (setq simulation-keys       (nth 2 params))
+        (setq no-common-keybindings (nth 3 params))
         (when (and exwm-class-name
                    (member exwm-class-name class-names-list))
           (setq prefix-keys (append exwm-input-prefix-keys prefix-keys))
           (setq-local exwm-input-prefix-keys prefix-keys)
-          (setq simulation-keys (append larumbe/exwm-common-input-simulation-keys simulation-keys))
+          (unless no-common-keybindings
+            (setq simulation-keys (append larumbe/exwm-common-input-simulation-keys simulation-keys)))
           (exwm-input-set-local-simulation-keys simulation-keys)
           (throw 'sim-keys-set nil))))))
 
