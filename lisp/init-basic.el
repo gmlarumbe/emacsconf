@@ -49,8 +49,9 @@
     "~/.emacs.d/straight/repos/yasnippet-snippets" ; Keep forked: get updates with --rebase
     "~/.emacs.d/straight/repos/jenkins.el"         ; Keep forked: deferred additions with some larumbe/
     "~/.emacs.d/straight/repos/magit-gerrit"       ; Keep forked: still untested
-    "~/.emacs.d/straight/repos/arch-packer"        ; Maybe with some refactoring, updates after 5 years, no PR in this project. Wait until I get arch in new computer
+    "~/.emacs.d/straight/repos/wide-column"        ; Keep forked: too old, very unused
     "~/.emacs.d/straight/repos/helm-navi"          ; PR pending review
+    "~/.emacs.d/straight/repos/arch-packer"        ; Maybe with some refactoring, updates after 5 years, no PR in this project. Wait until I get arch in new computer
     "~/.emacs.d/straight/repos/emacs"              ; TODO: Ticket to python-mode (larumbe/python-fix-hs-special-modes-alist) / vhdl-mode hierarchy error fixed in Emacs 29
     "~/.emacs.d/straight/repos/verilog-mode"       ; Development as a maintainer
     ;; TODO: Add PR to apheleia?

@@ -277,6 +277,8 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
 
 
 (use-package wide-column
+  :straight (:host github :repo "phillord/wide-column"
+             :fork (:repo "gmlarumbe/wide-column"))
   :diminish
   :commands (wide-column-mode))
 
