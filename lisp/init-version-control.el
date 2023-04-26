@@ -24,65 +24,9 @@
   :commands (magit-list-branch-names
              magit-get-current-branch)
   :config
-  (defun larumbe/magit-customize-dispatch ()
-    "Customize `magit-dispatch' according to available magit extensions.
-These make the commands available to `magit-dispatch' and `magit-status'
-before loading them, acting as autoloads.
-
-Some of the code is copied directly from the packages themselves. In case
-some day some change on a key is needed, make them be in sync."
-    ;; TODO: These additions might not be used frequently and cause magit to be very slow when pressing h or ?
-    ;; TODO: Do some profiling
-    ;; `magit-lfs'
-    (when (locate-library "magit-lfs")
-      ;; Fetched from `magit-lfs' code to emulate an autoload
-      (define-key magit-status-mode-map magit-lfs-suffix #'magit-lfs)
-      (transient-append-suffix 'magit-dispatch '(0 -1 -1)
-        `(magit-lfs
-          :key ,magit-lfs-suffix
-          :description "Magit-LFS")))
-    ;; `magit-gerrit'
-    (when (locate-library "magit-gerrit")
-      (define-key magit-status-mode-map magit-gerrit-popup-prefix #'magit-gerrit-popup)
-      (transient-append-suffix 'magit-dispatch "Q" ; INFO: For some reason, it requires to be run twice to show in the magit-dispatch menu
-        `(magit-gerrit-popup                       ; Tried with a separate variable but didn't work either.
-          :key ,magit-gerrit-popup-prefix
-          :description "Magit-Gerrit")))
-    ;; `gerrit'
-    (when (locate-library "gerrit")
-      (define-key magit-status-mode-map "," #'gerrit-dashboard)
-      (transient-append-suffix 'magit-dispatch "H"
-        `(gerrit-dashboard
-          :key ","
-          :description "Gerrit dashboard"))
-      (define-key magit-status-mode-map "." #'gerrit-download)
-      (transient-append-suffix 'magit-dispatch '(0 -1 -1)
-        `(gerrit-download
-          :key "."
-          :description "Gerrit download"))
-      (define-key magit-status-mode-map "/" #'gerrit-upload-transient)
-      (transient-append-suffix 'magit-dispatch '(0 -1 -1)
-        `(gerrit-upload-transient
-          :key "/"
-          :description "Gerrit upload")))
-    ;; `forge'
-    (when (locate-library "forge")
-      (define-key magit-status-mode-map "'" #'forge-dispatch)
-      (define-key magit-status-mode-map "N" #'forge-dispatch)
-      (transient-insert-suffix 'magit-dispatch "o"
-        '("N" "Forge" forge-dispatch))
-      (transient-insert-suffix 'magit-dispatch '(0 -1 -1)
-        '("'" "Forge" forge-dispatch))))
-
   ;; Magit config
   (setq magit-diff-refine-hunk t) ; Show word-granularity differences within diff hunks
-  (setq magit-diff-highlight-hunk-body nil) ; Disable background gray highlighting of current hunk
-  ;; INFO: Adding the same hook many times to the same function does not result in being executed more than once
-  (advice-add 'gerrit-dashboard        :before #'(lambda ()         (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)))
-  (advice-add 'gerrit-download         :before #'(lambda (changenr) (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)))
-  (advice-add 'gerrit-upload-transient :before #'(lambda ()         (add-hook 'magit-status-sections-hook #'larumbe/gerrit-magit-insert-status t)))
-  (larumbe/magit-customize-dispatch))
-
+  (setq magit-diff-highlight-hunk-body nil)) ; Disable background gray highlighting of current hunk
 
 
 (use-package magit-lfs
