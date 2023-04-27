@@ -39,15 +39,6 @@
   (Man-getpage-in-background (thing-at-point 'symbol :no-props)))
 
 
-(defun larumbe/sh-bro ()
-  "Basic interface to bropages."
-  (interactive)
-  (let ((cmd (concat "bro -t ansi " (read-shell-command "(Bro) Command: "))))
-    (compile cmd)
-    (beginning-of-buffer)
-    (shrink-window -15)))
-
-
 (defun larumbe/sh-mode-hook ()
   "Custom shell script hook."
   ;; INFO: At some point ?- was set as punctuation "." to handle Bash variable default values.

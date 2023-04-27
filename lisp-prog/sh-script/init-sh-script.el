@@ -4,6 +4,7 @@
 
 (use-package sh-script
   :straight nil
+  :mode (("\\.bashrc" . sh-mode))
   :hook ((sh-mode . larumbe/sh-mode-hook)
          (sh-mode . eglot-ensure))
   :bind (:map sh-mode-map
@@ -12,10 +13,11 @@
          ("C-c C-k" . sh-send-line-or-region-and-step)
          ("C-c C-t" . hydra-sh/body)
          ("C-?"     . larumbe/sh-man-thing-at-point)
-         ("C-M-?"   . larumbe/sh-bro))
+         ("C-M-?"   . tldr))
   :config
   (require 'sh-script-utils)
-  (require 'sh-script-templates))
+  (require 'sh-script-templates)
+  (use-package tldr))
 
 (use-package company-shell
   :after sh-script
@@ -25,6 +27,8 @@
   (defun larumbe/company-shell-hook ()
     "Hook to set `company-backends' for `sh-mode'."
     (setq-local company-backends (append '(company-shell) company-backends))))
+
+
 
 
 (provide 'init-sh-script)
