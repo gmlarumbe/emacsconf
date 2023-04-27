@@ -103,8 +103,7 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 (use-package conf-mode
   :mode (("\\.service\\'"        . conf-mode)
          ("\\.sby\\'"            . conf-mode)
-         ("\\reg\\.sim\\.files\\'" . conf-mode)
-         )
+         ("\\.f\\'"              . conf-mode))
   :hook ((conf-mode . larumbe/prog-mode-hook))) ; Since it is not a childe of prog-mode, requires common configuration settings
 
 
