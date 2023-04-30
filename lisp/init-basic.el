@@ -43,7 +43,10 @@
                                             "~/.emacs.d/straight/repos/vhdl-ext"
                                             "~/.emacs.d/straight/repos/tree-sitter-langs"
                                             ))
-(defvar larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos-core larumbe/emacs-conf-repos-packages))
+(defvar larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos-core
+                                               larumbe/emacs-conf-repos-packages
+                                               (when (file-exists-p "~/.dotfiles")
+                                                 '("~/.dotfiles"))))
 (defvar larumbe/emacs-conf-straight-forked
   '("~/.emacs.d/straight/repos/org-jira"           ; Keep forked: changes for non-Atlassian accounts
     "~/.emacs.d/straight/repos/yasnippet-snippets" ; Keep forked: get updates with --rebase
