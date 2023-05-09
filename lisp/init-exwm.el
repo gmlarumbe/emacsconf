@@ -220,7 +220,7 @@
        ;; cut/paste.
        ([?\C-w] . ?\C-x)
        ([?\M-w] . ?\C-c)
-       ([?\C-y] . ?\C-v)
+       ([?\C-y] . ?\C-y)
        ;; Search (rebound to M-f inside Modelsim, since C-f was rebound in waves to <right> key)
        ([?\C-s] . ?\M-f)
        ;; Save
