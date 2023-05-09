@@ -21,6 +21,16 @@ If prefix-arg is provided, recompile current DIR."
   (byte-compile-file buffer-file-name))
 
 
+(defun larumbe/native-compile-current-buffer-or-dir (&optional dir)
+  "Natively-compile file of current visited buffer.
+If prefix-arg is provided, recompile current DIR non-recursively."
+  (interactive "P")
+  (if current-prefix-arg
+      (dolist (file (directory-files dir t "\.el$"))
+        (native-compile file))
+    (native-compile buffer-file-name)))
+
+
 (defun larumbe/insert-time-stamp-elisp ()
   "Insert time-stamp for Elisp buffers.
 Try to add it before Commentary section."

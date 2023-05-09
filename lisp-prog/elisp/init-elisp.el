@@ -8,11 +8,12 @@
   :commands (larumbe/elisp-xref-set-dirs)
   :bind (:map emacs-lisp-mode-map
          ("C-c C-l"  . larumbe/load-file-current-buffer)
-         ("C-c C-b"  . larumbe/byte-compile-current-buffer-or-dir)
          ("C-c C-f"  . flycheck-mode)
          ("C-c C-t"  . hydra-elisp/body)
          ("C-c C-e"  . larumbe/edebug-defun)
          ("C-c C-o"  . hydra-command-log/body)
+         ("C-c c b"  . larumbe/byte-compile-current-buffer-or-dir)
+         ("C-c c n"  . larumbe/native-compile-current-buffer-or-dir)
          ("C-c h"    . sanityinc/headerise-elisp)
          ("C-c t"    . larumbe/insert-time-stamp-elisp)
          ("C-c l"    . larumbe/lively-dwim)
