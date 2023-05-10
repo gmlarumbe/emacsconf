@@ -40,7 +40,7 @@
     (cond ((setq data (vhdl-ext-instance-at-point))
            (setq vhdl-ext-which-func-extra (cdr data))
            (car data))
-          ((setq data (vhdl-ext-block-at-point))
+          ((setq data (vhdl-ext-block-at-point)) ; TODO: `vhdl-ext-block-at-point' not implemented, not worth doing it
            (setq vhdl-ext-which-func-extra (cdr data))
            (vhdl-ext-which-func-shorten-block (car data)))
           (t

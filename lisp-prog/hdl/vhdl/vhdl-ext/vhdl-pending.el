@@ -1,3 +1,5 @@
+;; INFO: Maybe it's better to implement these in tree-sitter?
+
 ;;; Utils
 (defun vhdl-ext-point-inside-block-p (block)
   "Return block name if cursor is inside specified BLOCK type."
@@ -56,8 +58,6 @@
           nil)))
 
 
-
-
 ;;;; Others
 ;; TODO: This one shouldn't be needed anymore...
 (defun vhdl-ext-electric-return ()
@@ -73,13 +73,6 @@ This will normally happen after calling `vhdl-ext-find-parent-module'"
 ;; Keys
 ;; ("<return>" . larumbe/vhdl-electric-return)
 ;; ("RET"      . larumbe/vhdl-electric-return)
-
-
-
-;;;; Navigation
-
-
-;;;; Which func
 
 
 ;;;; Editing (do with tree-sitter)
