@@ -72,7 +72,7 @@
   :bind (:map compilation-mode-map
          ("j" . larumbe/recompile-with-regexp-alist)
          ("t" . larumbe/compilation-threshold)
-         ("w" . larumbe/xrun-uvm-copy-timestamp))
+         ("w" . larumbe/uvm-copy-timestamp-vsim))
   :bind (:map comint-mode-map
          ("C-j" . larumbe/compilation-interactive-recompile)))
 
