@@ -101,7 +101,7 @@
 
   (defun larumbe/gerrit-magit-insert-status ()
     "Make sure that Gerrit bar is only added for Gerrit repos."
-    (when (file-exists-p (larumbe/path-join (magit-toplevel) ".gitreview"))
+    (when (file-exists-p (file-name-concat (magit-toplevel) ".gitreview"))
       (gerrit-magit-insert-status))))
 
 

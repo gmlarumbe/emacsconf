@@ -74,10 +74,10 @@
 
   (defun larumbe/straight-packages ()
     "Return list of strings with the paths of every straight repo."
-    (let* ((straight-repos-dir (expand-file-name (larumbe/path-join straight-base-dir "straight/repos")))
+    (let* ((straight-repos-dir (expand-file-name (file-name-concat straight-base-dir "straight/repos")))
            (straight-packages (directory-files straight-repos-dir t)))
-      (setq straight-packages (delete (larumbe/path-join straight-repos-dir ".")  straight-packages))
-      (setq straight-packages (delete (larumbe/path-join straight-repos-dir "..") straight-packages))
+      (setq straight-packages (delete (file-name-concat straight-repos-dir ".")  straight-packages))
+      (setq straight-packages (delete (file-name-concat straight-repos-dir "..") straight-packages))
       straight-packages))
 
   (defun larumbe/straight-check-dirty-repos ()
