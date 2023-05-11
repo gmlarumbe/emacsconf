@@ -157,7 +157,9 @@
 ;; Adds to the `auto-mode-alist' these modes to their corresponding files.
 (use-package git-modes
   :init
-  (dolist (pattern '("\\.git_cfgs/gitconfig-*"
+  (dolist (pattern '("gitconfig-*"
+                     ".gitconfig-*"
+                     ".gitignore_global\\'"
                      "/\\.gitreview\\'"))
     (add-to-list 'auto-mode-alist (cons pattern 'gitconfig-mode))))
 
