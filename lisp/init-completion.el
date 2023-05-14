@@ -67,7 +67,9 @@
   :straight nil
   :bind (:map minibuffer-local-map
          ("C-<return>" . completion-at-point)
-         ("M-RET"      . completion-at-point)))
+         ("M-RET"      . completion-at-point))
+  :config
+  (setq completions-detailed t)) ; New in Emacs 28
 
 
 ;;;; Company

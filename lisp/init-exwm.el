@@ -289,6 +289,8 @@
   (exwm-input-set-key (kbd "C-M-}") #'larumbe/enlarge-window-vertically)
   (exwm-input-set-key (kbd "M-'")   #'larumbe/kill-current-buffer)
   ;; Misc
+  (exwm-input-set-key (kbd "<f11>") #'toggle-debug-on-error)
+  (exwm-input-set-key (kbd "<print>") #'screenshot)
   (exwm-input-set-key (kbd "s-SPC") #'larumbe/toggle-keyboard-layout))
 
 

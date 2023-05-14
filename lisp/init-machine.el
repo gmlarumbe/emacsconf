@@ -14,7 +14,6 @@
   (global-hardcore-mode 1)
   (untabify-trailing-ws-mode 1)
   (electric-pair-mode 1)
-  (smart-mark-mode 1) ;; TODO: Verify that it's working properly. Remove otherwise
   (which-key-mode 1))
 
 (larumbe/enable-deferred-packages)

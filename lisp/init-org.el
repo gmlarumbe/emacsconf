@@ -51,16 +51,13 @@
          (org-insert-heading . larumbe/org-insert-current-header))
   :config
   (setq org-log-done 'time)
-  (setq org-todo-keywords
-        '((sequence "TODO" "IN PROGRESS" "|" "DONE" "CANCELED" "POSTPONED")
-          (sequence "|" "INFO")))
-  (setq org-todo-keyword-faces
-        '(("TODO"        . org-warning)
-          ("IN PROGRESS" . "yellow")
-          ("CANCELED"    . (:foreground "blue" :weight bold))
-          ("POSTPONED"   . "cyan")
-          ("INFO"        . "light blue")))
-
+  (setq org-todo-keywords '((sequence "TODO" "IN PROGRESS" "|" "DONE" "CANCELED" "POSTPONED")
+                            (sequence "|" "INFO")))
+  (setq org-todo-keyword-faces '(("TODO"        . org-warning)
+                                 ("IN PROGRESS" . "yellow")
+                                 ("CANCELED"    . (:foreground "blue" :weight bold))
+                                 ("POSTPONED"   . "cyan")
+                                 ("INFO"        . "light blue")))
   (setq org-priority-lowest ?E)          ; Set priority range [A-E]
   (setq org-priority-default ?C)         ; Default priority to average C
   (add-to-list 'org-export-backends 'md) ; Add markdown to export backends
@@ -75,12 +72,10 @@
       (switch-to-buffer buf)
       (call-interactively #'org-agenda-list)))
 
-
   (defun larumbe/org-mode-hook ()
     "`org-mode' own hook."
     (interactive)
     (hardcore-mode -1))
-
 
   (defun larumbe/org-insert-current-header ()
     "Insert current header of highest hierarchy.
@@ -98,12 +93,10 @@ Meant to be used as a hook for `org-insert-heading-hook'"
       (setq text (concat header ": "))
       (insert text)))
 
-
   ;; By default, `org-insert-todo-heading' inserts the TODO after
   ;; the `org-insert-heading-hook'. This advice moves the pointer
   ;; to the end of the line, making it ready to write afterwards.
   (advice-add 'org-insert-todo-heading :after #'org-end-of-line)
-
 
   ;; https://emacs.stackexchange.com/questions/31683/schedule-org-task-for-last-day-of-every-month
   (defun diary-last-day-of-month (date)
@@ -114,7 +107,6 @@ Meant to be used as a hook for `org-insert-heading-hook'"
            (last-day-of-month
             (calendar-last-day-of-month month year)))
       (= day last-day-of-month)))
-
 
   (defun larumbe/diary-last-day-of-month-mon-to-thu (date)
     "Return `t` if DATE is the last day of the month and DATE ranges from Monday to Thursday."
@@ -134,8 +126,8 @@ Meant to be used as a hook for `org-insert-heading-hook'"
   :straight nil
   :after org
   :bind (:map org-agenda-mode-map
-         ("C-w" . larumbe/org-agenda-do-next-week) ; replaces `delete-char' which has no effect since agenda is read-only
-         ("C-d" . larumbe/org-agenda-do-tomorrow)) ; replaces `whole-line-or-region-kill-region' which has no effect since agenda is read-only
+         ("C-w" . larumbe/org-agenda-do-next-week) ; replaces `whole-line-or-region-kill-region' which has no effect since agenda is read-only
+         ("C-d" . larumbe/org-agenda-do-tomorrow)) ; replaces `delete-char' which has no effect since agenda is read-only
   :hook ((org-agenda-mode . larumbe/org-mode-hook))
   :config
   (setq org-agenda-files (list "~/TODO.org"))

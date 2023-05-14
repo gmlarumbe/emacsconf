@@ -4,23 +4,6 @@
 
 
 ;;;; Window/Frame Display
-(use-package popwin
-  :config
-  (popwin-mode 1))
-
-
-(use-package which-func
-  :straight nil
-  :config
-  (set-face-attribute 'which-func nil :foreground "green"))
-
-
-(use-package time
-  :straight nil
-  :config
-  (setq display-time-default-load-average nil)) ; Display time on the status bar
-
-
 (use-package smart-mode-line
   :commands (larumbe/sml-enable)
   :config
@@ -44,14 +27,30 @@ This was needed in order to allow GitHub actions to work properly."
     (sml/setup)))
 
 
+(use-package diminish)
+
+
+(use-package time
+  :straight nil
+  :config
+  (setq display-time-default-load-average nil)) ; Display time on the status bar
+
+
+(use-package winner
+  :straight nil
+  :config)
+
+
+(use-package popwin
+  :config
+  (popwin-mode 1))
+
+
 (use-package buffer-move
   :bind (("<C-S-up>"    . buf-move-up)
          ("<C-S-down>"  . buf-move-down)
          ("<C-S-left>"  . buf-move-left)
          ("<C-S-right>" . buf-move-right)))
-
-
-(use-package diminish)
 
 
 (use-package ibuffer
@@ -61,7 +60,6 @@ This was needed in order to allow GitHub actions to work properly."
   (setq ibuffer-expert t))
 
 
-  ;; Projectile-sorted buffers
 (use-package ibuffer-projectile
     :hook ((ibuffer . modi/ibuffer-customization))
     :after ibuffer
@@ -80,9 +78,6 @@ This was needed in order to allow GitHub actions to work properly."
   :config
   (setq ibuffer-show-empty-filter-groups nil))
 
-
-(use-package indent-guide
-  :bind (("C-<f10>" . indent-guide-global-mode)))
 
 
 ;;;; Navigation
@@ -147,17 +142,12 @@ C-s C-w [C-w] [C-w]... behaviour. "
 (use-package navi-mode)
 
 
-(use-package winner
-  :straight nil
-  :config)
-
-
 (use-package beacon
   :diminish
   :config
   (setq beacon-size 20)
-  (add-to-list 'beacon-dont-blink-major-modes 'term-mode)
-  (add-to-list 'beacon-dont-blink-major-modes 'vterm-mode))
+  (dolist (mode '(term-mode vterm-mode))
+    (add-to-list 'beacon-dont-blink-major-modes mode)))
 
 
 (use-package speedbar
@@ -175,9 +165,6 @@ C-s C-w [C-w] [C-w]... behaviour. "
   (setq speedbar-show-unknown-files t)
   (setq speedbar-use-images nil)
   (setq sr-speedbar-right-side t))
-
-
-(use-package bind-chord)
 
 
 (use-package hardcore-mode
@@ -236,10 +223,11 @@ the vertical drag is done."
 (use-package untabify-trailing-ws
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("minor-modes/untabify-trailing-ws.el"))
   :config
-  (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-mode.el") untabify-trailing-disable-on-files)
-  (push (concat user-emacs-directory "straight/repos/verilog-mode/verilog-test.el") untabify-trailing-disable-on-files)
-  (push (concat user-emacs-directory "straight/repos/cperl-mode/cperl-mode.el") untabify-trailing-disable-on-files)
-  (push (concat user-emacs-directory "straight/repos/verilog-ext/snippets/makefile-mode/verilog-template") untabify-trailing-disable-on-files))
+  (dolist (file `(,(file-name-concat user-emacs-directory "straight/repos/verilog-mode/verilog-mode.el")
+                  ,(file-name-concat user-emacs-directory "straight/repos/verilog-mode/verilog-test.el")
+                  ,(file-name-concat user-emacs-directory "straight/repos/cperl-mode/cperl-mode.el")
+                  ,(file-name-concat user-emacs-directory "straight/repos/verilog-ext/snippets/makefile-mode/verilog-template")))
+    (push file untabify-trailing-disable-on-files)))
 
 
 (use-package align
@@ -256,8 +244,6 @@ the vertical drag is done."
 (use-package whole-line-or-region
   :bind (("C-w" . whole-line-or-region-kill-region)))
 
-
-(use-package smart-mark)
 
 (use-package multiple-cursors
   :bind (("C->"     . mc/mark-next-like-this)
@@ -279,6 +265,13 @@ the vertical drag is done."
 
 
 ;;;; Sysadmin
+(use-package server
+  :demand
+  :config
+  (unless (server-running-p)
+    (server-start)))
+
+
 (use-package arch-packer
   :straight (:repo "brotzeit/arch-packer"
              :fork (:repo "gmlarumbe/arch-packer"))
@@ -295,10 +288,8 @@ the vertical drag is done."
       (message "Set arch-packer command to: %s" arch-packer-default-command))))
 
 
-;; Similar to `arch-packer', but just for AUR.
-;; Seems better to get info/voting.
-;; Supports AUR package downloading but not installation.
-(use-package aurel)
+(use-package aurel) ;; Similar to `arch-packer', but just for AUR. Seems better to get info/voting. Supports AUR package downloading but not installation.
+
 
 (use-package google-this
   :diminish
@@ -311,27 +302,17 @@ the vertical drag is done."
 
 
 (use-package google-translate
+  :init
+  (setq google-translate-default-source-language "en") ; English
+  (setq google-translate-default-target-language "es") ; Spanish
+  ;; Check `google-translate-supported-languages-alist'.
+  ;; Use prefix arg to query for language, or set variables to nil
   :config
-  ;; BUG: https://github.com/atykhonov/google-translate/issues/52
-  ;; https://github.com/twlz0ne/multi-translate.el/issues/3
-  (defun google-translate--search-tkk@fix-137 ()
-    "Search TKK.
-Fix ttk search error https://github.com/atykhonov/google-translate/issues/137"
-    (list 430675 2721866130))
-
-  (advice-add 'google-translate--search-tkk :override 'google-translate--search-tkk@fix-137)
   (setq google-translate-backend-method 'curl))
 
 
 (use-package howdoi
   :straight (:host github :repo "arthurnn/howdoi-emacs"))
-
-
-(use-package tramp
-  :straight nil
-  :config
-  (setq tramp-own-remote-path nil) ; `tramp-remote-path': List of directories to search for executables on remote host.
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 
 (use-package deferred)
@@ -369,13 +350,16 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   ;; There are 2 packages, unison and unison-mode.
   ;; The first one for process invocation
   ;; The second one for syntax highlighting and process invocation -> Using this
-  :mode (("\\.prf\\'" . unison-mode))
-  :config
-  (use-package unison-sync-minor-mode
-    :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("minor-modes/unison-sync-minor-mode.el"))
-    :bind (:map unison-mode-map
-           ("C-c C-c" . unison-my-run))
-    :hook ((unison-mode . unison-sync-minor-mode))))
+  :mode (("\\.prf\\'" . unison-mode)))
+
+
+(use-package unison-sync-minor-mode
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("minor-modes/unison-sync-minor-mode.el"))
+  :after unison-mode
+  :demand
+  :bind (:map unison-mode-map
+         ("C-c C-c" . unison-my-run))
+  :hook ((unison-mode . unison-sync-minor-mode)))
 
 
 (use-package ssh-tunnels
@@ -401,7 +385,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
         (erc-server-send (format "PASS %s" erc-session-password))
       (message "Logging in without password"))
     (when (and (featurep 'erc-sasl)
-               (erc-sasl-use-sasl-p))
+               larumbe/erc-sasl-use-sasl)
       (erc-server-send "CAP REQ :sasl"))
     (erc-server-send (format "NICK %s" (erc-current-nick)))
     (erc-server-send
@@ -416,11 +400,12 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 (use-package erc-sasl
-  :straight (:host github :repo "psachin/erc-sasl")
-  :demand
+  :straight nil
   :after erc
+  :demand
+  :init
+  (defvar larumbe/erc-sasl-use-sasl t)
   :config
-  (setq erc-sasl-use-sasl t)
   ;; Provides a way of authenticating before actually connecting to the server.
   ;; Requires providing the nick and password in the `erc-tls' function.
   (add-to-list 'erc-sasl-server-regexp-list "irc\\.freenode\\.net")
@@ -430,17 +415,15 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 (use-package env-switch
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/env-switch.el")))
 
-;; Updates `exec-path' from $PATH.
-;; More info: https://emacs.stackexchange.com/questions/550/exec-path-and-path
-(use-package exec-path-from-shell)
+
+(use-package exec-path-from-shell) ; Updates `exec-path' from $PATH. https://emacs.stackexchange.com/questions/550/exec-path-and-path
 
 
 (use-package ytdl)
 
 
 ;;;; Misc
-;; GUI and Clipboard
-(use-package select
+(use-package select ; GUI and Clipboard
   :straight nil
   :config
   (setq select-enable-clipboard t) ; Clipboard enabling: default = t
@@ -471,11 +454,11 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   ;;  - Plus, this function calls `barf-if-buffer-read-only' so the (interactive "*") check
   ;;  in C seems redundant.
   ;;
-  ;; - Copied from <emacs-dir>/share/emacs/28.1/lisp/simple.el.gz
+  ;; - Copied from <emacs-dir>/share/emacs/30.0.50/lisp/simple.el.gz
   ;; - Tried creating a `larumbe/newline' function and adding both
   ;; :override and :before-until advices to newline but did not seem to work,
   ;; (might be due to order of advice dependency).
-  ;;
+
   (defun newline (&optional arg interactive)
     "Insert a newline, and move to left margin of the new line.
 With prefix argument ARG, insert that many newlines.
@@ -502,7 +485,7 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
            (beforepos (point))
            (last-command-event ?\n)
            ;; Don't auto-fill if we have a prefix argument.
-           (auto-fill-function (if arg nil auto-fill-function))
+           (inhibit-auto-fill (or inhibit-auto-fill arg))
            (arg (prefix-numeric-value arg))
            (procsym (make-symbol "newline-postproc")) ;(bug#46326)
            (postproc
@@ -551,11 +534,6 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
   (advice-add 'newline :before-until #'larumbe/newline-advice))
 
 
-(use-package menu-bar
-  :straight nil
-  :bind (("<f11>" . toggle-debug-on-error)))
-
-
 (use-package hi-lock
   :straight nil
   :bind (("C-\\" . highlight-symbol-at-point)
@@ -564,17 +542,6 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
 
 (use-package elmacro
   :diminish elmacro-mode)
-
-
-(use-package auto-highlight-symbol
-  :bind (:map auto-highlight-symbol-mode-map
-         ("M-<"     . ahs-backward)
-         ("M->"     . ahs-forward)
-         ("M--"     . ahs-back-to-start)
-         ("C-x C-'" . ahs-change-range) ; This might be only function that I still do not know how to achieve with Isearch
-         ("C-x C-a" . ahs-edit-mode))
-  :config
-  (setq ahs-default-range 'ahs-range-whole-buffer))
 
 
 (use-package re-builder
@@ -613,10 +580,10 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
   :diminish auto-revert-mode)
 
 
-;; API of `coin-ticker' was outdated. Also tried `crypto-ticker-mode' but was a bit more complex than this one
-(use-package btc-ticker)
+(use-package btc-ticker) ;; API of `coin-ticker' was outdated. Also tried `crypto-ticker-mode' but was a bit more complex than this one
 
 
+(use-package htmlize)
 ;; https://emacs.stackexchange.com/questions/14403/how-can-i-copy-syntax-highlighted-code-as-rtf-or-html
 ;; Steps:
 ;;  1 - Open *scratch* buffer and set proper major-mode
@@ -630,13 +597,13 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
 ;;  - Check if `modi/htmlize-region-to-file' is defined for my-elisp-packages
 ;;    + This one uses a CSS based on leuven css (light theme maybe more suitable for blank background emails)
 ;;  - Package `highlight2clipboard' did not support gnu/linux
-(use-package htmlize)
 
 
+(use-package screenshot)
 ;; Requires ImageMagick and makes use of binary "import"
 ;;
 ;; Prerequisites:
-;; - /etc/ImageMagick-6/policy.xml
+;; - /etc/ImageMagick-7/policy.xml
 ;; Change to:
 ;; <policy domain="coder" rights="read | write" pattern="PS" />
 ;;
@@ -646,7 +613,6 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
 ;;     - Scheme: local (save in ~/images/ requires previous mkdir)
 ;;  b) After executing a:
 ;;     - `screenshot-take' (reuses previous filename and scheme)
-(use-package screenshot)
 
 
 (use-package camcorder
@@ -670,7 +636,8 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
   (setq counsel-describe-variable-function #'helpful-variable))
 
 
-(use-package hierarchy)
+(use-package hierarchy
+  :straight nil)
 
 
 ;;;; Libraries
@@ -681,12 +648,13 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
 (use-package pcre2el)
 (use-package with-editor)
 (use-package request)
-(use-package bind-key)
+(use-package bind-key
+  :straight nil)
 (use-package yaml
   :commands (yaml-parse-string
              yaml-encode-object)) ; Full Elisp, worse performance but portable
 (use-package emacs-libyaml
-  :straight (:host github :repo "syohex/emacs-libyaml")) ; Dinamic binding for libyaml.so
+  :straight (:host github :repo "syohex/emacs-libyaml")) ; Dinamic binding for libyaml
 
 
 ;;;; Functions & Utils
@@ -713,9 +681,6 @@ A non-nil INTERACTIVE argument means to run the `post-self-insert-hook'."
 
 (use-package larumbe-macros
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("macros/larumbe-macros.el")))
-
-(use-package fpga-utils
-  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/fpga-utils.el")))
 
 
 ;;;; Provide package

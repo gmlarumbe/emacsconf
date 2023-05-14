@@ -8,6 +8,7 @@
 ;; - For code completion, they change `company-backends', overriding it with `company-capf' or adding it to existing ones
 ;; - etc...
 (use-package eglot
+  :straight nil
   :config
   ;; Prevent eglot from overriding value of `company-backends' (eglot value of `completion-at-point-functions' still works)
   (setq eglot-stay-out-of '(company eldoc flymake))
@@ -162,6 +163,22 @@ Same as `hs-toggle-hiding', but do not exec: (posn-set-point (event-end e))"
       (flyspell-mode 1)
       (message "Flyspell enabled..."))))
 
+
+(use-package indent-guide
+  :bind (("C-<f10>" . indent-guide-global-mode)))
+
+
+(use-package which-func
+  :straight nil
+  :config
+  (set-face-attribute 'which-func nil :foreground "green"))
+
+
+(use-package display-line-numbers
+  :config
+  ;; Even though `line-number-current-line' does not belong to `display-line-numbers' package,
+  ;; it is used indirectly by it, so it's the best place to set it outside of customize.
+  (set-face-attribute 'line-number-current-line nil :foreground "white"))
 
 
 (use-package diff-mode

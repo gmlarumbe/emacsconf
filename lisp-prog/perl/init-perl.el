@@ -13,6 +13,7 @@
 (defalias 'perl-mode 'cperl-mode)
 
 (use-package cperl-mode
+  :straight nil
   ;; Since it is not a child of prog-mode, requires common configuration settings
   :hook ((cperl-mode . larumbe/prog-mode-keys)
          (cperl-mode . larumbe/prog-mode-hook)

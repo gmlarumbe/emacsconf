@@ -22,6 +22,11 @@
 ;;;; Language-specific
 (require 'init-verilog)
 (require 'init-vhdl)
+
+(use-package fpga-utils
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/fpga-utils.el")))
+
+
 (require 'init-elisp)
 (require 'init-python)
 (require 'init-sh-script)

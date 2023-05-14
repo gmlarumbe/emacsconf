@@ -2,7 +2,7 @@
 ;;; Commentary:
 ;;
 ;; Package configuration is based upon straight.el and use-package
-;;  - https://github.com/raxod502/straight.el
+;;  - https://github.com/radian-software/straight.el
 ;;  - https://github.com/jwiegley/use-package
 ;;
 ;; Straight completely replaces Emacs default `package' system.
@@ -58,19 +58,18 @@
   (setq use-package-compute-statistics t))
 
 (use-package straight
-  :commands (larumbe/straight-packages
+  :commands (larumbe/straight-not-repo-p
+             larumbe/straight-packages
              larumbe/straight-check-dirty-repos
-             larumbe/straight-not-repo-p)
+             larumbe/straight-check-forked-repos)
   :config
   (setq straight-use-package-by-default t)
   (setq straight-host-usernames
         '((github . "gmlarumbe")))
 
-
   (defun larumbe/straight-not-repo-p (repo)
     "Return true if REPO is not a straight repo."
     (not (string-prefix-p (expand-file-name "~/.emacs.d/straight/") repo)))
-
 
   (defun larumbe/straight-packages ()
     "Return list of strings with the paths of every straight repo."

@@ -27,6 +27,7 @@
 
 
 (use-package xref
+  :straight nil
   :config
   (setq xref-auto-jump-to-first-definition t)
   (setq xref-auto-jump-to-first-xref t)

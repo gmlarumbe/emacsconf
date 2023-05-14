@@ -29,10 +29,6 @@
   (ivy-rich-mode 1))
 
 
-(use-package ivy-hydra
-  :after ivy)
-
-
 (when (equal larumbe/completion-framework 'ivy)
   (use-package swiper
     :bind (:map swiper-map
