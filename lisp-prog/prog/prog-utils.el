@@ -10,11 +10,14 @@
 (require 'init-completion)
 
 
-(defun larumbe/prog-mode-report-backend (tag &optional ref-p backend)
-  "Show in the minibuffer what is current used backend."
+(defun larumbe/prog-mode-report-backend (tag backend &optional ref-p)
+  "Show in the minibuffer what is the current used BACKEND for TAG.
+
+BACKEND is mandatory to make sure that responsibility of backend reporting comes from the caller.
+E.g: If it was run after finding definitions it would report the active backend of the destination file!
+
+Optional display references if REF-P is non-nil."
   (let (formatted-backend formatted-tag)
-    (unless backend
-      (setq backend (xref-find-backend))) ; TODO: Danger, if run after finding definitions will report the active backend of the destinatino file!
     ;; Add some coloring
     (setq formatted-backend (propertize (symbol-name backend) 'face '(:foreground "goldenrod" :weight bold)))
     (setq formatted-tag (propertize tag 'face '(:foreground "green")))
@@ -26,30 +29,30 @@
 
 (defun larumbe/prog-mode-definitions-default (def)
   "Default action to take when looking for definitions in a particular mode."
-  (let ((backend-xref (xref-find-backend))
+  (let ((tag-xref-backend (xref-find-backend))
         skip)
     ;; `dumb-jump' only supports definitions and does some basic processing of them
     ;; Since sometimes these could not be the desired ones, ask for confirmation
-    (when (and (equal backend-xref 'dumb-jump)
+    (when (and (equal tag-xref-backend 'dumb-jump)
                (not (y-or-n-p "No definitions found, try dumb-jump? ")))
       (setq skip t))
     (unless skip
       (xref-find-definitions def)
-      (larumbe/prog-mode-report-backend def nil backend-xref))))
+      (larumbe/prog-mode-report-backend def tag-xref-backend))))
 
 
 (defun larumbe/prog-mode-references-default (ref)
   "Default action to take when looking for references in a particular mode."
-  (let ((backend-xref (xref-find-backend)))
+  (let ((tag-xref-backend (xref-find-backend)))
     ;; `dumb-jump' only supports definitions (doesn't provide implementation for xref-find-references)
     ;; Since references would be searched through grep and processed by default `semantic-symref'
     ;; a customized ripgrep command is preferred.
-    (if (equal backend-xref 'dumb-jump)
+    (if (equal tag-xref-backend 'dumb-jump)
         (when (y-or-n-p "[Skipping dumb-jump] No refs found, try ripgrep? ")
           (larumbe/ripgrep-xref ref))
       ;; Find references with corresponding backend
       (xref-find-references ref)
-      (larumbe/prog-mode-report-backend ref :ref backend-xref))))
+      (larumbe/prog-mode-report-backend ref tag-xref-backend :ref))))
 
 
 (defun larumbe/prog-mode-definitions ()
@@ -64,8 +67,7 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
   (let ((file (thing-at-point 'filename :noprop))
         (url  (thing-at-point 'url      :noprop))
         (def  (thing-at-point 'symbol   :noprop))
-        (backend-xref)
-        (skip))
+        tag-xref-backend)
     (cond (;; URL
            url
            (browse-url url))
@@ -80,7 +82,7 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
            (if def
                (progn
                  (lsp-find-definition)
-                 (larumbe/prog-mode-report-backend def nil 'lsp))
+                 (larumbe/prog-mode-report-backend def 'lsp nil))
              (call-interactively #'xref-find-definitions)))
           ;; If not pointing to a file choose between different navigation functions
           ;;   - Verilog: try to jump to module at point if not over a tag
@@ -90,11 +92,13 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
                (larumbe/prog-mode-definitions-default def)
              ;; Context based jump if no thing-at-point:
              (cond (;; Inside a module instance
-                    (and (verilog-ext-point-inside-block 'module)
+                    (and (or (verilog-ext-point-inside-block 'module)
+                             (verilog-ext-point-inside-block 'interface))
                          (verilog-ext-instance-at-point))
                     (setq def (match-string-no-properties 1))
+                    (setq tag-xref-backend (xref-find-backend))
                     (xref-find-definitions def)
-                    (larumbe/prog-mode-report-backend def))
+                    (larumbe/prog-mode-report-backend def tag-xref-backend))
                    ;; Default fallback
                    (t
                     (call-interactively #'xref-find-definitions)))))
@@ -106,8 +110,9 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
              (cond (;; Inside an entity instance
                     (vhdl-ext-instance-at-point)
                     (setq def (match-string-no-properties 6))
+                    (setq tag-xref-backend (xref-find-backend))
                     (xref-find-definitions def)
-                    (larumbe/prog-mode-report-backend def))
+                    (larumbe/prog-mode-report-backend def tag-xref-backend))
                    ;; Default fallback
                    (t
                     (call-interactively #'xref-find-definitions)))))
@@ -115,8 +120,9 @@ In case definitions are not found and dumb-jump is detected ask for use it as a 
           ((string= major-mode "python-mode")
            (if def
                (progn
+                 (setq tag-xref-backend (xref-find-backend)) ; Should be elpy if enabled
                  (xref-find-definitions (elpy-xref--identifier-at-point))
-                 (larumbe/prog-mode-report-backend def))
+                 (larumbe/prog-mode-report-backend def tag-xref-backend))
              (call-interactively #'xref-find-definitions)))
           ;; Default to use xref
           (t
@@ -135,13 +141,14 @@ In case references are not found, and dumb-jump is detected as a backend, perfor
 This ripgrep will be executed at `projectile-project-root' or `default-directory'
 and will be applied to only files of current `major-mode' if existing in `larumbe/ripgrep-types'."
   (interactive)
-  (let ((ref (thing-at-point 'symbol)))
+  (let ((ref (thing-at-point 'symbol))
+        tag-xref-backend)
     (cond (;; `lsp' works a bit different than the rest. Eglot works fine with this custom approach
            (bound-and-true-p lsp-mode)
            (if ref
                (progn
                  (lsp-find-references)
-                 (larumbe/prog-mode-report-backend ref :ref 'lsp))
+                 (larumbe/prog-mode-report-backend ref 'lsp :ref))
              (call-interactively #'xref-find-references)))
           ;; Verilog
           ((or (string= major-mode "verilog-mode")
@@ -153,8 +160,9 @@ and will be applied to only files of current `major-mode' if existing in `larumb
                     (and (verilog-ext-point-inside-block 'module)
                          (verilog-ext-instance-at-point))
                     (setq ref (match-string-no-properties 1))
+                    (setq tag-xref-backend (xref-find-backend))
                     (xref-find-references ref)
-                    (larumbe/prog-mode-report-backend ref :ref))
+                    (larumbe/prog-mode-report-backend ref tag-xref-backend :ref))
                    ;; Default fallback
                    (t
                     (call-interactively #'xref-find-references)))))
@@ -167,8 +175,9 @@ and will be applied to only files of current `major-mode' if existing in `larumb
              (cond (;; Inside an entity instance
                     (vhdl-ext-instance-at-point)
                     (setq ref (match-string-no-properties 6))
+                    (setq tag-xref-backend (xref-find-backend))
                     (xref-find-references ref)
-                    (larumbe/prog-mode-report-backend ref :ref))
+                    (larumbe/prog-mode-report-backend ref tag-xref-backend :ref))
                    ;; Default fallback
                    (t
                     (call-interactively #'xref-find-references)))))
@@ -176,8 +185,9 @@ and will be applied to only files of current `major-mode' if existing in `larumb
            (string= major-mode "python-mode")
            (if ref
                (progn
+                 (setq tag-xref-backend (xref-find-backend))
                  (xref-find-references (elpy-xref--identifier-at-point))
-                 (larumbe/prog-mode-report-backend ref :ref))
+                 (larumbe/prog-mode-report-backend ref tag-xref-backend :ref)) ; Should be elpy if enabled
              (call-interactively #'xref-find-references)))
           ;; Default
           (t (if ref
