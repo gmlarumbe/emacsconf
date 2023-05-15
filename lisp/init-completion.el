@@ -62,15 +62,14 @@
 
 
 ;;;; CAPF
-;; Override company keybindings to use `completion-at-point' when executing "M-:" `eval-expression' at minibuffer.
 (use-package minibuffer
   :straight nil
   :bind (:map minibuffer-local-map
-         ("C-<return>" . completion-at-point)
-         ("M-RET"      . completion-at-point))
+         ("C-<return>" . completion-at-point)  ; Override company keybindings to use `completion-at-point' ...
+         ("M-RET"      . completion-at-point)) ; ... when executing "M-:" `eval-expression' at minibuffer.
   :config
   (setq enable-recursive-minibuffers t) ; Allow minibuffer commands while in the minibuffer.
-  (setq completions-detailed t)) ; New in Emacs 28
+  (setq completions-detailed t))        ; New in Emacs 28
 
 
 ;;;; Company
@@ -94,7 +93,7 @@
   ;; Company only uses one backend at a time, so set a backend for files/dirs and a grouped backend with keywords/tags/etc...
   ;; To keep the candidates organized in accordance with the grouped backends order, add the keyword :separate to the list of the grouped backends.
   ;; - https://company-mode.github.io/manual/Backends.html#Grouped-Backends
-  (defvar larumbe/company-backends-common '(company-files (company-capf company-keywords company-gtags :separate)))
+  (defvar larumbe/company-backends-common '(company-files (company-capf company-keywords) company-gtags :separate))
 
   (defun larumbe/company-backend-report ()
     "Show current backend used when running `company-other-backend'."
@@ -123,16 +122,6 @@
   :diminish yasnippet yas-minor-mode
   :bind ("<C-M-return>" . yas-expand)
   :config
-  ;; MELPA Snippets database
-  (use-package yasnippet-snippets
-    :straight (:repo "AndreaCrotti/yasnippet-snippets"
-               :fork (:repo "gmlarumbe/yasnippet-snippets"))
-    :config
-    ;; Snippets directories are set in `yas-snippet-dirs' variable.
-    ;; `yasnippet-snippets' will add the directory of `yasnippet-snippets-dir' to
-    ;; the list of available snippets. So we reset it's value to look only in one directory.
-    (setq yas-snippet-dirs '(yasnippet-snippets-dir)))
-
   ;; Unmap TAB, use it for indentation only
   (define-key yas-minor-mode-map (kbd "TAB") nil)
   (define-key yas-minor-mode-map [tab] nil)
@@ -146,6 +135,17 @@ If universal ARG is provided, visit a snippet file."
     (if arg
         (call-interactively #'yas-visit-snippet-file)
       (call-interactively #'yas-insert-snippet))))
+
+(use-package yasnippet-snippets
+  :straight (:repo "AndreaCrotti/yasnippet-snippets"
+             :fork (:repo "gmlarumbe/yasnippet-snippets"))
+  :after yasnippet
+  :demand
+  :config
+  ;; Snippets directories are set in `yas-snippet-dirs' variable.
+  ;; `yasnippet-snippets' will add the directory of `yasnippet-snippets-dir' to
+  ;; the list of available snippets. So we reset it's value to look only in one directory.
+  (setq yas-snippet-dirs '(yasnippet-snippets-dir)))
 
 
 ;;;; Hydra

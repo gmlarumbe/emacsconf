@@ -4,91 +4,35 @@
 ;;; Code:
 
 
-
 (use-package dired
   :straight nil
   :bind (:map dired-mode-map
-         ("C-x C-j" . larumbe/dired-jump)
          ("C-j"     . dired-find-file)
          ("b"       . dired-up-directory)
          ("l"       . recenter-top-bottom)
          ("y"       . dired-do-symlink)                               ; Replaces `dired-show-file-type'
          ("J"       . dired-goto-file)                                ; Switch from 'j' to 'J'
-         ("j"       . larumbe/dired-do-async-shell-command-or-okular) ; Open file-at-point directly with Okular if is a PDF and delete async process window. Otherwise it will ask for default program
-         (","       . larumbe/dired-toggle-deletion-confirmer)        ; https://superuser.com/questions/332590/how-to-prevent-delete-confirmation-in-emacs-dired
-         ("a"       . larumbe/dired-async-toggle)                     ; Replaces `dired-find-alternate-file', never used it though...
          ("C-x C-q" . wdired-change-to-wdired-mode))                  ; Previously overriden by EXWM global keybinding
-  :bind (("C-x C-j" . larumbe/dired-jump))                            ; Bind keybinding globally
   :hook ((dired-mode . larumbe/dired-hook))
   :commands (dired-hide-details-mode)
   :config
   (setq dired-listing-switches "-alh") ; Show size in human readable format
 
-  ;; Functionality
-  (defun larumbe/dired-jump (arg)
-    "Execute `dired-jump'.
-With universal ARG, delete every dired-mode buffer to have only 1 dired buffer.
-Provides a more convenient solution to cluttering dired buffers than `dired-single'."
-    (interactive "P")
-    (when arg
-      (dolist ($buf (buffer-list (current-buffer)))
-        (with-current-buffer $buf
-          (when (string= major-mode "dired-mode")
-            (kill-buffer $buf)))))
-    (cond ((string= major-mode "dired-mode")
-           (previous-buffer))
-          ((string= major-mode "vterm-mode")
-           ;; INFO: Updates `default-directory' from current shell through file write/read
-           (let* ((pwd-file "/tmp/vterm-last-dir")
-                  (pwd-cmd (concat "echo -n $(pwd) > " pwd-file "\n"))
-                  (default-directory default-directory)) ; Save global status of `default-directory'
-             (larumbe/sh-send-string-vterm pwd-cmd)
-             (sleep-for 0.15) ; Without this line point moved far above in *vterm*
-             (setq default-directory (shell-command-to-string (concat "cat " pwd-file)))
-             (dired-jump)))
-          (t
-           (dired-jump))))
-
-  (defun larumbe/dired-toggle-deletion-confirmer ()
-    "Toggles deletion confirmer for dired from (y-or-n) to nil and viceversa."
-    (interactive)
-    (if (equal dired-deletion-confirmer 'yes-or-no-p)
-        (progn
-          (setq dired-deletion-confirmer '(lambda (x) t))
-          (message "Dired deletion confirmation: FALSE"))
-      (progn
-        (setq dired-deletion-confirmer 'yes-or-no-p)
-        (message "Dired deletion confirmation: TRUE"))))
-
-  (defun larumbe/dired-do-async-shell-command-or-okular ()
-    "Same as `dired-do-async-shell-command' but if on a PDF will open Okular directly."
-    (interactive)
-    (when (not (string-equal major-mode "dired-mode"))
-      (error "Needs to be executed in dired...! "))
-    (let ((program "okular")
-          (filename (thing-at-point 'filename t)))
-      (if (string-equal (file-name-extension filename) "pdf")
-          (progn
-            (dired-do-async-shell-command program filename (list filename))
-            (delete-window (get-buffer-window "*Async Shell Command*")))
-        (call-interactively #'dired-do-async-shell-command))))
-
-  ;; `dired-async-mode' is an autoload from `async' package in straight repo "emacs-async"
-  ;; Seems more reasonable to reference it here than in async's use-package call
-  (defun larumbe/dired-async-toggle ()
-    "Run asynchronously dired commands for copying, renaming and symlinking, through async library.
-Useful since sometimes it takes longer renaming/copying for small files due to async processing overhead.
-To cancel a copy call `dired-async-kill-process'. "
-    (interactive)
-    (if dired-async-mode
-        (progn
-          (dired-async-mode -1)
-          (message "dired-async disabled"))
-      (dired-async-mode 1)
-      (message "dired-async enabled")))
-
   (defun larumbe/dired-hook ()
     (dired-hide-details-mode 1)))
+
+
+(use-package dired-utils
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/dired-utils.el"))
+  :after dired
+  :demand
+  :bind (:map dired-mode-map
+         ("C-x C-l" . previous-buffer)                                ; Complementary to `larumbe/dired-jump'
+         ("C-x C-j" . larumbe/dired-jump)                             ; Bind keybinding locally
+         ("j"       . larumbe/dired-do-async-shell-command-or-okular) ; Open file-at-point directly with Okular if is a PDF and delete async process window. Otherwise it will ask for default program
+         (","       . larumbe/dired-toggle-deletion-confirmer)        ; https://superuser.com/questions/332590/how-to-prevent-delete-confirmation-in-emacs-dired
+         ("a"       . larumbe/dired-async-toggle))                    ; Replaces `dired-find-alternate-file', never used it though...
+  :bind (("C-x C-j" . larumbe/dired-jump)))                           ; Bind keybinding globally
 
 
 ;; +--------------------+
@@ -117,6 +61,7 @@ To cancel a copy call `dired-async-kill-process'. "
   :config
   (setq dired-omit-verbose nil)
   (delete ".bin" dired-omit-extensions)
+  (delete ".so"  dired-omit-extensions)
   (setq dired-guess-shell-alist-user ; Program mappings to dired-do-shell-command (precedence over `dired-guess-shell-alist-default')
         '(("\\.pdf\\'"  "okular")
           ("\\.lxt2\\'" "gtkwave"))))

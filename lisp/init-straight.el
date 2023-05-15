@@ -26,6 +26,11 @@
 ;; (use-package matlab
 ;;   :straight matlab-mode)
 ;;
+;; - With respect to key mapping and overriding:
+;;     - If declaring with :bind, the keybindings will be overriden by major-mode keybindings
+;;     - To override minor-mode keybindings, use :bind*
+;;     - To override major-mode derived keybindings, use a hook (e.g. prog-mode-hook)
+;;
 ;;; Code:
 
 ;;;; Straight bootstrap

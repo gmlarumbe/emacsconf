@@ -31,15 +31,22 @@
   :config
   (setq xref-auto-jump-to-first-definition t)
   (setq xref-auto-jump-to-first-xref t)
+  (remove-hook 'xref-backend-functions #'etags--xref-backend) ; Avoid using etags (and asking for TAGS table)
   (add-hook 'xref--xref-buffer-mode-hook (lambda () (setq truncate-lines t))))
+
+
+(use-package xref-utils
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/xref-utils.el"))
+  :bind (("M-." . larumbe/xref-find-definitions)  ; Allow using it in non-prog modes (e.g. open files/URLs with fundamental/conf modes)
+         ("M-?" . larumbe/xref-find-references))) ; Let them being overriden by major-mode specific keybindings (e.g. `org-open-at-point')
 
 
 (use-package dumb-jump
   :commands (larumbe/dumb-jump-local-enable)
   :config
   (defun larumbe/dumb-jump-local-enable ()
-    "docstring"
-    ;; Set depth value of 't to 100 to give it the least possible priority to avoid using etags (and asking for TAGS table)
+    "Set depth value of 't to 100 to give it the least possible priority with
+    respect to other backends."
     (remove-hook 'xref-backend-functions 't t)
     (add-hook 'xref-backend-functions 't 100 t)
     (add-hook 'xref-backend-functions #'dumb-jump-xref-activate 1 t))
@@ -57,7 +64,6 @@
   ;;
   ;; Also I am not completely sure if adding .repo/GTAGS denoters will make these
   ;; have precedence over .git since the dumb-jump-get-project-root is advised
-
   (add-to-list 'dumb-jump-project-denoters ".repo")
   (add-to-list 'dumb-jump-project-denoters "GTAGS")
   (advice-add 'dumb-jump-get-project-root :override #'larumbe/projectile-project-root-or-current-dir))
