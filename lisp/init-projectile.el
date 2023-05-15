@@ -14,7 +14,6 @@
 (use-package projectile
   :diminish projectile-mode       ; Also diminishes `larumbe/projectile-custom-mode-line', as it is already available at the left corner
   :bind (:map projectile-mode-map ; Projectile 2.0 removes automatic keybindings
-         ("C-c p j" . projectile-find-tag)
          ("C-c p u" . projectile-regenerate-tags)
          ("C-c p c" . projectile-compile-project))
   :commands (projectile-project-root ; used by many larumbe functions
@@ -23,6 +22,7 @@
              larumbe/projectile-project-root-or-current-dir)
   :config
   (setq projectile-enable-caching t) ; Enable caching, otherwise `projectile-find-file' is really slow for large projects.
+  (setq projectile-tags-backend 'xref)
 
   (add-to-list 'projectile-globally-ignored-directories "*.repo") ; https://github.com/bbatsov/projectile/issues/1250
   (add-to-list 'projectile-globally-ignored-directories "*@@$")   ; Ignore ClearCase versions
@@ -46,7 +46,6 @@
   (setq projectile-project-root-files-bottom-up          larumbe/projectile-project-root-files) ; Bottom-up
   (setq projectile-project-root-files-top-down-recurring larumbe/projectile-project-root-files) ; Top-down recurring
 
-
   (defun larumbe/projectile-custom-mode-line ()
     "Report ONLY project name (without type) in the modeline.
 Replaces `projectile-default-mode-line' that also showed ':generic' type of project"
@@ -54,7 +53,6 @@ Replaces `projectile-default-mode-line' that also showed ':generic' type of proj
       (format "%s[%s]"
               projectile-mode-line-prefix
               (or project-name "-"))))
-
 
   ;; https://emacs.stackexchange.com/questions/16497/how-to-exclude-files-from-projectile
   ;; Inspired also by kmodi/setup-files/setup-projectile.el:71
@@ -85,13 +83,12 @@ Use `rg' for getting a list of all files in the project."
          ;; see https://stackoverflow.com/questions/2596462/how-to-strip-leading-in-unix-find
          (t "find . -type f | cut -c3- | tr '\\n' '\\0'")))
 
-
   (defun larumbe/projectile-project-root-or-current-dir (&optional dir)
     "Return `projectile-project-root' if existing, current dir otherwise.
 Used for some ripgrep/dumb-jump xref related functions."
-    (if (projectile-project-root dir)
-        (projectile-project-root dir)
-      default-directory)))
+    (or (projectile-project-root dir)
+        default-directory)))
+
 
 
 (when (equal larumbe/completion-framework 'helm)
@@ -134,20 +131,17 @@ Otherwise, smart-case is performed (similar to case-fold-search)."
           (setq extra-args "-w"))                 ; Whole word search
         (funcall cmd extra-args)))
 
-
     (defun larumbe/counsel-projectile-ag ()
       "Execute `counsel-projectile-ag' wrapper."
       (interactive)
       (let ((counsel-projectile-ag-initial-input (thing-at-point 'symbol)))
         (larumbe/counsel-projectile--search #'counsel-projectile-ag)))
 
-
     (defun larumbe/counsel-projectile-rg ()
       "Execute `counsel-projectile-rg' wrapper."
       (interactive)
       (let ((counsel-projectile-rg-initial-input (thing-at-point 'symbol)))
         (larumbe/counsel-projectile--search #'counsel-projectile-rg)))))
-
 
 
 (provide 'init-projectile)

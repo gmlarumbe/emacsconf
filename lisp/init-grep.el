@@ -8,7 +8,21 @@
   :hook ((ag-search-finished . ag/jump-to-result-if-only-one-match))
   :commands (ag/search
              larumbe/ag-search-project-gtags)
+  :init
+  (setq ag-arguments           ; Fetched from modi verilog config
+        '("--nogroup"          ; mandatory argument for ag.el as per https://github.com/Wilfred/ag.el/issues/41
+          "--numbers"          ; Line numbers
+          "--smart-case"
+          "--follow"           ; Follow symlinks
+          "--ignore" "#*#"     ; Adding "*#*#" or "#*#" to .ignore does not work for ag (works for rg)
+          "--ignore" "*~"
+          "--stats"))
+  (setq ag-reuse-buffers t)
+  (setq ag-reuse-window t)
+  (setq ag-highlight-search t)
   :config
+  (setq ag/file-column-pattern-nogroup "^File: \\(.+?\\):\\([1-9][0-9]*\\):\\([1-9][0-9]*\\):") ; At some point it began adding some File: to the beginning of the ag output
+
   (defun larumbe/ag-search-file-list (regex file directory)
     "Search REGEX limited to the files included in FILE in DIRECTORY.
 INFO: Might block Emacs for large filelists during search as it is not
@@ -22,7 +36,6 @@ i.e. one absolute file path per line"
         (setq files (split-string (buffer-string) "\n")))
       (ag/search regex directory :files files)))
 
-
   (defun larumbe/ag-search-project-gtags ()
     "Search `symbol-at-point' based on current projectile project.
 List of files provided by project's 'gtags.files' will filter the search."
@@ -32,7 +45,6 @@ List of files provided by project's 'gtags.files' will filter the search."
       (unless (file-exists-p gtags-file)
         (error "Error: gtags.files not found for current project"))
       (larumbe/ag-search-file-list (thing-at-point 'symbol) gtags-file proj-dir)))
-
 
   ;; Thanks to Kaushal Modi
   (defun ag/jump-to-result-if-only-one-match ()
@@ -46,21 +58,7 @@ List of files provided by project's 'gtags.files' will filter the search."
           (next-error)
           (kill-buffer (current-buffer))
           (message (concat "ag: Jumping to the only found match and "
-                           "killing the *ag* buffer."))))))
-
-;;;;; Config
-  (setq ag/file-column-pattern-nogroup "^File: \\(.+?\\):\\([1-9][0-9]*\\):\\([1-9][0-9]*\\):") ; At some point it began adding some File: to the beginning of the ag output
-  (setq ag-arguments           ; Fetched from modi verilog config
-        '("--nogroup"          ; mandatory argument for ag.el as per https://github.com/Wilfred/ag.el/issues/41
-          "--numbers"          ; Line numbers
-          "--smart-case"
-          "--follow"           ; Follow symlinks
-          "--ignore" "#*#"     ; Adding "*#*#" or "#*#" to .ignore does not work for ag (works for rg)
-          "--ignore" "*~"
-          "--stats"))
-  (setq ag-reuse-buffers t)
-  (setq ag-reuse-window t)
-  (setq ag-highlight-search t))
+                           "killing the *ag* buffer.")))))))
 
 
 ;; https://github.com/mhayashi1120/Emacs-wgrep
@@ -91,13 +89,13 @@ List of files provided by project's 'gtags.files' will filter the search."
     "--ignore-file" ,larumbe/gitignore-global-file)
   "Default rg arguments used in functions (helm, counsel, `projectile')")
 
-
 (use-package ripgrep
   :straight (:repo "nlamirault/ripgrep.el")
   :commands (larumbe/ripgrep-regexp-symbol-at-point
              larumbe/ripgrep-xref)
-  :config
+  :init
   (setq ripgrep-arguments (append larumbe/rg-arguments '("-w")))
+  :config
   (setq ripgrep--base-arguments '("--with-filename" "--no-heading")) ; Remove --line-number since it's already in `larumbe/rg-arguments'
 
   (defvar larumbe/ripgrep-types
@@ -109,7 +107,6 @@ List of files provided by project's 'gtags.files' will filter the search."
       (vhdl-mode       . "vhdl"))
     "Variable to determine the -t argument of rg depending on major-mode.")
 
-
   (defun larumbe/ripgrep-get-lang-type-args (lang)
     "Return formatted ripgrep type arguments for major-mode LANG."
     (let ((key (assoc lang larumbe/ripgrep-types))
@@ -117,7 +114,6 @@ List of files provided by project's 'gtags.files' will filter the search."
       (when key
         (setq type (cdr key))
         (list "-t" type))))
-
 
   (defun larumbe/ripgrep-regexp-symbol-at-point ()
     "Perform ripgrep of current symbol at point in a compilation buffer.
@@ -136,7 +132,6 @@ Return the type of file used to perform ripgrep."
       ;; Return value
       (or (nth 1 type-args)
           "all")))
-
 
   ;; Variables to show in the modeline which reference is being searched for, at the
   ;; beginning of the ripgrep, and after search has finished.
@@ -163,12 +158,11 @@ Return the type of file used to perform ripgrep."
       (larumbe/ripgrep-search-finished-hook))))
 
 
-
-;; Further packages
+;;; Further packages
 (use-package deadgrep)
 
 
-
+;;; Provide
 (provide 'init-grep)
 
 ;;; init-grep.el ends here

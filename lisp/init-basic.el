@@ -50,6 +50,9 @@
     "~/.emacs.d/straight/repos/arch-packer"        ; Maybe with some refactoring, updates after 5 years, no PR in this project. Wait until I get arch in new computer
     "~/.emacs.d/straight/repos/emacs"              ; TODO: Ticket to python-mode (larumbe/python-fix-hs-special-modes-alist) / vhdl-mode hierarchy error fixed in Emacs 29
     "~/.emacs.d/straight/repos/verilog-mode"       ; Development as a maintainer
+    ;; TODO: Add PR to lsp? jump-to-xref variables
+    ;; TODO: Add PR to ggtags? sync ggtags xref function
+
     ;; TODO: Add PR to apheleia? verilog-ext formatter
     ;; TODO: Add PR to aweshell?
     ;; TODO: Add PR to eglot? verilog-ext/vhdl LSPs

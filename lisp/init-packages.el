@@ -368,7 +368,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   (setq ssh-tunnels-host-width 20))
 
 
-(use-package erc
+(use-package erc ; INFO: Got some errors when tried with Emacs 30
   :straight nil
   :commands (erc-login
              larumbe/erc-login)
@@ -385,7 +385,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
         (erc-server-send (format "PASS %s" erc-session-password))
       (message "Logging in without password"))
     (when (and (featurep 'erc-sasl)
-               larumbe/erc-sasl-use-sasl)
+               (erc-sasl-use-sasl-p))
       (erc-server-send "CAP REQ :sasl"))
     (erc-server-send (format "NICK %s" (erc-current-nick)))
     (erc-server-send
@@ -399,12 +399,12 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   (advice-add 'erc-login :override #'larumbe/erc-login))
 
 
-(use-package erc-sasl
-  :straight nil
+(use-package erc-sasl ; INFO: Got some errors when tried with Emacs 30, also with bundled :straight nil
+  :straight (:host github :repo "psachin/erc-sasl")
   :after erc
   :demand
   :init
-  (defvar larumbe/erc-sasl-use-sasl t)
+  (setq erc-sasl-use-sasl t)
   :config
   ;; Provides a way of authenticating before actually connecting to the server.
   ;; Requires providing the nick and password in the `erc-tls' function.

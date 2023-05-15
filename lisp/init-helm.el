@@ -53,7 +53,6 @@
     (helm-mode 1)
     (helm-autoresize-mode 1)
 
-
     (defun larumbe/helm-help-major-mode-or-scratch (&optional arg)
       "Get helm `M-x' commands list/shortcuts for the last time it was used.
 It is assumed to be used after a `M-x' then e.g. `org-', then `C-g' and finally this function for window arrangement.
@@ -112,7 +111,6 @@ If called with PREFIX, search for string and no case sensitive."
                                                       (or pos (point)))))
                       :truncate-lines helm-occur-truncate-lines)
               (deactivate-mark t))))))
-
 
     ;; Better advising instead of forking since it's not a bug but a customization.
     ;; Otherwise would need to get updated manually to latest helm changes.

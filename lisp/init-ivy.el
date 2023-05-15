@@ -9,12 +9,10 @@
   :bind (:map ivy-minibuffer-map
          ("C-l"     . ivy-backward-kill-word) ; Useful for `dired-do-copy'. Complement with M-i if want to yank result at point.
          ("C-o"     . ivy-occur)
-         ("S-SPC"   . nil) ; Unmap `ivy-restrict-to-matches' that erases input unintentionally if writing uppercase words
-         ("C-c C-o" . hydra-ivy/body))
+         ("S-SPC"   . nil)) ; Unmap `ivy-restrict-to-matches' that erases input unintentionally if writing uppercase words
   :config
-  (setq ivy-use-virtual-buffers t)      ; Add recent files and bookmarks to the ivy-switch-buffer
-  (setq ivy-count-format "%d/%d ")      ; Displays the current and total number in the collection in the prompt
-  (setq enable-recursive-minibuffers t) ; Allow minibuffer commands while in the minibuffer.
+  (setq ivy-use-virtual-buffers t) ; Add recent files and bookmarks to the ivy-switch-buffer
+  (setq ivy-count-format "%d/%d ") ; Displays the current and total number in the collection in the prompt
   ;; Do not break compatibility with Helm for switching buffers
   (if (equal larumbe/completion-framework 'ivy)
       (ivy-mode 1)

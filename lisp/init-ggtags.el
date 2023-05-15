@@ -23,11 +23,28 @@
          ("M->"     . nil)
          ("M-<"     . nil))
   :bind (:map ggtags-mode-map
-         ("M-."     . nil)
-         ("M-?"     . nil)
+         ;; C-c `ggtags-mode-prefix-map' functions
+         ("C-c M-DEL" . nil) ; Unmap `ggtags-delete-tags'
+         ("C-c M-p"   . nil) ; Unmap `ggtags-prev-mark'
+         ("C-c M-n"   . nil) ; Unmap `ggtags-next-mark'
+         ("C-c M-f"   . nil) ; Unmap `ggtags-find-file'
+         ("C-c M-o"   . nil) ; Unmap `ggtags-find-other-symbol'
+         ("C-c M-g"   . nil) ; Unmap `ggtags-grep'
+         ("C-c M-i"   . nil) ; Unmap `ggtags-idutils-query'
+         ("C-c M-b"   . nil) ; Unmap `ggtags-browse-file-as-hypertext'
+         ("C-c M-k"   . nil) ; Unmap `ggtags-kill-file-buffers'
+         ("C-c M-h"   . nil) ; Unmap `ggtags-view-tag-history'
+         ("C-c M-j"   . nil) ; Unmap `ggtags-visit-project-root'
+         ("C-c M-/"   . nil) ; Unmap `ggtags-view-search-history'
+         ("C-c M-SPC" . nil) ; Unmap `ggtags-save-to-register'
+         ("C-c M-%"   . nil) ; Unmap `ggtags-query-replace'
+         ("C-c M-?"   . nil) ; Unmap `ggtags-show-definition'
+         ;; `ggtags-mode-map' functions
+         ("M-."     . nil) ; Unmap `ggtags-find-tag-dwim'
+         ("M-]"     . nil) ; Unmap `ggtags-find-references'
          ("C-M-."   . nil)) ; Remap back `xref-find-apropos'
   :bind (:map ggtags-global-mode-map
-         ("r"       . ggtags-query-replace))
+         ("r" . ggtags-query-replace))
   :config
   (setq ggtags-sort-by-nearness nil) ; INFO: If set to non-nil it will not work if using symlinks to external directories
   (setq ggtags-navigation-mode-lighter nil)
@@ -49,7 +66,6 @@
          ;; else return the whole `(buffer-substring beg end)'
          (buffer-substring beg end)))))
 
-  ;; Advising
   ;; INFO: It is not a good idea to advice ggtags-mode as it also advices the
   ;; buffer-local variable `ggtags-mode', with some side-effects such as
   ;; recursive function calling when testing `ggtags-mode' variable...

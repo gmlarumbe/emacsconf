@@ -31,12 +31,11 @@
   :config
   (setq xref-auto-jump-to-first-definition t)
   (setq xref-auto-jump-to-first-xref t)
-  (setq xref-after-update-hook #'(lambda () (setq truncate-lines t))))
+  (add-hook 'xref--xref-buffer-mode-hook (lambda () (setq truncate-lines t))))
 
 
 (use-package dumb-jump
-  :commands (larumbe/dumb-jump-local-enable
-             larumbe/dumb-jump-get-project-root)
+  :commands (larumbe/dumb-jump-local-enable)
   :config
   (defun larumbe/dumb-jump-local-enable ()
     "docstring"

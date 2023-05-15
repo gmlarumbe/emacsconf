@@ -69,6 +69,7 @@
          ("C-<return>" . completion-at-point)
          ("M-RET"      . completion-at-point))
   :config
+  (setq enable-recursive-minibuffers t) ; Allow minibuffer commands while in the minibuffer.
   (setq completions-detailed t)) ; New in Emacs 28
 
 
