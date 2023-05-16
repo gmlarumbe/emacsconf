@@ -241,6 +241,7 @@ However, uninstrumentation is done by evaluating the whole buffer."
 
 
 
+;;;; Fuco1
 ;;;;; Indentation
 ;; Change the default indentation function for `emacs-lisp-mode' to
 ;; improve the indentation of blocks like below:
@@ -332,77 +333,10 @@ Lisp function does not specify a special indentation."
                (funcall method indent-point state))))))))
 
 
-(defun modi/set-emacs-lisp-indentation ()
+(defun larumbe/set-emacs-lisp-indentation ()
   "Customize the indentation for `emacs-lisp-mode'."
   (setq-local lisp-indent-function #'Fuco1/lisp-indent-function))
 
-
-
-;;;; Lint
-;; Needed to submit packages to MELPA. Helpful to write other modes.
-(use-package package-lint)
-;; Only enabled if package has comments with: "Version" "Package-Version" "Package-Requires"
-;; i.e: `package-lint-looks-like-a-package-p' is t for `current-buffer'
-(use-package flycheck-package
-  :after package-lint
-  :demand
-  :config
-  (flycheck-package-setup))
-
-
-;;;; Misc
-(use-package lively
-  :demand
-  :config
-  (setq lively-interval 1)
-
-  (defun larumbe/lively-dwim (arg)
-    "docstring"
-    (interactive "P")
-    (if arg
-        (lively-stop)
-      (if (region-active-p)
-          (lively-region (region-beginning) (region-end))
-        (lively)))))
-
-
-
-;; Many thanks to Kaushal Modi
-(use-package command-log-mode
-  :demand
-  :init
-  ;; Do not bind `clm/open-command-log-buffer' by default to "C-c o"
-  (setq command-log-mode-key-binding-open-log nil)
-  :config
-  (setq command-log-mode-window-size 60)
-
-  (defhydra hydra-command-log (:color teal
-                               :columns 6)
-    "Command Log"
-    ("c" command-log-mode "toggle mode")
-    ("o" clm/open-command-log-buffer "open log buffer")
-    ("l" clm/open-command-log-buffer "open log buffer")
-    ("C" clm/command-log-clear "clear log buffer")
-    ("t" clm/toggle-command-log-buffer "toggle log buffer")
-    ("s" clm/save-command-log "save log")
-    ("x" clm/close-command-log-buffer "close log buffer")
-    ("q" nil "cancel" :color blue)))
-
-
-
-;; https://github.com/cpitclaudel/easy-escape
-(use-package easy-escape
-  :demand
-  :diminish easy-escape-minor-mode)
-
-
-(use-package eros
-  :demand
-  :config
-  (eros-mode 1))
-
-
-(use-package el2markdown)
 
 
 
