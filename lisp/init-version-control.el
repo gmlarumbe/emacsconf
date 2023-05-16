@@ -3,17 +3,6 @@
 ;;; Code:
 
 
-;;;; vc-dir
-(use-package vc-dir
-  :straight nil
-  :bind (:map vc-dir-mode-map
-              ("e"       . vc-ediff)      ; Overrides vc-find-file, already mapped to `f'
-              ("C-x v p" . svn-propedit)) ; dsvn function 'exported' to be used as well with vc-mode
-  :config
-  (add-hook 'vc-dir-mode-hook #'(lambda () (setq truncate-lines t))))
-
-
-
 ;;;; Git
 ;;;;; Magit
 (use-package magit
@@ -51,58 +40,6 @@
   (setq magit-delta-default-light-theme "none")
   (setq magit-delta-delta-args '("--max-line-distance" "0.6" "--true-color" "never" "--diff-so-fancy")))
 
-
-;;;;; Gerrit
-(use-package egerrit
-  :straight (:host sourcehut
-             :repo "niklaseklund/egerrit")
-  :commands egerrit-dashboard
-  :config
-  ;; INFO: Removed the -is:wip and -is:ignored things from default value
-  (setq egerrit-changes-queries
-        `(("Gerrit Dashboard" . (("Has draft comments" . ("has:draft"))
-                                 ("Your turn"          . ("attention:self"))
-                                 ("Work in progress"   . ("is:open owner:self"))
-                                 ("Outgoing reviews"   . ("is:open owner:self"))
-                                 ("Incoming reviews"   . ("is:open -owner:self (reviewer:self OR assignee:self)"))
-                                 ("CCed on"            . ("is:open cc:self"))
-                                 ("Recently closed"    . ("is:closed -is:ignored (OR owner:self) (owner:self OR reviewer:self OR assignee:self OR cc:self)" 20))))
-          ("URL" . egerrit-query-from-url)
-          ("Custom" . egerrit-custom-query))))
-
-
-;; https://github.com/emacsorphanage/magit-gerrit/issues/59
-;; Original magit-gerrit was not maintained anymore and transfered to Emacsorphanage
-;; after Tarsius looked at many different forks.
-;;  - Decided to create my own fork to add R transient to `magit-dispatch'
-(use-package magit-gerrit
-  :straight (:repo "emacsorphanage/magit-gerrit"
-             :fork (:repo "gmlarumbe/magit-gerrit"))
-  :commands (magit-gerrit-popup)
-  :init
-  (setq magit-gerrit-popup-prefix "R")
-  (setq magit-gerrit-push-to "for"))
-
-
-
-(use-package gerrit
-  :commands (gerrit-upload-transient
-             gerrit-download
-             gerrit-magit-insert-status
-             larumbe/gerrit-magit-insert-status)
-  :config
-  ;; INFO: Removed the -is:wip and -is:ignored things from suggested config at https://github.com/thisch/gerrit.el
-  (setq gerrit-dashboard-query-alist
-        '(("Assigned to me"   . "assignee:self (owner:self OR assignee:self) is:open")
-          ("Outgoing reviews" . "is:open owner:self")
-          ("Incoming reviews" . "is:open -owner:self (reviewer:self OR assignee:self)")
-          ("CCed On"          . "is:open  cc:self")
-          ("Recently closed"  . "is:closed  (owner:self) (owner:self OR reviewer:self OR assignee:self OR cc:self) limit:15")))
-
-  (defun larumbe/gerrit-magit-insert-status ()
-    "Make sure that Gerrit bar is only added for Gerrit repos."
-    (when (file-exists-p (file-name-concat (magit-toplevel) ".gitreview"))
-      (gerrit-magit-insert-status))))
 
 
 ;;;;; Forge
@@ -179,58 +116,6 @@
   :hook ((git-timemachine-mode . display-line-numbers-mode))
   :config
   (add-hook 'git-timemachine-mode-hook #'(lambda () (setq truncate-lines t))))
-
-
-;;;; Repo
-(use-package repo
-  :bind (:map repo-mode-map
-         ("U" . larumbe/update-repo))
-  :config
-  ;; Add additional debug messages
-  (advice-add 'repo-status :after #'(lambda (workspace) (message "repo status @ %s" (file-name-nondirectory (directory-file-name workspace)))))
-
-  ;; update_repo interface
-  (defvar larumbe/repo-workspace nil "docstring")
-
-  (defun larumbe/update-repo-sentinel (process signal)
-    "Notify the user when current workspace has been updated."
-    (cond
-     ((equal signal "finished\n")
-      (repo-status larumbe/repo-workspace)
-      (message "%s updated!" larumbe/repo-workspace))
-     ;; Error handling
-     ('t
-      (message "urepo process open message got signal %s" signal)
-      (display-buffer (process-buffer process)))))
-
-  (defun larumbe/update-repo ()
-    "Update repo with 'urepo' command."
-    (interactive)
-    (unless (and (executable-find "repo")
-                 (executable-find "urepo"))
-      (error "repo and urepo not found!"))
-    (let (proc buf cmd)
-      (setq larumbe/repo-workspace repo-workspace)
-      (setq cmd "urepo")
-      (setq buf "*update_repo*")
-      (setq proc (start-process-shell-command "update_repo" buf cmd))
-      (pop-to-buffer buf)
-      (message "Updating *%s*" (file-name-nondirectory (directory-file-name larumbe/repo-workspace)))
-      (set-process-sentinel proc #'larumbe/update-repo-sentinel))))
-
-
-;;;; SVN
-(use-package dsvn
-  :commands (svn-status larumbe/svn-status)
-  :config
-  (define-obsolete-function-alias 'string-to-int 'string-to-number "22.1")
-
-  (defun larumbe/svn-status ()
-    "Perform svn status via `dsvn' on `default-directory'."
-    (interactive)
-    (svn-status default-directory)
-    (setq truncate-lines t)))
-
 
 
 ;;;; Misc

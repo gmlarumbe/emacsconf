@@ -33,6 +33,7 @@
       (define-key map "\C-d" 'term-delchar-or-maybe-eof)
       map))
 
+  ;; INFO: These ones apply to `ansi-term', not to `vterm'
   (defun larumbe/term-sentinel (proc msg)
     "Function to advice `term-sentinel'.
 This function unmaps local map and therefore it's not possible

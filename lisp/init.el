@@ -23,7 +23,6 @@
 (require 'init-xref)
 (require 'init-completion)
 (require 'init-dired)
-(require 'init-jira)
 (require 'init-term)
 (require 'init-version-control)
 (require 'init-compilation)
