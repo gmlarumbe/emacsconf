@@ -59,7 +59,7 @@
     ;; TODO: Add PR to lsp? verilog-ext/vhdl LSPs
     ;; TODO: Add PR to flycheck? verilog-ext/vhdl linters
     )
-  "Obtained through evaluation of: `(larumbe/git-check-forked-repos (larumbe/straight-packages))'")
+  "Evaluation of: `(larumbe/git-check-forked-repos (larumbe/straight-packages))'.")
 
 (provide 'init-basic)
 

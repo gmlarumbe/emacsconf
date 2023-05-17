@@ -11,7 +11,6 @@
   :init
   (setq nxml-child-indent 4)
   :config
-
   ;;  Relax NG validation through the following variables/modes:
   ;; `rng-nxml-auto-validate-flag' and `rng-validate-mode'
   (defun larumbe/rng-nxml-mode-init ()
@@ -166,17 +165,16 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
   (setq ahk-indentation 2))
 
 
-;;;; CRON
+;;;; Cron
 (use-package crontab-mode
   :hook ((crontab-mode . larumbe/crontab-hook))
   :config
   (defun larumbe/crontab-hook ()
     "Crontab hook"
-    (interactive)
     (setq truncate-lines t)))
 
 
-;;;; YAML
+;;;; Yaml
 (use-package yaml-mode
   :hook ((yaml-mode . larumbe/prog-mode-hook)
          (yaml-mode . larumbe/prog-mode-keys)
@@ -185,30 +183,25 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
          ("C-M-n" . forward-same-indent)
          ("C-M-p" . backward-same-indent)
          ("C-M-u" . backward-to-indentation)
-         ("C-M-d" . forward-to-indentation))
-  :bind (:map yaml-mode-map
-         ("C-c C-o" . larumbe/yaml-shell-toggle)))
+         ("C-M-d" . forward-to-indentation)))
 
 
-;;;; SED
+;;;; Sed
 (use-package sed-mode)
-
 
 ;;;; CSV
 (use-package csv-mode)
-
 
 ;;;; INI
 (use-package ini-mode)
 
 
-;;;; HEXL
+;;;; Hexl
 (use-package hexl
-  :straight nil
-  :config
   ;; INFO: `hexl-mode' uses Emacs 'hexl' by default. Check `(executable-find "hexl")'
   ;; At some point I tried to add some options to `hexl-options' but only -de or -iso seemed possible.
-
+  :straight nil
+  :config
   ;; Modify attributes of existing faces associated to font-lock, instead of declaring new ones
   (set-face-attribute 'hexl-address-region nil
                       :foreground "light green"
@@ -218,16 +211,16 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
                       :inherit nil))
 
 
-;;;; SPECMAN/e
+;;;; Specman/e
 (use-package specman-mode
   :straight (:host github :repo "ooglyhLL/specman-mode")
   :commands (specman-mode)
-  :mode (("\\.e\\'"     . specman-mode)
-         ("\\.ecom\\'"  . specman-mode)
-         ("\\.erld\\'"  . specman-mode)))
+  :mode (("\\.e\\'"    . specman-mode)
+         ("\\.ecom\\'" . specman-mode)
+         ("\\.erld\\'" . specman-mode)))
 
 
-;;;; JINJA
+;;;; Jinja
 (use-package jinja2-mode
   :hook ((jinja2-mode . larumbe/prog-mode-keys)
          (jinja2-mode . larumbe/prog-mode-hook))) ; Since it is not a child of prog-mode, requires common configuration settings

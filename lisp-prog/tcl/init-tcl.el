@@ -20,4 +20,3 @@
 (provide 'init-tcl)
 
 ;;; init-tcl.el ends here
-("C-c C-k" . larumbe/tcl-send-line-or-region-and-step-vivado-shell)
