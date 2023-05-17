@@ -3,8 +3,7 @@
 ;;; Code:
 
 
-;;;; Git
-;;;;; Magit
+;;;; Magit
 (use-package magit
   :bind (("C-x g"   . magit-status)
          ("C-x M-g" . magit-dispatch)
@@ -41,15 +40,10 @@
   (setq magit-delta-delta-args '("--max-line-distance" "0.6" "--true-color" "never" "--diff-so-fancy")))
 
 
-
-;;;;; Forge
-;; INFO: Magithub is broken and unmaintained, using `forge' instead.
-;;  It seems `forge' is heavily based on what what's been done in Magithub.
-;;
 ;; Forge basic setup and configuration:
 ;;   - https://github.com/vermiculus/magithub/blob/master/magithub.org
 ;;
-;; Authentication: Forge looks at variable `auth-sources', normally at ./authinfo
+;; Authentication: Forge looks at files from variable `auth-sources'.
 ;; Within that file, the following structure is required:
 ;;  - machine api.github.com login user^forge password ***
 ;;
@@ -78,15 +72,10 @@
 ;; Finally, take into account that to get list of assignable issues, the github.user needs
 ;; to be set properly locally (otherwise it will take the global value)
 ;;   $ git config github.user <user_for_current_repo>
-;;
-;; NOTE: Issue creation/modification did not work properly with older versions of git (e.g. 2.11)
-(use-package forge
-  :config
-  ;; Database storage in SQL
-  (use-package emacsql))
+(use-package forge)
 
 
-;;;;; Other packages
+;;;; Git misc
 ;; This package provides several major modes for editing Git configuration files.
 ;;   - `gitattributes-mode'
 ;;   - `gitconfig-mode'

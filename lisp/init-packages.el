@@ -44,6 +44,13 @@
 (use-package fpga-utils
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/fpga-utils.el")))
 
+(use-package vivado-utils
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/vivado-utils.el"))
+  :mode (("\\.xdc\\'" . larumbe/vivado-xdc-mode)))
+
+(use-package lattice-utils
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/lattice-utils.el")))
+
 
 ;;;; Window/Frame Display
 (use-package smart-mode-line
@@ -424,6 +431,9 @@ Same as `hs-toggle-hiding', but do not exec: (posn-set-point (event-end e))"
   :diminish
   :commands (flycheck-display-error-messages-unless-error-list)
   :config
+  ;; Elisp flychecker
+  (setq flycheck-emacs-lisp-load-path 'inherit)
+  (setq flycheck-emacs-lisp-initialize-packages t)
   ;; Seems it shows full error if multiline
   (setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list))
 

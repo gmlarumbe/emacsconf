@@ -7,7 +7,7 @@
   :diminish eldoc-mode
   :commands (larumbe/elisp-xref-set-dirs)
   :bind (:map emacs-lisp-mode-map
-         ("C-c C-l" . larumbe/load-file-current-buffer)
+         ("C-c C-l" . larumbe/eval-buffer)
          ("C-c C-t" . hydra-elisp/body)
          ("C-c C-e" . larumbe/edebug-defun)
          ("C-c c b" . larumbe/byte-compile-current-buffer-or-dir)
@@ -20,9 +20,6 @@
          (emacs-lisp-mode . easy-escape-minor-mode)
          (emacs-lisp-mode . larumbe/set-emacs-lisp-indentation))
   :config
-  (require 'flycheck)
-  (setq flycheck-emacs-lisp-load-path 'inherit)
-  (setq flycheck-emacs-lisp-initialize-packages t)
   (require 'elisp-utils)
   (require 'elisp-templates))
 
@@ -96,7 +93,6 @@
     ("s" clm/save-command-log "save log")
     ("x" clm/close-command-log-buffer "close log buffer")
     ("q" nil "cancel" :color blue)))
-
 
 
 (use-package el2markdown)

@@ -12,12 +12,11 @@
          ("C-c C-p" . larumbe/sh-send-line-or-region-and-step-vterm)
          ("C-c C-k" . sh-send-line-or-region-and-step)
          ("C-c C-t" . hydra-sh/body)
-         ("C-?"     . larumbe/sh-man-thing-at-point)
-         ("C-M-?"   . tldr))
+         ("C-?"     . larumbe/sh-man-thing-at-point))
   :config
   (require 'sh-script-utils)
-  (require 'sh-script-templates)
-  (use-package tldr))
+  (require 'sh-script-templates))
+
 
 (use-package company-shell
   :after sh-script
@@ -29,6 +28,10 @@
     (setq-local company-backends (append '(company-shell) company-backends))))
 
 
+(use-package tldr
+  :after sh-script
+  :bind (:map sh-mode-map
+         ("C-M-?" . tldr)))
 
 
 (provide 'init-sh-script)

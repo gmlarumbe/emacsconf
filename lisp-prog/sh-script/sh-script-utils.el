@@ -42,7 +42,7 @@
 (defun larumbe/sh-mode-hook ()
   "Custom shell script hook."
   ;; INFO: At some point ?- was set as punctuation "." to handle Bash variable default values.
-  ;; However, that conflicted with some symbols separated with hypens, such as Debian/Ubuntu package names.
+  ;; However, that conflicted with some symbols separated with hypens, such as some Linux apt/pacman package names.
   (modify-syntax-entry ?+ ".")
   (modify-syntax-entry ?: "."))
 

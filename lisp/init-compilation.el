@@ -12,7 +12,7 @@
   :bind (:map compilation-shell-minor-mode-map
          ("M-RET" . nil)) ; Leave space for `company-complete'
   :bind (:map comint-mode-map
-         ("TAB"   . completion-at-point))  ; Similar to ansi-term (e.g. for vivado/diamond tcl-shell)
+         ("TAB"   . completion-at-point))  ; Similar to ansi-term for comint shells
   :hook ((compilation-mode   . larumbe/compilation-hook)
          (compilation-filter . colorize-compilation-buffer))
   :commands (recompile
@@ -68,7 +68,6 @@
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/compilation-utils.el"))
   :after compile
   :demand
-  :mode (("\\.srr\\'" . synplify-log-mode))
   :bind (:map compilation-mode-map
          ("j" . larumbe/recompile-with-regexp-alist)
          ("t" . larumbe/compilation-threshold)

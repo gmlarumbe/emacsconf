@@ -4,11 +4,14 @@
 
 
 ;;;; Own functions
-(defun larumbe/load-file-current-buffer ()
-  "Load current buffer .el file."
+(defun larumbe/eval-buffer ()
+  "Eval current buffer .el file."
   (interactive)
-  (if (string-equal "el" (file-name-extension buffer-file-name))
-      (load-file buffer-file-name)
+  (if (eq major-mode 'emacs-lisp-mode)
+      (progn
+        (message "Evaluating: %s" (or buffer-file-name (current-buffer)))
+        (eval-buffer)
+        (message "Evaluated: %s" (or buffer-file-name (current-buffer))))
     (error "Cannot load non-Elisp files")))
 
 

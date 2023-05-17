@@ -43,8 +43,6 @@
 
     (use-package helm-org) ; Required by helm-havi
     (use-package helm-navi
-      :straight (:repo "emacs-helm/helm-navi"
-                 :fork (:repo "gmlarumbe/helm-navi"))
       :bind (("C-#" . helm-navi-headings)
              ("M-#" . helm-navi))
       :diminish outshine-mode outline-minor-mode)
