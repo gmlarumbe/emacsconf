@@ -183,7 +183,10 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
          ("C-M-n" . forward-same-indent)
          ("C-M-p" . backward-same-indent)
          ("C-M-u" . backward-to-indentation)
-         ("C-M-d" . forward-to-indentation)))
+         ("C-M-d" . forward-to-indentation))
+  :config
+  ;; Do not add to :bind section to avoid creating autoload
+  (define-key yaml-mode-map (kbd "C-c C-o") #'larumbe/yaml-shell-toggle))
 
 
 ;;;; Sed

@@ -27,11 +27,6 @@
 
 
 (use-package polymode
-  :mode (("\\.xml\\.ep\\'"           . poly-nxml-mode)
-         ("reg\\.sim\\.files\\.ep\\'" . poly-conf-perl-mode)
-         ("\\.ini\\'"               . poly-conf-c-mode))
-  :bind (:map yaml-mode-map
-         ("C-c C-o" . larumbe/yaml-shell-toggle))
   :commands (larumbe/yaml-shell-toggle)
   :hook (poly-nxml-mode . larumbe/poly-nxml-mode-hook)
   :config
