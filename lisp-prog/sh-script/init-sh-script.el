@@ -4,7 +4,8 @@
 
 (use-package sh-script
   :straight nil
-  :mode (("\\.bashrc" . sh-mode))
+  :mode (("\\.bashrc"  . sh-mode)
+         ("\\.xinitrc" . sh-mode))
   :hook ((sh-mode . larumbe/sh-mode-hook)
          (sh-mode . eglot-ensure))
   :bind (:map sh-mode-map
