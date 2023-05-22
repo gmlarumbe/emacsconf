@@ -46,6 +46,8 @@
   (setq py-object-reference-face 'larumbe/py-object-reference-face)
   ;; `python-mode' adds a defadvice to `pdb' that makes use of this variable
   (setq py-pdb-path (intern (executable-find "pdb"))))
+
+
 (use-package python
   :straight nil
   :mode (("\\.py\\'" . python-ts-mode))

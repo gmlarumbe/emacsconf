@@ -326,8 +326,6 @@ the vertical drag is done."
 
 
 (use-package lsp-mode
-  :straight (:repo "emacs-lsp/lsp-mode"
-             :fork (:repo "gmlarumbe/lsp-mode"))
   :init
   (setq lsp-keymap-prefix "C-x l")
   (setq lsp-headerline-breadcrumb-enable nil)
