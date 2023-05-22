@@ -17,7 +17,6 @@
          ("C-M-z"   . eval-region)
          ("C-M-i"   . larumbe/elisp-indent-defun))
   :hook ((emacs-lisp-mode . larumbe/elisp-hook)
-         (emacs-lisp-mode . easy-escape-minor-mode)
          (emacs-lisp-mode . larumbe/set-emacs-lisp-indentation))
   :config
   (require 'elisp-utils)
@@ -50,7 +49,8 @@
 (use-package easy-escape ; https://github.com/cpitclaudel/easy-escape
   :after elisp-mode
   :demand
-  :diminish easy-escape-minor-mode)
+  :diminish easy-escape-minor-mode
+  :hook ((emacs-lisp-mode . easy-escape-minor-mode)))
 
 
 (use-package eros
