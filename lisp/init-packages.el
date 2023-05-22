@@ -330,7 +330,8 @@ the vertical drag is done."
              :fork (:repo "gmlarumbe/lsp-mode"))
   :init
   (setq lsp-keymap-prefix "C-x l")
-  (setq lsp-headerline-breadcrumb-enable nil))
+  (setq lsp-headerline-breadcrumb-enable nil)
+  (setq lsp-enable-imenu nil))
 
 
 (use-package lsp-ui :commands (lsp-ui-sideline-mode)) ; Flycheck side-line even without lsp enabled

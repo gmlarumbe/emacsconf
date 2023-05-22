@@ -13,6 +13,8 @@
 
 
 (use-package ggtags
+  :straight (:host github :repo "leoliu/ggtags"
+             :fork (:repo "gmlarumbe/ggtags"))
   :diminish
   :commands (ggtags-create-tags
              modi/ggtags-tag-at-point

@@ -37,6 +37,7 @@
 
 (use-package xref-utils
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/xref-utils.el"))
+  :after xref ; Otherwise functions get overriden the default ones in `xref'
   :bind (("M-." . larumbe/xref-find-definitions)  ; Allow using it in non-prog modes (e.g. open files/URLs with fundamental/conf modes)
          ("M-?" . larumbe/xref-find-references))) ; Let them being overriden by major-mode specific keybindings (e.g. `org-open-at-point')
 
