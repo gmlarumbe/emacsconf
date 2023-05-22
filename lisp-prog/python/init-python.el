@@ -86,8 +86,11 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
 (use-package elpy
   :straight (:repo "jorgenschaefer/elpy"
              :fork (:repo "gmlarumbe/elpy"))
+  :diminish
   :after python
   :demand
+  :hook ((python-mode    . elpy-mode)
+         (python-ts-mode . elpy-mode))
   :bind (:map elpy-mode-map
          ("C-c RET" . nil) ; Unbind `elpy-importmagic-add-import', obsolete command
          ("C-c C-e" . nil) ; Unbind `elpy-multiedit-python-symbol-at-point', seems a useful command but better to rely on multiple cursors/ivy occurr and wgrep
