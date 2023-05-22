@@ -2,7 +2,7 @@
 ;;; Commentary:
 ;;
 ;; Elpy based configuration:
-;;   - Provides tons of features but also overrid almost every keybinding.
+;;   - Provides tons of features but also override almost every keybinding.
 ;;   - Provides a company backend:
 ;;      - CAPF functions for `python-mode' are more related to shell, and only add gtags-completion-at-point (unnecessary)
 ;;      - This backend seems quite useful and uses jedi under the hood as well
@@ -20,11 +20,11 @@
 ;;; Code:
 
 (use-package python-mode
-  :mode (("\\SConstruct\\'"      . python-mode)
-         ("\\SConstruct.repo\\'" . python-mode))
+  :straight (:host gitlab :repo "python-mode-devs/python-mode")
+  :commands (python-mode)
   :bind (:map python-mode-map
-              ("C-c C-t" . larumbe/hydra-python-placeholder)   ; Unmaps `py-toggle-shell' which was not declared at the time of implementing...
-              ("C-c C-f" . larumbe/flycheck-eldoc-mode))
+         ("C-c C-t" . larumbe/hydra-python-placeholder)   ; Unmaps `py-toggle-shell' which was not declared at the time of implementing...
+         ("C-c C-f" . larumbe/flycheck-eldoc-mode))
   :init
   (setq py-pdbtrack-do-tracking-p nil) ; `python-mode' pdbtrack feature caused a BUG in window switching in gud/realgud when moving to next command in source window
   :config
@@ -46,11 +46,21 @@
   (setq py-object-reference-face 'larumbe/py-object-reference-face)
   ;; `python-mode' adds a defadvice to `pdb' that makes use of this variable
   (setq py-pdb-path (intern (executable-find "pdb"))))
+(use-package python
+  :straight nil
+  :mode (("\\.py\\'" . python-ts-mode))
+  ;; :init
+  ;; (setq python-check-command "pyflakes") ; TODO: It's found automatically I believe
+  :config
+  (require 'python-ts-font-lock)
+  (require 'python-utils)
+  (require 'python-templates))
 
 
 (use-package jedi-core
-  :after python-mode
+  :after python
   :demand
+  :commands (larumbe/jedi-restart-server)
   :hook ((python-mode . jedi:setup))
   :bind (:map jedi-mode-map
          ("<C-tab>" . nil) ; Let C-tab to HideShow
@@ -72,9 +82,10 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
 
 
 (use-package elpy
-  :after python-mode
+  :straight (:repo "jorgenschaefer/elpy"
+             :fork (:repo "gmlarumbe/elpy"))
+  :after python
   :demand
-  :hook ((elpy-mode . larumbe/elpy-hook))
   :bind (:map elpy-mode-map
          ("C-c RET" . nil) ; Unbind `elpy-importmagic-add-import', obsolete command
          ("C-c C-e" . nil) ; Unbind `elpy-multiedit-python-symbol-at-point', seems a useful command but better to rely on multiple cursors/ivy occurr and wgrep
@@ -129,12 +140,7 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
     (interactive)
     (if (region-active-p)
         (elpy-shell-send-region-or-buffer)
-      (elpy-shell-send-statement-and-step)))
-
-  (defun larumbe/elpy-hook ()
-    "Elpy hook."
-    ;; Add higher precedence for `company-files' backend
-    (setq-local company-backends (delete-dups (cons 'company-files (remove 'company-files company-backends))))))
+      (elpy-shell-send-statement-and-step))))
 
 
 

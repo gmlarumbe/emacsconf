@@ -93,7 +93,7 @@
   ;; Company only uses one backend at a time, so set a backend for files/dirs and a grouped backend with keywords/tags/etc...
   ;; To keep the candidates organized in accordance with the grouped backends order, add the keyword :separate to the list of the grouped backends.
   ;; - https://company-mode.github.io/manual/Backends.html#Grouped-Backends
-  (defvar larumbe/company-backends-common '(company-files (company-capf company-keywords) company-gtags :separate))
+  (defvar larumbe/company-backends-common '(company-files (company-capf company-keywords :separate) company-gtags))
 
   (defun larumbe/company-backend-report ()
     "Show current backend used when running `company-other-backend'."

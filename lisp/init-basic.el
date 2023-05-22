@@ -47,8 +47,14 @@
     "~/.emacs.d/straight/repos/magit-gerrit"       ; Keep forked: still untested
     "~/.emacs.d/straight/repos/wide-column"        ; Keep forked: too old, very unused
     "~/.emacs.d/straight/repos/arch-packer"        ; Maybe with some refactoring, updates after 5 years, no PR in this project. Wait until I get arch in new computer
-    "~/.emacs.d/straight/repos/emacs"              ; TODO: Ticket to python-mode (larumbe/python-fix-hs-special-modes-alist) / vhdl-mode hierarchy error fixed in Emacs 29
     "~/.emacs.d/straight/repos/verilog-mode"       ; Development as a maintainer
+
+    ;; TODO: What about elpy, to add support for python-ts-mode?
+
+    "~/.emacs.d/straight/repos/python-mode" ; TODO: Ticket to python-mode (larumbe/python-fix-hs-special-modes-alist), probably not, just forget
+
+    ;; TODO: I think I can remove this
+    "~/.emacs.d/straight/repos/emacs" ; TODO: vhdl-mode hierarchy error fixed in Emacs 29
 
     ;; TODO: Add PR to lsp? jump-to-xref variables
     ;; TODO: Add PR to ggtags? sync ggtags xref function
