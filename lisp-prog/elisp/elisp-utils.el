@@ -4,44 +4,7 @@
 
 
 ;;;; Own functions
-(defun larumbe/eval-buffer ()
-  "Eval current buffer .el file."
-  (interactive)
-  (if (eq major-mode 'emacs-lisp-mode)
-      (progn
-        (message "Evaluating: %s" (or buffer-file-name (current-buffer)))
-        (eval-buffer)
-        (message "Evaluated: %s" (or buffer-file-name (current-buffer))))
-    (error "Cannot load non-Elisp files")))
-
-
-(defun larumbe/byte-compile-current-buffer-or-dir (&optional dir)
-  "Byte-compile file of current visited buffer.
-If prefix-arg is provided, recompile current DIR."
-  (interactive "P")
-  (if current-prefix-arg
-      (byte-recompile-directory default-directory 0 :force))
-  (byte-compile-file buffer-file-name))
-
-
-(defun larumbe/native-compile-current-buffer-or-dir (&optional dir)
-  "Natively-compile file of current visited buffer.
-If prefix-arg is provided, recompile current DIR non-recursively."
-  (interactive "P")
-  (if current-prefix-arg
-      (dolist (file (directory-files dir t "\.el$"))
-        (native-compile file))
-    (native-compile buffer-file-name)))
-
-
-(defun larumbe/insert-time-stamp-elisp ()
-  "Insert time-stamp for Elisp buffers.
-Try to add it before Commentary section."
-  (interactive)
-  (larumbe/insert-time-stamp "^;;; Commentary:"))
-
-
-;;;; Xref
+;;;;; Xref
 ;; For elisp, the external-roots directories are considered to be the `load-path' since `emacs-lisp-mode'
 ;; sets the variable `project-vc-external-roots-function' locally to `elisp-load-path-roots'.
 ;; On remote machines, it could take very long times to grep every straight directory to find references.
@@ -61,7 +24,6 @@ Try to add it before Commentary section."
 
 (defvar larumbe/elisp-xref-dirs larumbe/emacs-conf-repos-devel
   "Set to nil by default, assumming a local/fast machine without many straight repos.")
-
 
 (defun larumbe/elisp-xref-set-dirs (dirs)
   "Ask for which directories are to be used to find xrefs for elisp.
@@ -86,7 +48,6 @@ Other values will set it to nil, enabling all folders for xref lookup."
   ;; Echo value set
   (message "xref dirs set to: %s" larumbe/elisp-xref-dirs))
 
-
 (defun larumbe/elisp-xref-create-gtags ()
   "Create gtags for Elisp directories depending on value of `larumbe/elisp-xref-dirs':
 - If `larumbe/elisp-xref-dirs' is nil, create references for every writable project directory of `load-path'.
@@ -95,18 +56,77 @@ Other values will set it to nil, enabling all folders for xref lookup."
   (let ((dirs (larumbe/elisp-project-vc-external-roots-function)))
     (larumbe/gtags-create-tags-async-dirs dirs)))
 
-
 (defun larumbe/elisp-project-vc-external-roots-function ()
   "Return list of strings of external roots projects where to look for xref references.
 Meant to be used as a hook to override default functionality of the whole `load-path'."
   (let ((dirs (if (bound-and-true-p larumbe/elisp-xref-dirs)
                   larumbe/elisp-xref-dirs
-                load-path)))
-    (delete-dups (mapcar #'(lambda (dir) (if (projectile-project-root dir)
-                                        (expand-file-name (projectile-project-root dir))
-                                      (expand-file-name dir)))
-                         dirs))))
+                load-path))
+        (proj (project-root (project-current))))
+    (remove proj (delete-dups (mapcar #'(lambda (dir) (if (projectile-project-root dir)
+                                                     (expand-file-name (projectile-project-root dir))
+                                                   (expand-file-name dir)))
+                                      dirs)))))
 
+(cl-defmethod xref-backend-references ((_backend (eql 'elisp)) identifier)
+  "Provide custom implementation for `xref' references 'elisp backend.
+
+Exactly like default cl-defgeneric in xref.el, but removing support for
+projectile for project discovery.
+
+Projectile is used as a backend for project.el by providing implementations
+for the `project-root' and `project-files' cl-defgenerics. However, Projectile
+lacks any kind of `project-external-roots' implementation because it doesn't
+simply support external roots. That conflicts with my approach of using the
+function `larumbe/elisp-project-vc-external-roots-function' in the `larumbe/elisp-hook'."
+  (mapcan
+   (lambda (dir)
+     (message "Searching %s..." dir)
+     (redisplay)
+     (prog1
+         (xref-references-in-directory identifier dir)
+       (message "Searching %s... done" dir)))
+   ;; INFO: Override the value of `project-find-functions', which is globally set when
+   ;; projectile is enabled on any buffer
+   (let* ((project-find-functions (remove #'project-projectile project-find-functions))
+          (pr (project-current t)))
+     (cons
+      (xref--project-root pr)
+      (project-external-roots pr)))))
+
+;;;;; Misc
+(defun larumbe/eval-buffer ()
+  "Eval current buffer .el file."
+  (interactive)
+  (if (eq major-mode 'emacs-lisp-mode)
+      (progn
+        (message "Evaluating: %s" (or buffer-file-name (current-buffer)))
+        (eval-buffer)
+        (message "Evaluated: %s" (or buffer-file-name (current-buffer))))
+    (error "Cannot load non-Elisp files")))
+
+(defun larumbe/byte-compile-current-buffer-or-dir (&optional dir)
+  "Byte-compile file of current visited buffer.
+If prefix-arg is provided, recompile current DIR."
+  (interactive "P")
+  (if current-prefix-arg
+      (byte-recompile-directory default-directory 0 :force))
+  (byte-compile-file buffer-file-name))
+
+(defun larumbe/native-compile-current-buffer-or-dir (&optional dir)
+  "Natively-compile file of current visited buffer.
+If prefix-arg is provided, recompile current DIR non-recursively."
+  (interactive "P")
+  (if current-prefix-arg
+      (dolist (file (directory-files dir t "\.el$"))
+        (native-compile file))
+    (native-compile buffer-file-name)))
+
+(defun larumbe/insert-time-stamp-elisp ()
+  "Insert time-stamp for Elisp buffers.
+Try to add it before Commentary section."
+  (interactive)
+  (larumbe/insert-time-stamp "^;;; Commentary:"))
 
 (defun larumbe/elisp-hook ()
   "Custom elisp hook."
@@ -125,8 +145,6 @@ Meant to be used as a hook to override default functionality of the whole `load-
   ;; Treesit makes extensive use of @ for identifiers
   (modify-syntax-entry ?@ "."))
 
-
-
 (defun larumbe/edebug-defun (arg)
   "Wrapper for `edebug-defun'.
 Call `modi/toggle-edebug' when universal ARG is provided.
@@ -138,14 +156,12 @@ However, uninstrumentation is done by evaluating the whole buffer."
       (call-interactively #'modi/toggle-edebug)
     (call-interactively #'edebug-defun)))
 
-
 (defun larumbe/elisp-indent-defun ()
   "Indent current defun."
   (interactive)
   (save-excursion
     (mark-defun)
     (indent-region (region-beginning) (region-end))))
-
 
 
 ;;;; Steve Purcell
@@ -166,12 +182,9 @@ However, uninstrumentation is done by evaluating the whole buffer."
       (insert "\n\n(provide '" pname ")\n\n")
       (insert ";;; " fname " ends here\n"))))
 
-
 (defun sanityinc/enable-check-parens-on-save ()
   "Run `check-parens' when the current buffer is saved."
   (add-hook 'after-save-hook #'check-parens nil t))
-
-
 
 
 ;;;; Kaushal Modi
@@ -334,7 +347,6 @@ Lisp function does not specify a special indentation."
                                      indent-point normal-indent))
               (method
                (funcall method indent-point state))))))))
-
 
 (defun larumbe/set-emacs-lisp-indentation ()
   "Customize the indentation for `emacs-lisp-mode'."
