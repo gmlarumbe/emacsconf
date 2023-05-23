@@ -22,7 +22,7 @@
 ;; More INFO: https://emacs.stackexchange.com/questions/56198/how-to-use-xref-find-references-on-elisp-files-without-no-references-found-for
 ;;            2nd answer
 
-(defvar larumbe/elisp-xref-dirs larumbe/emacs-conf-repos-devel
+(defvar larumbe/elisp-xref-dirs (remove "~/.dotfiles" larumbe/emacs-conf-repos-devel)
   "Set to nil by default, assumming a local/fast machine without many straight repos.")
 
 (defun larumbe/elisp-xref-set-dirs (dirs)
