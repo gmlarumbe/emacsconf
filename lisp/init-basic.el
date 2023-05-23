@@ -53,9 +53,9 @@
 
 ;; Elpy PR pending: add support for python-ts-mode
 ;; Ggtags PR pending: sync ggtags xref function
+;; Aweshell PR pending
 
 ;; TODO: Add PR to apheleia? verilog-ext formatter
-;; TODO: Add PR to aweshell?
 ;; TODO: Add PR to eglot? verilog-ext/vhdl LSPs
 ;; TODO: Add PR to lsp? verilog-ext/vhdl LSPs
 ;; TODO: Add PR to flycheck? verilog-ext/vhdl linters

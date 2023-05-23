@@ -73,7 +73,6 @@ If prefix arg is provided, force creation of a new ansi-term."
     (hardcore-mode -1)))
 
 
-
 (use-package vterm
   :bind (:map vterm-mode-map
          ("C-c C-t" . nil) ; Remap `vterm-copy-mode' to C-c C-k
@@ -97,21 +96,17 @@ If prefix arg is provided, force creation of a new ansi-term."
 
 
 (use-package aweshell
-  :straight (:host github :repo "manateelazycat/aweshell")
+  ;; INFO: ls will not be inherited from .bashrc (ls is an internal elisp command, the aliases break everything)
+  :straight (:repo "manateelazycat/aweshell"
+             :fork (:repo "gmlarumbe/aweshell" :branch "search-hist-fn"))
   :bind (("C-x C-M-/" . larumbe/aweshell-dwim))
   :bind (:map eshell-mode-map
          ("C-d" . larumbe/aweshell-delchar-or-eof))
   :init
   (setq aweshell-search-history-key "C-r")
+  (setq aweshell-search-history-function #'completing-read)
   :config
   (setq eshell-visual-subcommands '(("git" "log" "diff" "show")))
-
-  ;; TODO: Tweak the ls commands
-  ;; TODO: Remove the aliases (ls is an internal elisp command, the aliases break everything)
-
-  ;; INFO: Plan9 style shell (eshell related things)
-  (require 'em-smart)
-  (eshell-smart-initialize)
 
   (defun larumbe/aweshell-delchar-or-eof (arg)
     "Delete ARG characters forward, or send an EOF to process if at end of buffer."
@@ -141,25 +136,7 @@ If prefix arg is provided, force creation of a new aweshell."
                  (if (get-buffer-window buf)
                      (pop-to-buffer buf)
                    (switch-to-buffer buf))
-               (aweshell-new))))))
-
-  ;; TODO: Fork/send PR at some point:
-  ;;   Right now uses ido, (change of 2018) If setting back to `completing-read'
-  ;;   it would use ivy out-of-the-box, or even helm or whatever backend
-  ;;   overrides the `completing-read-function'
-  (defun aweshell-search-history ()
-    "Interactive search eshell history."
-    (interactive)
-    (save-excursion
-      (let* ((start-pos (eshell-beginning-of-input))
-             (input (eshell-get-old-input))
-             (all-shell-history (aweshell-parse-shell-history)))
-        (let* ((command (completing-read "Search history: " all-shell-history)))
-          (eshell-kill-input)
-          (insert command)
-          )))
-    ;; move cursor to eol
-    (end-of-line)))
+               (aweshell-new)))))))
 
 
 (provide 'init-term)
