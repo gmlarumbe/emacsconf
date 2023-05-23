@@ -192,6 +192,8 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package beacon
   :diminish
+  :init
+  (setq beacon-blink-when-window-scrolls nil) ; Issue #76: https://github.com/Malabarba/beacon/issues/76
   :config
   (setq beacon-size 20)
   (dolist (mode '(term-mode vterm-mode))
