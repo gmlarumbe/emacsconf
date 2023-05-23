@@ -1,11 +1,16 @@
 ;;; init-python.el --- Python  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;
+;; Replaced MELPA `python-mode' with Bundled modles in `python' package:
+;;  - More specifically with `python-ts-mode'
+;;
 ;; Elpy based configuration:
-;;   - Provides tons of features but also override almost every keybinding.
+;;   - Provides `xref' backend based on RPCs to jedi, to find definitions and references
 ;;   - Provides a company backend:
-;;      - CAPF functions for `python-mode' are more related to shell, and only add gtags-completion-at-point (unnecessary)
+;;      - CAPF functions for `python-mode' are more related to shell
 ;;      - This backend seems quite useful and uses jedi under the hood as well
+;;   - Provides tons of features but also override almost every keybinding.
+;;      - Solved by remaping many of these
 ;;   - Uses Jedi as a backend if available:
 ;;      - Could be installed through use-package jedi-core
 ;;      - Or through $ pip install jedi
@@ -19,44 +24,28 @@
 ;;
 ;;; Code:
 
-(use-package python-mode
-  :straight (:host gitlab :repo "python-mode-devs/python-mode")
-  :commands (python-mode)
-  :bind (:map python-mode-map
-         ("C-c C-t" . larumbe/hydra-python-placeholder)   ; Unmaps `py-toggle-shell' which was not declared at the time of implementing...
-         ("C-c C-f" . larumbe/flycheck-eldoc-mode))
-  :init
-  (setq py-pdbtrack-do-tracking-p nil) ; `python-mode' pdbtrack feature caused a BUG in window switching in gud/realgud when moving to next command in source window
-  :config
-  (setq python-check-command        "pylint")
-  (setq py-number-face              font-lock-doc-face)
-  (setq py-pseudo-keyword-face      font-lock-constant-face) ; True/False/None
-  (setq py-try-if-face              font-lock-doc-face)
-  (setq py-variable-name-face       font-lock-variable-name-face)
-  (setq py-use-font-lock-doc-face-p t)
-  ;; Utils
-  (require 'python-utils)
-  (require 'python-templates)
-  ;; Customization
-  (larumbe/python-fix-hs-special-modes-alist) ; BUG Fix (check function docstring for more info)
-  ;; Overrides `hs-hide-all' (Error if declaring with use-package :bind - Key sequence C-c @  starts with non-prefix key C-c @
-  (define-key python-mode-map "\C-c@\C-\M-h" #'larumbe/python-hs-hide-all)
-  (advice-add 'py-newline-and-indent :before-until #'larumbe/newline-advice) ; Kill def/refs buffers with C-RET
-  (defface larumbe/py-object-reference-face '((t (:foreground "dark olive green"))) "Face" :group 'python-faces) ; self. green face
-  (setq py-object-reference-face 'larumbe/py-object-reference-face)
-  ;; `python-mode' adds a defadvice to `pdb' that makes use of this variable
-  (setq py-pdb-path (intern (executable-find "pdb"))))
-
+;; TODO: Remove after testing:
+;; This was inside the :config section:
+;;    Avoid conflicts with `python-ts-mode'
+;;    INFO: From time to time, even with this uncommented, opening some .py buffers
+;;    would open them in `python-mode'
+;;    (delete '("\\.py[iw]?\\'" . python-mode) auto-mode-alist)
 
 (use-package python
   :straight nil
-  :mode (("\\.py\\'" . python-ts-mode))
-  ;; :init
-  ;; (setq python-check-command "pyflakes") ; TODO: It's found automatically I believe
+  :mode (("\\.py[iw]?\\'" . python-ts-mode))
+  :bind (:map python-ts-mode-map
+         ("C-c C-v" . nil) ; Unmap `python-check', better use flycheck
+         ("C-c C-t" . larumbe/python-hydra/body))
+  :init
+  (setq python-indent-offset 4)
+  (setq python-indent-guess-indent-offset nil)
+  (setq python-pdbtrack-activate nil) ; pdbtrack feature causes a BUG in window switching in gud/realgud when moving to next command in source window
   :config
   (require 'python-ts-font-lock)
   (require 'python-utils)
-  (require 'python-templates))
+  (require 'python-templates)
+  (define-key python-ts-mode-map [remap hs-hide-all] #'larumbe/python-hs-hide-all))
 
 
 (use-package jedi-core
@@ -66,7 +55,7 @@
   :hook ((python-mode . jedi:setup))
   :bind (:map jedi-mode-map
          ("<C-tab>" . nil) ; Let C-tab to HideShow
-         ;; Rely on `elpy' keybindings that use jedi as a backend
+         ;; Rely on `xref-utils' to navigate defs/refs
          ("M-."     . nil)
          ("M-,"     . nil)
          ("C-c ?"   . nil)
@@ -89,12 +78,13 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
   :diminish
   :after python
   :demand
-  :hook ((python-mode    . elpy-mode)
-         (python-ts-mode . elpy-mode))
+  :hook ((python-base-mode     . elpy-mode)
+         (elpy-mode            . larumbe/elpy-hook)
+         (inferior-python-mode . larumbe/inferior-python-elpy-hook))
   :bind (:map elpy-mode-map
          ("C-c RET" . nil) ; Unbind `elpy-importmagic-add-import', obsolete command
          ("C-c C-e" . nil) ; Unbind `elpy-multiedit-python-symbol-at-point', seems a useful command but better to rely on multiple cursors/ivy occurr and wgrep
-         ("C-c C-f" . nil) ; Unbind `elpy-find-file', save space for `larumbe/python-flycheck-mode
+         ("C-c C-f" . nil) ; Unbind `elpy-find-file', save space for `flycheck-mode'
          ("C-c C-n" . nil) ; Unbind `elpy-flymake-next-error', save space for `align-regexp'
          ("C-c C-o" . nil) ; Unbind `elpy-occur-definitions', `imenu-list' already shows defs and classes
          ("C-c C-s" . nil) ; Unbind `elpy-rgrep-symbol', save space for `larumbe/yas-insert-snippet-dwim'
@@ -130,13 +120,13 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
          ("C-M-u"   . elpy-nav-backward-indent) ; Overrides `py-down'
          ("C-c h"   . elpy-nav-indent-shift-left)   ; Vim-like
          ("C-c l"   . elpy-nav-indent-shift-right)) ; Vim-like
+  :init
+  (setq elpy-get-info-from-shell t) ; No need for `company-capf'
   :config
   (setq elpy-modules '(elpy-module-sane-defaults
-                       elpy-module-pyvenv
                        elpy-module-company
                        elpy-module-eldoc
                        elpy-module-yasnippet))
-  ;; Elpy automatically adds with highest precedence the `elpy-company-backend'.
   (setq elpy-eldoc-show-current-function nil) ; Already have `which-func'
   (elpy-enable)
 
@@ -145,8 +135,21 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
     (interactive)
     (if (region-active-p)
         (elpy-shell-send-region-or-buffer)
-      (elpy-shell-send-statement-and-step))))
+      (elpy-shell-send-statement-and-step)))
 
+  (defun larumbe/elpy-hook ()
+    "Elpy hook."
+    ;; Overrides `larumbe/prog-mode-hook' that sets the `company-backends' value to `larumbe/company-backends-common'.
+    ;; Plus, Elpy automatically adds with highest precedence the `elpy-company-backend'.
+    (setq-local company-backends '(company-files elpy-company-backend))
+    ;; `elpy' automatically re-enables auto-completion
+    (setq company-idle-delay nil))
+
+  (defun larumbe/inferior-python-elpy-hook ()
+    "Inferior Python shell hook."
+    ;; Allow `python' and `elpy' powered `company-capf' to be used in the shell
+    (company-mode)
+    (setq-local company-backends larumbe/company-backends-common)))
 
 
 

@@ -72,10 +72,10 @@
        :feature 'keyword
        :language 'python
        `([,@python--treesit-keywords] @font-lock-keyword-face
-         ((identifier) @larumbe--python-ts-self-face ; INFO: Changed this font
+         ((identifier) @larumbe--python-ts-self-face ; DANGER: Changed this font
           (:match "^self$" @larumbe--python-ts-self-face))
-         ;; INFO: Added the following punctuation queries here to avoid modifying the body of `python-ts-mode'
-         ["="  "." ","] @larumbe--python-ts-punctuation-face ; TODO: Check brackets/operators/delimiters below
+         ;; DANGER: Added the following punctuation queries here to avoid modifying the body of `python-ts-mode'
+         ["="  "." ","] @larumbe--python-ts-punctuation-face ; DANGER: Check brackets/operators/delimiters below
          ["(" ")"] @larumbe--python-ts-parenthesis-face
          ["[" "]"] @larumbe--python-ts-brackets-face
          ["{" "}"] @larumbe--python-ts-curly-brackets-face
@@ -97,11 +97,13 @@
           name: (identifier) @font-lock-type-face)
          (parameters (identifier) @font-lock-variable-name-face))
 
+       ;; DANGER: Removed this
        ;; :feature 'function
        ;; :language 'python
        ;; '((call function: (identifier) @font-lock-function-call-face)
        ;;   (call function: (attribute
        ;;                    attribute: (identifier) @font-lock-function-call-face)))
+       ;; Enf of DANGER
 
        :feature 'builtin
        :language 'python
@@ -117,6 +119,7 @@
        :language 'python
        '([(true) (false) (none)] @font-lock-constant-face)
 
+       ;; DANGER
        ;; :feature 'assignment
        ;; :language 'python
        ;; `(;; Variable names and LHS.
@@ -133,6 +136,7 @@
        ;;                 @font-lock-variable-name-face)
        ;;   (list_splat_pattern (identifier)
        ;;                       @font-lock-variable-name-face))
+       ;; End of DANGER
 
        :feature 'decorator
        :language 'python
@@ -161,8 +165,10 @@
        :feature 'property
        :language 'python
        '(
+         ;; DANGER
          ;; (attribute
          ;;  attribute: (identifier) @font-lock-property-use-face)
+         ;; End of DANGER
          (class_definition
           body: (block
                  (expression_statement
