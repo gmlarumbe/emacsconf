@@ -125,7 +125,7 @@
   ;; Unmap TAB, use it for indentation only
   (define-key yas-minor-mode-map (kbd "TAB") nil)
   (define-key yas-minor-mode-map [tab] nil)
-  ;; Load snippets
+  ;; Reload snippets
   (yas-reload-all)
 
   (defun larumbe/yas-insert-snippet-dwim (&optional arg)
@@ -141,7 +141,7 @@ If universal ARG is provided, visit a snippet file."
              :fork (:repo "gmlarumbe/yasnippet-snippets"))
   :after yasnippet
   :demand
-  :config
+  :init
   ;; Snippets directories are set in `yas-snippet-dirs' variable.
   ;; `yasnippet-snippets' will add the directory of `yasnippet-snippets-dir' to
   ;; the list of available snippets. So we reset it's value to look only in one directory.
