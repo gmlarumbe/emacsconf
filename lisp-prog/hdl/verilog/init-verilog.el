@@ -58,25 +58,45 @@
 
 (use-package verilog-ext
   :straight (:host github :repo "gmlarumbe/verilog-ext"
-             :files ("*.el" "snippets"))
+             :files (:defaults "snippets" "ts-mode/*.el"))
   :after verilog-mode
   :demand
-  :hook ((verilog-mode . verilog-ext-mode))
+  :hook ((verilog-mode . verilog-ext-mode)
+         (verilog-mode . larumbe/verilog-ext-mode-hook))
   :mode (("\\.v\\'"   . verilog-ts-mode)
          ("\\.sv\\'"  . verilog-ts-mode)
          ("\\.vh\\'"  . verilog-ts-mode)
          ("\\.svh\\'" . verilog-ts-mode))
+  :init
+  (setq verilog-ext-feature-list '(font-lock
+                                   hierarchy
+                                   eglot
+                                   lsp
+                                   flycheck
+                                   beautify
+                                   navigation
+                                   template
+                                   formatter
+                                   compilation
+                                   imenu
+                                   which-func
+                                   hideshow
+                                   time-stamp
+                                   block-end-comments
+                                   company-keywords
+                                   ports
+                                   typedefs
+                                   ;; xref
+                                   capf))
   :config
-  (setq verilog-ext-flycheck-verible-rules '("-line-length"))
+  (setq verilog-ext-flycheck-verible-rules '("-line-length"
+                                             "-parameter-name-style"))
   (verilog-ext-flycheck-set-linter 'verilog-verible)
   (verilog-ext-mode-setup)
 
-  ;; TODO: Some extra setup while developing
-  (setq verilog-ext-workspace-ignore-dirs '("/home/gonz/Programming/FPGA/ucontroller/vivado"))
-  (setq verilog-ext-workspace-ignore-files '("/home/gonz/Programming/FPGA/ucontroller/src/uart/tb/fifo_generator_0_sim_netlist.v"))
-  (add-hook 'verilog-mode-hook (lambda ()
-                                 (setq-local xref-backend-functions '(verilog-ext-xref-backend t))
-                                 (setq-local company-backends '(company-capf)))))
+  (defun larumbe/verilog-ext-mode-hook ()
+    "Verilog hook."
+    (setq-local company-backends '(company-files company-capf company-gtags))))
 
 
 (provide 'init-verilog)

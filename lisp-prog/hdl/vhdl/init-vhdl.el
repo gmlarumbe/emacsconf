@@ -72,34 +72,40 @@
   (setq vhdl-speedbar-auto-open nil)
   (setq vhdl-standard '(08 nil))
   (vhdl-electric-mode -1)
-  ;; GHDL custom linter setup
-  (defvar larumbe/vhdl-custom-ghdl-list
-    '("GHDL-custom" "ghdl" "-i --ieee=synopsys -fexplicit -fno-color-diagnostics" "make" "-f \\1"
-      nil "mkdir \\1" "./" "work/" "Makefile" "ghdl"
-      ("ghdl_p: \\*E,\\w+ (\\([^ \\t\\n]+\\),\\([0-9]+\\)|\\([0-9]+\\)):" 1 2 3) ("" 0)
-      ("\\1/entity" "\\2/\\1" "\\1/configuration"
-       "\\1/package" "\\1/body" downcase)))
-  (add-to-list 'vhdl-compiler-alist larumbe/vhdl-custom-ghdl-list)
-  (vhdl-set-compiler "GHDL-custom")
-  ;; BUG: When used use-package :bind to `vhdl-speedbar-mode-map' this keybinding applied to non-spacebar modes
+  ;; BUG: With use-package :bind to `vhdl-speedbar-mode-map' this keybinding applied to non-spacebar modes
   (advice-add 'vhdl-speedbar-initialize :after #'(lambda () (define-key vhdl-speedbar-mode-map [? ] #'speedbar-toggle-line-expansion)))
-  ;; Additional MELPA packages
-  ;; Adds implementation to `completion-at-point-functions'
-  (use-package vhdl-capf)
-  ;; Provides minor-mode `vhdl-tools-mode', with some wrappers for code navigation using ggtags,  improvements to imenu,
-  ;; However, seems old and unmaintained and relies on `helm-rg'
-  (use-package vhdl-tools))
+  ;; Newline advice to kill def/refs buffers
+  (advice-add 'vhdl-electric-return :before-until #'larumbe/newline-advice)) ; Kill def/refs buffers with C-RET
 
 
 (use-package vhdl-ext
   :straight (:host github :repo "gmlarumbe/vhdl-ext"
-             :files ("*.el")) ; TODO: Don't miss out vhdl-ts-mode
+             :files (:defaults "snippets" "ts-mode/*.el")) ; TODO: Don't miss out vhdl-ts-mode
   :after vhdl-mode
   :demand
   :mode (("\\.vhd\\'" . vhdl-ts-mode))
-  :hook ((vhdl-mode . vhdl-ext-mode))
+  :hook ((vhdl-mode    . vhdl-ext-mode)
+         (vhdl-ts-mode . vhdl-ext-mode))
   :config
-  (vhdl-ext-mode-setup))
+  (vhdl-ext-mode-setup)
+  (when (executable-find "vhdl_ls")
+    (add-hook 'vhdl-mode-hook (lambda () (when (file-exists-p (file-name-concat (vhdl-ext-project-root) "vhdl_ls.toml"))
+                                      (lsp))))))
+
+
+;; Gathers symbols according to identifier regexps from all `vhdl-mode' buffers.
+;; It's somehow inneficient, slow, and better done with `company-gtags'.
+(use-package vhdl-capf
+  :straight (:repo "sh-ow/vhdl-capf"
+             :fork (:repo "gmlarumbe/vhdl-capf"))
+  :after vhdl-mode) ; Enable with `:demand' and `:config' with `vhdl-capf-enable'
+
+
+;; Provides minor-mode `vhdl-tools-mode', with some wrappers for code navigation using ggtags and improvements to imenu.
+;; However, seems old and unmaintained. Just leave it in case it can be used as a reference for some feature.
+(use-package vhdl-tools
+  :after vhdl-mode)
+
 
 
 (provide 'init-vhdl)
