@@ -46,7 +46,9 @@
 
 (use-package vivado-utils
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/vivado-utils.el"))
-  :mode (("\\.xdc\\'" . larumbe/vivado-xdc-mode)))
+  :mode (("\\.xdc\\'" . larumbe/vivado-xdc-mode))
+  :bind (:map tcl-mode-map
+         ("C-c C-l" . larumbe/vivado-shell-tcl-send-line-or-region-and-step)))
 
 (use-package lattice-utils
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/lattice-utils.el")))

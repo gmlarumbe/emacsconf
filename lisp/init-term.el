@@ -81,6 +81,7 @@ If prefix arg is provided, force creation of a new ansi-term."
          ("C-c C-t" . nil)
          ("C-c C-k" . vterm-copy-mode-done))
   :bind (("C-M-/" . vterm)) ; Unmap `dabbrev-completion'
+  :commands (larumbe/sh-send-string-vterm)
   :init
   (setq vterm-keymap-exceptions '("C-c" "C-x" "C-u" "C-h" "C-l" "M-x" "M-O" "M-o" "C-y" "M-y")) ; Exclude C-g
   (setq vterm-shell "zsh")
