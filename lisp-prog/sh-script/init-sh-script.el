@@ -26,7 +26,8 @@
   :config
   (defun larumbe/company-shell-hook ()
     "Hook to set `company-backends' for `sh-mode'."
-    (setq-local company-backends (append '(company-shell) company-backends))))
+    (setq-local company-backends (append '(company-files company-shell) ; Add `company-shell' to default list, but ...
+                                         (remove 'company-files company-backends))))) ; ... keep `company-files' with higher precedence
 
 
 (use-package tldr
