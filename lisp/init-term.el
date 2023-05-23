@@ -97,8 +97,7 @@ If prefix arg is provided, force creation of a new ansi-term."
 
 (use-package aweshell
   ;; INFO: ls will not be inherited from .bashrc (ls is an internal elisp command, the aliases break everything)
-  :straight (:repo "manateelazycat/aweshell"
-             :fork (:repo "gmlarumbe/aweshell" :branch "search-hist-fn"))
+  :straight (:host github :repo "manateelazycat/aweshell")
   :bind (("C-x C-M-/" . larumbe/aweshell-dwim))
   :bind (:map eshell-mode-map
          ("C-d" . larumbe/aweshell-delchar-or-eof))
