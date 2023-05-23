@@ -11,7 +11,7 @@
 ;;
 ;; Xref will choose ONLY one backend through `xref-find-backend', the first one of `xref-backend-functions' that returns non-nil.
 ;;
-;; Xref uses semantic engine to retrieve references through various backends: Global, IDutils, CScope or grep as a fallback.
+;; For Elisp, Xref might use semantic engine to retrieve references through various backends: Global, IDutils, CScope or grep as a fallback.
 ;; Check variables: `semantic-symref-tool'. It makes use of `project-root' and project.el, a projectile-like based GNU ELPA
 ;; core package, probably intended to be added in future versions of Emacs.
 ;;

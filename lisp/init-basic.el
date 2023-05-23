@@ -48,24 +48,18 @@
     "~/.emacs.d/straight/repos/wide-column"        ; Keep forked: too old, very unused
     "~/.emacs.d/straight/repos/arch-packer"        ; Maybe with some refactoring, updates after 5 years, no PR in this project. Wait until I get arch in new computer
     "~/.emacs.d/straight/repos/verilog-mode"       ; Development as a maintainer
-
-    ;; TODO: What about elpy, to add support for python-ts-mode?
-
-    "~/.emacs.d/straight/repos/python-mode" ; TODO: Ticket to python-mode (larumbe/python-fix-hs-special-modes-alist), probably not, just forget
-
-    ;; TODO: I think I can remove this
-    "~/.emacs.d/straight/repos/emacs" ; TODO: vhdl-mode hierarchy error fixed in Emacs 29
-
-    ;; TODO: Add PR to lsp? jump-to-xref variables
-    ;; TODO: Add PR to ggtags? sync ggtags xref function
-
-    ;; TODO: Add PR to apheleia? verilog-ext formatter
-    ;; TODO: Add PR to aweshell?
-    ;; TODO: Add PR to eglot? verilog-ext/vhdl LSPs
-    ;; TODO: Add PR to lsp? verilog-ext/vhdl LSPs
-    ;; TODO: Add PR to flycheck? verilog-ext/vhdl linters
     )
   "Evaluation of: `(larumbe/git-check-forked-repos (larumbe/straight-packages))'.")
+
+;; Elpy PR pending: add support for python-ts-mode
+;; Ggtags PR pending: sync ggtags xref function
+
+;; TODO: Add PR to apheleia? verilog-ext formatter
+;; TODO: Add PR to aweshell?
+;; TODO: Add PR to eglot? verilog-ext/vhdl LSPs
+;; TODO: Add PR to lsp? verilog-ext/vhdl LSPs
+;; TODO: Add PR to flycheck? verilog-ext/vhdl linters
+
 
 (provide 'init-basic)
 
