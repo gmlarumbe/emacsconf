@@ -195,7 +195,9 @@ C-s C-w [C-w] [C-w]... behaviour. "
   :init
   (setq beacon-blink-when-window-scrolls nil) ; Issue #76: https://github.com/Malabarba/beacon/issues/76
   :config
-  (setq beacon-size 20)
+  (setq beacon-size 10)
+  (setq beacon-color "light green")
+  (setq beacon-blink-when-focused t)
   (dolist (mode '(term-mode vterm-mode))
     (add-to-list 'beacon-dont-blink-major-modes mode)))
 
