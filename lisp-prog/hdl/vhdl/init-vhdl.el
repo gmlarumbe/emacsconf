@@ -89,8 +89,7 @@
   :config
   (vhdl-ext-mode-setup)
   (when (executable-find "vhdl_ls")
-    (add-hook 'vhdl-mode-hook (lambda () (when (file-exists-p (file-name-concat (vhdl-ext-project-root) "vhdl_ls.toml"))
-                                      (lsp))))))
+    (add-hook 'vhdl-mode-hook (lambda () (when (locate-dominating-file default-directory "vhdl_ls.toml") (lsp))))))
 
 
 ;; Gathers symbols according to identifier regexps from all `vhdl-mode' buffers.
