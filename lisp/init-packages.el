@@ -78,6 +78,12 @@ This was needed in order to allow GitHub actions to work properly."
     (sml/setup)))
 
 
+(use-package font-lock
+  :straight nil
+  :config
+  (set-face-attribute 'font-lock-preprocessor-face nil :foreground "pale goldenrod"))
+
+
 (use-package diminish)
 
 
