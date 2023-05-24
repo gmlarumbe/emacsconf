@@ -54,6 +54,8 @@
 ;; Elpy PR pending: add support for python-ts-mode
 ;; Ggtags PR pending: sync ggtags xref function
 
+;; TODO: Open PR for arch-packer, just in case? There is some people complaining that it doesn't work
+
 ;; TODO: Add PR to apheleia? verilog-ext formatter
 ;; TODO: Add PR to eglot? verilog-ext/vhdl LSPs
 ;; TODO: Add PR to lsp? verilog-ext/vhdl LSPs

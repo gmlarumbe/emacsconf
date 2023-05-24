@@ -617,17 +617,35 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
 (use-package arch-packer
   :straight (:repo "brotzeit/arch-packer"
              :fork (:repo "gmlarumbe/arch-packer"))
-  :commands (arch-packer-toggle-command)
+  :bind (("C-x a" . arch-packer-hydra/body))
   :config
-  (defun arch-packer-toggle-command ()
-    "Toggle between 'pacman' and 'pacaur'."
+  (defun larumbe/arch-packer-command-toggle ()
+    "Toggle between 'pacman' and 'paru'."
     (interactive)
     (if (string= arch-packer-default-command "pacman")
-        (progn
-          (setq arch-packer-default-command "pacaur")
-          (message "Set arch-packer command to: %s" arch-packer-default-command))
-      (setq arch-packer-default-command "pacman")
-      (message "Set arch-packer command to: %s" arch-packer-default-command))))
+        (setq arch-packer-default-command "paru")
+      (setq arch-packer-default-command "pacman"))
+    (message "Set arch-packer command to: %s" arch-packer-default-command))
+
+  (defhydra arch-packer-hydra (:color blue
+                               :hint nil)
+    ;; Pacman/Paru
+    ("i" (arch-packer-install-package) "install" :column "Pacman/Paru")
+    ("d" (arch-packer-delete-package) "delete")
+    ("s" (arch-packer-search-package) "search")
+    ("r" (arch-packer-list-packages) "list")
+    ("t" (larumbe/arch-packer-command-toggle) "toggle")
+    ;; Menu
+    ("m" (arch-packer-menu-mark-unmark) "mark/unmark" :column "Menu")
+    ("u" (arch-packer-menu-mark-upgrade) "mark-upgrade")
+    ("U" (arch-packer-menu-mark-all-upgrades) "mark-all-upgrades")
+    ("d" (arch-packer-menu-mark-delete) "mark-delete")
+    ("x" (arch-packer-menu-execute) "execute")
+    ("b" (arch-packer-menu-visit-homepage) "visit homepage")
+    ("o" (arch-packer-display-output-buffer) "display output buffer")
+    ;; Exit ;;
+    ("q"   nil nil :color blue)
+    ("C-g" nil nil :color blue)))
 
 
 (use-package aurel) ;; Similar to `arch-packer', but just for AUR. Seems better to get info/voting. Supports AUR package downloading but not installation.
