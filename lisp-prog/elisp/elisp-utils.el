@@ -2,6 +2,13 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'init-basic)
+(require 'xref)
+(require 'projectile)
+(require 'flycheck)
+(require 'rainbow-delimiters)
+(require 'straight-utils)
+(require 'gtags-utils)
 
 ;;;; Own functions
 ;;;;; Xref
@@ -109,7 +116,7 @@ function `larumbe/elisp-project-vc-external-roots-function' in the `larumbe/elis
   "Byte-compile file of current visited buffer.
 If prefix-arg is provided, recompile current DIR."
   (interactive "P")
-  (if current-prefix-arg
+  (if dir
       (byte-recompile-directory default-directory 0 :force))
   (byte-compile-file buffer-file-name))
 
@@ -117,7 +124,7 @@ If prefix-arg is provided, recompile current DIR."
   "Natively-compile file of current visited buffer.
 If prefix-arg is provided, recompile current DIR non-recursively."
   (interactive "P")
-  (if current-prefix-arg
+  (if dir
       (dolist (file (directory-files dir t "\.el$"))
         (native-compile file))
     (native-compile buffer-file-name)))
@@ -272,6 +279,8 @@ However, uninstrumentation is done by evaluating the whole buffer."
 ;; Solution 2
 ;; http://emacs.stackexchange.com/q/10230/115
 ;; https://github.com/Fuco1/.emacs.d/blob/af82072196564fa57726bdbabf97f1d35c43b7f7/site-lisp/redef.el#L12-L94
+(defvar calculate-lisp-indent-last-sexp nil)
+
 (defun Fuco1/lisp-indent-function (indent-point state)
   "This function is the normal value of the variable `lisp-indent-function'.
 The function `calculate-lisp-indent' calls this to determine
