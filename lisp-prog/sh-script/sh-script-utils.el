@@ -2,6 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'man)
 
 (defun larumbe/sh-send-line-or-region-and-step (buffer)
   "Same as `sh-send-line-or-region-and-step' but for process in BUFFER."

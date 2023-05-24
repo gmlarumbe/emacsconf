@@ -3,6 +3,8 @@
 ;;; Code:
 
 
+(require 'tcl)
+
 (defvar larumbe/tcl-braces-face    'larumbe/tcl-braces-face)
 (defvar larumbe/tcl-brackets-face  'larumbe/tcl-brackets-face)
 (defface larumbe/tcl-braces-face   '((t (:foreground "goldenrod")))      "Face for TCL Braces"   :group 'tcl-custom-faces)

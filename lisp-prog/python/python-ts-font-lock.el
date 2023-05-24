@@ -2,6 +2,8 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'python)
+
 
 (defgroup python-ts-font-lock nil
   "Python tree-sitter faces."

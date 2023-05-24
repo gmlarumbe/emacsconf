@@ -2,6 +2,8 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'python)
+(require 'hideshow)
 
 ;;;; Legacy: send to shell
 (defun larumbe/python-send-line-or-region ()
