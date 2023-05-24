@@ -331,10 +331,18 @@ the vertical drag is done."
 
 
 (use-package lsp-mode
+  :hook ((lsp-mode . larumbe/lsp-mode-hook))
   :init
   (setq lsp-keymap-prefix "C-x l")
   (setq lsp-headerline-breadcrumb-enable nil)
-  (setq lsp-enable-imenu nil))
+  (setq lsp-enable-imenu nil)
+  (setq lsp-enable-symbol-highlighting nil)
+  :config
+  (defun larumbe/lsp-mode-hook ()
+    "LSP-Mode hook."
+    ;; `lsp-diagnostics' function `lsp-diagnostics-flycheck-enable' is called if customizable var `lsp-auto-configure' is non-nil,
+    ;; and if diagnostics are enabled. We want that, but not to be activated right after opening buffer.
+    (flycheck-mode -1)))
 
 
 (use-package lsp-ui :commands (lsp-ui-sideline-mode)) ; Flycheck side-line even without lsp enabled
