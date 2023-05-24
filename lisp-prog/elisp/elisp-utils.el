@@ -85,21 +85,31 @@ Projectile is used as a backend for project.el by providing implementations
 for the `project-root' and `project-files' cl-defgenerics. However, Projectile
 lacks any kind of `project-external-roots' implementation because it doesn't
 simply support external roots. That conflicts with my approach of using the
-function `larumbe/elisp-project-vc-external-roots-function' in the `larumbe/elisp-hook'."
-  (mapcan
-   (lambda (dir)
-     (message "Searching %s..." dir)
-     (redisplay)
-     (prog1
-         (xref-references-in-directory identifier dir)
-       (message "Searching %s... done" dir)))
-   ;; INFO: Override the value of `project-find-functions', which is globally set when
-   ;; projectile is enabled on any buffer
-   (let* ((project-find-functions (remove #'project-projectile project-find-functions))
-          (pr (project-current t)))
-     (cons
-      (xref--project-root pr)
-      (project-external-roots pr)))))
+function `larumbe/elisp-project-vc-external-roots-function' in the `larumbe/elisp-hook'.
+
+Filter results and discard the locations from flycheck temp files."
+  (let ((all-refs (mapcan
+                   (lambda (dir)
+                     (message "Searching %s..." dir)
+                     (redisplay)
+                     (prog1
+                         (xref-references-in-directory identifier dir)
+                       (message "Searching %s... done" dir)))
+                   ;; INFO: Override the value of `project-find-functions', which is globally set when
+                   ;; projectile is enabled on any buffer
+                   (let* ((project-find-functions (remove #'project-projectile project-find-functions))
+                          (pr (project-current t)))
+                     (cons
+                      (xref--project-root pr)
+                      (project-external-roots pr)))))
+        (flycheck-temp-file-re (concat "^" flycheck-temp-prefix "_"))
+        location file)
+    ;; If filename starts with "flycheck_" prefix, `'flycheck-temp-prefix', filter that file
+    (seq-filter (lambda (ref)
+                  (setq location (xref-match-item-location ref)) ; Refs are of struct type `xref-match-item'
+                  (setq file (xref-file-location-file location)) ; Locations are of struct type `xref-file-location'
+                  (not (string-match flycheck-temp-file-re (file-name-base file))))
+                all-refs)))
 
 ;;;;; Misc
 (defun larumbe/eval-buffer ()
