@@ -117,11 +117,17 @@
 
 ;;;; Own utils
 (use-package larumbe-vc-utils
-  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/larumbe-vc-utils.el"))
-  :bind (("C-<f12>" . larumbe/emacs-check-dirty-repos)))
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/larumbe-vc-utils.el")))
 
 (use-package git-dirty
-  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/git-dirty.el")))
+  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("major-modes/git-dirty.el"))
+  :bind (("C-<f12>" . git-dirty-check-repos-emacs))
+  :init
+  (unless straight-base-dir
+    (error "Variable `straight-base-dir' not set!"))
+  :config
+  (setq git-dirty-repo-list-emacs (remove "~/.dotfiles" larumbe/emacs-conf-repos-devel))
+  (setq git-dirty-repo-list-straight (larumbe/straight-packages)))
 
 
 

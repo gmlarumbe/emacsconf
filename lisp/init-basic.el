@@ -28,19 +28,19 @@
   (scroll-bar-mode -1))
 
 ;; Conf tweaking variables
-(defvar larumbe/gitignore-global-file (expand-file-name "~/.dotfiles/gitconfig/.gitignore_global")) ; Used by `helm-rg', `counsel-rg' and `init-projectile'.
-(defvar larumbe/completion-framework 'ivy) ; 'ivy or 'helm are allowed values (helm will coexist with `ivy-switch-buffer')
+(defconst larumbe/gitignore-global-file (expand-file-name "~/.dotfiles/gitconfig/.gitignore_global")) ; Used by `helm-rg', `counsel-rg' and `init-projectile'.
+(defconst larumbe/completion-framework 'ivy) ; 'ivy or 'helm are allowed values (helm will coexist with `ivy-switch-buffer')
 
-(defvar larumbe/emacs-conf-repos-core '("~/.elisp" "~/.elisp_private"))
-(defvar larumbe/emacs-conf-repos-packages '("~/.emacs.d/straight/repos/my-elisp-packages"
-                                            "~/.emacs.d/straight/repos/my-elisp-packages-priv"
-                                            "~/.emacs.d/straight/repos/verilog-ext"
-                                            "~/.emacs.d/straight/repos/vhdl-ext"))
-(defvar larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos-core
-                                               larumbe/emacs-conf-repos-packages
-                                               (when (file-exists-p "~/.dotfiles")
-                                                 '("~/.dotfiles"))))
-(defvar larumbe/emacs-conf-straight-forked
+(defconst larumbe/emacs-conf-repos-core '("~/.elisp" "~/.elisp_private"))
+(defconst larumbe/emacs-conf-repos-packages '("~/.emacs.d/straight/repos/my-elisp-packages"
+                                              "~/.emacs.d/straight/repos/my-elisp-packages-priv"
+                                              "~/.emacs.d/straight/repos/verilog-ext"
+                                              "~/.emacs.d/straight/repos/vhdl-ext"))
+(defconst larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos-core
+                                                 larumbe/emacs-conf-repos-packages
+                                                 (when (file-exists-p "~/.dotfiles")
+                                                   '("~/.dotfiles"))))
+(defconst larumbe/emacs-conf-straight-forked
   '("~/.emacs.d/straight/repos/org-jira"           ; Keep forked: changes for non-Atlassian accounts
     "~/.emacs.d/straight/repos/yasnippet-snippets" ; Keep forked: get updates with --rebase
     "~/.emacs.d/straight/repos/jenkins.el"         ; Keep forked: deferred additions with some larumbe/
@@ -49,7 +49,7 @@
     "~/.emacs.d/straight/repos/arch-packer"        ; Maybe with some refactoring, updates after 5 years, no PR in this project. Wait until I get arch in new computer
     "~/.emacs.d/straight/repos/verilog-mode"       ; Development as a maintainer
     )
-  "Evaluation of: `(larumbe/git-check-forked-repos (larumbe/straight-packages))'.")
+  "Evaluation of: `(larumbe/git-check-forked-repos-straight)'.")
 
 ;; Elpy PR pending: add support for python-ts-mode
 ;; Ggtags PR pending: sync ggtags xref function
