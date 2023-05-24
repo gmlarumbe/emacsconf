@@ -710,48 +710,10 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   (setq ssh-tunnels-host-width 20))
 
 
-(use-package erc ; INFO: Got some errors when tried with Emacs 30
+(use-package erc
   :straight nil
-  :commands (erc-login
-             larumbe/erc-login)
   :config
-  (defun larumbe/erc-login ()
-    "Perform user authentication at the IRC server."
-    (erc-log (format "login: nick: %s, user: %s %s %s :%s"
-                     (erc-current-nick)
-                     (user-login-name)
-                     (or erc-system-name (system-name))
-                     erc-session-server
-                     erc-session-user-full-name))
-    (if erc-session-password
-        (erc-server-send (format "PASS %s" erc-session-password))
-      (message "Logging in without password"))
-    (when (and (featurep 'erc-sasl)
-               (erc-sasl-use-sasl-p))
-      (erc-server-send "CAP REQ :sasl"))
-    (erc-server-send (format "NICK %s" (erc-current-nick)))
-    (erc-server-send
-     (format "USER %s %s %s :%s"
-             ;; hacked - S.B.
-             (if erc-anonymous-login erc-email-userid (user-login-name))
-             "0" "*"
-             erc-session-user-full-name))
-    (erc-update-mode-line))
-
-  (advice-add 'erc-login :override #'larumbe/erc-login))
-
-
-(use-package erc-sasl ; INFO: Got some errors when tried with Emacs 30, also with bundled :straight nil
-  :straight (:host github :repo "psachin/erc-sasl")
-  :after erc
-  :demand
-  :init
-  (setq erc-sasl-use-sasl t)
-  :config
-  ;; Provides a way of authenticating before actually connecting to the server.
-  ;; Requires providing the nick and password in the `erc-tls' function.
-  (add-to-list 'erc-sasl-server-regexp-list "irc\\.freenode\\.net")
-  (add-to-list 'erc-sasl-server-regexp-list "chat\\.freenode\\.net"))
+  (add-to-list 'erc-modules 'sasl))
 
 
 (use-package env-switch
