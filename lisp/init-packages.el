@@ -41,7 +41,7 @@
 (use-package larumbe-macros
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("macros/larumbe-macros.el")))
 
-(use-package fpga :straight (:host github :repo "gmlarumbe/my-elisp-packages"))
+(use-package fpga :straight (:host github :repo "gmlarumbe/fpga"))
 
 
 ;;;; Window/Frame Display
