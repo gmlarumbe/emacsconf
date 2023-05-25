@@ -35,7 +35,8 @@
 (defconst larumbe/emacs-conf-repos-packages '("~/.emacs.d/straight/repos/my-elisp-packages"
                                               "~/.emacs.d/straight/repos/my-elisp-packages-priv"
                                               "~/.emacs.d/straight/repos/verilog-ext"
-                                              "~/.emacs.d/straight/repos/vhdl-ext"))
+                                              "~/.emacs.d/straight/repos/vhdl-ext"
+                                              "~/.emacs.d/straight/repos/fpga"))
 (defconst larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos-core
                                                  larumbe/emacs-conf-repos-packages
                                                  (when (file-exists-p "~/.dotfiles")
