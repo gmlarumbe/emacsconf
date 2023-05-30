@@ -20,6 +20,7 @@
          ("C-c C-b" . nil)                 ; Unmap `verilog-submit-bug-report', leave space for something else
          ("C-c C-d" . nil)                 ; Unmap `verilog-goto-defun' until it's fixed, leave space for some verilog-ext function
          ("C-c /"   . nil)                 ; Unmap `verilog-star-comment'
+         ("M-?"     . nil)                 ; Unmap `completion-help-at-point'
          ("M-RET"   . nil)) ; Leave space for `company-complete'
   :config
   ;; Indentation

@@ -41,7 +41,9 @@
 (use-package larumbe-macros
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("macros/larumbe-macros.el")))
 
-(use-package fpga :straight (:host github :repo "gmlarumbe/fpga"))
+(use-package fpga
+  :straight (:host github :repo "gmlarumbe/fpga")
+  :mode (("\\.qpf\\'" . conf-mode))) ; Quartus project file
 
 
 ;;;; Window/Frame Display

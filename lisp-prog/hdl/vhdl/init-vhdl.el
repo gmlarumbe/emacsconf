@@ -72,6 +72,7 @@
   (setq vhdl-speedbar-auto-open nil)
   (setq vhdl-standard '(08 nil))
   (vhdl-electric-mode -1)
+  (remove-hook 'compilation-mode-hook 'vhdl-error-regexp-add-emacs)
   ;; BUG: With use-package :bind to `vhdl-speedbar-mode-map' this keybinding applied to non-spacebar modes
   (advice-add 'vhdl-speedbar-initialize :after #'(lambda () (define-key vhdl-speedbar-mode-map [? ] #'speedbar-toggle-line-expansion)))
   ;; Newline advice to kill def/refs buffers

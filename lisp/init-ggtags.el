@@ -13,7 +13,7 @@
 
 
 (use-package ggtags
-  :straight (:host github :repo "leoliu/ggtags"
+  :straight (:repo "leoliu/ggtags"
              :fork (:repo "gmlarumbe/ggtags" :branch "xref-sync"))
   :diminish
   :commands (ggtags-create-tags
