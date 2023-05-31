@@ -160,7 +160,9 @@ Try to add it before Commentary section."
                   eval-expression-minibuffer-setup-hook))
     (add-hook hook #'eldoc-mode))
   ;; Treesit makes extensive use of @ for identifiers
-  (modify-syntax-entry ?@ "."))
+  (modify-syntax-entry ?@ ".")
+  ;; Force vc-follow-symlinks for straight.el repos
+  (setq-local vc-follow-symlinks t))
 
 (defun larumbe/edebug-defun (arg)
   "Wrapper for `edebug-defun'.
