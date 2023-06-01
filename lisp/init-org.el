@@ -45,7 +45,7 @@
          ("C-,"   . nil)                ; Unamps org-cycle-agenda-files to free `larumbe/ansi-term'
          ("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
-         ("M-."   . nil))               ; Will be overriden by `larumbe/xref-find-definitions'
+         ("M-."   . org-open-at-point))
   :bind (("C-x ," . larumbe/org-show-todos-agenda))
   :hook ((org-mode           . larumbe/org-mode-hook)
          (org-insert-heading . larumbe/org-insert-current-header))

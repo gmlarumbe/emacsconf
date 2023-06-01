@@ -90,8 +90,16 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 
 ;;;; Markdown
 (use-package markdown-mode
+  :hook ((markdown-mode . larumbe/markdown-mode-hook))
+  :mode (("\\README.md\\'" . gfm-mode)) ; GitHub formatting mode
+  :bind (:map markdown-mode-map
+         ("M-." . markdown-follow-thing-at-point))
   :init
-  (setq markdown-command "/usr/bin/pandoc -s"))
+  (setq markdown-command "/usr/bin/pandoc -s")
+  :config
+  (defun larumbe/markdown-mode-hook ()
+    "Markdown hook."
+    (setq truncate-lines t)))
 
 
 ;;;; Conf
