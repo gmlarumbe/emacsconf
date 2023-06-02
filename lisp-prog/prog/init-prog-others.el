@@ -91,9 +91,11 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 ;;;; Markdown
 (use-package markdown-mode
   :hook ((markdown-mode . larumbe/markdown-mode-hook))
-  :mode (("\\README.md\\'" . gfm-mode)) ; GitHub formatting mode
+  :mode (("\\.md\\'" . gfm-mode)) ; GitHub formatting mode
   :bind (:map markdown-mode-map
-         ("M-." . markdown-follow-thing-at-point))
+         ("M-." . markdown-follow-thing-at-point)
+         ("C-M-{" . nil) ; Unmap `markdown-backward-block', leave space for `larumbe/shrink-window-vertically'
+         ("C-M-}" . nil)) ; Unmap `markdown-forward-block', leave space for `larumbe/enlarge-window-vertically'
   :init
   (setq markdown-command "/usr/bin/pandoc -s")
   :config
