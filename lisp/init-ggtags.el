@@ -13,12 +13,8 @@
 
 
 (use-package ggtags
-  :straight (:repo "leoliu/ggtags"
-             :fork (:repo "gmlarumbe/ggtags" :branch "xref-sync"))
   :diminish
-  :commands (ggtags-create-tags
-             modi/ggtags-tag-at-point
-             larumbe/ggtags-global-handle-exit-advice)
+  :commands (ggtags-create-tags)
   :bind (:map ggtags-navigation-map
          ("M-o"     . nil)
          ("C-c C-k" . nil) ; EXWM character mode
