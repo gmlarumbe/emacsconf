@@ -43,7 +43,15 @@
 
 (use-package fpga
   :straight (:host github :repo "gmlarumbe/fpga")
-  :mode (("\\.qpf\\'" . conf-mode))) ; Quartus project file
+  :mode (("\\.qpf\\'" . conf-mode))  ; Quartus project file
+  :config
+  (set-face-attribute 'fpga-utils-compilation-msg-code-face nil :foreground "gray55")
+  (set-face-attribute 'fpga-utils-compilation-bin-face nil      :foreground "goldenrod")
+  (set-face-attribute 'fpga-utils-brackets-face nil             :foreground "goldenrod")
+  (set-face-attribute 'fpga-utils-parenthesis-face nil          :foreground "dark goldenrod")
+  (set-face-attribute 'fpga-utils-curly-braces-face nil         :foreground "DarkGoldenrod2")
+  (set-face-attribute 'fpga-utils-braces-content-face nil       :foreground "yellow green")
+  (set-face-attribute 'fpga-utils-punctuation-face nil          :foreground "burlywood"))
 
 
 ;;;; Window/Frame Display

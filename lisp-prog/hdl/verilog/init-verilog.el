@@ -69,30 +69,55 @@
          ("\\.vh\\'"  . verilog-ts-mode)
          ("\\.svh\\'" . verilog-ts-mode))
   :init
-  (setq verilog-ext-feature-list '(font-lock
-                                   hierarchy
-                                   eglot
-                                   lsp
-                                   flycheck
-                                   beautify
-                                   navigation
-                                   template
-                                   formatter
-                                   compilation
-                                   imenu
-                                   which-func
-                                   hideshow
-                                   time-stamp
-                                   block-end-comments
-                                   company-keywords
-                                   ports
-                                   typedefs
-                                   ;; xref
-                                   capf))
+  (setq verilog-ext-feature-list
+        '(font-lock
+          hierarchy
+          eglot
+          lsp
+          flycheck
+          beautify
+          navigation
+          template
+          formatter
+          compilation
+          imenu
+          which-func
+          hideshow
+          time-stamp
+          block-end-comments
+          company-keywords
+          ports
+          typedefs
+          ;; xref
+          capf))
   :config
   (setq verilog-ext-flycheck-verible-rules '("-line-length"
                                              "-parameter-name-style"))
   (verilog-ext-flycheck-set-linter 'verilog-verible)
+  ;; Faces
+  (set-face-attribute 'verilog-ext-font-lock-grouping-keywords-face nil :foreground "dark olive green")
+  (set-face-attribute 'verilog-ext-font-lock-punctuation-face nil       :foreground "burlywood")
+  (set-face-attribute 'verilog-ext-font-lock-operator-face nil          :foreground "burlywood" :weight 'extra-bold)
+  (set-face-attribute 'verilog-ext-font-lock-brackets-face nil          :foreground "goldenrod")
+  (set-face-attribute 'verilog-ext-font-lock-parenthesis-face nil       :foreground "dark goldenrod")
+  (set-face-attribute 'verilog-ext-font-lock-curly-braces-face nil      :foreground "DarkGoldenrod2")
+  (set-face-attribute 'verilog-ext-font-lock-port-connection-face nil   :foreground "bisque2")
+  (set-face-attribute 'verilog-ext-font-lock-dot-name-face nil          :foreground "gray70")
+  (set-face-attribute 'verilog-ext-font-lock-braces-content-face nil    :foreground "yellow green")
+  (set-face-attribute 'verilog-ext-font-lock-width-num-face nil         :foreground "chartreuse2")
+  (set-face-attribute 'verilog-ext-font-lock-width-type-face nil        :foreground "sea green" :weight 'bold)
+  (set-face-attribute 'verilog-ext-font-lock-module-face nil            :foreground "green1")
+  (set-face-attribute 'verilog-ext-font-lock-instance-face nil          :foreground "medium spring green")
+  (set-face-attribute 'verilog-ext-font-lock-time-event-face nil        :foreground "deep sky blue" :weight 'bold)
+  (set-face-attribute 'verilog-ext-font-lock-time-unit-face nil         :foreground "light steel blue")
+  (set-face-attribute 'verilog-ext-font-lock-preprocessor-face nil      :foreground "pale goldenrod")
+  (set-face-attribute 'verilog-ext-font-lock-modport-face nil           :foreground "light blue")
+  (set-face-attribute 'verilog-ext-font-lock-direction-face nil         :foreground "RosyBrown3")
+  (set-face-attribute 'verilog-ext-font-lock-typedef-face nil           :foreground "light blue")
+  (set-face-attribute 'verilog-ext-font-lock-translate-off-face nil     :background "gray20" :slant 'italic)
+  (set-face-attribute 'verilog-ext-font-lock-uvm-classes-face nil       :foreground "light blue")
+  (set-face-attribute 'verilog-ext-font-lock-xilinx-attributes-face nil :foreground "orange1")
+  ;; Setup
   (verilog-ext-mode-setup)
 
   (defun larumbe/verilog-ext-mode-hook ()
