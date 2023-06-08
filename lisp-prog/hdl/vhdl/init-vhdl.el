@@ -84,10 +84,33 @@
              :files (:defaults "snippets" "ts-mode/*.el")) ; TODO: Don't miss out vhdl-ts-mode
   :after vhdl-mode
   :demand
-  :mode (("\\.vhd\\'" . vhdl-ts-mode))
+  :mode (("\\.vhd\\'"  . vhdl-ts-mode)
+         ("\\.vhdl\\'" . vhdl-ts-mode))
   :hook ((vhdl-mode    . vhdl-ext-mode)
          (vhdl-ts-mode . vhdl-ext-mode))
+  :init
+  (setq vhdl-ext-feature-list
+        '(font-lock
+          eglot
+          lsp
+          flycheck
+          navigation
+          template
+          imenu))
   :config
+  ;; Faces
+  (set-face-attribute 'vhdl-ext-font-lock-punctuation-face nil :foreground "burlywood")
+  (set-face-attribute 'vhdl-ext-font-lock-operator-face nil :inherit 'vhdl-ext-font-lock-punctuation-face :weight 'extra-bold)
+  (set-face-attribute 'vhdl-ext-font-lock-brackets-face nil :foreground "goldenrod")
+  (set-face-attribute 'vhdl-ext-font-lock-parenthesis-face nil :foreground "dark goldenrod")
+  (set-face-attribute 'vhdl-ext-font-lock-curly-braces-face nil :foreground "DarkGoldenrod2")
+  (set-face-attribute 'vhdl-ext-font-lock-brackets-content-face nil :foreground "yellow green")
+  (set-face-attribute 'vhdl-ext-font-lock-port-connection-face nil :foreground "bisque2")
+  (set-face-attribute 'vhdl-ext-font-lock-entity-face nil :foreground "green1")
+  (set-face-attribute 'vhdl-ext-font-lock-instance-face nil :foreground "medium spring green")
+  (set-face-attribute 'vhdl-ext-font-lock-instance-lib-face nil :foreground "gray70")
+  (set-face-attribute 'vhdl-ext-font-lock-translate-off-face nil :background "gray20" :slant 'italic)
+  ;; Setup
   (vhdl-ext-mode-setup)
   (when (executable-find "vhdl_ls")
     (add-hook 'vhdl-mode-hook (lambda () (when (locate-dominating-file default-directory "vhdl_ls.toml") (lsp))))))
