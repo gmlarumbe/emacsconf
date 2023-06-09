@@ -96,7 +96,10 @@
           flycheck
           navigation
           template
-          imenu))
+          compilation
+          imenu
+          time-stamp
+          company-keywords))
   :config
   ;; Faces
   (set-face-attribute 'vhdl-ext-font-lock-punctuation-face nil :foreground "burlywood")
@@ -110,6 +113,9 @@
   (set-face-attribute 'vhdl-ext-font-lock-instance-face nil :foreground "medium spring green")
   (set-face-attribute 'vhdl-ext-font-lock-instance-lib-face nil :foreground "gray70")
   (set-face-attribute 'vhdl-ext-font-lock-translate-off-face nil :background "gray20" :slant 'italic)
+  ;; Compilation faces
+  (set-face-attribute 'vhdl-ext-compile-msg-code-face nil :foreground "gray55")
+  (set-face-attribute 'vhdl-ext-compile-bin-face nil :foreground "goldenrod")
   ;; Setup
   (vhdl-ext-mode-setup)
   (when (executable-find "vhdl_ls")

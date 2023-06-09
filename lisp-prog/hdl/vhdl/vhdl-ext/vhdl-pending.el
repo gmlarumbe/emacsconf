@@ -1,8 +1,5 @@
 ;;; Present in verilog-ext not in vhdl-ext
 ;;;; Not very time consuming
-;; TODO: Compilation with colored errors/warnings and jump to file/line
-;; TODO: Auto-configure company-keywords
-;; TODO: Auto-configure time-stamp
 ;; TODO: Enhanced support for which-func
 ;; TODO: Code folding via hideshow
 ;; TODO: Port connection utilities

@@ -117,6 +117,9 @@
   (set-face-attribute 'verilog-ext-font-lock-translate-off-face nil     :background "gray20" :slant 'italic)
   (set-face-attribute 'verilog-ext-font-lock-uvm-classes-face nil       :foreground "light blue")
   (set-face-attribute 'verilog-ext-font-lock-xilinx-attributes-face nil :foreground "orange1")
+  ;; Compilation faces
+  (set-face-attribute 'verilog-ext-compile-msg-code-face nil :foreground "gray55")
+  (set-face-attribute 'verilog-ext-compile-bin-face nil      :foreground "goldenrod")
   ;; Setup
   (verilog-ext-mode-setup)
 
