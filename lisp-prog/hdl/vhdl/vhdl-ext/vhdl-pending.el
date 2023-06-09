@@ -1,12 +1,13 @@
 ;;; Present in verilog-ext not in vhdl-ext
 ;;;; Not very time consuming
 ;; TODO: Enhanced support for which-func
-;; TODO: Code folding via hideshow
 ;; TODO: Port connection utilities
 ;;;; A bit more time consuming
 ;; TODO: Find definitions and references
 ;; TODO: Auto-completion with dot and scope completion
 ;; TODO: Hierarchy extraction and navigation
+;;  All of these require some type of project/workspace analysis
+;;  Could reuse what's already existing in vhdl-mode?
 ;;;; Not needed
 ;; Formatter or beautifier not needed
 

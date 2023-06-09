@@ -71,6 +71,8 @@
   (setq vhdl-reset-kind 'sync)
   (setq vhdl-speedbar-auto-open nil)
   (setq vhdl-standard '(08 nil))
+  (setq vhdl-modify-date-on-saving nil) ; Use `vhdl-ext' time-stamp instead
+  (setq vhdl-hideshow-menu t)
   (vhdl-electric-mode -1)
   (remove-hook 'compilation-mode-hook 'vhdl-error-regexp-add-emacs)
   ;; BUG: With use-package :bind to `vhdl-speedbar-mode-map' this keybinding applied to non-spacebar modes
@@ -84,8 +86,8 @@
              :files (:defaults "snippets" "ts-mode/*.el")) ; TODO: Don't miss out vhdl-ts-mode
   :after vhdl-mode
   :demand
-  :mode (("\\.vhd\\'"  . vhdl-ts-mode)
-         ("\\.vhdl\\'" . vhdl-ts-mode))
+  ;; :mode (("\\.vhd\\'"  . vhdl-ts-mode)
+  ;;        ("\\.vhdl\\'" . vhdl-ts-mode))
   :hook ((vhdl-mode    . vhdl-ext-mode)
          (vhdl-ts-mode . vhdl-ext-mode))
   :init
@@ -98,10 +100,12 @@
           template
           compilation
           imenu
+          hideshow
           time-stamp
           company-keywords))
   :config
   ;; Faces
+  (set-face-attribute 'vhdl-ext-font-lock-then-face nil :foreground "dark olive green")
   (set-face-attribute 'vhdl-ext-font-lock-punctuation-face nil :foreground "burlywood")
   (set-face-attribute 'vhdl-ext-font-lock-operator-face nil :inherit 'vhdl-ext-font-lock-punctuation-face :weight 'extra-bold)
   (set-face-attribute 'vhdl-ext-font-lock-brackets-face nil :foreground "goldenrod")
