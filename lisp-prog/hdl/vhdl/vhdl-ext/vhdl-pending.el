@@ -1,5 +1,23 @@
-;; INFO: Maybe it's better to implement these in tree-sitter?
+;;; Present in verilog-ext not in vhdl-ext
+;;;; Not very time consuming
+;; TODO: Compilation with colored errors/warnings and jump to file/line
+;; TODO: Auto-configure company-keywords
+;; TODO: Auto-configure time-stamp
+;; TODO: Enhanced support for which-func
+;; TODO: Code folding via hideshow
+;; TODO: Port connection utilities
+;;;; A bit more time consuming
+;; TODO: Find definitions and references
+;; TODO: Auto-completion with dot and scope completion
+;; TODO: Hierarchy extraction and navigation
+;;;; Not needed
+;; Formatter or beautifier not needed
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; INFO: Maybe it's better to implement these in tree-sitter?
 ;;; Utils
 (defun vhdl-ext-point-inside-block-p (block)
   "Return block name if cursor is inside specified BLOCK type."
