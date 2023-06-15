@@ -107,6 +107,9 @@
   (add-hook 'git-timemachine-mode-hook #'(lambda () (setq truncate-lines t))))
 
 
+(use-package gitlab-ci-mode)
+
+
 ;;;; Misc
 (use-package diff-hl
   :bind (("M-<f10>" . global-diff-hl-mode))
