@@ -78,7 +78,10 @@
            (case-fold-search nil)
            (orderless-smart-case nil)   ; INFO: This is the one that has (or should) have an effect
            (sym-atp (thing-at-point 'symbol :noprops))
+           (last-char (cdr (bounds-of-thing-at-point 'symbol)))
            (initial-input (concat "\\_<" sym-atp "\\_>"))
+           ;; (initial-input (concat "\\_<" sym-atp (when (eq last-char (line-end-position)) ".") "\\_>")) ; TODO: Now it detects if it's at the end of the line with the hidden char, but not the rest
+           ;; (initial-input (concat "\\<" sym-atp "\\>")) ; With this it will take some chars such as points as part of the symbol
            )
        (consult-line initial-input)))
 
