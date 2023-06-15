@@ -86,10 +86,11 @@ If prefix arg is provided, force creation of a new ansi-term."
   (setq vterm-keymap-exceptions '("C-c" "C-x" "C-u" "C-h" "C-l" "M-x" "M-O" "M-o" "C-y" "M-y")) ; Exclude C-g
   (setq vterm-shell "zsh")
 
-  (defun larumbe/sh-send-string-vterm (string)
-    "Send STRING to *vterm* process."
+  (defun larumbe/sh-send-string-vterm (string &optional vterm-buf)
+    "Send STRING to *vterm* process.
+If optional arg VTERM-BUF is non-nil, use this buffer instead of default *vterm*."
     (interactive)
-    (let* ((buf "*vterm*")
+    (let* ((buf (or vterm-buf "*vterm*"))
            (proc (get-buffer-process buf)))
       (unless (get-buffer buf)
         (error "Buffer %s does not exist" buffer))
