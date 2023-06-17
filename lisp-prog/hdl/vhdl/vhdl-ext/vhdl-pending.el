@@ -1,15 +1,16 @@
 ;;; Present in verilog-ext not in vhdl-ext
 ;;;; Not very time consuming
-;; TODO: Enhanced support for which-func
-;; TODO: Port connection utilities
 ;;;; A bit more time consuming
+;; TODO: Hierarchy extraction and navigation
+;;;; Probably won't do
 ;; TODO: Find definitions and references
 ;; TODO: Auto-completion with dot and scope completion
-;; TODO: Hierarchy extraction and navigation
+
 ;;  All of these require some type of project/workspace analysis
 ;;  Could reuse what's already existing in vhdl-mode?
+
 ;;;; Not needed
-;; Formatter or beautifier not needed
+;; Formatter or beautifier
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -20,6 +21,7 @@
 (defun vhdl-ext-point-inside-block-p (block)
   "Return block name if cursor is inside specified BLOCK type."
   (let ((pos (point))
+        ;; TODO: Also consider generates
         (re (cond ((eq block 'entity)        "^\\<\\(entity\\)\\>")
                   ((eq block 'architecture)  "^\\<\\(architecture\\)\\>")
                   ((eq block 'function)      "\\<\\(function\\)\\>")
@@ -90,26 +92,6 @@ This will normally happen after calling `vhdl-ext-find-parent-module'"
 ;; ("<return>" . larumbe/vhdl-electric-return)
 ;; ("RET"      . larumbe/vhdl-electric-return)
 
-
-;;;; Editing (do with tree-sitter)
-(defun vhdl-ext-indent-block-at-point ()
-  "Indent current block at point."
-  (interactive)
-  (let ((data (vhdl-ext-block-at-point))
-        start-pos end-pos block name)
-    (modify-syntax-entry ?` "w" table)
-    (with-syntax-table table
-      (unless data
-        (user-error "Not inside a block"))
-      (save-excursion
-        (setq block (alist-get 'type data))
-        (setq name (alist-get 'name data))
-        (goto-char (alist-get 'beg-point data))
-        (setq start-pos (line-beginning-position))
-        (goto-char (alist-get 'end-point data))
-        (setq end-pos (line-end-position))
-        (indent-region start-pos end-pos)
-        (message "Indented %s : %s" block name)))))
 
 
 ;;; Lsp

@@ -90,19 +90,25 @@
   ;;        ("\\.vhdl\\'" . vhdl-ts-mode))
   :hook ((vhdl-mode    . vhdl-ext-mode)
          (vhdl-ts-mode . vhdl-ext-mode))
+  :bind (:map vhdl-mode-map
+         ("C-M-f" . vhdl-ext-forward-sexp)
+         ("C-M-b" . vhdl-ext-backward-sexp))
   :init
   (setq vhdl-ext-feature-list
         '(font-lock
           eglot
           lsp
           flycheck
+          beautify
           navigation
           template
           compilation
           imenu
+          which-func
           hideshow
           time-stamp
-          company-keywords))
+          company-keywords
+          ports))
   :config
   ;; Faces
   (set-face-attribute 'vhdl-ext-font-lock-then-face nil :foreground "dark olive green")
