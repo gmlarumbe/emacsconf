@@ -27,6 +27,14 @@
   (ivy-rich-mode 1))
 
 
+(use-package orderless
+  :demand
+  :after ivy
+  :config
+  (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder)))
+  (add-to-list 'ivy-highlight-functions-alist '(orderless-ivy-re-builder . orderless-ivy-highlight)))
+
+
 (when (equal larumbe/completion-framework 'ivy)
   (use-package swiper
     :bind (:map swiper-map
@@ -221,10 +229,8 @@ Otherwise, smart-case is performed (similar to case-fold-search)."
       (larumbe/counsel--search #'counsel-rg)))
 
 
-
   (use-package ivy-youtube
     :bind (("C-x c y" . ivy-youtube))))
-
 
 
 (provide 'init-ivy)
