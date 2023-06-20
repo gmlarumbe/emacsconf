@@ -31,8 +31,16 @@
   :demand
   :after ivy
   :config
+  ;; Ivy config, according to orderless GitHub README
   (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder)))
   (add-to-list 'ivy-highlight-functions-alist '(orderless-ivy-re-builder . orderless-ivy-highlight)))
+  ;; This has a similar effect to setting:  (setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
+  ;; However it has the benefit that adds some more flexibility using orderless.
+  ;; It could be set, for example: (add-to-list 'orderless-matching-styles 'orderless-flex)
+  ;;
+  ;; The only issue is that in `ivy-highlight-functions-alist', for key `orderless-ivy-re-builder',
+  ;; value `orderless-ivy-highlight' does not work properly in swiper. This can be overcome by
+  ;; forcing using `ivy--regex-plus' with local let bindings inside swiper functions
 
 
 (when (equal larumbe/completion-framework 'ivy)
