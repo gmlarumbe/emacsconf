@@ -48,6 +48,7 @@
            ("M-s ." . larumbe/symbol-at-point))
     :config
     (setq search-default-mode 'auto)
+    (defvar larumbe/swiper-re-builders-alist '((t . ivy--regex-plus)))
 
     ;; Search wrappers
     (defun larumbe/search-forward (&optional uarg)
@@ -56,12 +57,13 @@ Use `swiper-isearch' not showing lines for compilation buffers or if uarg is
 provided (e.g. large files where showing lines with `swiper' could be a bit
 slow)."
       (interactive "P")
-      (cond ((string= major-mode "dired-mode")
-             (call-interactively #'isearch-forward))
-            (uarg
-             (call-interactively #'swiper))
-            (t
-             (call-interactively #'swiper-isearch))))
+      (let ((ivy-re-builders-alist larumbe/swiper-re-builders-alist)) ; Override `orderless' for swiper, keep it for ivy
+        (cond ((string= major-mode "dired-mode")
+               (call-interactively #'isearch-forward))
+              (uarg
+               (call-interactively #'swiper))
+              (t
+               (call-interactively #'swiper-isearch)))))
 
     (defun larumbe/search-backward (&optional uarg)
       "Use isearch for dired-mode and swiper for the rest.
@@ -69,22 +71,24 @@ Use `swiper-isearch' not showing lines for compilation buffers or if uarg is
 provided (e.g. large files where showing lines with `swiper' could be a bit
 slow)."
       (interactive "P")
-      (cond ((string= major-mode "dired-mode")
-             (call-interactively #'isearch-backward))
-            (uarg
-             (call-interactively #'swiper-backward))
-            (t
-             (call-interactively #'swiper-isearch))))
+      (let ((ivy-re-builders-alist larumbe/swiper-re-builders-alist)) ; Override `orderless' for swiper, keep it for ivy
+        (cond ((string= major-mode "dired-mode")
+               (call-interactively #'isearch-backward))
+              (uarg
+               (call-interactively #'swiper-backward))
+              (t
+               (call-interactively #'swiper-isearch)))))
 
     (defun larumbe/symbol-at-point (&optional uarg)
       "Use isearch for dired-mode, swiper-isearch (no-line info) if UARG and swiper for the rest."
       (interactive "P")
-      (cond ((string= major-mode "dired-mode")
-             (call-interactively #'isearch-forward-symbol-at-point))
-            (uarg
-             (call-interactively #'swiper-symbol-at-point))
-            (t
-             (call-interactively #'swiper-isearch-symbol-at-point))))
+      (let ((ivy-re-builders-alist larumbe/swiper-re-builders-alist)) ; Override `orderless' for swiper, keep it for ivy
+        (cond ((string= major-mode "dired-mode")
+               (call-interactively #'isearch-forward-symbol-at-point))
+              (uarg
+               (call-interactively #'swiper-symbol-at-point))
+              (t
+               (call-interactively #'swiper-isearch-symbol-at-point)))))
 
     ;; https://github.com/abo-abo/swiper/issues/1068
     ;; INFO: abo-abo's answer was fine but didn't take into account ignoring
@@ -124,12 +128,13 @@ If the input is empty, select the previous history element instead.
 INFO: If performed a symbol search with no symbol at point, center
 point between the symbol boundaries."
       (interactive "p")
-      (cond ((string= ivy-text "")
-             (ivy-previous-history-element 1))
-            ((search-backward "\\_<\\_>" nil t)
-             (forward-char 3))
-            (t
-             (ivy-next-line arg))))
+      (let ((ivy-re-builders-alist larumbe/swiper-re-builders-alist)) ; Override `orderless' for swiper, keep it for ivy
+        (cond ((string= ivy-text "")
+               (ivy-previous-history-element 1))
+              ((search-backward "\\_<\\_>" nil t)
+               (forward-char 3))
+              (t
+               (ivy-next-line arg)))))
 
     (advice-add 'swiper-C-s :override #'larumbe/swiper-C-s)
 
