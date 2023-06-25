@@ -1,9 +1,6 @@
 ;;; Generic
-;; TODO:
-;;   - Move the regexps of compilation-utils to verilog-compile?
 
 ;;; Completion
-
 ;; TODO: Improve dot completion detecting if in a queue/array/enum to show its builtin methods
 ;; TODO: Improve completion if ` detected (directives candidates)
 ;; TODO: Add completions for system tasks: https://verificationacademy.com/forums/systemverilog/complete-list-system-functions-or-system-tasks-descriptions
@@ -18,7 +15,6 @@
 ;;   Maybe filtering with (verilog-ext-in-block 'class)?
 
 ;;; Flycheck
-;; TODO: Add some options on the linters to use a -f or -F option
 
 ;;; Compilation
 ;; For `verilog-ext-makefile-compile' use the custom compile regexp:
