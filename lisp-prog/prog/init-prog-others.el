@@ -135,14 +135,9 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 ;;;; Matlab
 (use-package matlab
   :straight matlab-mode
-  :defines (matlab-indent-function
-            matlab-shell-command)
   :mode (("\\.m\\'" . matlab-mode))
   :bind (:map matlab-mode-map
-         ("M-s" . nil)) ; Unmap `matlab-show-matlab-shell-buffer' to allow for isearch/swiper
-  :config
-  (setq matlab-indent-function t)
-  (setq matlab-shell-command "matlab"))
+         ("M-s" . nil))) ; Unmap `matlab-show-matlab-shell-buffer' to allow for isearch/swiper
 
 
 ;;;; Nasl
