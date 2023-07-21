@@ -278,8 +278,8 @@
   (exwm-input-set-key (kbd "<print>") #'screenshot)
   (exwm-input-set-key (kbd "s-SPC") #'larumbe/toggle-keyboard-layout)
   ;; Workspace selection keymap tweaking
-  (define-key exwm-workspace--switch-map "\C-m" #'exit-minibuffer))
-
+  (advice-add 'exwm-workspace--init-switch-map :after
+              (lambda () (define-key exwm-workspace--switch-map "\C-m" #'exit-minibuffer))))
 
 
 (defun larumbe/exwm-set-layout ()
