@@ -73,8 +73,6 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
 
 
 (use-package elpy
-  :straight (:repo "jorgenschaefer/elpy"
-             :fork (:repo "gmlarumbe/elpy" :branch "ts-mode"))
   :diminish
   :after python
   :demand

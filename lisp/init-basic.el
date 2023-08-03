@@ -52,8 +52,6 @@
     )
   "Evaluation of: `(larumbe/git-check-forked-repos-straight)'.")
 
-;; Elpy PR pending: add support for python-ts-mode
-
 ;; TODO: Open PR for arch-packer, just in case? There is some people complaining that it doesn't work
 
 ;; TODO: Add PR to apheleia? verilog-ext formatter
