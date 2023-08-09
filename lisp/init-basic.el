@@ -53,10 +53,14 @@
   "Evaluation of: `(larumbe/git-check-forked-repos-straight)'.")
 
 ;; TODO: Open PR for arch-packer, just in case? There is some people complaining that it doesn't work
-
+;;
 ;; TODO: Add PR to apheleia? verilog-ext formatter
+;;  - https://github.com/radian-software/apheleia section "Adding a formatter"
+;;
 ;; TODO: Add PR to eglot? verilog-ext/vhdl LSPs
+;;
 ;; TODO: Add PR to lsp? verilog-ext/vhdl LSPs
+;;
 ;; TODO: Add PR to flycheck? verilog-ext/vhdl linters
 
 

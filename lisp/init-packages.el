@@ -587,6 +587,23 @@ If NOSELECT is non-nil, do not select the imenu-list buffer."
       (when (modi/imenu-list-visible-p)
         (imenu-list-update-safe)))) ; update `imenu-list' buffer
 
+  (defun larumbe/imenu-list-hide-all (&optional first)
+    "Hide all the blocks at `imenu-list' buffer.
+If optional arg FIRST is non-nil show first Imenu block
+which in `verilog-ext' Imenu index corresponds to *instances*.
+INFO: It is meant to be run after `imenu-list', however
+it could cause sluggish behaviour as it's not every efficient."
+    (if (string-equal major-mode "imenu-list-major-mode")
+        (progn
+          (goto-char (point-min))
+          (while (< (point) (point-max))
+            (hs-hide-block)
+            (line-move-visual 1))
+          (goto-char (point-min))
+          (when first
+            (hs-show-block)))
+      (message "Not in imenu-list mode !!")))
+
   (advice-add 'switch-to-buffer :around #'modi/imenu-auto-update)
   (advice-add 'revert-buffer    :around #'modi/imenu-auto-update))
 
@@ -869,6 +886,11 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 (use-package camcorder
+  :init
+  ;; Change FPS to 10 for large GIFs
+  (setq camcorder-recording-command '("recordmydesktop" " --fps 10 --no-sound --windowid " window-id " -o " file))
+  ;; Also check:
+  ;;   - https://unix.stackexchange.com/questions/35282/convert-ogv-video-to-gif-animation (2nd answer)
   :commands (camcorder-start
              camcorder-record
              camcorder-stop))
