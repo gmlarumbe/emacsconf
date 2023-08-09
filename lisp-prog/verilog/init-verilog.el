@@ -94,6 +94,7 @@
   (setq verilog-ext-flycheck-verible-rules '("-line-length"
                                              "-parameter-name-style"))
   (verilog-ext-flycheck-set-linter 'verilog-verible)
+  (setq verilog-ext-flycheck-use-open-buffers nil)
   ;; Faces
   (set-face-attribute 'verilog-ext-font-lock-grouping-keywords-face nil :foreground "dark olive green")
   (set-face-attribute 'verilog-ext-font-lock-punctuation-face nil       :foreground "burlywood")

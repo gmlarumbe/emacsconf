@@ -73,6 +73,7 @@
   (setq vhdl-standard '(08 nil))
   (setq vhdl-modify-date-on-saving nil) ; Use `vhdl-ext' time-stamp instead
   (setq vhdl-hideshow-menu t)
+  (setq vhdl-special-syntax-alist nil)  ; Avoid highlighting of _v (variables), _c (constants) and _t (types)
   (vhdl-electric-mode -1)
   (remove-hook 'compilation-mode-hook 'vhdl-error-regexp-add-emacs)
   ;; BUG: With use-package :bind to `vhdl-speedbar-mode-map' this keybinding applied to non-spacebar modes
@@ -96,6 +97,7 @@
   :init
   (setq vhdl-ext-feature-list
         '(font-lock
+          hierarchy
           eglot
           lsp
           flycheck
@@ -109,6 +111,7 @@
           time-stamp
           company-keywords
           ports))
+  (setq vhdl-ext-hierarchy-backend 'builtin)
   :config
   ;; Faces
   (set-face-attribute 'vhdl-ext-font-lock-then-face nil :foreground "dark olive green")
@@ -130,6 +133,8 @@
   (vhdl-ext-mode-setup)
   (when (executable-find "vhdl_ls")
     (add-hook 'vhdl-mode-hook (lambda () (when (locate-dominating-file default-directory "vhdl_ls.toml") (lsp))))))
+
+
 
 
 ;; Gathers symbols according to identifier regexps from all `vhdl-mode' buffers.
