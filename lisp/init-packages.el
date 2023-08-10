@@ -66,8 +66,8 @@ This was needed in order to allow GitHub actions to work properly."
     (unless theme
       (error "No theme selected!"))
     ;; Handle `custom-safe-themes'.
-    (let* ((straight-repos-dir (expand-file-name (concat (file-name-as-directory straight-base-dir) "straight/repos")))
-           (theme-file (concat (file-name-as-directory straight-repos-dir) "smart-mode-line/smart-mode-line-dark-theme.el"))
+    (let* ((straight-repos-dir (expand-file-name (file-name-concat straight-base-dir "straight/repos")))
+           (theme-file (file-name-concat straight-repos-dir "smart-mode-line/smart-mode-line-dark-theme.el"))
            (hash (with-temp-buffer
                    (insert-file-contents theme-file)
                    (secure-hash 'sha256 (current-buffer)))))
@@ -190,9 +190,15 @@ C-s C-w [C-w] [C-w]... behaviour. "
   :bind (:map outshine-mode-map
          ("M-RET" . nil)  ; Leave space for `company-complete'
          ("C-M-i" . nil)) ; Leave space for defun indentation, unmaps `outshine-cycle-buffer'
+  :diminish outshine-mode
   :config
   ;; Do not include outshine tags at imenu
   (setq outshine-imenu-show-headlines-p nil))
+
+
+(use-package outline
+  :straight nil
+  :diminish outline-minor-mode)
 
 
 (use-package navi-mode)
@@ -436,15 +442,6 @@ Same as `hs-toggle-hiding', but do not exec: (posn-set-point (event-end e))"
 
   ;; Apply advice
   (advice-add 'hs-toggle-hiding :override #'larumbe/hs-toggle-hiding))
-
-
-(use-package outline
-  :straight nil
-  :diminish outline-minor-mode)
-
-
-(use-package outshine
-  :diminish outshine-mode)
 
 
 (use-package flycheck
