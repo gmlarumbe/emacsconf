@@ -5,7 +5,7 @@
 
 My Emacs configuration file.
 
-Main focus on **Verilog/SystemVerilog** HDL, **scripting** and **compilation** for elaboration/synthesis/simulations.
+Main focus on **SystemVerilog**, **VHDL*, **scripting** and **compilation** for elaboration/synthesis/simulations.
 
 ## How-To ##
 
@@ -36,8 +36,6 @@ Main focus on **Verilog/SystemVerilog** HDL, **scripting** and **compilation** f
   * **lisp**: core files of the configuration.
 
   * **lisp_prog**: programming languages related files.
-    * Subdir **prog** holds config generic to all languages, plus some config for the less frequently used.
-    * Subid **hdl** holds config to Verilog/VHDL, both specific and common, such as font-locking.
 
   * **scripts**: auxiliary files for CI.
 
