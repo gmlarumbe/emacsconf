@@ -64,10 +64,10 @@
   :demand
   :hook ((verilog-mode . verilog-ext-mode)
          (verilog-mode . larumbe/verilog-ext-mode-hook))
-  ;; :mode (("\\.v\\'"   . verilog-ts-mode)
-  ;;        ("\\.sv\\'"  . verilog-ts-mode)
-  ;;        ("\\.vh\\'"  . verilog-ts-mode)
-  ;;        ("\\.svh\\'" . verilog-ts-mode))
+  :mode (("\\.v\\'"   . verilog-ts-mode)
+         ("\\.sv\\'"  . verilog-ts-mode)
+         ("\\.vh\\'"  . verilog-ts-mode)
+         ("\\.svh\\'" . verilog-ts-mode))
   :init
   (setq verilog-ext-feature-list
         '(font-lock

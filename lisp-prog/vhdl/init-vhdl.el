@@ -87,8 +87,8 @@
              :files (:defaults "snippets" "ts-mode/*.el")) ; TODO: Don't miss out vhdl-ts-mode
   :after vhdl-mode
   :demand
-  ;; :mode (("\\.vhd\\'"  . vhdl-ts-mode)
-  ;;        ("\\.vhdl\\'" . vhdl-ts-mode))
+  :mode (("\\.vhd\\'"  . vhdl-ts-mode)
+         ("\\.vhdl\\'" . vhdl-ts-mode))
   :hook ((vhdl-mode    . vhdl-ext-mode)
          (vhdl-ts-mode . vhdl-ext-mode))
   :bind (:map vhdl-mode-map
