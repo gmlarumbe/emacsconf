@@ -26,7 +26,10 @@
 (use-package edebug
   :straight nil
   :bind (:map edebug-mode-map
-         ("?" . hydra-edebug/body)))
+         ("?" . hydra-edebug/body))
+  :init
+  ;; Avoid truncation of echo messages in edebug
+  (setq edebug-print-length 200)) ; Check also `edebug-print-level'
 
 
 (use-package lively
