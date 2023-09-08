@@ -53,6 +53,17 @@
   (set-face-attribute 'fpga-utils-braces-content-face nil       :foreground "yellow green")
   (set-face-attribute 'fpga-utils-punctuation-face nil          :foreground "burlywood"))
 
+(use-package wavedrom-mode
+  :straight (:host github :repo "gmlarumbe/wavedrom-mode")
+  :config
+  (set-face-attribute 'wavedrom-font-lock-brackets-face nil :foreground "goldenrod")
+  (set-face-attribute 'wavedrom-font-lock-punctuation-face nil :foreground "burlywood"))
+
+(use-package vunit-mode)
+
+(use-package test-hdl
+  :straight (:host github :repo "gmlarumbe/test-hdl" :files (:defaults)))
+
 
 ;;;; Window/Frame Display
 (use-package smart-mode-line
@@ -906,10 +917,6 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   :config
   (setq counsel-describe-function-function #'helpful-callable)
   (setq counsel-describe-variable-function #'helpful-variable))
-
-
-(use-package hierarchy
-  :straight nil) ; INFO: For some reason, straight is downloading the repo instead of using the Emacs core one
 
 
 

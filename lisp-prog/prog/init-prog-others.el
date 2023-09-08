@@ -124,7 +124,7 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 
 
 ;;;; JSON
-(use-package json-mode)
+;; `json-mode' seemed quite old, using Emacs 29.1 builtin js-json-mode
 (use-package json-navigator)
 
 

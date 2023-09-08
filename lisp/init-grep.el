@@ -8,8 +8,7 @@
   :commands (ag/search)
   :init
   (setq ag-arguments           ; Fetched from modi verilog config
-        '("--nogroup"          ; mandatory argument for ag.el as per https://github.com/Wilfred/ag.el/issues/41
-          "--numbers"          ; Line numbers
+        '("--numbers"          ; Line numbers
           "--smart-case"
           "--follow"           ; Follow symlinks
           "--ignore" "#*#"     ; Adding "*#*#" or "#*#" to .ignore does not work for ag (works for rg)
@@ -18,9 +17,7 @@
   (setq ag-reuse-buffers t)
   (setq ag-reuse-window t)
   (setq ag-highlight-search t)
-  :config
-  ;; At some point it began adding some File: to the beginning of the ag output
-  (setq ag/file-column-pattern-nogroup "^File: \\(.+?\\):\\([1-9][0-9]*\\):\\([1-9][0-9]*\\):"))
+  (setq ag-group-matches t))
 
 
 ;;;; Ripgrep

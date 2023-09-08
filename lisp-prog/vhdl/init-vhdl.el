@@ -85,8 +85,7 @@
 (use-package vhdl-ext
   :after vhdl-mode
   :demand
-  :hook ((vhdl-mode    . vhdl-ext-mode)
-         (vhdl-ts-mode . vhdl-ext-mode))
+  :hook ((vhdl-mode . vhdl-ext-mode))
   :init
   (setq vhdl-ext-feature-list
         '(font-lock

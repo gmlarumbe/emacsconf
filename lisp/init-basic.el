@@ -19,6 +19,7 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 (setq confirm-kill-emacs #'y-or-n-p) ; Avoid closing Emacs unexpectedly (helm prefix C-x c)
 (setq disabled-command-function nil)
+(setq-default tab-width 4)
 
 ;; Save screen real estate
 (menu-bar-mode -1)
@@ -36,7 +37,12 @@
                                               "~/.emacs.d/straight/repos/my-elisp-packages-priv"
                                               "~/.emacs.d/straight/repos/verilog-ext"
                                               "~/.emacs.d/straight/repos/vhdl-ext"
-                                              "~/.emacs.d/straight/repos/fpga"))
+                                              "~/.emacs.d/straight/repos/verilog-ts-mode"
+                                              "~/.emacs.d/straight/repos/vhdl-ts-mode"
+                                              "~/.emacs.d/straight/repos/test-hdl"
+                                              "~/.emacs.d/straight/repos/fpga"
+                                              "~/.emacs.d/straight/repos/wavedrom-mode"
+                                              "~/.emacs.d/straight/repos/vunit-mode"))
 (defconst larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos-core
                                                  larumbe/emacs-conf-repos-packages
                                                  (when (file-exists-p "~/.dotfiles")
@@ -49,6 +55,7 @@
     "~/.emacs.d/straight/repos/wide-column"        ; Keep forked: too old, very unused
     "~/.emacs.d/straight/repos/arch-packer"        ; Maybe with some refactoring, updates after 5 years, no PR in this project. Wait until I get arch in new computer
     "~/.emacs.d/straight/repos/verilog-mode"       ; Development as a maintainer
+    "~/.emacs.d/straight/repos/vunit-mode"         ; Changes not merged into master
     )
   "Evaluation of: `(larumbe/git-check-forked-repos-straight)'.")
 
