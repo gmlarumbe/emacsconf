@@ -42,7 +42,6 @@
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("macros/larumbe-macros.el")))
 
 (use-package fpga
-  :straight (:host github :repo "gmlarumbe/fpga")
   :mode (("\\.qpf\\'" . conf-mode))  ; Quartus project file
   :config
   (set-face-attribute 'fpga-utils-compilation-msg-code-face nil :foreground "gray55")
@@ -54,7 +53,6 @@
   (set-face-attribute 'fpga-utils-punctuation-face nil          :foreground "burlywood"))
 
 (use-package wavedrom-mode
-  :straight (:host github :repo "gmlarumbe/wavedrom-mode")
   :config
   (set-face-attribute 'wavedrom-font-lock-brackets-face nil :foreground "goldenrod")
   (set-face-attribute 'wavedrom-font-lock-punctuation-face nil :foreground "burlywood"))
