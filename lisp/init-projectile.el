@@ -22,7 +22,6 @@
              larumbe/projectile-project-root-or-current-dir)
   :config
   (setq projectile-enable-caching t) ; Enable caching, otherwise `projectile-find-file' is really slow for large projects.
-  (setq projectile-tags-backend 'xref)
 
   (add-to-list 'projectile-globally-ignored-directories "*.repo") ; https://github.com/bbatsov/projectile/issues/1250
   (add-to-list 'projectile-globally-ignored-directories "*@@$")   ; Ignore ClearCase versions
