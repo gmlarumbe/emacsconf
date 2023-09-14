@@ -100,21 +100,6 @@
   (set-face-attribute 'vhdl-ts-font-lock-translate-off-face nil :background "gray20" :slant 'italic))
 
 
-;; Gathers symbols according to identifier regexps from all `vhdl-mode' buffers.
-;; It's somehow inneficient, slow, and better done with `company-gtags'.
-(use-package vhdl-capf
-  :straight (:repo "sh-ow/vhdl-capf"
-             :fork (:repo "gmlarumbe/vhdl-capf"))
-  :after vhdl-mode) ; Enable with `:demand' and `:config' with `vhdl-capf-enable'
-
-
-;; Provides minor-mode `vhdl-tools-mode', with some wrappers for code navigation using ggtags and improvements to imenu.
-;; However, seems old and unmaintained. Just leave it in case it can be used as a reference for some feature.
-(use-package vhdl-tools
-  :after vhdl-mode)
-
-
-
 (provide 'init-vhdl)
 
 ;;; init-vhdl.el ends here
