@@ -22,7 +22,7 @@
          ("C-c /"   . nil)                 ; Unmap `verilog-star-comment'
          ("M-?"     . nil)                 ; Unmap `completion-help-at-point'
          ("M-RET"   . nil)) ; Leave space for `company-complete'
-  :config
+  :init
   ;; Indentation
   (defvar larumbe/verilog-indent-level 4)
   (setq verilog-indent-level             larumbe/verilog-indent-level)
@@ -51,21 +51,20 @@
   ;; Alignment
   (setq verilog-align-assign-expr t)
   (setq verilog-align-typedef-words nil) ; Rely on `verilog-ext' to automatically update it
-  (setq verilog-align-typedef-regexp (concat "\\<" verilog-identifier-re "_\\(t\\|if\\|vif\\)\\>")) ; INFO: Set on specific machines
+  (setq verilog-align-typedef-regexp (concat "\\<" "[a-zA-Z_][a-zA-Z_0-9]*" "_\\(t\\|if\\|vif\\)\\>")) ; INFO: Set on specific machines
+  :config
   ;; Mode config
   (remove-hook 'compilation-mode-hook 'verilog-error-regexp-add-emacs) ; `verilog-mode' automatically adds useless compilation regexp alists
   (advice-add 'electric-verilog-terminate-line :before-until #'larumbe/newline-advice)) ; Quit *xref* buffer with C-m/RET
 
 
 (use-package verilog-ext
-  :after verilog-mode
-  :demand
   :hook ((verilog-mode . verilog-ext-mode)
          (verilog-mode . larumbe/verilog-ext-mode-hook))
   :init
   (setq verilog-ext-feature-list
         '(font-lock
-          ;; xref
+          xref
           capf
           hierarchy
           eglot
@@ -82,13 +81,15 @@
           typedefs
           time-stamp
           block-end-comments
-          company-keywords
           ports))
-  :config
   (setq verilog-ext-flycheck-verible-rules '("-line-length"
                                              "-parameter-name-style"))
-  (verilog-ext-flycheck-set-linter 'verilog-verible)
   (setq verilog-ext-flycheck-use-open-buffers nil)
+  :config
+  ;; Setup
+  (verilog-ext-mode-setup)
+  ;; Flycheck
+  (verilog-ext-flycheck-set-linter 'verilog-verible)
   ;; Faces
   (set-face-attribute 'verilog-ext-font-lock-grouping-keywords-face nil :foreground "dark olive green")
   (set-face-attribute 'verilog-ext-font-lock-punctuation-face nil       :foreground "burlywood")
@@ -115,8 +116,6 @@
   ;; Compilation faces
   (set-face-attribute 'verilog-ext-compile-msg-code-face nil :foreground "gray55")
   (set-face-attribute 'verilog-ext-compile-bin-face nil      :foreground "goldenrod")
-  ;; Setup
-  (verilog-ext-mode-setup)
 
   (defun larumbe/verilog-ext-mode-hook ()
     "Verilog hook."
@@ -124,8 +123,7 @@
 
 
 (use-package verilog-ts-mode
-  :straight (:host github :repo "gmlarumbe/verilog-ext"
-             :files ("ts-mode/verilog-ts-mode.el"))
+  :mode (("\\.s?vh?\\'" . verilog-ts-mode))
   :config
   ;; Faces
   (set-face-attribute 'verilog-ts-font-lock-grouping-keywords-face nil :foreground "dark olive green")

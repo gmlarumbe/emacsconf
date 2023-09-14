@@ -12,7 +12,7 @@
          ("C-M-n" . vhdl-forward-same-indent)
          ("<f5>"  . vhdl-compile)
          ("<f8>"  . sr-speedbar-open))
-  :config
+  :init
   ;; Indentation
   (setq vhdl-basic-offset 4)
   ;; Mode config
@@ -28,6 +28,7 @@
   (setq vhdl-modify-date-on-saving nil) ; Use `vhdl-ext' time-stamp instead
   (setq vhdl-hideshow-menu t)
   (setq vhdl-special-syntax-alist nil)  ; Avoid highlighting of _v (variables), _c (constants) and _t (types)
+  :config
   (vhdl-electric-mode -1)
   (remove-hook 'compilation-mode-hook 'vhdl-error-regexp-add-emacs)
   ;; BUG: With use-package :bind to `vhdl-speedbar-mode-map' this keybinding applied to non-spacebar modes
@@ -37,12 +38,12 @@
 
 
 (use-package vhdl-ext
-  :after vhdl-mode
-  :demand
   :hook ((vhdl-mode . vhdl-ext-mode))
   :init
   (setq vhdl-ext-feature-list
         '(font-lock
+          xref
+          capf
           hierarchy
           eglot
           lsp
@@ -55,10 +56,11 @@
           which-func
           hideshow
           time-stamp
-          company-keywords
           ports))
-  (setq vhdl-ext-hierarchy-backend 'builtin)
+  (setq vhdl-ext-hierarchy-backend 'tree-sitter)
   :config
+  ;; Setup
+  (vhdl-ext-mode-setup)
   ;; Faces
   (set-face-attribute 'vhdl-ext-font-lock-then-face nil :foreground "dark olive green")
   (set-face-attribute 'vhdl-ext-font-lock-punctuation-face nil :foreground "burlywood")
@@ -75,23 +77,19 @@
   ;; Compilation faces
   (set-face-attribute 'vhdl-ext-compile-msg-code-face nil :foreground "gray55")
   (set-face-attribute 'vhdl-ext-compile-bin-face nil :foreground "goldenrod")
-  ;; Setup
-  (vhdl-ext-mode-setup)
+  ;; rust_hdl LSP
   (when (executable-find "vhdl_ls")
     (add-hook 'vhdl-mode-hook (lambda () (when (locate-dominating-file default-directory "vhdl_ls.toml") (lsp))))))
 
 
 (use-package vhdl-ts-mode
-  :straight (:host github :repo "gmlarumbe/vhdl-ext"
-             :files ("ts-mode/vhdl-ts-mode.el"))
+  :mode (("\\.vhdl?\\'" . vhdl-ts-mode))
   :config
   ;; Faces
   (set-face-attribute 'vhdl-ts-font-lock-then-face nil :foreground "dark olive green")
   (set-face-attribute 'vhdl-ts-font-lock-punctuation-face nil :foreground "burlywood")
   (set-face-attribute 'vhdl-ts-font-lock-operator-face nil :inherit 'vhdl-ts-font-lock-punctuation-face :weight 'extra-bold)
-  (set-face-attribute 'vhdl-ts-font-lock-brackets-face nil :foreground "goldenrod")
   (set-face-attribute 'vhdl-ts-font-lock-parenthesis-face nil :foreground "dark goldenrod")
-  (set-face-attribute 'vhdl-ts-font-lock-curly-braces-face nil :foreground "DarkGoldenrod2")
   (set-face-attribute 'vhdl-ts-font-lock-brackets-content-face nil :foreground "yellow green")
   (set-face-attribute 'vhdl-ts-font-lock-port-connection-face nil :foreground "bisque2")
   (set-face-attribute 'vhdl-ts-font-lock-entity-face nil :foreground "green1")
