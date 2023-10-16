@@ -119,7 +119,7 @@
 
   (defun larumbe/verilog-ext-mode-hook ()
     "Verilog hook."
-    (setq-local company-backends '(company-files company-capf company-gtags))))
+    (setq-local company-backends '(company-files company-capf))))
 
 
 (use-package verilog-ts-mode

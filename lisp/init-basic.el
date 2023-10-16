@@ -32,10 +32,11 @@
 (defconst larumbe/gitignore-global-file (expand-file-name "~/.dotfiles/gitconfig/.gitignore_global")) ; Used by `helm-rg', `counsel-rg' and `init-projectile'.
 (defconst larumbe/completion-framework 'ivy) ; 'ivy or 'helm are allowed values (helm will coexist with `ivy-switch-buffer')
 
-(defconst larumbe/emacs-conf-repos-core '("~/.elisp" "~/.elisp_private"))
-(defconst larumbe/emacs-conf-repos-packages '("~/.emacs.d/straight/repos/my-elisp-packages"
-                                              "~/.emacs.d/straight/repos/my-elisp-packages-priv"
-                                              "~/.emacs.d/straight/repos/verilog-ext"
+(defconst larumbe/emacs-conf-repos-core '("~/.elisp"
+                                          "~/.elisp_private"
+                                          "~/.emacs.d/straight/repos/my-elisp-packages"
+                                          "~/.emacs.d/straight/repos/my-elisp-packages-priv"))
+(defconst larumbe/emacs-conf-repos-packages '("~/.emacs.d/straight/repos/verilog-ext"
                                               "~/.emacs.d/straight/repos/vhdl-ext"
                                               "~/.emacs.d/straight/repos/verilog-ts-mode"
                                               "~/.emacs.d/straight/repos/vhdl-ts-mode"
@@ -55,9 +56,10 @@
     "~/.emacs.d/straight/repos/wide-column"        ; Keep forked: too old, very unused
     "~/.emacs.d/straight/repos/arch-packer"        ; Maybe with some refactoring, updates after 5 years, no PR in this project. Wait until I get arch in new computer
     "~/.emacs.d/straight/repos/verilog-mode"       ; Development as a maintainer
-    "~/.emacs.d/straight/repos/vunit-mode"         ; Changes not merged into master
+    "~/.emacs.d/straight/repos/vunit-mode"         ; Wants to keep compatibility with old Emacs versions
     )
   "Evaluation of: `(larumbe/git-check-forked-repos-straight)'.")
+
 
 ;; TODO: Open PR for arch-packer, just in case? There is some people complaining that it doesn't work
 ;;

@@ -38,7 +38,8 @@
 
 
 (use-package vhdl-ext
-  :hook ((vhdl-mode . vhdl-ext-mode))
+  :hook ((vhdl-mode . vhdl-ext-mode)
+         (vhdl-mode . larumbe/vhdl-ext-mode-hook))
   :init
   (setq vhdl-ext-feature-list
         '(font-lock
@@ -77,9 +78,14 @@
   ;; Compilation faces
   (set-face-attribute 'vhdl-ext-compile-msg-code-face nil :foreground "gray55")
   (set-face-attribute 'vhdl-ext-compile-bin-face nil :foreground "goldenrod")
-  ;; rust_hdl LSP
-  (when (executable-find "vhdl_ls")
-    (add-hook 'vhdl-mode-hook (lambda () (when (locate-dominating-file default-directory "vhdl_ls.toml") (lsp))))))
+
+  (defun larumbe/vhdl-ext-mode-hook ()
+    "vhdl-ext hook."
+    (setq-local company-backends '(company-files company-capf))
+    ;; rust_hdl LSP
+    (when (and (executable-find "vhdl_ls")
+               (locate-dominating-file default-directory "vhdl_ls.toml"))
+      (lsp))))
 
 
 (use-package vhdl-ts-mode
