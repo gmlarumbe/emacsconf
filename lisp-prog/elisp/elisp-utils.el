@@ -29,7 +29,7 @@
 ;; More INFO: https://emacs.stackexchange.com/questions/56198/how-to-use-xref-find-references-on-elisp-files-without-no-references-found-for
 ;;            2nd answer
 
-(defvar larumbe/elisp-xref-dirs (remove "~/.dotfiles" larumbe/emacs-conf-repos-devel)
+(defvar larumbe/elisp-xref-dirs larumbe/emacs-conf-repos-core
   "Set to nil by default, assumming a local/fast machine without many straight repos.")
 
 (defun larumbe/elisp-xref-set-dirs (dirs)
@@ -47,9 +47,9 @@ Other values will set it to nil, enabling all folders for xref lookup."
      (setq larumbe/elisp-xref-dirs nil))
     ('non-straight
      (setq larumbe/elisp-xref-dirs (append (seq-filter #'larumbe/straight-not-repo-p load-path)
-                                           larumbe/emacs-conf-repos-packages)))
+                                           larumbe/emacs-conf-repos-core)))
     ('mine
-     (setq larumbe/elisp-xref-dirs larumbe/emacs-conf-repos-devel))
+     (setq larumbe/elisp-xref-dirs larumbe/emacs-conf-repos-core))
     (_
      (setq larumbe/elisp-xref-dirs nil)))
   ;; Echo value set
