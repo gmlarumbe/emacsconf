@@ -80,7 +80,7 @@
          ("C-n" . company-select-next-or-abort)
          ("C-p" . company-select-previous-or-abort)
          ("C-j" . company-complete-selection))
-  :config
+  :init
   (setq company-idle-delay nil) ; Disable auto complete
   (setq company-transformers '(delete-consecutive-dups company-sort-by-occurrence)) ; Remove duplicate and sort by occurrence
   (setq company-tooltip-align-annotations t) ; Align annotations to the right
@@ -89,6 +89,13 @@
   ;; e.g. "a-t-l" to find `add-to-list'
   ;; Default is `regexp-quote' which looks for an exact match.
   (setq company-search-regexp-function #'company-search-flex-regexp)
+
+
+  :config
+  ;; Faces
+  (set-face-attribute 'company-tooltip nil :background "gray10")              ; Dark background
+  (set-face-attribute 'company-tooltip-selection nil :background "gray30")    ; Line match overlay
+  (set-face-attribute 'company-tooltip-common nil :foreground "yellow green") ; Completion string
 
   ;; Company only uses one backend at a time, so set a backend for files/dirs and a grouped backend with keywords/tags/etc...
   ;; To keep the candidates organized in accordance with the grouped backends order, add the keyword :separate to the list of the grouped backends.
