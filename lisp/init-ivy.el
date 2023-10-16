@@ -57,6 +57,7 @@
     :config
     (setq search-default-mode 'auto)
     (defvar larumbe/swiper-re-builders-alist '((t . ivy--regex-plus)))
+    (defconst larumbe/swiper-case-insensitive-modes '(vhdl-mode vhdl-ts-mode))
 
     ;; Search wrappers
     (defun larumbe/search-forward (&optional uarg)
@@ -65,7 +66,8 @@ Use `swiper-isearch' not showing lines for compilation buffers or if uarg is
 provided (e.g. large files where showing lines with `swiper' could be a bit
 slow)."
       (interactive "P")
-      (let ((ivy-re-builders-alist larumbe/swiper-re-builders-alist)) ; Override `orderless' for swiper, keep it for ivy
+      (let ((ivy-case-fold-search-default (if (member major-mode larumbe/swiper-case-insensitive-modes) t 'auto))
+            (ivy-re-builders-alist larumbe/swiper-re-builders-alist)) ; Override `orderless' for swiper, keep it for ivy
         (cond ((string= major-mode "dired-mode")
                (call-interactively #'isearch-forward))
               (uarg
@@ -79,7 +81,8 @@ Use `swiper-isearch' not showing lines for compilation buffers or if uarg is
 provided (e.g. large files where showing lines with `swiper' could be a bit
 slow)."
       (interactive "P")
-      (let ((ivy-re-builders-alist larumbe/swiper-re-builders-alist)) ; Override `orderless' for swiper, keep it for ivy
+      (let ((ivy-case-fold-search-default (if (member major-mode larumbe/swiper-case-insensitive-modes) t 'auto))
+            (ivy-re-builders-alist larumbe/swiper-re-builders-alist)) ; Override `orderless' for swiper, keep it for ivy
         (cond ((string= major-mode "dired-mode")
                (call-interactively #'isearch-backward))
               (uarg
@@ -90,7 +93,8 @@ slow)."
     (defun larumbe/symbol-at-point (&optional uarg)
       "Use isearch for dired-mode, swiper-isearch (no-line info) if UARG and swiper for the rest."
       (interactive "P")
-      (let ((ivy-re-builders-alist larumbe/swiper-re-builders-alist)) ; Override `orderless' for swiper, keep it for ivy
+      (let ((ivy-case-fold-search-default (member major-mode larumbe/swiper-case-insensitive-modes))
+            (ivy-re-builders-alist larumbe/swiper-re-builders-alist)) ; Override `orderless' for swiper, keep it for ivy
         (cond ((string= major-mode "dired-mode")
                (call-interactively #'isearch-forward-symbol-at-point))
               (uarg
@@ -117,15 +121,13 @@ slow)."
     ;; 3 positions on the ivy buffer. Worked around with `larumbe/swiper-C-s'
     (defun swiper-symbol-at-point ()
       (interactive)
-      (let* ((ivy-case-fold-search-default nil)
-             (sym-atp (thing-at-point 'symbol :noprops))
+      (let* ((sym-atp (thing-at-point 'symbol :noprops))
              (initial-input (concat "\\_<" sym-atp "\\_>")))
         (swiper initial-input)))
 
     (defun swiper-isearch-symbol-at-point ()
       (interactive)
-      (let* ((ivy-case-fold-search-default nil)
-             (sym-atp (thing-at-point 'symbol :noprops))
+      (let* ((sym-atp (thing-at-point 'symbol :noprops))
              (initial-input (concat "\\_<" sym-atp "\\_>")))
         (swiper-isearch initial-input)))
 
