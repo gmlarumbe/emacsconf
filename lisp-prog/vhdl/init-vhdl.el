@@ -5,6 +5,7 @@
 
 (use-package vhdl-mode
   :straight nil
+  :hook ((vhdl-mode . larumbe/vhdl-mode-hook))
   :bind (:map vhdl-mode-map
          ("C-M-a" . vhdl-beginning-of-defun)
          ("C-M-e" . vhdl-end-of-defun)
@@ -34,12 +35,19 @@
   ;; BUG: With use-package :bind to `vhdl-speedbar-mode-map' this keybinding applied to non-spacebar modes
   (advice-add 'vhdl-speedbar-initialize :after #'(lambda () (define-key vhdl-speedbar-mode-map [? ] #'speedbar-toggle-line-expansion)))
   ;; Newline advice to kill def/refs buffers
-  (advice-add 'vhdl-electric-return :before-until #'larumbe/newline-advice)) ; Kill def/refs buffers with C-RET
+  (advice-add 'vhdl-electric-return :before-until #'larumbe/newline-advice) ; Kill def/refs buffers with C-RET
+
+  (defun larumbe/vhdl-mode-hook ()
+    "vhdl-ext hook."
+    (setq-local company-backends '(company-files company-capf))
+    ;; rust_hdl LSP
+    (when (and (executable-find "vhdl_ls")
+               (locate-dominating-file default-directory "vhdl_ls.toml"))
+      (lsp))))
 
 
 (use-package vhdl-ext
-  :hook ((vhdl-mode . vhdl-ext-mode)
-         (vhdl-mode . larumbe/vhdl-ext-mode-hook))
+  :hook ((vhdl-mode . vhdl-ext-mode))
   :init
   (setq vhdl-ext-feature-list
         '(font-lock
@@ -58,7 +66,6 @@
           hideshow
           time-stamp
           ports))
-  (setq vhdl-ext-hierarchy-backend 'tree-sitter)
   :config
   ;; Setup
   (vhdl-ext-mode-setup)
@@ -77,15 +84,7 @@
   (set-face-attribute 'vhdl-ext-font-lock-translate-off-face nil :background "gray20" :slant 'italic)
   ;; Compilation faces
   (set-face-attribute 'vhdl-ext-compile-msg-code-face nil :foreground "gray55")
-  (set-face-attribute 'vhdl-ext-compile-bin-face nil :foreground "goldenrod")
-
-  (defun larumbe/vhdl-ext-mode-hook ()
-    "vhdl-ext hook."
-    (setq-local company-backends '(company-files company-capf))
-    ;; rust_hdl LSP
-    (when (and (executable-find "vhdl_ls")
-               (locate-dominating-file default-directory "vhdl_ls.toml"))
-      (lsp))))
+  (set-face-attribute 'vhdl-ext-compile-bin-face nil :foreground "goldenrod"))
 
 
 (use-package vhdl-ts-mode
