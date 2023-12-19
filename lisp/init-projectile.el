@@ -23,17 +23,20 @@
   :config
   (setq projectile-enable-caching t) ; Enable caching, otherwise `projectile-find-file' is really slow for large projects.
 
-  (add-to-list 'projectile-globally-ignored-directories "*.repo") ; https://github.com/bbatsov/projectile/issues/1250
-  (add-to-list 'projectile-globally-ignored-directories "*@@$")   ; Ignore ClearCase versions
-
   (setq projectile-indexing-method 'hybrid) ; `alien' is the fastest indexing method (default), but ignores .projectile ignores
   ;; INFO: hybrid works fine for most of the cases allowing for ignoring of specific dirs.
-  ;; Plus, to quickly fetch the file-list, ripgrep based functions are used in conjunction with .global_gitignore
+  ;; Plus, to quickly fetch the file-list, ripgrep based functions are used in conjunction with .gitignore_global
   ;;
   ;; To change indexing method per-project, set the following in the .dir-locals.el:
   ;;  ((nil . ((projectile-indexing-method . alien))))
   ;;
   ;; Source: http://joelmccracken.github.io/entries/project-local-variables-in-projectile-with-dirlocals/
+
+  ;; By default, on Git repos when fd is available, the command used will be fd with `projectile-git-fd-args'
+  (setq projectile-git-fd-args (mapconcat #'identity `(,projectile-git-fd-args "--ignore-file" ,larumbe/gitignore-global-file) " "))
+
+  (add-to-list 'projectile-globally-ignored-directories "*.repo") ; https://github.com/bbatsov/projectile/issues/1250
+  (add-to-list 'projectile-globally-ignored-directories "*@@$")   ; Ignore ClearCase versions
 
   (setq projectile-completion-system larumbe/completion-framework)
   (setq projectile-mode-line-prefix " P") ; Modeline
