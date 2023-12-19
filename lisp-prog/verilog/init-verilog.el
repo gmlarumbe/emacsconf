@@ -22,6 +22,7 @@
          ("C-c /"   . nil)                 ; Unmap `verilog-star-comment'
          ("M-?"     . nil)                 ; Unmap `completion-help-at-point'
          ("M-RET"   . nil)) ; Leave space for `company-complete'
+  :hook ((verilog-mode . larumbe/verilog-mode-hook))
   :init
   ;; Indentation
   (defvar larumbe/verilog-indent-level 4)
@@ -55,12 +56,15 @@
   :config
   ;; Mode config
   (remove-hook 'compilation-mode-hook 'verilog-error-regexp-add-emacs) ; `verilog-mode' automatically adds useless compilation regexp alists
-  (advice-add 'electric-verilog-terminate-line :before-until #'larumbe/newline-advice)) ; Quit *xref* buffer with C-m/RET
+  (advice-add 'electric-verilog-terminate-line :before-until #'larumbe/newline-advice) ; Quit *xref* buffer with C-m/RET
+
+  (defun larumbe/verilog-mode-hook ()
+    "Verilog hook."
+    (setq-local company-backends '(company-files company-capf))))
 
 
 (use-package verilog-ext
-  :hook ((verilog-mode . verilog-ext-mode)
-         (verilog-mode . larumbe/verilog-ext-mode-hook))
+  :hook ((verilog-mode . verilog-ext-mode))
   :init
   (setq verilog-ext-feature-list
         '(font-lock
@@ -84,7 +88,6 @@
           ports))
   (setq verilog-ext-flycheck-verible-rules '("-line-length"
                                              "-parameter-name-style"))
-  (setq verilog-ext-flycheck-use-open-buffers nil)
   :config
   ;; Setup
   (verilog-ext-mode-setup)
@@ -116,10 +119,8 @@
   ;; Compilation faces
   (set-face-attribute 'verilog-ext-compile-msg-code-face nil :foreground "gray55")
   (set-face-attribute 'verilog-ext-compile-bin-face nil      :foreground "goldenrod")
-
-  (defun larumbe/verilog-ext-mode-hook ()
-    "Verilog hook."
-    (setq-local company-backends '(company-files company-capf))))
+  ;; Imenu
+  (set-face-attribute 'verilog-ext-imenu-class-item-face nil :foreground "goldenrod" :weight 'bold))
 
 
 (use-package verilog-ts-mode
