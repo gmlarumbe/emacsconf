@@ -108,7 +108,8 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 (use-package conf-mode
   :mode (("\\.service\\'" . conf-mode)
          ("\\.sby\\'"     . conf-mode)
-         ("\\.f\\'"       . conf-mode))
+         ("\\.f\\'"       . conf-mode)
+         ("\\.ini\\'"     . conf-mode))
   :hook ((conf-mode . larumbe/prog-mode-hook))) ; Since it is not a childe of prog-mode, requires common configuration settings
 
 
@@ -201,8 +202,9 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
 (use-package csv-mode)
 
 ;;;; INI
-(use-package ini-mode)
-
+;; Tried with LindyDancer's `ini-mode', but it gave some errors in my config:
+;; - It inherited from `prog-mode' but did not support hideshow
+;; - Very simple, didn't provide any advatage over regular `conf-mode'
 
 ;;;; Hexl
 (use-package hexl
