@@ -104,7 +104,23 @@ This was needed in order to allow GitHub actions to work properly."
 
 (use-package winner
   :straight nil
-  :config)
+  :config
+  ;; Issue with dead frame error in EXWM:
+  ;; - First tried with :init section snippet:
+  ;;   (setq winner-boring-buffers '("*Completions*" "Vivado<2>" "ui-PlanAhead<2>"))
+  ;;   (setq winner-boring-buffers-regexp "^\\(Vivado\\|ui-PlanAhead\\)")
+  ;; However this seemed to work only to restore the buffers, but not to fix the issue.
+  ;;
+  ;; - Then I found a better solution: https://github.com/ch11ng/exwm/issues/760
+  ;;     Add advice to stop hangs on EXWM
+  ;;     The problem happens with floating windows that disappear - like open file dialog or a Zoom dialog when starting a meeting
+  ;;     The solution is to assure all frames in winner-modified-list pass the frame-live-p test
+  (defun gjg/winner-clean-up-modified-list ()
+    "Remove dead frames from `winner-modified-list'"
+    (dolist (frame winner-modified-list)
+      (unless (frame-live-p frame)
+        (setq winner-modified-list (remove frame winner-modified-list))))) ; Original snippet used `delete' with side-effects, but didn't work for me
+  (advice-add 'winner-save-old-configurations :before #'gjg/winner-clean-up-modified-list))
 
 
 (use-package popwin
