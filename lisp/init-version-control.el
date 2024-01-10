@@ -118,6 +118,7 @@
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
 
+
 ;;;; Own utils
 (use-package larumbe-vc-utils
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/larumbe-vc-utils.el")))
@@ -136,6 +137,10 @@
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/magit-difft.el"))
   :after magit
   :demand)
+
+;; `difftastic' package is equivalent to my own `magit-difft' utils
+;; - https://github.com/pkryger/difftastic.el
+;; Tried at some point but was not worth the effort since I didn't use difftastic on a regular basis
 
 
 (provide 'init-version-control)

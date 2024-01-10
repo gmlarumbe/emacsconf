@@ -1,5 +1,7 @@
-;;; init-ggtags.el --- Ggtags/Global  -*- lexical-binding: t -*-
+;;; init-gtags.el --- Ggtags/Global  -*- lexical-binding: t -*-
 ;;; Commentary:
+;;
+;; As of 2024, `ggtags' package is only used to add gtags backend to `xref'.
 ;;
 ;; Ggtags & Xref:
 ;;  - Xref uses the backends in the `xref-backend-functions' hook, similar to how
@@ -83,6 +85,6 @@ Used by `xref' among others."
 
 
 
-(provide 'init-ggtags)
+(provide 'init-gtags)
 
-;;; init-ggtags.el ends here
+;;; init-gtags.el ends here

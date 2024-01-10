@@ -60,8 +60,17 @@
 
   ;; Add hooks outside of use-package because `compilation-finish-functions' name does not end in -hook
   (add-hook 'compilation-start-hook       #'larumbe/compilation-start-hook)
-  (add-hook 'compilation-finish-functions #'larumbe/compilation-finish-function))
+  (add-hook 'compilation-finish-functions #'larumbe/compilation-finish-function)
 
+  ;; Recompile keeping current error regexps
+  (defun larumbe/compilation-recompile-keep-re-alist (oldfun &rest r)
+    (let ((re-alist       compilation-error-regexp-alist)
+          (re-alist-alist compilation-error-regexp-alist-alist))
+      (apply oldfun r)
+      (setq-local compilation-error-regexp-alist       re-alist)
+      (setq-local compilation-error-regexp-alist-alist re-alist-alist)))
+
+  (advice-add 'recompile :around #'larumbe/compilation-recompile-keep-re-alist))
 
 
 (use-package compilation-utils
@@ -70,10 +79,9 @@
   :demand
   :bind (:map compilation-mode-map
          ("j" . larumbe/recompile-with-regexp-alist)
-         ("t" . larumbe/compilation-threshold)
-         ("w" . larumbe/uvm-copy-timestamp-vsim))
-  :bind (:map comint-mode-map
-         ("C-j" . larumbe/compilation-interactive-recompile)))
+         ("t" . larumbe/compilation-threshold))
+  :init
+  (setq compilation-buffer-name-function #'larumbe/compilation-buffer-name-function))
 
 
 ;;;; Package providing

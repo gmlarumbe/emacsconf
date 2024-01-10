@@ -14,12 +14,15 @@
 (setq initial-major-mode 'fundamental-mode)
 
 ;; Global config
-(desktop-save-mode 1)
+(desktop-save-mode 0) ; Disable and rely on ivy's recentf feature with 0 loading time
 (load-theme 'deeper-blue t)
 (defalias 'yes-or-no-p 'y-or-n-p)
 (setq confirm-kill-emacs #'y-or-n-p) ; Avoid closing Emacs unexpectedly (helm prefix C-x c)
 (setq disabled-command-function nil)
 (setq-default tab-width 4)
+(setq-default treesit-font-lock-level 4)
+(with-eval-after-load 'treesit
+  (setq treesit--indent-verbose t))
 
 ;; Save screen real estate
 (menu-bar-mode -1)
@@ -61,16 +64,12 @@
   "Evaluation of: `(larumbe/git-check-forked-repos-straight)'.")
 
 
-;; TODO: Open PR for arch-packer, just in case? There is some people complaining that it doesn't work
-;;
-;; TODO: Add PR to apheleia? verilog-ext formatter
-;;  - https://github.com/radian-software/apheleia section "Adding a formatter"
-;;
-;; TODO: Add PR to eglot? verilog-ext/vhdl LSPs
-;;
-;; TODO: Add PR to lsp? verilog-ext/vhdl LSPs
-;;
-;; TODO: Add PR to flycheck? verilog-ext/vhdl linters
+;; Emacs 29.1 faces
+(set-face-attribute 'font-lock-operator-face nil  :foreground "burlywood" :weight 'extra-bold)
+(set-face-attribute 'font-lock-bracket-face nil   :foreground "goldenrod")
+(set-face-attribute 'font-lock-delimiter-face nil :foreground "burlywood")
+(set-face-attribute 'font-lock-number-face nil    :foreground "yellow green")
+(set-face-attribute 'font-lock-function-call-face nil :foreground "unspecified")
 
 
 (provide 'init-basic)

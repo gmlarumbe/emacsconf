@@ -5,7 +5,7 @@
 
 My Emacs configuration file.
 
-Main focus on **SystemVerilog**, **VHDL*, **scripting** and **compilation** for elaboration/synthesis/simulations.
+Main focus on **SystemVerilog**, **VHDL**, **scripting** and **compilation** for elaboration/synthesis/simulations.
 
 ## How-To ##
 

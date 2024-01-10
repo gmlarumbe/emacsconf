@@ -2,7 +2,7 @@
 ;;
 ;;; Commentary:
 ;;
-;; Copyright (C) 2017-2023 Gonzalo M. Larumbe
+;; Copyright (C) 2017-2024 Gonzalo M. Larumbe
 ;;
 ;; Author: Gonzalo Martinez Larumbe <gonzalomlarumbe@gmail.com>
 ;; Homepage: https://github.com/gmlarumbe/emacsconf
@@ -14,7 +14,7 @@
 (require 'init-basic)
 (require 'init-straight)
 (require 'init-org)
-(require 'init-ggtags)
+(require 'init-gtags)
 (require 'init-packages)
 (require 'init-grep)
 (require 'init-helm)
@@ -27,6 +27,7 @@
 (require 'init-version-control)
 (require 'init-compilation)
 (require 'init-prog)
+(require 'init-fpga)
 (require 'init-exwm)
 (require 'init-machine)
 
