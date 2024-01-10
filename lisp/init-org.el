@@ -151,6 +151,9 @@ Meant to be used as a hook for `org-insert-heading-hook'"
       (org-agenda-next-line))))
 
 
+(use-package toc-org)
+
+
 
 (provide 'init-org)
 
