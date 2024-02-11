@@ -371,6 +371,9 @@ the vertical drag is done."
 (use-package lsp-ivy) ; interactive ivy interface to the workspace symbol functionality offered by lsp-mode
 
 
+(use-package lsp-bridge)
+
+
 (use-package realgud)
 
 

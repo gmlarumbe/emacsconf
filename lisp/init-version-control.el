@@ -11,10 +11,10 @@
          :map magit-hunk-section-map ("RET" . magit-diff-visit-file-other-window))
   :commands (magit-list-branch-names
              magit-get-current-branch)
-  :config
-  ;; Magit config
+  :init
   (setq magit-diff-refine-hunk t) ; Show word-granularity differences within diff hunks
-  (setq magit-diff-highlight-hunk-body nil)) ; Disable background gray highlighting of current hunk
+  (setq magit-diff-highlight-hunk-body nil) ; Disable background gray highlighting of current hunk
+  (setq magit-section-disable-line-numbers nil))
 
 
 (use-package magit-lfs
