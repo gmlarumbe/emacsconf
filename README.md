@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/gmlarumbe/emacsconf/workflows/CI/badge.svg)](https://github.com/gmlarumbe/emacsconf/actions)
+[![Build Status](https://github.com/gmlarumbe/emacsconf/actions/workflows/blank.yml/badge.svg)](https://github.com/gmlarumbe/emacsconf/actions)
 
 
 ## Overview
