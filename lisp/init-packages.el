@@ -371,7 +371,10 @@ the vertical drag is done."
 (use-package lsp-ivy) ; interactive ivy interface to the workspace symbol functionality offered by lsp-mode
 
 
-(use-package lsp-bridge)
+(use-package lsp-bridge
+  :straight '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge"
+                         :files (:defaults "*.el" "*.py" "acm" "core" "langserver" "multiserver" "resources")
+                         :build (:not compile)))
 
 
 (use-package realgud)

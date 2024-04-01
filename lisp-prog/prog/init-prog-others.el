@@ -236,6 +236,16 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
          (jinja2-mode . larumbe/prog-mode-hook))) ; Since it is not a child of prog-mode, requires common configuration settings
 
 
+;;;; JavaScript
+(use-package js
+  :straight nil
+  :hook ((js-mode . larumbe/js-hook))
+  :config
+  (defun larumbe/js-hook ()
+    "Prevent cursor from moving to the beginning of indentation with C-p/C-n."
+    (interactive)
+    (setq-local goal-column nil)))
+
 
 (provide 'init-prog-others)
 
