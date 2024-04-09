@@ -377,6 +377,16 @@ the vertical drag is done."
                          :build (:not compile)))
 
 
+(use-package lspce ; INFO: For the time being requires manual building of the Rust dynamic module: check README.md
+  :straight (:host github :repo "zbelial/lspce"
+             :files (:defaults "lspce-module.so"))
+  :init
+  (setq lspce-send-changes-idle-time 1)
+  :config
+  (lspce-set-log-file "/tmp/lspce.log")
+  (lspce-enable-logging))
+
+
 (use-package realgud)
 
 
