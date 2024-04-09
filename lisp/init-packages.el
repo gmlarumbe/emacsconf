@@ -476,6 +476,48 @@ Same as `hs-toggle-hiding', but do not exec: (posn-set-point (event-end e))"
   (setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list))
 
 
+(use-package flymake
+  :straight nil
+  :hook ((flymake-mode . larumbe/flymake-hook))
+  :config
+  (set-face-attribute 'flymake-warning nil :underline '(:style wave :color "yellow"))
+  (defun larumbe/flymake-hook ()
+    "Allow use of M-n and M-p to navigate flymake errors.
+
+     From /opt/emacs-29.3/share/emacs/29.3/lisp/progmodes/flymake.el.gz:1109
+Documentation string of `flymake-mode'."
+    (setq-local next-error-function #'flymake-goto-next-error)))
+
+
+(use-package flymake-diagnostic-at-point
+  :after flymake
+  :ensure t
+  :hook ((flymake-mode . flymake-diagnostic-at-point-mode))
+  :init
+  (defface larumbe/popup-tip-flymake-info-face
+    '((t (:foreground "green")))
+    "Face for popup tip (info).")
+  (defface larumbe/popup-tip-flymake-warning-face
+    '((t (:foreground "yellow")))
+    "Face for popup tip (warning).")
+  (defface larumbe/popup-tip-flymake-error-face
+    '((t (:foreground "red")))
+    "Face for popup tip (error).")
+  (setq flymake-diagnostic-at-point-display-diagnostic-function #'larumbe/flymake-diagnostic-at-point-display-popup)
+  :config
+  ;; Same as original function in the package but using different faces depending on severity
+  (defun larumbe/flymake-diagnostic-at-point-display-popup (text)
+    "Display the flymake diagnostic TEXT inside a popup."
+    (let* ((text (flymake--diag-text (get-char-property (point) 'flymake-diagnostic)))
+           (type (flymake--diag-type (get-char-property (point) 'flymake-diagnostic)))
+           (face (pcase type
+                   (:note 'larumbe/popup-tip-flymake-info-face)
+                   (:warning 'larumbe/popup-tip-flymake-warning-face)
+                   (:error 'larumbe/popup-tip-flymake-error-face)
+                   (_ 'larumbe/popup-tip-flymake-error-face))))
+      (popup-tip text :face face))))
+
+
 (use-package flyspell
   :straight nil
   :commands (flyspell-toggle)
