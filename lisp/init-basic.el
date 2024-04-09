@@ -63,7 +63,6 @@
     )
   "Evaluation of: `(larumbe/git-check-forked-repos-straight)'.")
 
-
 ;; Emacs 29.1 faces
 (set-face-attribute 'font-lock-operator-face nil  :foreground "burlywood" :weight 'extra-bold)
 (set-face-attribute 'font-lock-bracket-face nil   :foreground "goldenrod")
@@ -71,6 +70,22 @@
 (set-face-attribute 'font-lock-number-face nil    :foreground "yellow green")
 (set-face-attribute 'font-lock-function-call-face nil :foreground "unspecified")
 (set-face-attribute 'font-lock-misc-punctuation-face nil :foreground "dark gray")
+
+;; Custom faces
+(defface larumbe/diagnostics-info-face
+  '((t (:foreground "light green")))
+  "Face for popup tip (info)."
+  :group 'larumbe-faces)
+
+(defface larumbe/diagnostics-warning-face
+  '((t (:foreground "yellow")))
+  "Face for popup tip (warning)."
+  :group 'larumbe-faces)
+
+(defface larumbe/diagnostics-error-face
+  '((t (:foreground "red")))
+  "Face for popup tip (error)."
+  :group 'larumbe-faces)
 
 
 (provide 'init-basic)

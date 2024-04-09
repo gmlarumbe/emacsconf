@@ -362,15 +362,6 @@ the vertical drag is done."
     (flycheck-mode -1)))
 
 
-(use-package lsp-ui :commands (lsp-ui-sideline-mode)) ; Flycheck side-line even without lsp enabled
-;; INFO: At some point tried with `flycheck-pos-tip' and `flycheck-popup-tip' to show messages
-;; right in front of the cursor. However none of the tooltips seemed to work properly and the
-;; result obtained with `lsp-ui-sideline-mode' was far better and less obtrusive.
-
-
-(use-package lsp-ivy) ; interactive ivy interface to the workspace symbol functionality offered by lsp-mode
-
-
 (use-package lsp-bridge
   :straight '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge"
                          :files (:defaults "*.el" "*.py" "acm" "core" "langserver" "multiserver" "resources")
@@ -476,11 +467,29 @@ Same as `hs-toggle-hiding', but do not exec: (posn-set-point (event-end e))"
   (setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list))
 
 
+(use-package flycheck-inline
+  :hook ((flycheck-mode . flycheck-inline-mode))
+  :config
+  (set-face-attribute 'flycheck-inline-info nil :foreground "light green"))
+;; Replaces `lsp-ui-sideline-mode' from `lsp-ui':
+;;  - Better since diagnostic error appears right below the error
+;;    (in lsp-ui it appeared at the side, sometime quite far from the error)
+;;
+;; Seems maintained and works out of the box:
+;;  - Tried `flycheck-popup-tip' but there was something that did not work well
+;;  related to `flycheck-popup-tip-delete-popup' and `pre-command-hook' not working well
+;;
+;; Provides a similar alternative to `flymake-diagnostic-at-point' for buffers
+;; in LSP that use flymake
+
+
 (use-package flymake
   :straight nil
   :hook ((flymake-mode . larumbe/flymake-hook))
+  :init
+  (setq flymake-note-bitmap '(exclamation-mark larumbe/diagnostics-info-face))
   :config
-  (set-face-attribute 'flymake-warning nil :underline '(:style wave :color "yellow"))
+  (set-face-attribute 'flymake-warning nil :underline '(:style wave :color "orange"))
   (defun larumbe/flymake-hook ()
     "Allow use of M-n and M-p to navigate flymake errors.
 
@@ -494,15 +503,6 @@ Documentation string of `flymake-mode'."
   :ensure t
   :hook ((flymake-mode . flymake-diagnostic-at-point-mode))
   :init
-  (defface larumbe/popup-tip-flymake-info-face
-    '((t (:foreground "green")))
-    "Face for popup tip (info).")
-  (defface larumbe/popup-tip-flymake-warning-face
-    '((t (:foreground "yellow")))
-    "Face for popup tip (warning).")
-  (defface larumbe/popup-tip-flymake-error-face
-    '((t (:foreground "red")))
-    "Face for popup tip (error).")
   (setq flymake-diagnostic-at-point-display-diagnostic-function #'larumbe/flymake-diagnostic-at-point-display-popup)
   :config
   ;; Same as original function in the package but using different faces depending on severity
@@ -511,9 +511,9 @@ Documentation string of `flymake-mode'."
     (let* ((text (flymake--diag-text (get-char-property (point) 'flymake-diagnostic)))
            (type (flymake--diag-type (get-char-property (point) 'flymake-diagnostic)))
            (face (pcase type
-                   (:note 'larumbe/popup-tip-flymake-info-face)
-                   (:warning 'larumbe/popup-tip-flymake-warning-face)
-                   (:error 'larumbe/popup-tip-flymake-error-face)
+                   (:note 'larumbe/diagnostics-info-face)
+                   (:warning 'larumbe/diagnostics-warning-face)
+                   (:error 'larumbe/diagnostics-error-face)
                    (_ 'larumbe/popup-tip-flymake-error-face))))
       (popup-tip text :face face))))
 
