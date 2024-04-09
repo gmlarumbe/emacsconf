@@ -148,6 +148,38 @@ point between the symbol boundaries."
 
     (advice-add 'swiper-C-s :override #'larumbe/swiper-C-s)
 
+    (defun larumbe/ivy-occur ()
+      "Copy/pasted `ivy-occur' but switching back to original buffer.
+Since it already adds a `next-error-function' there is no need to change buffer."
+      (interactive)
+      (if (not (window-minibuffer-p))
+          (user-error "No completion session is active")
+        (let* ((caller (ivy-state-caller ivy-last))
+               (occur-fn (or (plist-get ivy--occurs-list caller)
+                             #'ivy--occur-default))
+               (buffer
+                (generate-new-buffer
+                 (format "*ivy-occur%s \"%s\"*"
+                         (if caller
+                             (concat " " (prin1-to-string caller))
+                           "")
+                         ivy-text))))
+          (with-current-buffer buffer
+            (funcall occur-fn
+                     (if (ivy-state-dynamic-collection ivy-last)
+                         (funcall (ivy-state-collection ivy-last) ivy-text)
+                       ivy--old-cands))
+            (setf (ivy-state-text ivy-last) ivy-text)
+            (setq ivy-occur-last ivy-last))
+          (ivy-exit-with-action
+           (lambda (_)
+             (pop-to-buffer buffer)
+             (setq next-error-last-buffer buffer)
+             (setq-local next-error-function #'ivy-occur-next-error)
+             ;; INFO: This is the only different line wrt `ivy-occur'
+             (pop-to-buffer (ivy-state-buffer ivy-last)))))))
+
+    (advice-add 'ivy-occur :override #'larumbe/ivy-occur)
 
     ;; http://pragmaticemacs.com/emacs/search-or-swipe-for-the-current-word/
     (defun bjm/ivy-yank-whole-word ()
