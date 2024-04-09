@@ -55,6 +55,7 @@
 (require 'init-tcl)
 (require 'init-perl)
 (require 'init-c)
+(require 'init-js)
 (require 'init-prog-others)
 (require 'init-polymode)
 
