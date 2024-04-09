@@ -70,6 +70,7 @@
 (set-face-attribute 'font-lock-delimiter-face nil :foreground "burlywood")
 (set-face-attribute 'font-lock-number-face nil    :foreground "yellow green")
 (set-face-attribute 'font-lock-function-call-face nil :foreground "unspecified")
+(set-face-attribute 'font-lock-misc-punctuation-face nil :foreground "dark gray")
 
 
 (provide 'init-basic)

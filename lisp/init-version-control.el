@@ -37,6 +37,7 @@
   :config
   (setq magit-delta-default-dark-theme "none")
   (setq magit-delta-default-light-theme "none")
+  ;; Adding the options "--line-numbers" "true" doesn't work as expected with magit...
   (setq magit-delta-delta-args '("--max-line-distance" "0.6" "--true-color" "never" "--diff-so-fancy")))
 
 
