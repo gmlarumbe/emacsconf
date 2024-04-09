@@ -66,26 +66,6 @@
 (use-package verilog-ext
   :hook ((verilog-mode . verilog-ext-mode))
   :init
-  (setq verilog-ext-feature-list
-        '(font-lock
-          xref
-          capf
-          hierarchy
-          eglot
-          lsp
-          flycheck
-          beautify
-          navigation
-          template
-          formatter
-          compilation
-          imenu
-          which-func
-          hideshow
-          typedefs
-          time-stamp
-          block-end-comments
-          ports))
   (setq verilog-ext-flycheck-verible-rules '("-line-length"
                                              "-parameter-name-style"))
   :config

@@ -43,29 +43,11 @@
     ;; rust_hdl LSP
     (when (and (executable-find "vhdl_ls")
                (locate-dominating-file default-directory "vhdl_ls.toml"))
-      (lsp))))
+      (lspce))))
 
 
 (use-package vhdl-ext
   :hook ((vhdl-mode . vhdl-ext-mode))
-  :init
-  (setq vhdl-ext-feature-list
-        '(font-lock
-          xref
-          capf
-          hierarchy
-          eglot
-          lsp
-          flycheck
-          beautify
-          navigation
-          template
-          compilation
-          imenu
-          which-func
-          hideshow
-          time-stamp
-          ports))
   :config
   ;; Setup
   (vhdl-ext-mode-setup)
