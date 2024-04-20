@@ -12,9 +12,26 @@
   :commands (magit-list-branch-names
              magit-get-current-branch)
   :init
-  (setq magit-diff-refine-hunk t) ; Show word-granularity differences within diff hunks
-  (setq magit-diff-highlight-hunk-body nil) ; Disable background gray highlighting of current hunk
-  (setq magit-section-disable-line-numbers nil))
+  (setq magit-diff-refine-hunk t)               ; Show word-granularity differences within diff hunks
+  (setq magit-diff-highlight-hunk-body nil)     ; Disable background gray highlighting of current hunk
+  (setq magit-section-disable-line-numbers nil) ; Tried to use this to show lines but didn't work as expected
+  (setq magit-ediff-dwim-show-on-hunks t)       ; Avoid showing three windows for HEAD/index/unstaged and show only two depending on where section the point is in a magit buffer
+  :config
+  ;; If running an Ediff on Magit, it will create some buffers with suffixes such as
+  ;; ".~{index}~". The magit Ediff code calls `magit-find-file-noselect-1' to perform
+  ;; Ediff, which in turn calls `magit-revert-rev-file-buffer'. The latter calls
+  ;; (normal-mode t) to somehow set the buffer to its corresponding major-mode for
+  ;; syntax highlighting. However, hooks are not run. The way to work this around is
+  ;; to run them manually using Ediff hooks only on corresponding buffers.
+  (defun larumbe/magit-ediff-hook ()
+    "Magit fix to show line-numbers and truncate lines on Ediff sessions."
+    (let ((buf-name (buffer-name)))
+      (when (or (string-suffix-p ".~{index}~" buf-name)
+                (string-suffix-p ".~HEAD~" buf-name)
+                (string-match "\.~stash@" buf-name))
+        (run-mode-hooks))))
+
+  (add-hook 'ediff-prepare-buffer-hook #'larumbe/magit-ediff-hook))
 
 
 (use-package magit-lfs

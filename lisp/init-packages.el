@@ -249,6 +249,10 @@ C-s C-w [C-w] [C-w]... behaviour. "
   :bind (("C-:" . avy-goto-char-2)))
 
 
+(use-package combobulate
+  :straight (:host github :repo "mickeynp/combobulate" :nonrecursive t))
+
+
 ;;;; Editing
 (use-package drag-stuff
   :bind (("<C-M-up>"   . drag-stuff-up)
