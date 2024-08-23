@@ -26,12 +26,13 @@
   (defun larumbe/magit-ediff-hook ()
     "Magit fix to show line-numbers and truncate lines on Ediff sessions."
     (let ((buf-name (buffer-name)))
-      (when (or (string-suffix-p ".~{index}~" buf-name)
-                (string-suffix-p ".~HEAD~" buf-name)
-                (string-match "\.~stash@" buf-name))
+      (when (string-match "\.~.*~$" buf-name)
         (run-mode-hooks))))
 
-  (add-hook 'ediff-prepare-buffer-hook #'larumbe/magit-ediff-hook))
+  (add-hook 'ediff-prepare-buffer-hook #'larumbe/magit-ediff-hook)
+
+  ;; Also run hooks (to show line numbers and truncate lines) after visiting a file from a diff
+  (setq magit-diff-visit-file-hook '(larumbe/magit-ediff-hook)))
 
 
 (use-package magit-lfs
