@@ -16,6 +16,7 @@
   :hook ((dired-mode . larumbe/dired-hook))
   :commands (dired-hide-details-mode)
   :config
+  (require 'projectile) ; Allow use of projectile commands if only a dired buffer was opened with lazy loading
   (setq dired-listing-switches "-alh") ; Show size in human readable format
 
   (defun larumbe/dired-hook ()

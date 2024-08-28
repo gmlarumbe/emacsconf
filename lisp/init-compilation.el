@@ -21,7 +21,7 @@
   (require 'popwin)
   (require 'ansi-color) ; Buffer colorizing
 
-  (add-to-list 'popwin:special-display-config '(compilation-mode :stick t))
+  (assq-delete-all 'compilation-mode popwin:special-display-config) ; Remove previous entries for compilation-mode
 
   ;; Compilation motion commands skip less important messages. The value can be either
   ;; 2 -- skip anything less than error,
@@ -32,10 +32,7 @@
   (setq compilation-scroll-output 'first-error)
 
   (defun larumbe/compilation-hook ()
-    ;; Do not enable line numbers since it slows down large compilation buffers
-    (setq truncate-lines t)
-    ;; Split compilation vertically: https://stackoverflow.com/questions/966191/how-can-i-get-the-compilation-buffer-on-the-bottom-rather-than-on-the-right-in-em/
-    (setq-local split-width-threshold nil))
+    (setq truncate-lines t))
 
   ;; https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode
   (defun colorize-compilation-buffer ()
@@ -64,9 +61,11 @@
 
   ;; Recompile keeping current error regexps
   (defun larumbe/compilation-recompile-keep-re-alist (oldfun &rest r)
-    (let ((re-alist       compilation-error-regexp-alist)
+    (let ((buf (current-buffer))
+          (re-alist       compilation-error-regexp-alist)
           (re-alist-alist compilation-error-regexp-alist-alist))
       (apply oldfun r)
+      (pop-to-buffer buf)
       (setq-local compilation-error-regexp-alist       re-alist)
       (setq-local compilation-error-regexp-alist-alist re-alist-alist)))
 
