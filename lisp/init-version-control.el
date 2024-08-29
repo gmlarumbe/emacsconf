@@ -149,7 +149,7 @@
   (unless straight-base-dir
     (error "Variable `straight-base-dir' not set!"))
   :config
-  (setq git-dirty-repo-list-emacs (remove "~/.dotfiles" larumbe/emacs-conf-repos-devel))
+  (setq git-dirty-repo-list-emacs larumbe/emacs-conf-repos-devel)
   (setq git-dirty-repo-list-straight (larumbe/straight-packages)))
 
 (use-package magit-difft

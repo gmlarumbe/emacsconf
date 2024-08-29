@@ -50,7 +50,8 @@
 (defconst larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos-core
                                                  larumbe/emacs-conf-repos-packages
                                                  (when (file-exists-p "~/.dotfiles")
-                                                   '("~/.dotfiles"))))
+                                                   '("~/.dotfiles"))
+                                                 '("~/Repos/foss/tree-sitter-systemverilog")))
 (defconst larumbe/emacs-conf-straight-forked
   '("~/.emacs.d/straight/repos/org-jira"           ; Keep forked: changes for non-Atlassian accounts
     "~/.emacs.d/straight/repos/yasnippet-snippets" ; Keep forked: get updates with --rebase
