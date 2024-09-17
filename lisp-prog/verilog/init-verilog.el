@@ -105,6 +105,8 @@
 
 (use-package verilog-ts-mode
   :mode (("\\.s?vh?\\'" . verilog-ts-mode))
+  :init
+  (setq verilog-ts-imenu-style 'tree-group)
   :config
   ;; Faces
   (set-face-attribute 'verilog-ts-font-lock-grouping-keywords-face nil :foreground "dark olive green")

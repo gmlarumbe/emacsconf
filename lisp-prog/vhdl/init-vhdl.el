@@ -71,6 +71,8 @@
 
 (use-package vhdl-ts-mode
   :mode (("\\.vhdl?\\'" . vhdl-ts-mode))
+  :init
+  (setq vhdl-ts-imenu-style 'tree-group)
   :config
   ;; Faces
   (set-face-attribute 'vhdl-ts-font-lock-then-face nil :foreground "dark olive green")
