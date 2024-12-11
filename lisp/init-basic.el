@@ -22,7 +22,7 @@
 (setq-default tab-width 4)
 (setq-default treesit-font-lock-level 4)
 (with-eval-after-load 'treesit
-  (setq treesit--indent-verbose t))
+  (setq treesit--indent-verbose nil))
 
 ;; Save screen real estate
 (menu-bar-mode -1)
@@ -69,7 +69,7 @@
 (set-face-attribute 'font-lock-bracket-face nil   :foreground "goldenrod")
 (set-face-attribute 'font-lock-delimiter-face nil :foreground "burlywood")
 (set-face-attribute 'font-lock-number-face nil    :foreground "yellow green")
-(set-face-attribute 'font-lock-function-call-face nil :foreground "unspecified")
+(set-face-attribute 'font-lock-function-call-face nil :foreground "Light Coral")
 (set-face-attribute 'font-lock-misc-punctuation-face nil :foreground "dark gray")
 
 ;; Custom faces

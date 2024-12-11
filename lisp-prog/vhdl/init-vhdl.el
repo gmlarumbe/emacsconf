@@ -15,7 +15,7 @@
          ("<f8>"  . sr-speedbar-open))
   :init
   ;; Indentation
-  (setq vhdl-basic-offset 4)
+  (setq vhdl-basic-offset 2)
   ;; Mode config
   (setq vhdl-clock-edge-condition 'function)
   (setq vhdl-company-name "gmlarumbe")
@@ -72,6 +72,7 @@
 (use-package vhdl-ts-mode
   :mode (("\\.vhdl?\\'" . vhdl-ts-mode))
   :init
+  (setq vhdl-ts-indent-level 2)
   (setq vhdl-ts-imenu-style 'tree-group)
   :config
   ;; Faces
