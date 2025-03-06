@@ -238,6 +238,8 @@ Validation will be enabled if `rng-nxml-auto-validate-flag' is non-nil."
   :hook ((jinja2-mode . larumbe/prog-mode-keys)
          (jinja2-mode . larumbe/prog-mode-hook))) ; Since it is not a child of prog-mode, requires common configuration settings
 
+;;;; TypeScript
+(use-package typescript-ts-mode)
 
 
 (provide 'init-prog-others)

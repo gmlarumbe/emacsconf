@@ -68,6 +68,7 @@
   :init
   (setq verilog-ext-flycheck-verible-rules '("-line-length"
                                              "-parameter-name-style"))
+  (setq verilog-ext-beautify-instance-extra t)
   :config
   ;; Setup
   (verilog-ext-mode-setup)
@@ -107,6 +108,7 @@
   :mode (("\\.s?vh?\\'" . verilog-ts-mode))
   :init
   (setq verilog-ts-imenu-style 'tree-group)
+  (setq verilog-ts-beautify-instance-extra t)
   :config
   ;; Faces
   (set-face-attribute 'verilog-ts-font-lock-grouping-keywords-face nil :foreground "dark olive green")
