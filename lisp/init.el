@@ -2,7 +2,7 @@
 ;;
 ;;; Commentary:
 ;;
-;; Copyright (C) 2017-2024 Gonzalo M. Larumbe
+;; Copyright (C) 2017-2025 Gonzalo M. Larumbe
 ;;
 ;; Author: Gonzalo Martinez Larumbe <gonzalomlarumbe@gmail.com>
 ;; Homepage: https://github.com/gmlarumbe/emacsconf
