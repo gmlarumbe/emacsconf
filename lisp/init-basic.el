@@ -61,6 +61,7 @@
     "~/.emacs.d/straight/repos/arch-packer"        ; Maybe with some refactoring, updates after 5 years, no PR in this project. Wait until I get arch in new computer
     "~/.emacs.d/straight/repos/verilog-mode"       ; Development as a maintainer
     "~/.emacs.d/straight/repos/vunit-mode"         ; Wants to keep compatibility with old Emacs versions
+    "~/.emacs.d/straight/repos/outshine"           ; Need a fork to avoid overriding of unmaintained org- commands
     )
   "Evaluation of: `(larumbe/git-check-forked-repos-straight)'.")
 

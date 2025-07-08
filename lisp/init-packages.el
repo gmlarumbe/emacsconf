@@ -192,6 +192,8 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 
 (use-package outshine
+  :straight (:host github :repo "alphapapa/outshine" ; Original is unmaintained and overrides some org- keywords
+             :fork (:repo "gmlarumbe/outshine"))
   :bind (:map outshine-mode-map
          ("M-RET" . nil)  ; Leave space for `company-complete'
          ("C-M-i" . nil)) ; Leave space for defun indentation, unmaps `outshine-cycle-buffer'
