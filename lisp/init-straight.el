@@ -73,6 +73,11 @@
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/straight-utils.el")))
 
 
+;; INFO: Place here temporarily to make sure that it shadows Emacs 30.1 bundled transient
+(use-package transient
+  :straight (:host github :repo "magit/transient"))
+
+
 
 (provide 'init-straight)
 
