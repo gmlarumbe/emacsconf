@@ -69,6 +69,7 @@
   (setq verilog-ext-flycheck-verible-rules '("-line-length"
                                              "-parameter-name-style"))
   (setq verilog-ext-beautify-instance-extra nil)
+  (setq verilog-ext-tags-backend 'tree-sitter)
   :config
   ;; Setup
   (verilog-ext-mode-setup)

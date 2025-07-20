@@ -21,9 +21,8 @@
              larumbe/projectile-custom-mode-line
              larumbe/projectile-project-root-or-current-dir)
   :config
-  (setq projectile-enable-caching t) ; Enable caching, otherwise `projectile-find-file' is really slow for large projects.
-
-  (setq projectile-indexing-method 'hybrid) ; `alien' is the fastest indexing method (default), but ignores .projectile ignores
+  (setq projectile-enable-caching nil) ; Enable caching, otherwise `projectile-find-file' is really slow for large projects.
+  (setq projectile-indexing-method 'alien) ; `alien' is the fastest indexing method (default), but ignores .projectile ignores
   ;; INFO: hybrid works fine for most of the cases allowing for ignoring of specific dirs.
   ;; Plus, to quickly fetch the file-list, ripgrep based functions are used in conjunction with .gitignore_global
   ;;

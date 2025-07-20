@@ -48,6 +48,8 @@
 
 (use-package vhdl-ext
   :hook ((vhdl-mode . vhdl-ext-mode))
+  :init
+  (setq vhdl-ext-tags-backend 'tree-sitter)
   :config
   ;; Setup
   (vhdl-ext-mode-setup)
