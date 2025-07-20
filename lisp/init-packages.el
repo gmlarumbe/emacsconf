@@ -373,10 +373,17 @@ the vertical drag is done."
                          :files (:defaults "*.el" "*.py" "acm" "core" "langserver" "multiserver" "resources")
                          :build (:not compile)))
 
+(straight-use-package ; :pre-build keyword not supported by `use-package'
+ `(lspce :type git :host github :repo "zbelial/lspce"
+         :files (:defaults ,(pcase system-type
+                              ('gnu/linux "lspce-module.so")
+                              ('darwin "lspce-module.dylib")))
+         :pre-build ,(pcase system-type
+                       ('gnu/linux '(("cargo" "build" "--release") ("cp" "./target/release/liblspce_module.so" "./lspce-module.so")))
+                       ('darwin '(("cargo" "build" "--release") ("cp" "./target/release/liblspce_module.dylib" "./lspce-module.dylib"))))))
 
-(use-package lspce ; INFO: For the time being requires manual building of the Rust dynamic module: check README.md
-  :straight (:host github :repo "zbelial/lspce"
-             :files (:defaults "lspce-module.so"))
+(use-package lspce
+  :straight nil
   :init
   (setq lspce-send-changes-idle-time 1)
   :config
