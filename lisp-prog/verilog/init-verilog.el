@@ -2,6 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
+(defvar larumbe/verilog-indent-level 4)
 
 (use-package verilog-mode
   :straight (:repo "veripool/verilog-mode"
@@ -25,7 +26,6 @@
   :hook ((verilog-mode . larumbe/verilog-mode-hook))
   :init
   ;; Indentation
-  (defvar larumbe/verilog-indent-level 4)
   (setq verilog-indent-level             larumbe/verilog-indent-level)
   (setq verilog-indent-level-module      larumbe/verilog-indent-level)
   (setq verilog-indent-level-declaration larumbe/verilog-indent-level)
@@ -108,6 +108,7 @@
 (use-package verilog-ts-mode
   :mode (("\\.s?vh?\\'" . verilog-ts-mode))
   :init
+  (setq verilog-ts-indent-level larumbe/verilog-indent-level)
   (setq verilog-ts-imenu-style 'tree-group)
   (setq verilog-ts-beautify-instance-extra nil)
   :config

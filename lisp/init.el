@@ -16,6 +16,8 @@
 (require 'init-org)
 (require 'init-gtags)
 (require 'init-packages)
+(require 'init-diagnostics)
+(require 'init-lsp)
 (require 'init-grep)
 (require 'init-helm)
 (require 'init-ivy)

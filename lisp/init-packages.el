@@ -14,6 +14,7 @@
 (use-package bind-key :straight nil)
 (use-package yaml :commands (yaml-parse-string yaml-encode-object)) ; Full Elisp, worse performance but portable
 (use-package emacs-libyaml :straight (:host github :repo "syohex/emacs-libyaml")) ; Dinamic binding for libyaml
+(use-package transient :straight (:host github :repo "magit/transient")) ; Make sure update of Magit will also point to latest transient version, not to the one bundled with Emacs
 
 
 ;;;; Functions & Utils
@@ -298,12 +299,16 @@ the vertical drag is done."
 
 (use-package untabify-trailing-ws
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("minor-modes/untabify-trailing-ws.el"))
-  :config
+  :init
+  ;; Files
+  (setq untabify-trailing-disable-on-files nil)
   (dolist (file `(,(file-name-concat user-emacs-directory "straight/repos/verilog-mode/verilog-mode.el")
                   ,(file-name-concat user-emacs-directory "straight/repos/verilog-mode/verilog-test.el")
                   ,(file-name-concat user-emacs-directory "straight/repos/cperl-mode/cperl-mode.el")
                   ,(file-name-concat user-emacs-directory "straight/repos/verilog-ext/snippets/makefile-mode/verilog-template")))
-    (push file untabify-trailing-disable-on-files)))
+    (push file untabify-trailing-disable-on-files))
+  ;; Modes
+  (setq untabify-trailing-disable-on-modes '(vhdl-mode vhdl-ts-mode)))
 
 
 (use-package align
@@ -340,57 +345,6 @@ the vertical drag is done."
 
 
 ;;;; Programming
-;; LSP: lsp & eglot will override some variables/functionality:
-;; - For code navigation they use `xref' under the hood, they set the proper value to `xref-backend-functions'
-;; - For syntax checking, they override `flymake' and `flycheck' variables, e.g. they execute (flycheck-select-checker 'lsp) or similar
-;; - For code completion, they change `company-backends', overriding it with `company-capf' or adding it to existing ones
-;; - etc...
-
-(use-package eglot
-  :straight nil
-  :config
-  ;; Prevent eglot from overriding value of `company-backends' (eglot value of `completion-at-point-functions' still works)
-  (setq eglot-stay-out-of '(company eldoc flymake)))
-
-
-(use-package lsp-mode
-  :hook ((lsp-mode . larumbe/lsp-mode-hook))
-  :init
-  (setq lsp-keymap-prefix "C-x l")
-  (setq lsp-headerline-breadcrumb-enable nil)
-  (setq lsp-enable-imenu nil)
-  (setq lsp-enable-symbol-highlighting nil)
-  :config
-  (defun larumbe/lsp-mode-hook ()
-    "LSP-Mode hook."
-    ;; `lsp-diagnostics' function `lsp-diagnostics-flycheck-enable' is called if customizable var `lsp-auto-configure' is non-nil,
-    ;; and if diagnostics are enabled. We want that, but not to be activated right after opening buffer.
-    (flycheck-mode -1)))
-
-
-(use-package lsp-bridge
-  :straight '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge"
-                         :files (:defaults "*.el" "*.py" "acm" "core" "langserver" "multiserver" "resources")
-                         :build (:not compile)))
-
-(straight-use-package ; :pre-build keyword not supported by `use-package'
- `(lspce :type git :host github :repo "zbelial/lspce"
-         :files (:defaults ,(pcase system-type
-                              ('gnu/linux "lspce-module.so")
-                              ('darwin "lspce-module.dylib")))
-         :pre-build ,(pcase system-type
-                       ('gnu/linux '(("cargo" "build" "--release") ("cp" "./target/release/liblspce_module.so" "./lspce-module.so")))
-                       ('darwin '(("cargo" "build" "--release") ("cp" "./target/release/liblspce_module.dylib" "./lspce-module.dylib"))))))
-
-(use-package lspce
-  :straight nil
-  :init
-  (setq lspce-send-changes-idle-time 1)
-  :config
-  (lspce-set-log-file "/tmp/lspce.log")
-  (lspce-enable-logging))
-
-
 (use-package realgud)
 
 
@@ -467,83 +421,6 @@ Same as `hs-toggle-hiding', but do not exec: (posn-set-point (event-end e))"
 
   ;; Apply advice
   (advice-add 'hs-toggle-hiding :override #'larumbe/hs-toggle-hiding))
-
-
-(use-package flycheck
-  :diminish
-  :commands (flycheck-display-error-messages-unless-error-list)
-  :config
-  ;; Elisp flychecker
-  (setq flycheck-emacs-lisp-load-path 'inherit)
-  (setq flycheck-emacs-lisp-initialize-packages t)
-  ;; Seems it shows full error if multiline
-  (setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list))
-
-
-(use-package flycheck-inline
-  :hook ((flycheck-mode . flycheck-inline-mode))
-  :config
-  (set-face-attribute 'flycheck-inline-info nil :foreground "light green"))
-;; Replaces `lsp-ui-sideline-mode' from `lsp-ui':
-;;  - Better since diagnostic error appears right below the error
-;;    (in lsp-ui it appeared at the side, sometime quite far from the error)
-;;
-;; Seems maintained and works out of the box:
-;;  - Tried `flycheck-popup-tip' but there was something that did not work well
-;;  related to `flycheck-popup-tip-delete-popup' and `pre-command-hook' not working well
-;;
-;; Provides a similar alternative to `flymake-diagnostic-at-point' for buffers
-;; in LSP that use flymake
-
-
-(use-package flymake
-  :straight nil
-  :hook ((flymake-mode . larumbe/flymake-hook))
-  :init
-  (setq flymake-note-bitmap '(exclamation-mark larumbe/diagnostics-info-face))
-  :config
-  (set-face-attribute 'flymake-warning nil :underline '(:style wave :color "orange"))
-  (defun larumbe/flymake-hook ()
-    "Allow use of M-n and M-p to navigate flymake errors.
-
-     From /opt/emacs-29.3/share/emacs/29.3/lisp/progmodes/flymake.el.gz:1109
-Documentation string of `flymake-mode'."
-    (setq-local next-error-function #'flymake-goto-next-error)))
-
-
-(use-package flymake-diagnostic-at-point
-  :after flymake
-  :ensure t
-  :hook ((flymake-mode . flymake-diagnostic-at-point-mode))
-  :init
-  (setq flymake-diagnostic-at-point-display-diagnostic-function #'larumbe/flymake-diagnostic-at-point-display-popup)
-  :config
-  ;; Same as original function in the package but using different faces depending on severity
-  (defun larumbe/flymake-diagnostic-at-point-display-popup (text)
-    "Display the flymake diagnostic TEXT inside a popup."
-    (let* ((text (flymake--diag-text (get-char-property (point) 'flymake-diagnostic)))
-           (type (flymake--diag-type (get-char-property (point) 'flymake-diagnostic)))
-           (face (pcase type
-                   (:note 'larumbe/diagnostics-info-face)
-                   (:warning 'larumbe/diagnostics-warning-face)
-                   (:error 'larumbe/diagnostics-error-face)
-                   (_ 'larumbe/popup-tip-flymake-error-face))))
-      (popup-tip text :face face))))
-
-
-(use-package flyspell
-  :straight nil
-  :commands (flyspell-toggle)
-  :config
-  (defun flyspell-toggle ()
-    "Toggle flyspell mode on current buffer."
-    (interactive)
-    (if flyspell-mode
-        (progn
-          (flyspell-mode -1)
-          (message "Flyspell disabled..."))
-      (flyspell-mode 1)
-      (message "Flyspell enabled..."))))
 
 
 (use-package indent-guide

@@ -2,6 +2,9 @@
 ;;; Commentary:
 ;;; Code:
 
+(defvar larumbe/magit-difftastic-enable nil)
+(defvar larumbe/magit-lfs-enable nil)
+
 
 ;;;; Magit
 (use-package magit
@@ -33,14 +36,6 @@
 
   ;; Also run hooks (to show line numbers and truncate lines) after visiting a file from a diff
   (setq magit-diff-visit-file-hook '(larumbe/magit-ediff-hook)))
-
-
-(use-package magit-lfs
-  :commands (magit-lfs)
-  :init
-  ;; INFO: Magit Remaps ':' key from `magit-git-command' to `magit-lfs'
-  ;; Setting following variable maps it to ";" instead
-  (setq magit-lfs-suffix ";"))
 
 
 ;; INFO: Requires xterm-256color to work properly (*ansi-term* is not enough)
@@ -129,13 +124,45 @@
 (use-package gitlab-ci-mode)
 
 
-;;;; Misc
 (use-package diff-hl
   :bind (("M-<f10>" . global-diff-hl-mode))
   :config
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
+
+(when larumbe/magit-lfs-enable
+  (use-package magit-lfs
+    :commands (magit-lfs)
+    :init
+    ;; INFO: Magit Remaps ':' key from `magit-git-command' to `magit-lfs'
+    ;; Setting following variable maps it to ";" instead
+    (setq magit-lfs-suffix ";")))
+
+
+
+;;;; Difftastic
+;; `difftastic' package is equivalent to my own `magit-difft' utils
+;; - https://github.com/pkryger/difftastic.el
+(when larumbe/magit-difftastic-enable
+  (use-package difftastic
+    :after magit
+    :demand)
+
+  (use-package difftastic-bindings
+    :straight (:host github :repo "pkryger/difftastic.el" :files ("difftastic-bindings.el"))
+    :after difftastic
+    :demand
+    :config (difftastic-bindings-mode))
+
+  ;; `difftastic' package is equivalent to my own `magit-difft' utils
+  ;; - https://github.com/pkryger/difftastic.el
+  ;; This one should be deprecated once the `difftastic' one is setup properly
+  ;; (i.e. customized as god dictates)
+  (use-package magit-difft
+    :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/magit-difft.el"))
+    :after magit
+    :demand))
 
 
 ;;;; Own utils
@@ -151,15 +178,6 @@
   :config
   (setq git-dirty-repo-list-emacs larumbe/emacs-conf-repos-devel)
   (setq git-dirty-repo-list-straight (larumbe/straight-packages)))
-
-(use-package magit-difft
-  :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/magit-difft.el"))
-  :after magit
-  :demand)
-
-;; `difftastic' package is equivalent to my own `magit-difft' utils
-;; - https://github.com/pkryger/difftastic.el
-;; Tried at some point but was not worth the effort since I didn't use difftastic on a regular basis
 
 
 (provide 'init-version-control)

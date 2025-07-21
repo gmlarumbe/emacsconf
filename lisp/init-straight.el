@@ -52,10 +52,14 @@
 
 
 ;;;; Use-package integration
+;; INFO: This one did not work inside the :init section of `use-package'.
+;; From its doc: Must be set before loading `use-package'.
+(setq use-package-enable-imenu-support t)
+
 (straight-use-package 'use-package)
 
 (use-package use-package
-  :config
+  :init
   (setq use-package-always-defer t)
   ;; Enables one to run M-x `use-package-report' to check Initialized/Declared/Configured packages
   ;; -  https://github.com/jwiegley/use-package#gathering-statistics
@@ -63,7 +67,7 @@
 
 
 (use-package straight
-  :config
+  :init
   (setq straight-use-package-by-default t)
   (setq straight-host-usernames
         '((github . "gmlarumbe"))))
@@ -71,11 +75,6 @@
 
 (use-package straight-utils
   :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("libs/straight-utils.el")))
-
-
-;; INFO: Place here temporarily to make sure that it shadows Emacs 30.1 bundled transient
-(use-package transient
-  :straight (:host github :repo "magit/transient"))
 
 
 

@@ -14,9 +14,7 @@
     (local-set-key (kbd "C-<tab>") #'hs-toggle-hiding)
     (local-set-key (kbd "C-c C-n") #'align-regexp)
     (local-set-key (kbd "C-c C-s") #'larumbe/yas-insert-snippet-dwim)
-    (unless (or (eq major-mode 'verilog-mode)
-                (eq major-mode 'verilog-ts-mode))
-      (local-set-key (kbd "C-c C-f") #'flycheck-mode)))
+    (local-set-key (kbd "C-c C-f") #'flycheck-mode))
 
   (defun larumbe/prog-mode-indent-tabs-mode ()
     "Do not use TAB for indentation, except for Makefile modes."

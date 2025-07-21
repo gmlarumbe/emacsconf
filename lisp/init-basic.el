@@ -16,7 +16,7 @@
 ;; Global config
 (desktop-save-mode 0) ; Disable and rely on ivy's recentf feature with 0 loading time
 (load-theme 'deeper-blue t)
-(defalias 'yes-or-no-p 'y-or-n-p)
+(defalias 'yes-or-no-p 'y-or-n-p)    ; Set all interactive `yes-or-no' prompts to `y-or-n-p' prompts
 (setq confirm-kill-emacs #'y-or-n-p) ; Avoid closing Emacs unexpectedly (helm prefix C-x c)
 (setq disabled-command-function nil)
 (setq-default tab-width 4)
@@ -66,28 +66,12 @@
   "Evaluation of: `(larumbe/git-check-forked-repos-straight)'.")
 
 ;; Emacs 29.1 faces
-(set-face-attribute 'font-lock-operator-face nil  :foreground "burlywood" :weight 'extra-bold)
-(set-face-attribute 'font-lock-bracket-face nil   :foreground "goldenrod")
-(set-face-attribute 'font-lock-delimiter-face nil :foreground "burlywood")
-(set-face-attribute 'font-lock-number-face nil    :foreground "yellow green")
-(set-face-attribute 'font-lock-function-call-face nil :foreground "Light Coral")
+(set-face-attribute 'font-lock-operator-face nil         :foreground "burlywood" :weight 'extra-bold)
+(set-face-attribute 'font-lock-bracket-face nil          :foreground "goldenrod")
+(set-face-attribute 'font-lock-delimiter-face nil        :foreground "burlywood")
+(set-face-attribute 'font-lock-number-face nil           :foreground "yellow green")
+(set-face-attribute 'font-lock-function-call-face nil    :foreground "Light Coral")
 (set-face-attribute 'font-lock-misc-punctuation-face nil :foreground "dark gray")
-
-;; Custom faces
-(defface larumbe/diagnostics-info-face
-  '((t (:foreground "light green")))
-  "Face for popup tip (info)."
-  :group 'larumbe-faces)
-
-(defface larumbe/diagnostics-warning-face
-  '((t (:foreground "yellow")))
-  "Face for popup tip (warning)."
-  :group 'larumbe-faces)
-
-(defface larumbe/diagnostics-error-face
-  '((t (:foreground "red")))
-  "Face for popup tip (error)."
-  :group 'larumbe-faces)
 
 
 (provide 'init-basic)
