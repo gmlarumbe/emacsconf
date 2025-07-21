@@ -984,6 +984,12 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   (setq counsel-describe-variable-function #'helpful-variable))
 
 
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
+
+
 
 ;;;; Provide package
 (provide 'init-packages)
