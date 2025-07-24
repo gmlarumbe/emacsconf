@@ -20,7 +20,8 @@
   (setq dired-listing-switches "-alh") ; Show size in human readable format
 
   (defun larumbe/dired-hook ()
-    (dired-hide-details-mode 1)))
+    (dired-hide-details-mode 1)
+    (setq truncate-lines t)))
 
 
 (use-package dired-utils
