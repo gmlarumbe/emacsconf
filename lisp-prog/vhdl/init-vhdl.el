@@ -50,6 +50,24 @@
 (use-package vhdl-ext
   :hook ((vhdl-mode . vhdl-ext-mode))
   :init
+  (setq vhdl-ext-feature-list '(font-lock
+                                xref
+                                capf
+                                hierarchy
+                                ;; eglot
+                                ;; lsp
+                                ;; lsp-bridge
+                                ;; lspce
+                                flycheck
+                                beautify
+                                navigation
+                                template
+                                compilation
+                                imenu
+                                which-func
+                                hideshow
+                                time-stamp
+                                ports))
   (setq vhdl-ext-tags-backend 'tree-sitter)
   :config
   ;; Setup
