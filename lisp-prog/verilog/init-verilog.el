@@ -129,6 +129,11 @@
 (use-package verilog-ts-mode
   :mode (("\\.s?vh?\\'" . verilog-ts-mode))
   :init
+  ;; The one below is not really necessary unless `verilog-ts--node-at-point'
+  ;; needs to be used before loading `verilog-ts-mode': For example with
+  ;; `larumbe/avid-run-makefile-target'
+  (add-to-list 'treesit-load-name-override-list '(verilog "libtree-sitter-systemverilog" "tree_sitter_systemverilog"))
+  ;; Actual customization
   (setq verilog-ts-indent-level larumbe/verilog-indent-level)
   (setq verilog-ts-imenu-style 'tree-group)
   (setq verilog-ts-beautify-instance-extra nil)
