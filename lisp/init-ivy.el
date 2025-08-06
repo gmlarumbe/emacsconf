@@ -54,6 +54,9 @@
     :bind (("C-s"   . larumbe/search-forward)
            ("C-r"   . larumbe/search-backward)
            ("M-s ." . larumbe/symbol-at-point))
+    :init
+    (defvar mc/cmds-to-run-once '(swiper-mc))
+
     :config
     (setq search-default-mode 'auto)
     (defvar larumbe/swiper-re-builders-alist '((t . ivy--regex-plus)))
