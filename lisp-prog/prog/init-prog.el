@@ -24,11 +24,10 @@
       (setq indent-tabs-mode nil)))
 
   (defun larumbe/prog-mode-hook ()
-    "Basic Hook for derived programming modes."
+    "Basic Hook for derived programming modes.
+Only includes non-global modes."
     (ggtags-mode               1)
-    (projectile-mode           1)
     (company-mode              1)
-    (show-paren-mode           1)
     (display-line-numbers-mode 1)
     (outshine-mode             1)
     (fic-mode                  1)

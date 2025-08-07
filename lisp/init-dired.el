@@ -1,6 +1,5 @@
 ;;; init-dired.el --- Dired  -*- lexical-binding: t -*-
 ;;; Commentary:
-;;
 ;;; Code:
 
 
@@ -15,10 +14,9 @@
          ("C-x C-q" . wdired-change-to-wdired-mode))                  ; Previously overriden by EXWM global keybinding
   :hook ((dired-mode . larumbe/dired-hook))
   :commands (dired-hide-details-mode)
-  :config
-  (projectile-mode 1) ; Allow use of projectile commands if only a dired buffer was opened with lazy loading
+  :init
   (setq dired-listing-switches "-alh") ; Show size in human readable format
-
+  :config
   (defun larumbe/dired-hook ()
     (dired-hide-details-mode 1)
     (setq truncate-lines t)))
@@ -60,14 +58,14 @@
   :init
   (setq dired-bind-jump nil) ; Prevent overriding of `larumbe/dired-jump' for C-x C-j keybinding
   (setq dired-bind-info nil) ; Prevent overriding of `dired-kill-subdir'
-  :config
   (setq dired-omit-verbose nil)
-  (delete ".bin" dired-omit-extensions)
-  (delete ".so"  dired-omit-extensions)
-  (delete ".mem"  dired-omit-extensions)
   (setq dired-guess-shell-alist-user ; Program mappings to dired-do-shell-command (precedence over `dired-guess-shell-alist-default')
         '(("\\.pdf\\'"  "okular")
-          ("\\.lxt2\\'" "gtkwave"))))
+          ("\\.lxt2\\'" "gtkwave")))
+  :config
+  (delete ".bin" dired-omit-extensions)
+  (delete ".so"  dired-omit-extensions)
+  (delete ".mem"  dired-omit-extensions))
 
 
 ;; EmacsWiki: `dired+'

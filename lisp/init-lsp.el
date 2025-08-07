@@ -37,7 +37,7 @@
                          :build (:not compile)))
 
 
-(use-package lspce ; INFO: For the time being requires manual building of the Rust dynamic module: check README.md
+(use-package lspce ; For the time being requires manual building of the Rust dynamic module: check README.md
   :straight (:host github :repo "zbelial/lspce"
              :files (:defaults "lspce-module.so"))
   :init

@@ -46,11 +46,10 @@
   :bind (:map ggtags-global-mode-map
          ("r" . ggtags-query-replace))
   :config
-  (setq ggtags-sort-by-nearness nil) ; INFO: If set to non-nil it will not work if using symlinks to external directories
+  (setq ggtags-sort-by-nearness nil) ; If set to non-nil it will not work if using symlinks to external directories
   (setq ggtags-navigation-mode-lighter nil)
   (setq ggtags-mode-line-project-name nil)
-  ;; INFO: Set to 1 to avoid the `global -u' automatic GTAGS update if tags file is smaller than the variable.
-  (setq ggtags-oversize-limit 1)   ; If set to nil it seems that there is no limit...
+  (setq ggtags-oversize-limit 1)   ; Set to 1 to avoid the `global -u' automatic GTAGS update if tags file is smaller than the variable. If set to nil it seems that there is no limit...
   (setq ggtags-update-on-save nil) ; Try to avoid the `global -u in progress...'
 
   (defun larumbe/ggtags-tag-at-point ()

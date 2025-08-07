@@ -11,8 +11,6 @@
          ("M-." . larumbe/xref-find-definitions)) ; Browse URLs and files
   :bind (:map compilation-shell-minor-mode-map
          ("M-RET" . nil)) ; Leave space for `company-complete'
-  :bind (:map comint-mode-map
-         ("TAB" . completion-at-point))  ; Similar to ansi-term for comint shells
   :hook ((compilation-mode . larumbe/compilation-hook))
   :commands (recompile)
   :init

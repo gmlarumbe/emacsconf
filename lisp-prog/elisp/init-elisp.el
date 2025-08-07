@@ -2,6 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
+
 (use-package elisp-mode
   :straight nil
   :diminish eldoc-mode
@@ -19,6 +20,7 @@
   :hook ((emacs-lisp-mode . larumbe/elisp-hook)
          (emacs-lisp-mode . larumbe/set-emacs-lisp-indentation))
   :config
+  (use-package rainbow-delimiters) ; Must be lazy-loaded before `larumbe/elisp-hook' @ `elisp-utils'
   (require 'elisp-utils)
   (require 'elisp-templates))
 

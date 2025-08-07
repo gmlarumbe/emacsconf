@@ -32,8 +32,8 @@
   (scroll-bar-mode -1))
 
 ;; Conf tweaking variables
-(defconst larumbe/gitignore-global-file (expand-file-name "~/.dotfiles/gitconfig/.gitignore_global")) ; Used by `helm-rg', `counsel-rg' and `init-projectile'.
-(defconst larumbe/completion-framework 'ivy) ; 'ivy or 'helm are allowed values (helm will coexist with `ivy-switch-buffer')
+(defconst larumbe/gitignore-global-file (expand-file-name "~/.dotfiles/gitconfig/.gitignore_global")) ; Used by completion framework ripgrep wrappers and `init-projectile'.
+(defconst larumbe/completion-framework 'ivy) ; ['ivy, 'helm, 'vertico]
 
 (defconst larumbe/emacs-conf-repos-core '("~/.elisp"
                                           "~/.elisp_private"
@@ -65,13 +65,6 @@
     )
   "Evaluation of: `(larumbe/git-check-forked-repos-straight)'.")
 
-;; Emacs 29.1 faces
-(set-face-attribute 'font-lock-operator-face nil         :foreground "burlywood" :weight 'extra-bold)
-(set-face-attribute 'font-lock-bracket-face nil          :foreground "goldenrod")
-(set-face-attribute 'font-lock-delimiter-face nil        :foreground "burlywood")
-(set-face-attribute 'font-lock-number-face nil           :foreground "yellow green")
-(set-face-attribute 'font-lock-function-call-face nil    :foreground "Light Coral")
-(set-face-attribute 'font-lock-misc-punctuation-face nil :foreground "dark gray")
 
 
 (provide 'init-basic)

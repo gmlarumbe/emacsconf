@@ -52,8 +52,8 @@
 
 
 ;;;; Use-package integration
-;; INFO: This one did not work inside the :init section of `use-package'.
-;; From its doc: Must be set before loading `use-package'.
+;; Imenu use-package support did not work inside the :init section of `use-package'.
+;; - From its doc: Must be set before loading `use-package'.
 (setq use-package-enable-imenu-support t)
 
 (straight-use-package 'use-package)

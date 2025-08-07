@@ -71,7 +71,13 @@ This was needed in order to allow GitHub actions to work properly."
 (use-package font-lock
   :straight nil
   :config
-  (set-face-attribute 'font-lock-preprocessor-face nil :foreground "pale goldenrod"))
+  (set-face-attribute 'font-lock-preprocessor-face nil     :foreground "pale goldenrod")
+  (set-face-attribute 'font-lock-operator-face nil         :foreground "burlywood" :weight 'extra-bold)
+  (set-face-attribute 'font-lock-bracket-face nil          :foreground "goldenrod")
+  (set-face-attribute 'font-lock-delimiter-face nil        :foreground "burlywood")
+  (set-face-attribute 'font-lock-number-face nil           :foreground "yellow green")
+  (set-face-attribute 'font-lock-function-call-face nil    :foreground "Light Coral")
+  (set-face-attribute 'font-lock-misc-punctuation-face nil :foreground "dark gray"))
 
 
 (use-package diminish)
@@ -121,19 +127,6 @@ This was needed in order to allow GitHub actions to work properly."
   :config
   (setq ibuffer-default-sorting-mode 'major-mode)
   (setq ibuffer-expert t))
-
-
-(use-package ibuffer-projectile
-    :hook ((ibuffer . modi/ibuffer-customization))
-    :after ibuffer
-    :config
-    (defun modi/ibuffer-customization ()
-      "My customization for `ibuffer'."
-      ;; ibuffer-projectile setup
-      (ibuffer-projectile-set-filter-groups)
-      (unless (eq ibuffer-sorting-mode 'alphabetic)
-        (ibuffer-do-sort-by-alphabetic) ; first do alphabetic sort
-        (ibuffer-do-sort-by-major-mode))))
 
 
 (use-package ibuf-ext
@@ -332,13 +325,6 @@ the vertical drag is done."
          ("C-c C->" . mc/edit-lines)
          ("C-c C-<" . mc/mark-all-like-this)
          ("C-c C-#" . mc/insert-numbers)))
-
-
-(use-package expand-region
-  :bind (("C-=" . er/expand-region))
-  :config
-  (setq expand-region-contract-fast-key "|")
-  (setq expand-region-reset-fast-key "<ESC><ESC>"))
 
 
 ;;;; Programming
@@ -560,9 +546,6 @@ it could cause sluggish behaviour as it's not every efficient."
   :commands (hide/show-comments-toggle))
 
 
-(use-package rainbow-delimiters)
-
-
 (use-package wide-column
   :straight (:host github :repo "phillord/wide-column"
              :fork (:repo "gmlarumbe/wide-column"))
@@ -700,7 +683,7 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
 
 
 (use-package ssh-tunnels
-  :config
+  :init
   (setq ssh-tunnels-name-width 25)
   (setq ssh-tunnels-host-width 20))
 

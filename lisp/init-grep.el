@@ -58,6 +58,7 @@
   :bind (:map wgrep-mode-map
          ("C-x s" . wgrep-save-all-buffers)))
 
+
 ;; Allow editing in *ag* buffers
 ;; BUG: Could not make it work, always detects the buffer as read-only.
 ;;  - Solution: use `ivy-occur' as a great alternative with swiper/counsel.

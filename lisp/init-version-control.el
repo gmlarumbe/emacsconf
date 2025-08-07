@@ -2,9 +2,8 @@
 ;;; Commentary:
 ;;; Code:
 
-(defvar larumbe/magit-difftastic-enable nil)
+(defvar larumbe/magit-difftastic-enable nil) ; Enable if someday tree-sitter-systemverilog is included, or if C/Python development is needed
 (defvar larumbe/magit-lfs-enable nil)
-
 
 ;;;; Magit
 (use-package magit
@@ -142,8 +141,6 @@
 
 
 ;;;; Difftastic
-;; `difftastic' package is equivalent to my own `magit-difft' utils
-;; - https://github.com/pkryger/difftastic.el
 (when larumbe/magit-difftastic-enable
   (use-package difftastic
     :after magit
@@ -153,16 +150,7 @@
     :straight (:host github :repo "pkryger/difftastic.el" :files ("difftastic-bindings.el"))
     :after difftastic
     :demand
-    :config (difftastic-bindings-mode))
-
-  ;; `difftastic' package is equivalent to my own `magit-difft' utils
-  ;; - https://github.com/pkryger/difftastic.el
-  ;; This one should be deprecated once the `difftastic' one is setup properly
-  ;; (i.e. customized as god dictates)
-  (use-package magit-difft
-    :straight (:host github :repo "gmlarumbe/my-elisp-packages" :files ("site-lisp/magit-difft.el"))
-    :after magit
-    :demand))
+    :config (difftastic-bindings-mode)))
 
 
 ;;;; Own utils

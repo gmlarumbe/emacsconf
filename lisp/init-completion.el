@@ -5,7 +5,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; INFO: Main differences between CAPF and Company:
+;; Main differences between CAPF and Company:
 ;;  - CAPF uses `completion-at-point-functions', which are defined by
 ;;  specific major-modes (such as `ggtags-mode', `verilog-mode' or `emacs-lisp-mode').
 ;;  - Company uses the variable `company-backends', which can in turn include
@@ -27,13 +27,13 @@
 ;; - Company would use CAPF backend (including `elisp-completion-at-point' or `ggtags-completion-at-point')
 ;;   plus its own backend for company-gtags and its own backend for keywords and files.
 ;;
-;; INFO: So, for the time being the recommended workflow would be to only use Company as it already includes CAPF completion.
+;; So, for the time being the recommended workflow would be to only use Company as it already includes CAPF completion.
 ;;  - `company-complete' will pop up a company menu and show exact matches (not-incremental).
 ;;  - `counsel-company' will incrementally complete in the minibuffer after inserting the beginning (company common part).
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; More INFO:
+;; More:
 ;; - https://www.gnu.org/software/emacs/manual/html_node/elisp/Completion-in-Buffers.html
 ;; - https://github.com/minad/corfu/issues/9
 ;; - Documentation of `completion-at-point-functions':
@@ -47,7 +47,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; More INFO:
+;; More:
 ;;  - CAPF is aware of the context, e.g.:
 ;;    - Elisp: results are different if capf is called inside a comment or after a parenthesis (functions)
 ;;    - Verilog: results are different if capf is called within a module, task/function or class (according to indentation functions)
@@ -67,7 +67,7 @@
   :bind (:map minibuffer-local-map
          ("C-<return>" . completion-at-point)  ; Override company keybindings to use `completion-at-point' ...
          ("M-RET"      . completion-at-point)) ; ... when executing "M-:" `eval-expression' at minibuffer.
-  :config
+  :init
   (setq enable-recursive-minibuffers t) ; Allow minibuffer commands while in the minibuffer.
   (setq completions-detailed t))        ; New in Emacs 28
 
@@ -105,10 +105,9 @@
   (defun larumbe/company-backend-report ()
     "Show current backend used when running `company-other-backend'."
     (interactive)
-    (let (formatted-backend
-          backend-list)
+    (let (formatted-backend)
       (if (listp company-backend)
-          (progn
+          (let (backend-list)
             (setq backend-list (remove :separate company-backend))
             (setq formatted-backend (propertize (mapconcat #'symbol-name backend-list ", ")
                                                 'face '(:foreground "green"))))

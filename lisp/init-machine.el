@@ -3,9 +3,12 @@
 ;;; Code:
 
 
-(defun larumbe/enable-deferred-packages ()
-  "Enable deferred packages downloaded via `use-package'."
+(defun larumbe/enable-deferred-global-modes ()
+  "Enable deferred packages downloaded via `use-package'.
+All these packages have to be global modes."
   (interactive)
+  (projectile-mode 1)
+  (show-paren-mode 1)
   (which-function-mode)
   (display-time-mode t)
   (larumbe/sml-enable 'dark)
@@ -14,9 +17,10 @@
   (global-hardcore-mode 1)
   (untabify-trailing-ws-mode 1)
   (electric-pair-mode 1)
-  (which-key-mode 1))
+  (which-key-mode 1)
+  (global-prettify-symbols-mode 1))
 
-(larumbe/enable-deferred-packages)
+(larumbe/enable-deferred-global-modes)
 
 
 ;;;; Machine-specific

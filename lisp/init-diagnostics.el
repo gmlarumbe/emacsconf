@@ -83,17 +83,15 @@ Documentation string of `flymake-mode'."
 
 (use-package flyspell
   :straight nil
-  :commands (flyspell-toggle)
-  :config
-  (defun flyspell-toggle ()
-    "Toggle flyspell mode on current buffer."
-    (interactive)
-    (if flyspell-mode
-        (progn
-          (flyspell-mode -1)
-          (message "Flyspell disabled..."))
-      (flyspell-mode 1)
-      (message "Flyspell enabled..."))))
+  :init
+  (setq flyspell-use-meta-tab nil) ; Leave M-TAB (C-M-i) for indent block
+  (setq flyspell-auto-correct-binding (kbd "M-=")) ; Cannot be nil, overriden later in :bind section
+  :bind (:map flyspell-mode-map
+         ("C-=" . flyspell-goto-next-error)
+         ("C-+" . flyspell-auto-correct-word)
+         ("M-=" . flyspell-buffer)) ; Override `flyspell-auto-correct-binding'
+  :bind (("C-M-=" . flyspell-mode)))
+
 
 
 (provide 'init-diagnostics)

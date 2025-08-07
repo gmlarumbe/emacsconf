@@ -28,6 +28,8 @@
          (c++-mode    . larumbe/c-and-c++-mode-hook)
          (c-ts-mode   . larumbe/c-and-c++-ts-mode-hook)
          (c++-ts-mode . larumbe/c-and-c++-ts-mode-hook))
+  :init
+  (setq larumbe/c-utils-use-lsp nil)
   :config
   (larumbe/c-ts-mode-override))
 

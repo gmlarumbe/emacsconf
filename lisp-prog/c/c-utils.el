@@ -2,6 +2,9 @@
 ;;; Commentary:
 ;;; Code:
 
+
+(defvar larumbe/c-utils-use-lsp nil)
+
 (require 'cc-mode)
 (require 'c-ts-mode)
 (require 'lsp-mode)
@@ -277,7 +280,9 @@ MODE is either `c' or `cpp'."
 (defun larumbe/c-and-c++-ts-mode-hook ()
   "Custom C/C++ tree sitter hook."
   (hide-ifdef-mode 1)
-  (when (executable-find "clangd")
+  (unless (executable-find "clangd")
+    (user-error "Requires clangd"))
+  (when larumbe/c-utils-use-lsp
     (lsp)))
 
 

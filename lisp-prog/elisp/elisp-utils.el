@@ -148,7 +148,6 @@ Try to add it before Commentary section."
 (defun larumbe/elisp-hook ()
   "Custom elisp hook."
   (sanityinc/enable-check-parens-on-save)
-  (prettify-symbols-mode 1)
   (rainbow-delimiters-mode 1)
   ;; Xrefs limited to specified directories
   (when (bound-and-true-p larumbe/elisp-xref-dirs)

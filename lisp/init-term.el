@@ -16,7 +16,40 @@
 ;;
 ;;; Code:
 
-(use-package term
+
+(use-package comint
+  :straight nil
+  :bind (:map comint-mode-map
+         ("TAB" . completion-at-point))
+  :init
+  (setq comint-process-echoes t))
+
+
+(use-package vterm
+  :bind (:map vterm-mode-map
+         ("C-c C-t" . nil) ; Remap `vterm-copy-mode' to C-c C-k
+         ("C-c C-k" . vterm-copy-mode))
+  :bind (:map vterm-copy-mode-map
+         ("C-c C-t" . nil)
+         ("C-c C-k" . vterm-copy-mode-done))
+  :bind (("C-M-/" . vterm)) ; Unmap `dabbrev-completion'
+  :commands (larumbe/sh-send-string-vterm)
+  :init
+  (setq vterm-keymap-exceptions '("C-c" "C-x" "C-u" "C-h" "C-l" "M-x" "M-O" "M-o" "C-y" "M-y")) ; Exclude C-g
+  (setq vterm-shell "zsh")
+
+  (defun larumbe/sh-send-string-vterm (string &optional vterm-buf)
+    "Send STRING to *vterm* process.
+If optional arg VTERM-BUF is non-nil, use this buffer instead of default *vterm*."
+    (interactive)
+    (let* ((buf (or vterm-buf "*vterm*"))
+           (proc (get-buffer-process buf)))
+      (unless (get-buffer buf)
+        (error "Buffer %s does not exist" buffer))
+      (process-send-string proc string))))
+
+
+(use-package term ; `ansi-term' config
   :bind (:map term-raw-map
          ("M-o" . other-window)
          ("C-u" . nil)
@@ -26,8 +59,6 @@
          ("M-x" . counsel-M-x))
   :hook ((term-mode . larumbe/term-hook))
   :config
-  (setq comint-process-echoes t)
-
   (defvar term-no-process-map
     (let ((map (make-keymap)))
       (define-key map "\C-d" 'term-delchar-or-maybe-eof)
@@ -71,30 +102,6 @@ If prefix arg is provided, force creation of a new ansi-term."
     "`term-hode' own hook"
     (interactive)
     (hardcore-mode -1)))
-
-
-(use-package vterm
-  :bind (:map vterm-mode-map
-         ("C-c C-t" . nil) ; Remap `vterm-copy-mode' to C-c C-k
-         ("C-c C-k" . vterm-copy-mode))
-  :bind (:map vterm-copy-mode-map
-         ("C-c C-t" . nil)
-         ("C-c C-k" . vterm-copy-mode-done))
-  :bind (("C-M-/" . vterm)) ; Unmap `dabbrev-completion'
-  :commands (larumbe/sh-send-string-vterm)
-  :init
-  (setq vterm-keymap-exceptions '("C-c" "C-x" "C-u" "C-h" "C-l" "M-x" "M-O" "M-o" "C-y" "M-y")) ; Exclude C-g
-  (setq vterm-shell "zsh")
-
-  (defun larumbe/sh-send-string-vterm (string &optional vterm-buf)
-    "Send STRING to *vterm* process.
-If optional arg VTERM-BUF is non-nil, use this buffer instead of default *vterm*."
-    (interactive)
-    (let* ((buf (or vterm-buf "*vterm*"))
-           (proc (get-buffer-process buf)))
-      (unless (get-buffer buf)
-        (error "Buffer %s does not exist" buffer))
-      (process-send-string proc string))))
 
 
 (use-package aweshell

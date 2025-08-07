@@ -1,7 +1,7 @@
 ;;; init-projectile.el --- Projectile setup  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;
-;; INFO: Projectile 2.0 removes automatic keybindings.
+;; Projectile 2.0 removes automatic keybindings.
 ;; The keybindings are mapped to `projectile-mode-map' because they need
 ;; `projectile-mode' to be enabled to work properly.
 ;;
@@ -10,7 +10,7 @@
 ;;
 ;;; Code:
 
-
+;;;; Core
 (use-package projectile
   :diminish projectile-mode       ; Also diminishes `larumbe/projectile-custom-mode-line', as it is already available at the left corner
   :bind (:map projectile-mode-map ; Projectile 2.0 removes automatic keybindings
@@ -21,7 +21,6 @@
              larumbe/projectile-custom-mode-line
              larumbe/projectile-project-root-or-current-dir)
   :config
-  (setq projectile-enable-caching nil) ; Enable caching, otherwise `projectile-find-file' is really slow for large projects.
   (setq projectile-indexing-method 'alien) ; `alien' is the fastest indexing method (default), but ignores .projectile ignores
   ;; INFO: hybrid works fine for most of the cases allowing for ignoring of specific dirs.
   ;; Plus, to quickly fetch the file-list, ripgrep based functions are used in conjunction with .gitignore_global
@@ -31,13 +30,16 @@
   ;;
   ;; Source: http://joelmccracken.github.io/entries/project-local-variables-in-projectile-with-dirlocals/
 
+  ;; Enable caching for indexing methods different than 'alien.
+  ;; Otherwise `projectile-find-file' is really slow for large projects.
+  (setq projectile-enable-caching (not (eq projectile-indexing-method 'alien)))
+
   ;; By default, on Git repos when fd is available, the command used will be fd with `projectile-git-fd-args'
   (setq projectile-git-fd-args (mapconcat #'identity `(,projectile-git-fd-args "--ignore-file" ,larumbe/gitignore-global-file) " "))
 
   (add-to-list 'projectile-globally-ignored-directories "*.repo") ; https://github.com/bbatsov/projectile/issues/1250
   (add-to-list 'projectile-globally-ignored-directories "*@@$")   ; Ignore ClearCase versions
 
-  (setq projectile-completion-system larumbe/completion-framework)
   (setq projectile-mode-line-prefix " P") ; Modeline
   (setq projectile-mode-line-function #'larumbe/projectile-custom-mode-line)
 
@@ -92,21 +94,24 @@ Used for some ripgrep/dumb-jump xref related functions."
 
 
 
-(when (equal larumbe/completion-framework 'helm)
-  (use-package helm-projectile
-    :diminish
-    :after projectile ; INFO: Otherwise projectile would disable these package keybindings
-    :bind (:map projectile-mode-map
-           ("C-c p s" . helm-projectile-switch-project)
-           ("C-c p f" . helm-projectile-find-file)
-           ("C-c p a" . helm-projectile-ag)
-           ("C-c p g" . helm-projectile-grep)
-           ("C-c p r" . helm-projectile-rg))))
+;;;; Ibuffer
+(use-package ibuffer-projectile
+  :hook ((ibuffer . modi/ibuffer-customization))
+  :after ibuffer
+  :config
+  (defun modi/ibuffer-customization ()
+    "My customization for `ibuffer'."
+    ;; ibuffer-projectile setup
+    (ibuffer-projectile-set-filter-groups)
+    (unless (eq ibuffer-sorting-mode 'alphabetic)
+      (ibuffer-do-sort-by-alphabetic) ; first do alphabetic sort
+      (ibuffer-do-sort-by-major-mode))))
 
 
+;;;; Ivy
 (when (equal larumbe/completion-framework 'ivy)
   (use-package counsel-projectile
-    :after projectile ; INFO: Otherwise projectile would disable these package keybindings
+    :after projectile ; Otherwise projectile would disable these package keybindings
     :bind (:map projectile-mode-map
            ("C-c p s" . counsel-projectile-switch-project)
            ("C-c p f" . counsel-projectile-find-file)
@@ -135,14 +140,53 @@ Otherwise, smart-case is performed (similar to case-fold-search)."
     (defun larumbe/counsel-projectile-ag ()
       "Execute `counsel-projectile-ag' wrapper."
       (interactive)
-      (let ((counsel-projectile-ag-initial-input (thing-at-point 'symbol)))
+      (let ((counsel-projectile-ag-initial-input (if (eq major-mode 'dired-mode)
+                                                     nil
+                                                   (thing-at-point 'symbol))))
         (larumbe/counsel-projectile--search #'counsel-projectile-ag)))
 
     (defun larumbe/counsel-projectile-rg ()
       "Execute `counsel-projectile-rg' wrapper."
       (interactive)
-      (let ((counsel-projectile-rg-initial-input (thing-at-point 'symbol)))
+      (let ((counsel-projectile-rg-initial-input (if (eq major-mode 'dired-mode)
+                                                     nil
+                                                   (thing-at-point 'symbol))))
         (larumbe/counsel-projectile--search #'counsel-projectile-rg)))))
+
+
+;;;; Vertico
+(when (equal larumbe/completion-framework 'vertico)
+  (use-package consult-projectile
+    :diminish
+    :after projectile
+    :bind (:map projectile-mode-map
+           ("C-c p s" . consult-projectile-switch-project)
+           ("C-c p f" . consult-projectile-find-file)
+           ("C-c p b" . consult-projectile-switch-to-buffer)
+           ("C-c p g" . consult-projectile-grep))))
+;; For commands `consult-projectile-ag'/`consult-projectile-rg'
+;; - https://www.reddit.com/r/emacs/comments/m9zgwi/ann_consultprojectile_consult_integration_for/
+;;
+;; "This feature is unnecessary. If you set consult-project-root-function to
+;; projectile-root as shown in the Consult README, the consult-grep/ripgrep
+;; commands will use the project root by default."
+;;
+;; Seems that consult-grep via ag/rg relies on builtin `project' support instead
+;; of on projectile.
+
+
+;;;; Helm
+(when (equal larumbe/completion-framework 'helm)
+  (use-package helm-projectile
+    :diminish
+    :after projectile ; Otherwise projectile would disable these package keybindings
+    :bind (:map projectile-mode-map
+           ("C-c p s" . helm-projectile-switch-project)
+           ("C-c p f" . helm-projectile-find-file)
+           ("C-c p a" . helm-projectile-ag)
+           ("C-c p g" . helm-projectile-grep)
+           ("C-c p r" . helm-projectile-rg))))
+
 
 
 (provide 'init-projectile)
