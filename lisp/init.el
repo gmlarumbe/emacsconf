@@ -32,6 +32,7 @@
 (require 'init-compilation)
 (require 'init-prog)
 (require 'init-fpga)
+(require 'init-eaf)
 (require 'init-exwm)
 (require 'init-machine)
 
