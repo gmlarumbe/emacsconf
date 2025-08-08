@@ -22,7 +22,6 @@
     :straight (:host github :repo "emacs-eaf/emacs-application-framework"
                :files ("*" (:exclude ".git" ".github" ".gitignore" "LICENSE" "img" "*.md" "*png"))))
   ;; Install
-  ;; (setq eaf-apps-to-install '(git)) ; check 'applications.json' items
   (setq eaf-apps-to-install '(git browser pdf-viewer music-player video-player image-viewer terminal system-monitor)) ; check 'applications.json' items
   (eaf-install-and-update))
 
