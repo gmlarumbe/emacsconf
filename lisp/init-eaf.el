@@ -26,82 +26,81 @@
   (eaf-install-and-update))
 
 
-(unless (getenv "GITHUB_WORKSPACE") ; Do not load these on CI
-  (use-package eaf
-    :straight nil
-    :load-path "~/.emacs.d/straight/build/eaf/"
-    :init
-    ;; Do not use EAF for dired as a default.
-    ;; INFO: However, if "file-manager" is installed it will switch to EAF as a default
-    (setq eaf-dired-advisor-enable nil)
-    ;; Avoid issues with native compilation, redeclare variables
-    (defvar eaf-app-binding-alist '())
-    (defvar eaf-app-module-path-alist '()))
+(use-package eaf
+  :straight nil
+  :load-path "~/.emacs.d/straight/build/eaf/"
+  :init
+  ;; Do not use EAF for dired as a default.
+  ;; INFO: However, if "file-manager" is installed it will switch to EAF as a default
+  (setq eaf-dired-advisor-enable nil)
+  ;; Avoid issues with native compilation, redeclare variables
+  (defvar eaf-app-binding-alist '())
+  (defvar eaf-app-module-path-alist '()))
 
 
-  (use-package eaf-git
-    :straight nil
-    :load-path "~/.emacs.d/straight/build/eaf/app/git"
-    :commands (larumbe/eaf-git)
-    :config
-    (defun larumbe/eaf-git ()
-      "Wrapper to lazy-load `eaf-git'."
-      (interactive)
-      (require 'eaf)
-      (require 'eaf-git)
-      (call-interactively #'eaf-open-git)))
+(use-package eaf-git
+  :straight nil
+  :load-path "~/.emacs.d/straight/build/eaf/app/git"
+  :commands (larumbe/eaf-git)
+  :config
+  (defun larumbe/eaf-git ()
+    "Wrapper to lazy-load `eaf-git'."
+    (interactive)
+    (require 'eaf)
+    (require 'eaf-git)
+    (call-interactively #'eaf-open-git)))
 
 
-  (use-package eaf-browser
-    :straight nil
-    :load-path "~/.emacs.d/straight/build/eaf/app/browser"
-    :commands (larumbe/eaf-browser)
-    :config
-    (defun larumbe/eaf-browser ()
-      "Wrapper to lazy-load `eaf-browser'."
-      (interactive)
-      (require 'eaf)
-      (require 'eaf-browser)
-      (call-interactively #'eaf-open-browser)))
+(use-package eaf-browser
+  :straight nil
+  :load-path "~/.emacs.d/straight/build/eaf/app/browser"
+  :commands (larumbe/eaf-browser)
+  :config
+  (defun larumbe/eaf-browser ()
+    "Wrapper to lazy-load `eaf-browser'."
+    (interactive)
+    (require 'eaf)
+    (require 'eaf-browser)
+    (call-interactively #'eaf-open-browser)))
 
 
-  (use-package eaf-system-monitor
-    :straight nil
-    :load-path "~/.emacs.d/straight/build/eaf/app/system-monitor"
-    :commands (larumbe/eaf-system-monitor)
-    :config
-    (defun larumbe/eaf-system-monitor ()
-      "Wrapper to lazy-load `eaf-system-monitor'."
-      (interactive)
-      (require 'eaf)
-      (require 'eaf-system-monitor)
-      (call-interactively #'eaf-open-system-monitor)))
+(use-package eaf-system-monitor
+  :straight nil
+  :load-path "~/.emacs.d/straight/build/eaf/app/system-monitor"
+  :commands (larumbe/eaf-system-monitor)
+  :config
+  (defun larumbe/eaf-system-monitor ()
+    "Wrapper to lazy-load `eaf-system-monitor'."
+    (interactive)
+    (require 'eaf)
+    (require 'eaf-system-monitor)
+    (call-interactively #'eaf-open-system-monitor)))
 
 
-  (use-package eaf-video-player
-    :straight nil
-    :load-path "~/.emacs.d/straight/build/eaf/app/video-player"
-    :commands (larumbe/eaf-video-player)
-    :config
-    (defun larumbe/eaf-video-player ()
-      "Wrapper to lazy-load `eaf-video-player'."
-      (interactive)
-      (require 'eaf)
-      (require 'eaf-video-player)
-      (call-interactively #'eaf-open-video-player)))
+(use-package eaf-video-player
+  :straight nil
+  :load-path "~/.emacs.d/straight/build/eaf/app/video-player"
+  :commands (larumbe/eaf-video-player)
+  :config
+  (defun larumbe/eaf-video-player ()
+    "Wrapper to lazy-load `eaf-video-player'."
+    (interactive)
+    (require 'eaf)
+    (require 'eaf-video-player)
+    (call-interactively #'eaf-open-video-player)))
 
 
-  (use-package eaf-terminal
-    :straight nil
-    :load-path "~/.emacs.d/straight/build/eaf/app/terminal"
-    :commands (larumbe/eaf-terminal)
-    :config
-    (defun larumbe/eaf-terminal ()
-      "Wrapper to lazy-load `eaf-terminal"
-      (interactive)
-      (require 'eaf)
-      (require 'eaf-terminal)
-      (call-interactively #'eaf-open-terminal))))
+(use-package eaf-terminal
+  :straight nil
+  :load-path "~/.emacs.d/straight/build/eaf/app/terminal"
+  :commands (larumbe/eaf-terminal)
+  :config
+  (defun larumbe/eaf-terminal ()
+    "Wrapper to lazy-load `eaf-terminal"
+    (interactive)
+    (require 'eaf)
+    (require 'eaf-terminal)
+    (call-interactively #'eaf-open-terminal)))
 
 
 (provide 'init-eaf)
