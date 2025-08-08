@@ -11,24 +11,24 @@
          ("C-M-z" . eval-region)))
 
 
-(use-package elisp-utils
-  :straight nil
-  :bind (:map emacs-lisp-mode-map
-         ("C-c C-l" . larumbe/eval-buffer)
-         ("C-c C-e" . larumbe/edebug-defun)
-         ("C-c c b" . larumbe/byte-compile-current-buffer-or-dir)
-         ("C-c c n" . larumbe/native-compile-current-buffer-or-dir)
-         ("C-c h"   . sanityinc/headerise-elisp)
-         ("C-c t"   . larumbe/insert-time-stamp-elisp)
-         ("C-M-i"   . larumbe/elisp-indent-defun))
-  :hook ((emacs-lisp-mode . larumbe/elisp-hook)
-         (emacs-lisp-mode . larumbe/set-emacs-lisp-indentation)))
+;; (use-package elisp-utils
+;;   :straight nil
+;;   :bind (:map emacs-lisp-mode-map
+;;          ("C-c C-l" . larumbe/eval-buffer)
+;;          ("C-c C-e" . larumbe/edebug-defun)
+;;          ("C-c c b" . larumbe/byte-compile-current-buffer-or-dir)
+;;          ("C-c c n" . larumbe/native-compile-current-buffer-or-dir)
+;;          ("C-c h"   . sanityinc/headerise-elisp)
+;;          ("C-c t"   . larumbe/insert-time-stamp-elisp)
+;;          ("C-M-i"   . larumbe/elisp-indent-defun))
+;;   :hook ((emacs-lisp-mode . larumbe/elisp-hook)
+;;          (emacs-lisp-mode . larumbe/set-emacs-lisp-indentation)))
 
 
-(use-package elisp-templates
-  :straight nil
-  :bind (:map emacs-lisp-mode-map
-         ("C-c C-t" . hydra-elisp/body)))
+;; (use-package elisp-templates
+;;   :straight nil
+;;   :bind (:map emacs-lisp-mode-map
+;;          ("C-c C-t" . hydra-elisp/body)))
 
 
 (use-package edebug
@@ -40,7 +40,7 @@
   (setq edebug-print-length 200)) ; Check also `edebug-print-level'
 
 
-(use-package rainbow-delimiters)
+;; (use-package rainbow-delimiters)
 
 
 (use-package lively
