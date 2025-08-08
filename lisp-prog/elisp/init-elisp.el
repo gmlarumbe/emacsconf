@@ -8,21 +8,27 @@
   :diminish eldoc-mode
   :commands (larumbe/elisp-xref-set-dirs)
   :bind (:map emacs-lisp-mode-map
+         ("C-M-z" . eval-region)))
+
+
+(use-package elisp-utils
+  :straight nil
+  :bind (:map emacs-lisp-mode-map
          ("C-c C-l" . larumbe/eval-buffer)
-         ("C-c C-t" . hydra-elisp/body)
          ("C-c C-e" . larumbe/edebug-defun)
          ("C-c c b" . larumbe/byte-compile-current-buffer-or-dir)
          ("C-c c n" . larumbe/native-compile-current-buffer-or-dir)
          ("C-c h"   . sanityinc/headerise-elisp)
          ("C-c t"   . larumbe/insert-time-stamp-elisp)
-         ("C-M-z"   . eval-region)
          ("C-M-i"   . larumbe/elisp-indent-defun))
   :hook ((emacs-lisp-mode . larumbe/elisp-hook)
-         (emacs-lisp-mode . larumbe/set-emacs-lisp-indentation))
-  :config
-  (use-package rainbow-delimiters) ; Must be lazy-loaded before `larumbe/elisp-hook' @ `elisp-utils'
-  (require 'elisp-utils)
-  (require 'elisp-templates))
+         (emacs-lisp-mode . larumbe/set-emacs-lisp-indentation)))
+
+
+(use-package elisp-templates
+  :straight nil
+  :bind (:map emacs-lisp-mode-map
+         ("C-c C-t" . hydra-elisp/body)))
 
 
 (use-package edebug
@@ -32,6 +38,9 @@
   :init
   ;; Avoid truncation of echo messages in edebug
   (setq edebug-print-length 200)) ; Check also `edebug-print-level'
+
+
+(use-package rainbow-delimiters)
 
 
 (use-package lively

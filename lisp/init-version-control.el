@@ -2,7 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(defvar larumbe/magit-difftastic-enable nil) ; Enable if someday tree-sitter-systemverilog is included, or if C/Python development is needed
+(defvar larumbe/magit-difftastic-enable t)
 (defvar larumbe/magit-lfs-enable nil)
 
 ;;;; Magit

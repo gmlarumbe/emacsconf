@@ -247,8 +247,6 @@ Otherwise, smart-case is performed (similar to case-fold-search)."
 
 
 (use-package ivy-youtube
-  :demand
-  :after ivy
   :bind (("C-x c y" . ivy-youtube)))
 
 

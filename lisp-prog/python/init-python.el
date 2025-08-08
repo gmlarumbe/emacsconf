@@ -24,16 +24,9 @@
 ;;
 ;;; Code:
 
-;; TODO: Remove after testing:
-;; This was inside the :config section:
-;;    Avoid conflicts with `python-ts-mode'
-;;    INFO: From time to time, even with this uncommented, opening some .py buffers
-;;    would open them in `python-mode'
-;;    (delete '("\\.py[iw]?\\'" . python-mode) auto-mode-alist)
 
 (use-package python
   :straight nil
-  :mode (("\\.py[iw]?\\'" . python-ts-mode))
   :bind (:map python-ts-mode-map
          ("C-c C-v" . nil) ; Unmap `python-check', better use flycheck
          ("C-c C-t" . larumbe/python-hydra/body))
@@ -41,6 +34,7 @@
   (setq python-indent-offset 4)
   (setq python-indent-guess-indent-offset nil)
   (setq python-pdbtrack-activate nil) ; pdbtrack feature causes a BUG in window switching in gud/realgud when moving to next command in source window
+  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode)) ; Needed because of: (add-to-list 'auto-mode-alist (cons (purecopy "\\.py[iw]?\\'") 'python-mode))
   :config
   (require 'python-ts-font-lock)
   (require 'python-utils)
@@ -49,10 +43,8 @@
 
 
 (use-package jedi-core
-  :after python
-  :demand
   :commands (larumbe/jedi-restart-server)
-  :hook ((python-mode . jedi:setup))
+  :hook ((python-base-mode . jedi:setup))
   :bind (:map jedi-mode-map
          ("<C-tab>" . nil) ; Let C-tab to HideShow
          ;; Rely on `xref-utils' to navigate defs/refs
@@ -74,8 +66,6 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
 
 (use-package elpy
   :diminish
-  :after python
-  :demand
   :hook ((python-base-mode     . elpy-mode)
          (elpy-mode            . larumbe/elpy-hook)
          (inferior-python-mode . larumbe/inferior-python-elpy-hook))
@@ -120,12 +110,12 @@ Useful after changing the $PYTHONPATH (e.g. env switching)."
          ("C-c l"   . elpy-nav-indent-shift-right)) ; Vim-like
   :init
   (setq elpy-get-info-from-shell t) ; No need for `company-capf'
-  :config
   (setq elpy-modules '(elpy-module-sane-defaults
                        elpy-module-company
                        elpy-module-eldoc
                        elpy-module-yasnippet))
   (setq elpy-eldoc-show-current-function nil) ; Already have `which-func'
+  :config
   (elpy-enable)
 
   (defun larumbe/elpy-shell-send-dwim ()
