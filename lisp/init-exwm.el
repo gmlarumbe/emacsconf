@@ -44,7 +44,9 @@
 
 
 (use-package exwm
-  :demand)
+  :demand
+  :bind (:map exwm-workspace-switch-map
+         ("RET" . exit-minibuffer)))
 
 
 ;;;; Variables
