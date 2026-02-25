@@ -27,6 +27,14 @@
 (use-package test-hdl
   :straight (:host github :repo "gmlarumbe/test-hdl" :files (:defaults)))
 
+(use-package systemrdl-mode
+  :mode (("\\.rdlh?\\'" . systemrdl-mode))
+  :straight (:host github :repo "paul-donahue/systemrdl-mode" :files ("systemrdl-mode.el")
+             :fork (:repo "gmlarumbe/systemrdl-mode"))
+  :init
+  (setq systemrdl-indent-level 4))
+
+
 
 (provide 'init-fpga)
 

@@ -72,8 +72,9 @@ This was needed in order to allow GitHub actions to work properly."
   :straight nil
   :config
   (set-face-attribute 'font-lock-preprocessor-face nil     :foreground "pale goldenrod")
-  (set-face-attribute 'font-lock-operator-face nil         :foreground "burlywood" :weight 'extra-bold)
-  (set-face-attribute 'font-lock-bracket-face nil          :foreground "goldenrod")
+  (set-face-attribute 'font-lock-operator-face nil         :foreground "burlywood")
+  (set-face-attribute 'font-lock-punctuation-face nil      :foreground "burlywood")
+  (set-face-attribute 'font-lock-bracket-face nil          :foreground "dark gray")
   (set-face-attribute 'font-lock-delimiter-face nil        :foreground "burlywood")
   (set-face-attribute 'font-lock-number-face nil           :foreground "yellow green")
   (set-face-attribute 'font-lock-function-call-face nil    :foreground "Light Coral")
@@ -837,6 +838,8 @@ This is because regexp parsing blocks Emacs execution and might not be useful fo
   (setq counsel-describe-function-function #'helpful-callable)
   (setq counsel-describe-variable-function #'helpful-variable))
 
+
+(use-package focus)
 
 
 ;;;; Provide package

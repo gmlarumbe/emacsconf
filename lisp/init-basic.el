@@ -46,7 +46,8 @@
                                               "~/.emacs.d/straight/repos/test-hdl"
                                               "~/.emacs.d/straight/repos/fpga"
                                               "~/.emacs.d/straight/repos/wavedrom-mode"
-                                              "~/.emacs.d/straight/repos/vunit-mode"))
+                                              "~/.emacs.d/straight/repos/vunit-mode"
+                                              "~/.emacs.d/straight/repos/systemrdl-mode"))
 (defconst larumbe/emacs-conf-repos-devel (append larumbe/emacs-conf-repos-core
                                                  larumbe/emacs-conf-repos-packages
                                                  (when (file-exists-p "~/.dotfiles")
@@ -62,6 +63,7 @@
     "~/.emacs.d/straight/repos/verilog-mode"       ; Development as a maintainer
     "~/.emacs.d/straight/repos/vunit-mode"         ; Wants to keep compatibility with old Emacs versions
     "~/.emacs.d/straight/repos/outshine"           ; Need a fork to avoid overriding of unmaintained org- commands
+    "~/.emacs.d/straight/repos/systemrdl-mode"     ; Old and unmaintained, yet useful
     )
   "Evaluation of: `(larumbe/git-check-forked-repos-straight)'.")
 
