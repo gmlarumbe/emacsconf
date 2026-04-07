@@ -234,6 +234,18 @@
        )
       'no-common-keybidings
       ))
+
+    ("Questa Visualizer" .
+     (("Visualizer")
+      nil
+      (;; Keep original values
+       ([?\C-k] . ?\C-k)
+       ;; Bindings
+       ([?\M-s]  . ?\C-s) ; Save
+       ([?\C-\/] . ?\C-z) ; Undo
+       ([?\M-a]  . ?\C-a) ; Select all
+       )
+      ))
     ))
 
 
