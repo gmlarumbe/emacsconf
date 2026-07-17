@@ -200,7 +200,13 @@ C-s C-w [C-w] [C-w]... behaviour. "
 
 (use-package outline
   :straight nil
-  :diminish outline-minor-mode)
+  :diminish outline-minor-mode
+  :init
+  ;; Emacs 30.1 bug with outline-minor-mode and auto-revert
+  (advice-add 'outline-revert-buffer-restore-visibility
+              :around
+              (lambda (orig &rest args)
+                (ignore-errors (apply orig args)))))
 
 
 (use-package navi-mode)
