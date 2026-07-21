@@ -33,6 +33,7 @@
 (require 'init-prog)
 (require 'init-fpga)
 (require 'init-eaf)
+(require 'init-elfeed)
 (require 'init-exwm)
 (require 'init-machine)
 
