@@ -20,7 +20,9 @@
     (mapcar (lambda (feed)
               (cons (car feed) (list (regexp-opt (cdr feed) 'words))))
             larumbe/reddit-alert-keywords))
-  ;; Variables
+  ;; Variables/constants
+  (defconst larumbe/sendmail-program "msmtp")
+
   (defvar larumbe/reddit-alert-user-name)
   (defvar larumbe/reddit-alert-from-email)
   (defvar larumbe/reddit-alert-to-email)
@@ -29,11 +31,11 @@
   (defun larumbe/reddit-alert-send-email (subject body)
     (let* ((user-full-name larumbe/reddit-alert-user-name)
            (user-mail-address larumbe/reddit-alert-from-email)
-           (sendmail-program (executable-find "msmtp"))
+           (sendmail-program (executable-find larumbe/sendmail-program))
            (buffer (get-buffer-create "*elfeed-reddit-fpga*"))
            proc proc-in)
       (unless sendmail-program
-        (error "Couldn't find msmtp in PATH"))
+        (error "Couldn't find %s in PATH" larumbe/sendmail-program))
       (setq proc (make-process
                   :name "sendmail-reddit"
                   :buffer buffer
@@ -66,10 +68,9 @@
         (when (string-match-p feed-elm url)
           (setq my-feed feed-elm)))
       (when my-feed
-        (message "my-feed=%s" my-feed)
-        (message "URL=%s" url)
         ;; Match keywords
         (when (string-match-p (cadr (assoc my-feed larumbe/reddit-alert-keywords-regexps)) title)
+          (message "Sending Reddit alert: %s" title)
           (larumbe/reddit-alert-send-email
            (format "[Reddit] %s" title)
            (format
@@ -77,7 +78,7 @@
             url
             title
             link))
-          (message "Reddit alert: %s" title)))))
+          (message "Sent Reddit alert: %s" title)))))
 
   (add-hook 'elfeed-new-entry-hook #'larumbe/reddit-alert-hook)
   (run-at-time nil (* 5 60) #'elfeed-update))
