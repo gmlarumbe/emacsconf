@@ -561,7 +561,7 @@ it could cause sluggish behaviour as it's not every efficient."
   :straight nil
   :hook ((before-save . time-stamp))
   :config
-  (setq time-stamp-format "%:y-%02m-%02d %02H:%02M") ; Do not include user nor seconds
+  (setq time-stamp-format "%:Y/%02m/%02d") ; Same as for Verilog/VHDL
   (setq time-stamp-line-limit 20)) ; Default 8
 
 
