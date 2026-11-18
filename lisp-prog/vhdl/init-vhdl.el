@@ -68,7 +68,6 @@
                                 hideshow
                                 time-stamp
                                 ports))
-  (setq vhdl-ext-tags-backend 'tree-sitter)
   :config
   ;; Setup
   (vhdl-ext-mode-setup)
